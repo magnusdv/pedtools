@@ -1,5 +1,3 @@
-safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
-
 #' Random pedigree
 #'
 #' Generate a random pedigree by applying random mating starting from a finite

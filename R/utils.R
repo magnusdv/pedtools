@@ -5,6 +5,9 @@ is_count0 <- function(x) {
   assert_that(is.numeric(x), length(x) == 1, x == as.integer(x), x >= 0)
 }
 
+# A safer version of base::sample
+safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
+
 # Stripped-down, faster version of expand.grid
 fast.grid = function(argslist, as.list = FALSE) {
   nargs = length(argslist)
