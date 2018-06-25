@@ -34,7 +34,22 @@ has_numlabs = function(x) {
 getSex = function(x, labels)
   x$SEX[internalID(x, labels)]
 
-pedSize = function(x) length(x$ID)
+#' Pedigree size
+#'
+#' Return the number of pedigree members.
+#'
+#' @param x a [`ped`] object.
+#'
+#' @return A positive integer.
+#' @export
+#'
+#' @examples
+#' x = nuclearPed(1)
+#' stopifnot(pedSize(x)==3)
+#'
+pedSize = function(x) {
+  length(x$ID)
+}
 
 catLabels = function(x, int_ids) paste(x$LABELS[int_ids], collapse = ", ")
 

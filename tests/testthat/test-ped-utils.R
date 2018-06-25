@@ -1,5 +1,10 @@
 context("various utils")
 
+test_that("pedSize works", {
+  expect_equal(pedSize(nuclearPed(1)), 3)
+  expect_equal(pedSize(fullSibMating(2)), 6)
+})
+
 test_that("mergePed() works in half sib example", {
   x = nuclearPed(1)
   y = relabel(x, c(4,2,5))
