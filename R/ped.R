@@ -176,12 +176,17 @@ as_ped.matrix = function(m) ped(id=m[,1], fid=m[,2], mid=m[,3], sex=m[,4])
 #'
 #' @examples
 #' x = nuclearPed(1)
-#' internalID(x, 3)
+#' x = relabel(x, c("fa", "mo", "ch"))
+#' internalID(x, "ch")
 #'
 internalID = function(x, labels) {
   int_ids = match(labels, x$LABELS)
-  if (any(wrong <- is.na(int_ids)))
-    stop("Indicated labels not among original ID labels:", catLabels(x, which(wrong)))
+  if (anyNA(int_ids)) {
+    wrong = labels[is.na(int_ids)]
+    stop(sprintf("Unknown member%s of %s: %s", if(length(wrong)>1) "s" else "",
+                 deparse(substitute(x)), paste(wrong, collapse=", ")),
+                 call.=FALSE)
+  }
   int_ids
 }
 

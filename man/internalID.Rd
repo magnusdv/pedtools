@@ -19,6 +19,7 @@ Return the internal indices of pedigree members.
 }
 \examples{
 x = nuclearPed(1)
-internalID(x, 3)
+x = relabel(x, c("fa", "mo", "ch"))
+internalID(x, "ch")
 
 }
