@@ -1,8 +1,8 @@
 #' Create simple pedigrees
 #'
 #' These are utility functions for creating some common pedigree structures as
-#' \code{ped} objects. Use \code{\link{swapSex}} to change the gender of pedigree
-#' members.
+#' \code{ped} objects. Use \code{\link{swapSex}} to change the gender of
+#' pedigree members.
 #'
 #' The call \code{cousinsPed(degree=n, removal=k)} creates a pedigree with two
 #' n'th cousins, k times removed. By default, removals are added on the right
@@ -11,23 +11,27 @@
 #' \code{degree2} is given \code{removal} is ignored. (Similarly for
 #' \code{halfCousinsPed}.)
 #'
-#' @param nch A positive integer, the number of offspring in the nuclear
-#'   family.
-#' @param sex A vector of length \code{nch}; indicating the genders (1=male,
-#'   2=female) of the offspring. If missing, all offspring are taken to be
-#'   males.
+#' @param nch A positive integer indicating the number of offspring. If NULL, it
+#'   is taken to be the \code{length(children)}
+#' @param sex A numeric vector of length \code{nch} (recycled if shorter)
+#'   encoding the genders of the children (0=unknown, 1=male, 2=female).
+#' @param father The label of the father.
+#' @param mother The label of the father.
+#' @param children A character of length \code{nch}, with labels of the
+#'   children.
+#'
 #' @param degree,degree2 Non-negative integers, indicating the degree of
 #'   cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
 #'   a.s.o. See Details and Examples.
-#' @param removal Non-negative integers, indicating the removals
-#'   of cousin-like relationships. See Details and Examples.
+#' @param removal Non-negative integers, indicating the removals of cousin-like
+#'   relationships. See Details and Examples.
 #' @param child A logical: Should an inbred child be added to the two cousins?
 #'
 #' @return A \code{\link{ped}} object.
 #'
-#' @seealso \code{\link{swapSex}},
-#'   \code{\link{removeIndividuals}}, \code{\link{addChildren}},
-#'   \code{\link{relabel}}, \code{\link{doubleCousins}},
+#' @seealso \code{\link{swapSex}}, \code{\link{removeIndividuals}},
+#'   \code{\link{addChildren}}, \code{\link{relabel}},
+#'   \code{\link{doubleCousins}},
 #'
 #' @examples
 #'
@@ -55,15 +59,20 @@ NULL
 #' @rdname pedCreate
 #' @importFrom assertthat assert_that is.count
 #' @export
-nuclearPed = function(nch, sex=1) {
-  assert_that(is.count(nch))
-  if(length(sex) == 1) sex = rep(sex, nch)
-  assert_that(length(sex) == nch, all(sex %in% 0:2))
+nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
+                      children = as.character(seq.int(3, length.out=nch))) {
+  if(missing(nch))
+    nch = length(children)
+  assert_that(is.count(nch), length(children)==nch, length(father)==1,
+              length(mother)==1, is.numeric(sex), length(sex) <= nch)
 
-  ped(id = 1:(2 + nch),
+  if(length(sex) == 1) sex = rep(sex, nch)
+  x = ped(id = 1:(2 + nch),
       fid = c(0, 0, rep(1, nch)),
       mid = c(0, 0, rep(2, nch)),
       sex = c(1, 2, sex))
+
+  setLabels(x, c(father, mother, children))
 }
 
 #' @rdname pedCreate

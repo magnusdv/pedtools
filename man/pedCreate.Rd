@@ -7,26 +7,33 @@
 \alias{halfCousinsPed}
 \title{Create simple pedigrees}
 \usage{
-nuclearPed(nch, sex = 1)
+nuclearPed(nch, sex = 1, father = "1", mother = "2",
+  children = as.character(seq.int(3, length.out = nch)))
 
 cousinsPed(degree, removal = 0, degree2 = NULL, child = FALSE)
 
 halfCousinsPed(degree, removal = 0, degree2 = NULL, child = FALSE)
 }
 \arguments{
-\item{nch}{A positive integer, the number of offspring in the nuclear
-family.}
+\item{nch}{A positive integer indicating the number of offspring. If NULL, it
+is taken to be the \code{length(children)}}
 
-\item{sex}{A vector of length \code{nch}; indicating the genders (1=male,
-2=female) of the offspring. If missing, all offspring are taken to be
-males.}
+\item{sex}{A numeric vector of length \code{nch} (recycled if shorter)
+encoding the genders of the children (0=unknown, 1=male, 2=female).}
+
+\item{father}{The label of the father.}
+
+\item{mother}{The label of the father.}
+
+\item{children}{A character of length \code{nch}, with labels of the
+children.}
 
 \item{degree, degree2}{Non-negative integers, indicating the degree of
 cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
 a.s.o. See Details and Examples.}
 
-\item{removal}{Non-negative integers, indicating the removals
-of cousin-like relationships. See Details and Examples.}
+\item{removal}{Non-negative integers, indicating the removals of cousin-like
+relationships. See Details and Examples.}
 
 \item{child}{A logical: Should an inbred child be added to the two cousins?}
 }
@@ -35,8 +42,8 @@ A \code{\link{ped}} object.
 }
 \description{
 These are utility functions for creating some common pedigree structures as
-\code{ped} objects. Use \code{\link{swapSex}} to change the gender of pedigree
-members.
+\code{ped} objects. Use \code{\link{swapSex}} to change the gender of
+pedigree members.
 }
 \details{
 The call \code{cousinsPed(degree=n, removal=k)} creates a pedigree with two
@@ -68,7 +75,7 @@ cousinsPed(degree=1, child=TRUE)
 
 }
 \seealso{
-\code{\link{swapSex}},
-  \code{\link{removeIndividuals}}, \code{\link{addChildren}},
-  \code{\link{relabel}}, \code{\link{doubleCousins}},
+\code{\link{swapSex}}, \code{\link{removeIndividuals}},
+  \code{\link{addChildren}}, \code{\link{relabel}},
+  \code{\link{doubleCousins}},
 }
