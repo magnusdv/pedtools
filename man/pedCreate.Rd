@@ -38,11 +38,11 @@ relationships. See Details and Examples.}
 \item{child}{A logical: Should an inbred child be added to the two cousins?}
 }
 \value{
-A \code{\link{ped}} object.
+A \code{\link[=ped]{ped()}} object.
 }
 \description{
 These are utility functions for creating some common pedigree structures as
-\code{ped} objects. Use \code{\link{swapSex}} to change the gender of
+\code{ped} objects. Use \code{\link[=swapSex]{swapSex()}} to change the gender of
 pedigree members.
 }
 \details{
@@ -75,7 +75,7 @@ cousinsPed(degree=1, child=TRUE)
 
 }
 \seealso{
-\code{\link{swapSex}}, \code{\link{removeIndividuals}},
-  \code{\link{addChildren}}, \code{\link{relabel}},
-  \code{\link{doubleCousins}},
+\code{\link[=swapSex]{swapSex()}}, \code{\link[=removeIndividuals]{removeIndividuals()}},
+\code{\link[=addChildren]{addChildren()}}, \code{\link[=relabel]{relabel()}},
+\code{\link[=doubleCousins]{doubleCousins()}},
 }

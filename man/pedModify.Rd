@@ -34,7 +34,7 @@ branch(x, id)
 relabel(x, new, old = x$LABELS)
 }
 \arguments{
-\item{x}{A \code{\link{ped}} object}
+\item{x}{A \code{\link[=ped]{ped()}} object}
 
 \item{verbose}{A logical: Verbose output or not.}
 
@@ -87,7 +87,7 @@ x = removeIndividuals(x, 4)
 
 }
 \seealso{
-\code{\link{ped}}, \code{\link{nuclearPed}}
+\code{\link[=ped]{ped()}}, \code{\link[=nuclearPed]{nuclearPed()}}
 }
 \author{
 Magnus Dehli Vigeland

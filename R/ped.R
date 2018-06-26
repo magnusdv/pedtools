@@ -1,53 +1,53 @@
 #' Pedigree construction
 #'
-#' Basic construction of \code{ped} objects. Utility functions for creating many
-#' common pedigree structures are described in \code{\link{pedCreate}}.
+#' Basic construction of `ped` objects. Utility functions for creating many
+#' common pedigree structures are described in [pedCreate()].
 #'
 #' Internally, this happens: ...
 #'
-#' A singleton is a special \code{ped} object whose pedigree contains 1
-#' individual. The class attribute of a singleton is \code{c('singleton',
-#' 'ped')}
+#' A singleton is a special `ped` object whose pedigree contains 1
+#' individual. The class attribute of a singleton is `c('singleton',
+#' 'ped')`
 #'
 #' @param id a vector (numeric or character) of individual ID labels.
-#' @param fid a vector of the same length as \code{id}, containing the labels of the fathers.
-#'   In other words \code{fid[i]} is the father of \code{id[i]}, or 0 if \code{id[i]} is a founder.
-#' @param mid a vector of the same length as \code{id}, containing the labels of the mothers.
-#'   In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]} is a founder.
-#' @param sex a numeric of the same length as \code{id}, describing the genders of the individuals
-#'   (in the same order as \code{id}.) Each entry must be either 1 (=male), 2 (=female) or 0 (=unknown).
+#' @param fid a vector of the same length as `id`, containing the labels of the fathers.
+#'   In other words `fid[i]` is the father of `id[i]`, or 0 if `id[i]` is a founder.
+#' @param mid a vector of the same length as `id`, containing the labels of the mothers.
+#'   In other words `mid[i]` is the mother of `id[i]`, or 0 if `id[i]` is a founder.
+#' @param sex a numeric of the same length as `id`, describing the genders of the individuals
+#'   (in the same order as `id`.) Each entry must be either 1 (=male), 2 (=female) or 0 (=unknown).
 #' @param famid a character of length 1
 #' @param reorder a logical. If TRUE, the pedigree is reordered so that all
 #'   parents preceeede their children.
-#' @param check a logical. If TRUE, \code{\link{checkped}} is run on the
+#' @param check a logical. If TRUE, [checkped()] is run on the
 #'   pedigree before it is returned.
 #' @param verbose a logical.
 #' @param ... further arguments
 #'
-#' @return A \code{ped} object, which is essentially a list with the following
+#' @return A `ped` object, which is essentially a list with the following
 #'   entries:
 #'   \describe{
 #'   \item{ID}{A numerical vector with the internal IDs, which are always 1,2,3,...,N.}
 #'   \item{FID}{A numerical vector indicating the internal IDs of the fathers.}
 #'   \item{MID}{A numerical vector indicating the internal IDs of the mothers.}
 #'   \item{SEX}{A numerical vector with gender codes. Unless the pedigree is reordered,
-#'     this equals the input argument \code{sex}.}
+#'     this equals the input argument `sex`.}
 #'   \item{FAMID}{The family ID.}
 #'   \item{LABELS}{A character vector containing the original id labels.
-#'     Unless the pedigree has been reordered, this equals the input argument \code{id}.}
+#'     Unless the pedigree has been reordered, this equals the input argument `id`.}
 #'   \item{NIND}{The number of individuals in the pedigree, i.e. length(id)}
 #'   \item{FOUNDERS}{A numerical vector containing the internal IDs of the founder
-#'     individuals. Equals \code{which(FID==0)}.}
+#'     individuals. Equals `which(FID==0)`.}
 #'   \item{NONFOUNDERS}{A numerical vector containing the internal IDs of the nonfounder
-#'     individuals. Equals \code{which(FID > 0)}.}
+#'     individuals. Equals `which(FID > 0)`.}
 #'   \item{hasLoops}{A logical: TRUE if the pedigree is inbred.}
 #'   \item{loop_breakers}{A matrix with loop breaker ID's in the first
 #'   column and their duplicates in the second column. All entries refer to the internal IDs.
-#'   This is usually set by \code{\link{breakLoops}}.}
+#'   This is usually set by [breakLoops()].}
 #'   }
 #' @author Magnus Dehli Vigeland
-#' @seealso \code{\link{pedCreate}}, \code{\link{pedModify}},
-#'   \code{\link{pedParts}}
+#' @seealso [pedCreate()], [pedModify()],
+#'   [pedParts()]
 #'
 #' @examples
 #' x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))
@@ -105,9 +105,9 @@ singleton = function(id, sex = 1, famid = NULL) {
 
 #' Pedigree errors
 #'
-#' Check a \code{ped} object for pedigree errors.
+#' Check a `ped` object for pedigree errors.
 #'
-#' @param x object of class \code{ped}.
+#' @param x object of class `ped`.
 #'
 #' @return If no errors are detected, the function returns NULL invisibly.
 #'   Otherwise, messages describing the errors are printed to the screen and an
@@ -168,7 +168,7 @@ as_ped.matrix = function(m) ped(id=m[,1], fid=m[,2], mid=m[,3], sex=m[,4])
 #'
 #' Return the internal indices of pedigree members.
 #'
-#' @param x A \code{ped} object.
+#' @param x A `ped` object.
 #' @param labels A character vector (or coercible to one) of original ID labels.
 #'
 #' @return A numeric vector
@@ -192,9 +192,9 @@ internalID = function(x, labels) {
 
 #' Standard pedigree order
 #'
-#' Reorder a \code{ped} object so parents come before their children.
+#' Reorder a `ped` object so parents come before their children.
 #'
-#' @param x a \code{\link{ped}} object
+#' @param x a [ped()] object
 #'
 #' @examples
 #' x = reorder(nuclearPed(1), 3:1)

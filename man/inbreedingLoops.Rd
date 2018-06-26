@@ -19,7 +19,7 @@ findLoopBreakers(x)
 findLoopBreakers2(x)
 }
 \arguments{
-\item{x}{a \code{\link{ped}} object.}
+\item{x}{a \code{\link[=ped]{ped()}} object.}
 
 \item{loop_breakers}{either NULL (resulting in automatic selection of loop
 breakers) or a numeric containing IDs of individuals to be used as loop

@@ -5,13 +5,13 @@
 #' Most of the work is done by the plotting functionality in the 'kinship2'
 #' package.
 #'
-#' \code{plot.ped} is in essence a wrapper for \code{plot.pedigree} in the
-#' \code{kinship2} package.
+#' `plot.ped` is in essence a wrapper for `plot.pedigree` in the
+#' `kinship2` package.
 #'
-#' @param x a \code{\link{ped}} object.
+#' @param x a [ped()] object.
 #' @param id.labels a vector with labels for each pedigree member. This
-#' defaults to \code{x$LABELS} (see \code{\link{setLabels}}).
-#' @param text a character vector of length \code{x$NIND}.
+#' defaults to `x$LABELS` (see [setLabels()]).
+#' @param text a character vector of length `x$NIND`.
 #' @param title the plot title. If NULL or '', no title is added to the plot.
 #' @param col a vector with color indicators for the pedigree members. Recycled
 #' if necessary. By default everyone is drawn black.
@@ -20,11 +20,11 @@
 #' marked with a star in the pedigree plot.
 #' @param margins a numeric of length 4 indicating the plot margins. For
 #' singletons only the first element (the 'bottom' margin) is used.
-#' @param \dots arguments passed on to \code{plot.pedigree} in the
-#' \code{kinship2} package. In particular \code{symbolsize} and \code{cex} can
+#' @param \dots arguments passed on to `plot.pedigree` in the
+#' `kinship2` package. In particular `symbolsize` and `cex` can
 #' be useful.
 #' @author Magnus Dehli Vigeland, Guro Doerum
-#' @seealso \code{\link{plot.pedigree}}, \code{\link{setLabels}}
+#' @seealso [plot.pedigree()], [setLabels()]
 #'
 #' @examples
 #'

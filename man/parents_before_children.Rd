@@ -10,7 +10,7 @@ parents_before_children(x)
 has_parents_before_children(x)
 }
 \arguments{
-\item{x}{a \code{\link{ped}} object}
+\item{x}{a \code{\link[=ped]{ped()}} object}
 }
 \description{
 Reorder a \code{ped} object so parents come before their children.

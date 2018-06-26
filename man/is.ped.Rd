@@ -22,7 +22,7 @@ a singleton object, and FALSE otherwise.\cr For \code{is.ped.list}: TRUE
 if \code{x} is a list of ped/singleton objects.
 }
 \description{
-Functions for checking whether an object is a \code{\link{ped}} object, a \code{\link{singleton}} or
+Functions for checking whether an object is a \code{\link[=ped]{ped()}} object, a \code{\link[=singleton]{singleton()}} or
 a list of such.
 }
 \details{
@@ -39,7 +39,7 @@ stopifnot(is.ped(x1), !is.singleton(x1),
 
 }
 \seealso{
-\code{\link{ped}}
+\code{\link[=ped]{ped()}}
 }
 \author{
 Magnus Dehli Vigeland

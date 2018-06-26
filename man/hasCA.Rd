@@ -7,10 +7,10 @@
 hasCA(x)
 }
 \arguments{
-\item{x}{a \code{\link{ped}} object.}
+\item{x}{a \code{\link[=ped]{ped()}} object.}
 }
 \description{
-Computes a matrix A whose entry A[i,j] is TRUE if pedigree members i and j have a common ancestor, and FALSE otherwise.
+Computes a matrix A whose entry \code{A[i,j]} is TRUE if pedigree members i and j have a common ancestor, and FALSE otherwise.
 }
 \examples{
 

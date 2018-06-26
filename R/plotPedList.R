@@ -1,27 +1,27 @@
 #' Plot a list of pedigrees.
 #'
 #' This function creates a row of pedigree plots, each created by
-#' \code{\link{plot.ped}}.  Each parameter accepted by
-#' \code{\link{plot.ped}} can be applied here.  Some effort is made to
+#' [plot.ped()].  Each parameter accepted by
+#' [plot.ped()] can be applied here.  Some effort is made to
 #' guess a reasonable window size and margins, but in general the user must be
 #' prepared to do manual resizing of the plot window.
 #'
 #' See various examples in the Examples section below.
 #'
 #' Note that for tweaking dev.height and dev.width the function
-#' \code{\link{dev.size}} is useful to determine the size of the active device.
+#' [dev.size()] is useful to determine the size of the active device.
 #'
-#' @param plot.arg.list A list of lists. Each element of \code{plot.arg.list}
-#' is a list, where the first element is the \code{\link{ped}} object to be
-#' plotted, and the remaining elements are passed on to \code{plot.ped}.
+#' @param plot.arg.list A list of lists. Each element of `plot.arg.list`
+#' is a list, where the first element is the [ped()] object to be
+#' plotted, and the remaining elements are passed on to `plot.ped`.
 #' These elements must be correctly named. See examples below.
 #' @param widths A numeric vector of relative widths of the subplots. Recycled
-#' to \code{length(plot.arg.list)} if necessary, before passed on to
-#' \code{\link{layout}}. Note that the vector does not need to sum to 1.
+#' to `length(plot.arg.list)` if necessary, before passed on to
+#' [layout()]. Note that the vector does not need to sum to 1.
 #' @param frames Either a single logical (FALSE = no frames; TRUE = automatic
 #' framing) or a list of numeric vectors: Each vector must consist of
 #' consecutive integers, indicating subplots to be framed together. By default
-#' the framing follows the list structure of \code{plot.arg.list}.
+#' the framing follows the list structure of `plot.arg.list`.
 #' @param frametitles A character vector of titles for each frame. If this is
 #' non-NULL, titles for individuals subplots are ignored.
 #' @param fmar A single number in the interval [0,0.5) controlling the position
@@ -31,9 +31,9 @@
 #' if newdev is TRUE). If these are NA suitable values are guessed from the
 #' pedigree sizes.
 #' @param \dots Further arguments passed on to each call to
-#' \code{\link{plot.ped}}.
+#' [plot.ped()].
 #' @author Magnus Dehli Vigeland
-#' @seealso \code{\link{plot.ped}}
+#' @seealso [plot.ped()]
 #' @examples
 #'
 #'

@@ -11,8 +11,8 @@ checkped(x)
 }
 \value{
 If no errors are detected, the function returns NULL invisibly.
-  Otherwise, messages describing the errors are printed to the screen and an
-  error is raised.
+Otherwise, messages describing the errors are printed to the screen and an
+error is raised.
 }
 \description{
 Check a \code{ped} object for pedigree errors.

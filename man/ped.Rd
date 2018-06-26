@@ -27,7 +27,7 @@ In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]}
 \item{reorder}{a logical. If TRUE, the pedigree is reordered so that all
 parents preceeede their children.}
 
-\item{check}{a logical. If TRUE, \code{\link{checkped}} is run on the
+\item{check}{a logical. If TRUE, \code{\link[=checkped]{checkped()}} is run on the
 pedigree before it is returned.}
 
 \item{verbose}{a logical.}
@@ -36,45 +36,44 @@ pedigree before it is returned.}
 }
 \value{
 A \code{ped} object, which is essentially a list with the following
-  entries:
-  \describe{
-  \item{ID}{A numerical vector with the internal IDs, which are always 1,2,3,...,N.}
-  \item{FID}{A numerical vector indicating the internal IDs of the fathers.}
-  \item{MID}{A numerical vector indicating the internal IDs of the mothers.}
-  \item{SEX}{A numerical vector with gender codes. Unless the pedigree is reordered,
-    this equals the input argument \code{sex}.}
-  \item{FAMID}{The family ID.}
-  \item{LABELS}{A character vector containing the original id labels.
-    Unless the pedigree has been reordered, this equals the input argument \code{id}.}
-  \item{NIND}{The number of individuals in the pedigree, i.e. length(id)}
-  \item{FOUNDERS}{A numerical vector containing the internal IDs of the founder
-    individuals. Equals \code{which(FID==0)}.}
-  \item{NONFOUNDERS}{A numerical vector containing the internal IDs of the nonfounder
-    individuals. Equals \code{which(FID > 0)}.}
-  \item{hasLoops}{A logical: TRUE if the pedigree is inbred.}
-  \item{loop_breakers}{A matrix with loop breaker ID's in the first
-  column and their duplicates in the second column. All entries refer to the internal IDs.
-  This is usually set by \code{\link{breakLoops}}.}
-  }
+entries:
+\describe{
+\item{ID}{A numerical vector with the internal IDs, which are always 1,2,3,...,N.}
+\item{FID}{A numerical vector indicating the internal IDs of the fathers.}
+\item{MID}{A numerical vector indicating the internal IDs of the mothers.}
+\item{SEX}{A numerical vector with gender codes. Unless the pedigree is reordered,
+this equals the input argument \code{sex}.}
+\item{FAMID}{The family ID.}
+\item{LABELS}{A character vector containing the original id labels.
+Unless the pedigree has been reordered, this equals the input argument \code{id}.}
+\item{NIND}{The number of individuals in the pedigree, i.e. length(id)}
+\item{FOUNDERS}{A numerical vector containing the internal IDs of the founder
+individuals. Equals \code{which(FID==0)}.}
+\item{NONFOUNDERS}{A numerical vector containing the internal IDs of the nonfounder
+individuals. Equals \code{which(FID > 0)}.}
+\item{hasLoops}{A logical: TRUE if the pedigree is inbred.}
+\item{loop_breakers}{A matrix with loop breaker ID's in the first
+column and their duplicates in the second column. All entries refer to the internal IDs.
+This is usually set by \code{\link[=breakLoops]{breakLoops()}}.}
+}
 }
 \description{
 Basic construction of \code{ped} objects. Utility functions for creating many
-common pedigree structures are described in \code{\link{pedCreate}}.
+common pedigree structures are described in \code{\link[=pedCreate]{pedCreate()}}.
 }
 \details{
 Internally, this happens: ...
 
 A singleton is a special \code{ped} object whose pedigree contains 1
-individual. The class attribute of a singleton is \code{c('singleton',
-'ped')}
+individual. The class attribute of a singleton is \code{c('singleton', 'ped')}
 }
 \examples{
 x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))
 y = singleton('NN', sex=2, famid="SINGLETON GIRL")
 }
 \seealso{
-\code{\link{pedCreate}}, \code{\link{pedModify}},
-  \code{\link{pedParts}}
+\code{\link[=pedCreate]{pedCreate()}}, \code{\link[=pedModify]{pedModify()}},
+\code{\link[=pedParts]{pedParts()}}
 }
 \author{
 Magnus Dehli Vigeland

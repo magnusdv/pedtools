@@ -3,7 +3,7 @@
 #' Utility functions for 'ped' objects, mainly for extracting various
 #' pedigree information.
 #'
-#' @param x A \code{\link{ped}} object.
+#' @param x A [ped()] object.
 #' @param id A single ID label (numeric or character).
 #' @param internal A logical indicating whether 'id' refers to the internal order.
 #' @param degree,removal Non-negative integers.
@@ -11,17 +11,17 @@
 #' siblings/cousins/nephews/nieces are returned. If NA, both categories are
 #' inclucded.
 #'
-#' @return For \code{ancestors(x,id)}, a vector containing the ID's of all
-#' ancestors of the individual \code{id}.  For \code{descendants(x,id)}, a
+#' @return For `ancestors(x,id)`, a vector containing the ID's of all
+#' ancestors of the individual `id`.  For `descendants(x,id)`, a
 #' vector containing the ID's of all descendants (i.e. children, grandchildren,
-#' a.s.o.) of individual \code{id}.
+#' a.s.o.) of individual `id`.
 #'
-#' The functions \code{cousins}, \code{grandparents}, \code{nephews_nieces},
-#' \code{children}, \code{parents}, \code{siblings}, \code{spouses},
-#' \code{unrelated}, each returns an integer vector containing the ID's of all
-#' pedigree members having the specified relationship with \code{id}.
+#' The functions `cousins`, `grandparents`, `nephews_nieces`,
+#' `children`, `parents`, `siblings`, `spouses`,
+#' `unrelated`, each returns an integer vector containing the ID's of all
+#' pedigree members having the specified relationship with `id`.
 #'
-#' For \code{leaves}, a vector of the ID labels of pedigree members without
+#' For `leaves`, a vector of the ID labels of pedigree members without
 #' children.
 #'
 #' @author Magnus Dehli Vigeland

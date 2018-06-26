@@ -1,18 +1,18 @@
 #' Is an object a ped object?
 #' 
-#' Functions for checking whether an object is a \code{\link{ped}} object, a \code{\link{singleton}} or
+#' Functions for checking whether an object is a [ped()] object, a [singleton()] or
 #' a list of such.
 #' 
-#' Note that the \code{singleton} class inherits from \code{ped}, so if
-#' \code{x} is a singleton, \code{is.ped(x)} returns TRUE.
+#' Note that the `singleton` class inherits from `ped`, so if
+#' `x` is a singleton, `is.ped(x)` returns TRUE.
 #' 
-#' @param x Any \code{R} object.
-#' @return For \code{is.ped}: TRUE if \code{x} is a ped (or singleton)
-#' object, and FALSE otherwise.\cr For \code{is.singleton}: TRUE if \code{x} is
-#' a singleton object, and FALSE otherwise.\cr For \code{is.ped.list}: TRUE
-#' if \code{x} is a list of ped/singleton objects.
+#' @param x Any `R` object.
+#' @return For `is.ped`: TRUE if `x` is a ped (or singleton)
+#' object, and FALSE otherwise.\cr For `is.singleton`: TRUE if `x` is
+#' a singleton object, and FALSE otherwise.\cr For `is.ped.list`: TRUE
+#' if `x` is a list of ped/singleton objects.
 #' @author Magnus Dehli Vigeland
-#' @seealso \code{\link{ped}}
+#' @seealso [ped()]
 #' @examples
 #' 
 #' x1 = nuclearPed(1)

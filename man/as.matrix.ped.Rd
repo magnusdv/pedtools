@@ -10,7 +10,7 @@
 restore_ped(x, attrs = NULL, check = TRUE)
 }
 \arguments{
-\item{x}{a \code{\link{ped}} object. In \code{restore_ped}: A
+\item{x}{a \code{\link[=ped]{ped()}} object. In \code{restore_ped}: A
 numerical matrix.}
 
 \item{include.attrs}{a logical indicating if marker annotations and other
@@ -22,7 +22,7 @@ info should be attached as attributes. See value.}
 info compatible with \code{x}, in the format produced by \code{as.matrix}.
 If NULL, the attributes of \code{x} itself are used.}
 
-\item{check}{a logical, forwarded to \code{\link{ped}}. If FALSE, no
+\item{check}{a logical, forwarded to \code{\link[=ped]{ped()}}. If FALSE, no
 checks for pedigree errors are performed.}
 }
 \value{
@@ -65,7 +65,7 @@ stopifnot(identical(y, z))
 
 }
 \seealso{
-\code{\link{ped}}
+\code{\link[=ped]{ped()}}
 }
 \author{
 Magnus Dehli Vigeland

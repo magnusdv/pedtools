@@ -47,7 +47,7 @@ ancestors(x, id, internal = FALSE)
 descendants(x, id, internal = FALSE)
 }
 \arguments{
-\item{x}{A \code{\link{ped}} object.}
+\item{x}{A \code{\link[=ped]{ped()}} object.}
 
 \item{internal}{A logical indicating whether 'id' refers to the internal order.}
 

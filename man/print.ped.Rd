@@ -9,12 +9,12 @@
 \arguments{
 \item{x}{object of class \code{ped}.}
 
-\item{...}{optional arguments passed on to \code{\link{print.data.frame}}.}
+\item{...}{optional arguments passed on to \code{\link[=print.data.frame]{print.data.frame()}}.}
 }
 \description{
 Print a \code{ped} object using original labels.
 }
 \details{
-This first calls \code{\link{as.data.frame.ped}} and then prints the
+This first calls \code{\link[=as.data.frame.ped]{as.data.frame.ped()}} and then prints the
 resulting data.frame. The data.frame is returned invisibly.
 }

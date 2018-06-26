@@ -13,8 +13,8 @@
 }
 \description{
 Convert a \code{ped} object to a data.frame with columns id, fid, mid and sex.
-The output uses the original ID labels, unlike \code{\link{as.matrix.ped}} which uses
+The output uses the original ID labels, unlike \code{\link[=as.matrix.ped]{as.matrix.ped()}} which uses
 internal numeric IDs. The latter is safer for manipulating the pedigree structure,
-since the internal IDs are always distinct. (See \code{\link{setLabels}}.)
+since the internal IDs are always distinct. (See \code{\link[=setLabels]{setLabels()}}.)
 The main use of the data.frame method is printing.
 }

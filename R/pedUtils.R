@@ -1,8 +1,8 @@
 #' Pairwise common ancestors
 #'
-#' Computes a matrix A whose entry A[i,j] is TRUE if pedigree members i and j have a common ancestor, and FALSE otherwise.
+#' Computes a matrix A whose entry `A[i,j]` is TRUE if pedigree members i and j have a common ancestor, and FALSE otherwise.
 #'
-#' @param x a \code{\link{ped}} object.
+#' @param x a [ped()] object.
 #'
 #' @examples
 #'

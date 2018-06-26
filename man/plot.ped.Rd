@@ -17,10 +17,10 @@
 as.kinship2_pedigree(x, deceased = numeric(0))
 }
 \arguments{
-\item{x}{a \code{\link{ped}} object.}
+\item{x}{a \code{\link[=ped]{ped()}} object.}
 
 \item{id.labels}{a vector with labels for each pedigree member. This
-defaults to \code{x$LABELS} (see \code{\link{setLabels}}).}
+defaults to \code{x$LABELS} (see \code{\link[=setLabels]{setLabels()}}).}
 
 \item{text}{a character vector of length \code{x$NIND}.}
 
@@ -58,7 +58,7 @@ plot(x)
 
 }
 \seealso{
-\code{\link{plot.pedigree}}, \code{\link{setLabels}}
+\code{\link[=plot.pedigree]{plot.pedigree()}}, \code{\link[=setLabels]{setLabels()}}
 }
 \author{
 Magnus Dehli Vigeland, Guro Doerum

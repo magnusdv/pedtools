@@ -9,13 +9,13 @@ plotPedList(plot.arg.list, widths = NA, frames = T, frametitles = NULL,
 }
 \arguments{
 \item{plot.arg.list}{A list of lists. Each element of \code{plot.arg.list}
-is a list, where the first element is the \code{\link{ped}} object to be
+is a list, where the first element is the \code{\link[=ped]{ped()}} object to be
 plotted, and the remaining elements are passed on to \code{plot.ped}.
 These elements must be correctly named. See examples below.}
 
 \item{widths}{A numeric vector of relative widths of the subplots. Recycled
 to \code{length(plot.arg.list)} if necessary, before passed on to
-\code{\link{layout}}. Note that the vector does not need to sum to 1.}
+\code{\link[=layout]{layout()}}. Note that the vector does not need to sum to 1.}
 
 \item{frames}{Either a single logical (FALSE = no frames; TRUE = automatic
 framing) or a list of numeric vectors: Each vector must consist of
@@ -35,12 +35,12 @@ if newdev is TRUE). If these are NA suitable values are guessed from the
 pedigree sizes.}
 
 \item{\dots}{Further arguments passed on to each call to
-\code{\link{plot.ped}}.}
+\code{\link[=plot.ped]{plot.ped()}}.}
 }
 \description{
 This function creates a row of pedigree plots, each created by
-\code{\link{plot.ped}}.  Each parameter accepted by
-\code{\link{plot.ped}} can be applied here.  Some effort is made to
+\code{\link[=plot.ped]{plot.ped()}}.  Each parameter accepted by
+\code{\link[=plot.ped]{plot.ped()}} can be applied here.  Some effort is made to
 guess a reasonable window size and margins, but in general the user must be
 prepared to do manual resizing of the plot window.
 }
@@ -48,7 +48,7 @@ prepared to do manual resizing of the plot window.
 See various examples in the Examples section below.
 
 Note that for tweaking dev.height and dev.width the function
-\code{\link{dev.size}} is useful to determine the size of the active device.
+\code{\link[=dev.size]{dev.size()}} is useful to determine the size of the active device.
 }
 \examples{
 
@@ -118,7 +118,7 @@ plotPedList(list(halfCousinPed(4), cousinsPed(7)), title='Many generations',
 
 }
 \seealso{
-\code{\link{plot.ped}}
+\code{\link[=plot.ped]{plot.ped()}}
 }
 \author{
 Magnus Dehli Vigeland

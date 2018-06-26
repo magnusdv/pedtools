@@ -5,13 +5,13 @@
 #' When removing an individual, all descendants are also removed as well as
 #' founders remaining without offspring.
 #'
-#' The \code{branch()} function extracts the pedigree subset consisting of all
-#' descendants of \code{id}, including \code{id} itself and all relevant
+#' The `branch()` function extracts the pedigree subset consisting of all
+#' descendants of `id`, including `id` itself and all relevant
 #' spouses.
 #'
-#' @param x A \code{\link{ped}} object
-#' @param id,ids Individual ID label(s). In \code{addOffspring} the (optional)
-#' \code{ids} argument is used to specify ID labels for the offspring to be
+#' @param x A [ped()] object
+#' @param id,ids Individual ID label(s). In `addOffspring` the (optional)
+#' `ids` argument is used to specify ID labels for the offspring to be
 #' created.
 #' @param father,mother Integers indicating the IDs of parents. If missing, a
 #' new founder individual is created (whose ID will be 1+the largest ID already
@@ -19,17 +19,17 @@
 #' @param nch A single integer indicating the number of children to be
 #' created. Default: 1.
 #' @param sex Integer vectors indicating the genders
-#' of the offspring to be created (recycled if less than \code{nch}
+#' of the offspring to be created (recycled if less than `nch`
 #' elements).
 #' @param verbose A logical: Verbose output or not.
 #' @param parent Integer ID of any pedigree member, which will be the father or
 #' mother (depending on its gender) of the new child.
-#' @param new a numeric containing new labels to replace those in \code{old}.
+#' @param new a numeric containing new labels to replace those in `old`.
 #' @param old a numeric containing ID labels to be replaced by those in
-#' \code{new}. If missing, \code{old} is set to \code{x$LABELS}.
-#' @return The modified \code{ped} object.
+#' `new`. If missing, `old` is set to `x$LABELS`.
+#' @return The modified `ped` object.
 #' @author Magnus Dehli Vigeland
-#' @seealso \code{\link{ped}}, \code{\link{nuclearPed}}
+#' @seealso [ped()], [nuclearPed()]
 #'
 #' @examples
 #'
@@ -298,8 +298,8 @@ relabel = function(x, new, old=x$LABELS) {
 #'
 #' Set labels of pedigree members
 #'
-#' @param x a \code{ped} object
-#' @param labels a character (or coercible to character) of length \code{x$NIND}
+#' @param x a `ped` object
+#' @param labels a character (or coercible to character) of length `x$NIND`
 #'
 #' @importFrom assertthat assert_that
 #' @export
@@ -312,9 +312,9 @@ setLabels = function(x, labels) {
 
 #' Family ID
 #'
-#' Set a family identifier of a \code{ped} object.
+#' Set a family identifier of a `ped` object.
 #'
-#' @param x a \code{ped} object
+#' @param x a `ped` object
 #' @param famid a character of length 1. If missing, an emtpy string is used.
 #'
 #' @importFrom assertthat assert_that

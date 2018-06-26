@@ -7,7 +7,7 @@
 pedSize(x)
 }
 \arguments{
-\item{x}{a [`ped`] object.}
+\item{x}{a \code{\link{ped}} object.}
 }
 \value{
 A positive integer.

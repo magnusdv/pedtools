@@ -5,11 +5,11 @@
 #' pedigrees. Only ped objects without marker data are supported.
 #'
 #'
-#' @param x,y \code{\link{ped}} objects
-#' @param ... further arguments passed along to \code{\link{ped}}, e.g.
-#'   \code{famid}, \code{check} and \code{reorder}.
+#' @param x,y [ped()] objects
+#' @param ... further arguments passed along to [ped()], e.g.
+#'   `famid`, `check` and `reorder`.
 #'
-#' @return A \code{ped} object.
+#' @return A `ped` object.
 #' @author Magnus Dehli Vigeland
 #'
 #' @examples

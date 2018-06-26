@@ -1,23 +1,23 @@
 #' Create simple pedigrees
 #'
 #' These are utility functions for creating some common pedigree structures as
-#' \code{ped} objects. Use \code{\link{swapSex}} to change the gender of
+#' `ped` objects. Use [swapSex()] to change the gender of
 #' pedigree members.
 #'
-#' The call \code{cousinsPed(degree=n, removal=k)} creates a pedigree with two
+#' The call `cousinsPed(degree=n, removal=k)` creates a pedigree with two
 #' n'th cousins, k times removed. By default, removals are added on the right
-#' side. To override this, the parameter \code{degree2} can be used to indicate
+#' side. To override this, the parameter `degree2` can be used to indicate
 #' explicitly the number of generations on the right side of the pedigree. When
-#' \code{degree2} is given \code{removal} is ignored. (Similarly for
-#' \code{halfCousinsPed}.)
+#' `degree2` is given `removal` is ignored. (Similarly for
+#' `halfCousinsPed`.)
 #'
 #' @param nch A positive integer indicating the number of offspring. If NULL, it
-#'   is taken to be the \code{length(children)}
-#' @param sex A numeric vector of length \code{nch} (recycled if shorter)
+#'   is taken to be the `length(children)`
+#' @param sex A numeric vector of length `nch` (recycled if shorter)
 #'   encoding the genders of the children (0=unknown, 1=male, 2=female).
 #' @param father The label of the father.
 #' @param mother The label of the father.
-#' @param children A character of length \code{nch}, with labels of the
+#' @param children A character of length `nch`, with labels of the
 #'   children.
 #'
 #' @param degree,degree2 Non-negative integers, indicating the degree of
@@ -27,11 +27,11 @@
 #'   relationships. See Details and Examples.
 #' @param child A logical: Should an inbred child be added to the two cousins?
 #'
-#' @return A \code{\link{ped}} object.
+#' @return A [ped()] object.
 #'
-#' @seealso \code{\link{swapSex}}, \code{\link{removeIndividuals}},
-#'   \code{\link{addChildren}}, \code{\link{relabel}},
-#'   \code{\link{doubleCousins}},
+#' @seealso [swapSex()], [removeIndividuals()],
+#'   [addChildren()], [relabel()],
+#'   [doubleCousins()],
 #'
 #' @examples
 #'
