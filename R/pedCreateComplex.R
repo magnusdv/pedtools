@@ -47,7 +47,6 @@
 #' # plot(x)
 #'
 #' @name pedCreateComplex
-#' @md
 NULL
 
 #' @rdname pedCreateComplex
@@ -138,7 +137,6 @@ halfSibStack = function(generations) {
             sex = c(1, 1, 2, 1, 1), verbose = FALSE)
     for (g in seq_len(generations)[-1]) {
         m = 3 * g
-        print(m)
         x = addChildren(x, father = m - 2, mother = m, nch = 1, verbose = F)
         x = addChildren(x, father = m - 1, mother = m, nch = 1, verbose = F)
     }
