@@ -47,6 +47,7 @@ NULL
 #' @rdname pedModify
 #' @export
 swapSex = function(x, ids, verbose = TRUE) {
+  assert_that(is.ped(x))
   if(!length(ids)) return(x)
   ids = internalID(x, ids)
   FID = x$FID
@@ -79,7 +80,7 @@ swapSex = function(x, ids, verbose = TRUE) {
 #' @rdname pedModify
 #' @export
 addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
-  assert_that(is.count(nch), all(sex %in% 0:2))
+  assert_that(is.ped(x), is.count(nch), all(sex %in% 0:2))
   father_exists = isTRUE(father %in% x$LABELS)
   mother_exists = isTRUE(mother %in% x$LABELS)
   if (!father_exists && !mother_exists)
