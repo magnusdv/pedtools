@@ -30,3 +30,11 @@ test_that("random ped", {
   expect_equal(x$NIND, 6)
 })
 
+test_that("singleton creation works as expected", {
+  x = singleton(1)
+  expect_is(x, "ped")
+  expect_is(x, "singleton")
+
+  expect_error(singleton(), 'argument "id" is missing')
+})
+
