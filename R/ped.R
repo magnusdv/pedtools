@@ -52,7 +52,7 @@
 #' @examples
 #' x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))
 #' y = singleton('NN', sex=2, famid="SINGLETON GIRL")
-#' @importFrom assertthat assert_that
+#'
 #' @export
 ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verbose = FALSE) {
   n = length(id)

@@ -77,7 +77,6 @@ swapSex = function(x, ids, verbose = TRUE) {
 # CHANGE: addOffspring has changed name to addChildren.
 
 #' @rdname pedModify
-#' @importFrom assertthat assert_that is.count
 #' @export
 addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
   assert_that(is.count(nch), all(sex %in% 0:2))
@@ -228,6 +227,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
 #' @rdname pedModify
 #' @export
 removeIndividuals = function(x, ids, verbose = TRUE) {
+  assert_that(is.ped(x))
   # Remove individuals 'ids' and all their descendants.
   # Spouse-founders are removed as well.
   if(!length(ids))
@@ -278,15 +278,17 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
 #' @rdname pedModify
 #' @export
 branch = function(x, id) {
-    desc = descendants(x, id)
-    spous = unlist(lapply(c(id, desc), spouses, x = x))
-    subset(x, subset = c(id, desc, spous))
+  assert_that(is.ped(x))
+  desc = descendants(x, id)
+  spous = unlist(lapply(c(id, desc), spouses, x = x))
+  subset(x, subset = c(id, desc, spous))
 }
 
 
 #' @rdname pedModify
 #' @export
 relabel = function(x, new, old=x$LABELS) {
+  assert_that(is.ped(x), all(old %in% x$LABELS), length(new)==length(old))
   lab = x$LABELS
   lab[match(old, lab)] = new
   x$LABELS = lab
@@ -301,11 +303,10 @@ relabel = function(x, new, old=x$LABELS) {
 #' @param x a `ped` object
 #' @param labels a character (or coercible to character) of length `x$NIND`
 #'
-#' @importFrom assertthat assert_that
 #' @export
 setLabels = function(x, labels) {
   labels = as.character(labels)
-  assert_that(length(labels) == x$NIND, !anyDuplicated(labels))
+  assert_that(is.ped(x), length(labels) == pedSize(x), !anyDuplicated(labels))
   x$LABELS = labels
   x
 }
@@ -317,12 +318,11 @@ setLabels = function(x, labels) {
 #' @param x a `ped` object
 #' @param famid a character of length 1. If missing, an emtpy string is used.
 #'
-#' @importFrom assertthat assert_that
 #' @export
 setFamid = function(x, famid) {
   famid = as.character(famid)
   if(!length(famid)) famid=""
-  assert_that(length(famid) == 1)
+  assert_that(is.ped(x), length(famid) == 1)
   x$FAMID = famid
   x
 }

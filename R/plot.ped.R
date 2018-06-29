@@ -84,11 +84,11 @@ plot.ped = function(x, id.labels = x$LABELS, text=NULL, title = NULL, col = 1, d
 }
 
 #' @rdname plot.ped
-#' @importFrom assertthat assert_that is.string
+#'
 #' @export
 plot.singleton = function(x, id.labels = x$LABELS, title = NULL, col = 1, deceased = numeric(0),
                           starred = numeric(0), margins = c(8, 0, 0, 0), ...) {
-  assertthat::assert_that(is.null(id.labels) || is.string(id.labels))
+  assert_that(is.null(id.labels) || is.string(id.labels))
 
   y = addParents(x, x$LABELS[1], verbose = FALSE) # reorder necessary??
 

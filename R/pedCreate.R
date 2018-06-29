@@ -57,7 +57,6 @@
 NULL
 
 #' @rdname pedCreate
-#' @importFrom assertthat assert_that is.count
 #' @export
 nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
                       children = as.character(seq.int(3, length.out=nch))) {

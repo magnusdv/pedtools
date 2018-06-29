@@ -1,6 +1,5 @@
 
 # Test that input is a nonegative integer.
-#' @importFrom assertthat assert_that
 is_count0 <- function(x) {
   assert_that(is.numeric(x), length(x) == 1, x == as.integer(x), x >= 0)
 }
