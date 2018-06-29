@@ -1,11 +1,11 @@
 #' Is an object a ped object?
-#' 
+#'
 #' Functions for checking whether an object is a [ped()] object, a [singleton()] or
 #' a list of such.
-#' 
+#'
 #' Note that the `singleton` class inherits from `ped`, so if
 #' `x` is a singleton, `is.ped(x)` returns TRUE.
-#' 
+#'
 #' @param x Any `R` object.
 #' @return For `is.ped`: TRUE if `x` is a ped (or singleton)
 #' object, and FALSE otherwise.\cr For `is.singleton`: TRUE if `x` is
@@ -14,23 +14,35 @@
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
 #' @examples
-#' 
+#'
 #' x1 = nuclearPed(1)
 #' x2 = singleton(1)
-#' stopifnot(is.ped(x1), !is.singleton(x1), 
+#' stopifnot(is.ped(x1), !is.singleton(x1),
 #'           is.ped(x2), is.singleton(x2),
-#'           is.ped.list(list(x1,x2)))
-#' 
+#'           is.pedList(list(x1,x2)))
+#'
 #' @export
-is.ped = function(x) 
+is.ped = function(x)
     inherits(x, "ped")
 
 #' @rdname is.ped
 #' @export
-is.singleton = function(x) 
+is.singleton = function(x)
     inherits(x, "singleton")
 
 #' @rdname is.ped
 #' @export
-is.ped.list = function(x) 
+is.pedList = function(x)
     isTRUE(is.list(x) && all(sapply(x, inherits, "ped")))
+
+assertthat::on_failure(is.ped) = function (call, env) {
+  paste0(deparse(call$x), " is not a `ped` object.")
+}
+
+assertthat::on_failure(is.singleton) = function (call, env) {
+    paste0(deparse(call$x), " is not a `singleton` object.")
+}
+
+assertthat::on_failure(is.pedList) = function (call, env) {
+  paste0(deparse(call$x), " is not a list of `ped` and/or `singleton` objects.")
+}

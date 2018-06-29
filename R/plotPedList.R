@@ -114,7 +114,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
     for (p in plot.arg.list) {
         if (is.ped(p))
             p = list(p)  # will now be included in next line
-        if (is.ped.list(p))
+        if (is.pedList(p))
             plot.list.flattened = c(plot.list.flattened, lapply(p, list)) else {
             # if list of ped with plot arguments
             if (!is.ped(p[[1]])) {

@@ -3,14 +3,14 @@
 \name{is.ped}
 \alias{is.ped}
 \alias{is.singleton}
-\alias{is.ped.list}
+\alias{is.pedList}
 \title{Is an object a ped object?}
 \usage{
 is.ped(x)
 
 is.singleton(x)
 
-is.ped.list(x)
+is.pedList(x)
 }
 \arguments{
 \item{x}{Any \code{R} object.}
@@ -33,9 +33,9 @@ Note that the \code{singleton} class inherits from \code{ped}, so if
 
 x1 = nuclearPed(1)
 x2 = singleton(1)
-stopifnot(is.ped(x1), !is.singleton(x1), 
+stopifnot(is.ped(x1), !is.singleton(x1),
           is.ped(x2), is.singleton(x2),
-          is.ped.list(list(x1,x2)))
+          is.pedList(list(x1,x2)))
 
 }
 \seealso{
