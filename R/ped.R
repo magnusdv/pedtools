@@ -180,6 +180,7 @@ as_ped.matrix = function(m) ped(id=m[,1], fid=m[,2], mid=m[,3], sex=m[,4])
 #' internalID(x, "ch")
 #'
 internalID = function(x, labels) {
+  assert_that(is.ped(x))
   int_ids = match(labels, x$LABELS)
   if (anyNA(int_ids)) {
     wrong = labels[is.na(int_ids)]
@@ -203,7 +204,7 @@ internalID = function(x, labels) {
 #'
 #' @export
 parents_before_children = function(x) {
-  assertthat::assert_that(is.ped(x))
+  assert_that(is.ped(x))
   if(is.singleton(x) || has_parents_before_children(x))
     return(x)
 
@@ -222,7 +223,7 @@ parents_before_children = function(x) {
 
 #' @export
 reorder = function(x, neworder) {
-  assertthat::assert_that(is.ped(x))
+  assert_that(is.ped(x))
   if(is.singleton(x))
     return(x)
   xmatr = as.matrix(x)
@@ -236,7 +237,7 @@ reorder = function(x, neworder) {
 #' @rdname parents_before_children
 #' @export
 has_parents_before_children = function(x) {
-  assertthat::assert_that(is.ped(x))
+  assert_that(is.ped(x))
   father_before_child = x$FID < x$ID
   mother_before_child = x$MID < x$ID
   all(father_before_child & mother_before_child)

@@ -26,13 +26,16 @@ hasCA = function(x) {
 
 # Checks whether the labels of a ped oject are coercible to integers
 has_numlabs = function(x) {
+  assert_that(is.ped(x))
   numlabs = suppressWarnings(as.numeric(x$LABELS))
   isTRUE(all(numlabs == as.integer(numlabs)))
 }
 
 
-getSex = function(x, labels)
+getSex = function(x, labels) {
+  assert_that(is.ped(x))
   x$SEX[internalID(x, labels)]
+}
 
 #' Pedigree size
 #'
@@ -48,6 +51,7 @@ getSex = function(x, labels)
 #' stopifnot(pedSize(x)==3)
 #'
 pedSize = function(x) {
+  assert_that(is.ped(x))
   length(x$ID)
 }
 
