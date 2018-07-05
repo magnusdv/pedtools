@@ -1,28 +1,31 @@
 #' Pedigree subsets
 #'
-#' Utility functions for 'ped' objects, mainly for extracting various
-#' pedigree information.
+#' Utility functions for 'ped' objects, mainly for extracting various pedigree
+#' information.
 #'
 #' @param x A [ped()] object.
 #' @param id A single ID label (numeric or character).
-#' @param internal A logical indicating whether 'id' refers to the internal order.
+#' @param internal A logical indicating whether 'id' refers to the internal
+#'   order.
 #' @param degree,removal Non-negative integers.
 #' @param half a logical or NA. If TRUE (resp FALSE), only half (resp. full)
-#' siblings/cousins/nephews/nieces are returned. If NA, both categories are
-#' inclucded.
+#'   siblings/cousins/nephews/nieces are returned. If NA, both categories are
+#'   inclucded.
 #'
-#' @return For `ancestors(x,id)`, a vector containing the ID's of all
-#' ancestors of the individual `id`.  For `descendants(x,id)`, a
-#' vector containing the ID's of all descendants (i.e. children, grandchildren,
-#' a.s.o.) of individual `id`.
+#' @return For `ancestors(x,id)`, a vector containing the IDs of all ancestors
+#'   of the individual `id`.  For `descendants(x,id)`, a vector containing the
+#'   IDs of all descendants (i.e. children, grandchildren, a.s.o.) of
+#'   individual `id`.
 #'
-#' The functions `cousins`, `grandparents`, `nephews_nieces`,
-#' `children`, `parents`, `siblings`, `spouses`,
-#' `unrelated`, each returns an integer vector containing the ID's of all
-#' pedigree members having the specified relationship with `id`.
+#'   The functions `founders`, `nonfounders`, `males`, `females`, `leaves` each
+#'   return a vector containing the IDs of all pedigree members with the wanted
+#'   property. (Recall that a founder is a member without parents in the
+#'   pedigree, and that a leaf is a member without children in the pedigree.)
 #'
-#' For `leaves`, a vector of the ID labels of pedigree members without
-#' children.
+#'   The functions `father`, `mother`, `cousins`, `grandparents`,
+#'   `nephews_nieces`, `children`, `parents`, `siblings`, `spouses`,
+#'   `unrelated`, each returns a vector containing the IDs of all pedigree
+#'   members having the specified relationship with `id`.
 #'
 #' @author Magnus Dehli Vigeland
 #'
@@ -49,6 +52,43 @@ founders = function(x, internal = FALSE) {
 #' @export
 nonfounders = function(x, internal = FALSE) {
   if (internal) x$NONFOUNDERS else x$LABELS[x$NONFOUNDERS]
+}
+
+#' @rdname pedParts
+#' @export
+males = function(x, internal = FALSE) {
+  m = x$SEX == 1
+  if (internal) which(m) else x$LABELS[m]
+}
+
+#' @rdname pedParts
+#' @export
+females = function(x, internal = FALSE) {
+  f = x$SEX == 2
+  if (internal) which(f) else x$LABELS[f]
+}
+
+#' @rdname pedParts
+#' @export
+leaves = function(x, internal = FALSE) {
+  leaves_int = setdiff(x$ID, c(x$FID, x$MID))
+  if (internal) leaves_int else x$LABELS[leaves_int]
+}
+
+#' @rdname pedParts
+#' @export
+father = function(x, id, internal = FALSE) {
+  if (!internal) id = internalID(x, id)
+  fa = x$FID[id]
+  if (internal) fa else x$LABELS[fa]
+}
+
+#' @rdname pedParts
+#' @export
+mother = function(x, id, internal = FALSE) {
+  if (!internal) id = internalID(x, id)
+  mo = x$MID[id]
+  if (internal) mo else x$LABELS[mo]
 }
 
 #' @rdname pedParts
@@ -88,13 +128,6 @@ unrelated = function(x, id, internal = FALSE) {
     if (internal) internalID(x, unrel) else unrel
 }
 
-
-#' @rdname pedParts
-#' @export
-leaves = function(x, internal = FALSE) {
-  leaves_int = setdiff(x$ID, c(x$FID, x$MID))
-  if (internal) leaves_int else x$LABELS[leaves_int]
-}
 
 #' @rdname pedParts
 #' @export

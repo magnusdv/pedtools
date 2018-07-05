@@ -4,11 +4,15 @@
 \alias{pedParts}
 \alias{founders}
 \alias{nonfounders}
+\alias{males}
+\alias{females}
+\alias{leaves}
+\alias{father}
+\alias{mother}
 \alias{children}
 \alias{offspring}
 \alias{spouses}
 \alias{unrelated}
-\alias{leaves}
 \alias{parents}
 \alias{grandparents}
 \alias{siblings}
@@ -22,6 +26,16 @@ founders(x, internal = FALSE)
 
 nonfounders(x, internal = FALSE)
 
+males(x, internal = FALSE)
+
+females(x, internal = FALSE)
+
+leaves(x, internal = FALSE)
+
+father(x, id, internal = FALSE)
+
+mother(x, id, internal = FALSE)
+
 children(x, id, internal = FALSE)
 
 offspring(x, id, internal = FALSE)
@@ -29,8 +43,6 @@ offspring(x, id, internal = FALSE)
 spouses(x, id, internal = FALSE)
 
 unrelated(x, id, internal = FALSE)
-
-leaves(x, internal = FALSE)
 
 parents(x, id, internal = FALSE)
 
@@ -49,7 +61,8 @@ descendants(x, id, internal = FALSE)
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
 
-\item{internal}{A logical indicating whether 'id' refers to the internal order.}
+\item{internal}{A logical indicating whether 'id' refers to the internal
+order.}
 
 \item{id}{A single ID label (numeric or character).}
 
@@ -60,22 +73,24 @@ siblings/cousins/nephews/nieces are returned. If NA, both categories are
 inclucded.}
 }
 \value{
-For \code{ancestors(x,id)}, a vector containing the ID's of all
-ancestors of the individual \code{id}.  For \code{descendants(x,id)}, a
-vector containing the ID's of all descendants (i.e. children, grandchildren,
-a.s.o.) of individual \code{id}.
+For \code{ancestors(x,id)}, a vector containing the IDs of all ancestors
+of the individual \code{id}.  For \code{descendants(x,id)}, a vector containing the
+IDs of all descendants (i.e. children, grandchildren, a.s.o.) of
+individual \code{id}.
 
-The functions \code{cousins}, \code{grandparents}, \code{nephews_nieces},
-\code{children}, \code{parents}, \code{siblings}, \code{spouses},
-\code{unrelated}, each returns an integer vector containing the ID's of all
-pedigree members having the specified relationship with \code{id}.
+The functions \code{founders}, \code{nonfounders}, \code{males}, \code{females}, \code{leaves} each
+return a vector containing the IDs of all pedigree members with the wanted
+property. (Recall that a founder is a member without parents in the
+pedigree, and that a leaf is a member without children in the pedigree.)
 
-For \code{leaves}, a vector of the ID labels of pedigree members without
-children.
+The functions \code{father}, \code{mother}, \code{cousins}, \code{grandparents},
+\code{nephews_nieces}, \code{children}, \code{parents}, \code{siblings}, \code{spouses},
+\code{unrelated}, each returns a vector containing the IDs of all pedigree
+members having the specified relationship with \code{id}.
 }
 \description{
-Utility functions for 'ped' objects, mainly for extracting various
-pedigree information.
+Utility functions for 'ped' objects, mainly for extracting various pedigree
+information.
 }
 \examples{
 

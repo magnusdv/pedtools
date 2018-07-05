@@ -1,5 +1,22 @@
 context("ped parts")
 
+
+test_that("father() and mother() works", {
+  x = nuclearPed(father="fa", mother="mo", child="ch")
+  expect_equal(father(x, "ch"), "fa")
+  expect_equal(mother(x, "ch"), "mo")
+
+  expect_equal(father(x, "fa"), character(0))
+  expect_equal(mother(x, "fa"), character(0))
+
+  expect_equal(father(x, 3, internal=T), 1)
+  expect_equal(mother(x, 3, internal=T), 2)
+
+  # TODO: these are not consistent with internal=F
+  expect_equal(father(x, 1, internal=T), 0)
+  expect_equal(mother(x, 1, internal=T), 0)
+})
+
 test_that("leaves() works with trivial labels", {
   expect_equal(leaves(nuclearPed(1)), "3")
   expect_equal(leaves(nuclearPed(8)), as.character(3:10))
