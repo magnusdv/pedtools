@@ -81,10 +81,10 @@ catLabels = function(x, int_ids) paste(x$LABELS[int_ids], collapse = ", ")
     })
 }
 
-
+#' @export
 peeling_order = function(x) {
   # output: list of nuclear subfamilies. Format for each nuc:
-  # c(link,father,mother,offsp1,..), where pivot=0 for the last nuc.
+  # list(father,mother,children,link), where link=0 for the last nuc.
   n = pedSize(x)
   if (n == 1)
     return(list())
@@ -96,9 +96,11 @@ peeling_order = function(x) {
 
   # List all nucs: Format = c(father, mother, children)
   list1 = lapply(rev(p_pairs_idx), function(j) {
-    nuc = c(father=FID[j], mother=MID[j], child=which(FID == FID[j] & MID == MID[j]))
+    nuc = list(father=FID[j], mother=MID[j], children=which(FID == FID[j] & MID == MID[j]))
     class(nuc) = "nucleus"
-    nuc})
+    attr(nuc, 'labels') = x$LABELS
+    nuc
+  })
 
   peeling = vector("list", Nnucs <- length(list1))
   i = k = 1
@@ -108,14 +110,16 @@ peeling_order = function(x) {
     nuc = list1[[i]]
 
     # Identify links to other remaining nucs
-    if(length(list1) > 1)
-      links = nuc[nuc %in% unlist(list1[-i])]
+    if(length(list1) > 1) {
+      nucmembers = c(nuc$father, nuc$mother, nuc$children)
+      links = nucmembers[nucmembers %in% unlist(list1[-i], use.names=F)]
+    }
     else
       links = 0 # if nuc is the last
 
     # If only one link: move nuc to peeling list, and proceed
     if (length(links) == 1) {
-      attr(nuc, 'link') = links
+      nuc$link = links
       peeling[[k]] = nuc
       list1[i] = NULL
       i = 1
@@ -134,12 +138,25 @@ peeling_order = function(x) {
   peeling
 }
 
+#' @export
 print.nucleus = function(nuc) {
-  children = paste(nuc[-(1:2)], collapse=", ")
-  link = attr(nuc, 'link')
-  linktext = if (is.null(link)) "PART OF LOOP; NO LINK ASSIGNED"
-  else if (link==0) "End of chain"
-  else sprintf("%d (%s)", link, switch(link, "father", "mother", "child"))
-  cat(sprintf("Father: %d\nMother: %d\nChildren: %s\nLink: %s\n",
-              nuc[['father']], nuc[['mother']], children, linktext))
+  labs = attr(nuc, 'labels')
+  fa = nuc$father
+  mo = nuc$mother
+  ch = nuc$children
+
+  link = nuc$link
+  if (is.null(link))
+    linktext = "PART OF LOOP; NO LINK ASSIGNED"
+  else if (link==0)
+    linktext = "NONE - end of chain"
+  else {
+    who = if (link == fa) "father"
+          else if (link == mo) "mother"
+          else if (link %in% ch) "child"
+          else stop("link individual ", link, " is not a member of the nucleus")
+    linktext = sprintf("%d (%s)", link, who)
+  }
+  cat(sprintf("Pedigree nucleus.\nFather: %s\nMother: %s\nChildren: %s\nLink individual: %s\n",
+              labs[fa], labs[mo], paste(labs[ch], collapse=", "), linktext))
 }
