@@ -79,12 +79,11 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
     return(x)
   }
 
-  if (check)
-    checkped(x)
+  if (check) checkped(x)
 
   # Detect loops (by trying to find a peeling order)
   nucs = peeling_order(x)
-  lastnuc_link = attr(nucs[[length(nucs)]], 'link')
+  lastnuc_link = nucs[[length(nucs)]]$link
   x$hasLoops = is.null(lastnuc_link)
 
   # reorder so that parents preceede their children

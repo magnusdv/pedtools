@@ -91,7 +91,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
     stop("Individuals already exist: ", catLabels(x, ids[ids %in% x$LABELS]), call.=FALSE)
 
   sex = rep_len(sex, nch)
-  n = x$NIND
+  n = pedSize(x)
 
   # Check if labels are coercible to integers
   if(!has_numlabs(x))
