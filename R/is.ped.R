@@ -32,8 +32,9 @@ is.singleton = function(x)
 
 #' @rdname is.ped
 #' @export
-is.pedList = function(x)
-    isTRUE(is.list(x) && all(sapply(x, inherits, "ped")))
+is.pedList = function(x) {
+    isTRUE(is.list(x) && length(x) > 0 && all(sapply(x, inherits, "ped")))
+}
 
 assertthat::on_failure(is.ped) = function (call, env) {
   paste0(deparse(call$x), " is not a `ped` object.")

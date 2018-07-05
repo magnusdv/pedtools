@@ -1,5 +1,9 @@
 context("various utils")
 
+test_that("is.pedList() is FALSE for empty list", {
+  expect_false(is.pedList(list()))
+})
+
 test_that("pedSize of singleton is 1", {
   expect_equal(pedSize(singleton(1)), 1)
 })
