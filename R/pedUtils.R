@@ -139,23 +139,23 @@ peeling_order = function(x) {
 }
 
 #' @export
-print.nucleus = function(nuc) {
-  labs = attr(nuc, 'labels')
-  fa = nuc$father
-  mo = nuc$mother
-  ch = nuc$children
+print.nucleus = function(x, ...) {
+  labs = attr(x, 'labels')
+  fa = x$father
+  mo = x$mother
+  ch = x$children
 
-  link = nuc$link
+  link = x$link
   if (is.null(link))
     linktext = "PART OF LOOP; NO LINK ASSIGNED"
   else if (link==0)
-    linktext = "NONE - end of chain"
+    linktext = "0  (end of chain)"
   else {
     who = if (link == fa) "father"
           else if (link == mo) "mother"
           else if (link %in% ch) "child"
           else stop("link individual ", link, " is not a member of the nucleus")
-    linktext = sprintf("%d (%s)", link, who)
+    linktext = sprintf("%s (%s)", labs[link], who)
   }
   cat(sprintf("Pedigree nucleus.\nFather: %s\nMother: %s\nChildren: %s\nLink individual: %s\n",
               labs[fa], labs[mo], paste(labs[ch], collapse=", "), linktext))
