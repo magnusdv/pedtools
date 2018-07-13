@@ -4,9 +4,11 @@
 \alias{ped_subsets}
 \alias{founders}
 \alias{nonfounders}
+\alias{leaves}
 \alias{males}
 \alias{females}
-\alias{leaves}
+\alias{typedMembers}
+\alias{untypedMembers}
 \alias{father}
 \alias{mother}
 \alias{children}
@@ -26,11 +28,15 @@ founders(x, internal = FALSE)
 
 nonfounders(x, internal = FALSE)
 
+leaves(x, internal = FALSE)
+
 males(x, internal = FALSE)
 
 females(x, internal = FALSE)
 
-leaves(x, internal = FALSE)
+typedMembers(x, internal = FALSE)
+
+untypedMembers(x, internal = FALSE)
 
 father(x, id, internal = FALSE)
 

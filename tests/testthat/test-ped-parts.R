@@ -1,5 +1,28 @@
 context("ped parts")
 
+test_that("typedMembers() and untypedMembers() works", {
+  x = nuclearPed(father="fa", mother="mo", child="ch")
+
+  # labels
+  expect_equal(typedMembers(x), character(0))
+  expect_equal(untypedMembers(x), x$LABELS)
+
+  # internal
+  expect_equal(typedMembers(x, internal=T), numeric(0))
+  expect_equal(untypedMembers(x, internal=T), 1:3)
+
+  ### Add marker
+  m = marker(x, 'mo'=1:2)
+  y = setMarkers(x, m)
+
+  # labels
+  expect_equal(typedMembers(y), "mo")
+  expect_equal(untypedMembers(y), c("fa", "ch"))
+
+  # internal
+  expect_equal(typedMembers(y, internal=T), 2)
+  expect_equal(untypedMembers(y, internal=T), c(1,3))
+})
 
 test_that("father() and mother() works", {
   x = nuclearPed(father="fa", mother="mo", child="ch")

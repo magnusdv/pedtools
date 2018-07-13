@@ -56,6 +56,13 @@ nonfounders = function(x, internal = FALSE) {
 
 #' @rdname ped_subsets
 #' @export
+leaves = function(x, internal = FALSE) {
+  leaves_int = setdiff(x$ID, c(x$FID, x$MID))
+  if (internal) leaves_int else x$LABELS[leaves_int]
+}
+
+#' @rdname ped_subsets
+#' @export
 males = function(x, internal = FALSE) {
   m = x$SEX == 1
   if (internal) which(m) else x$LABELS[m]
@@ -70,9 +77,22 @@ females = function(x, internal = FALSE) {
 
 #' @rdname ped_subsets
 #' @export
-leaves = function(x, internal = FALSE) {
-  leaves_int = setdiff(x$ID, c(x$FID, x$MID))
-  if (internal) leaves_int else x$LABELS[leaves_int]
+typedMembers = function(x, internal = FALSE) {
+  if (nMarkers(x) == 0)
+    return(if(internal) numeric(0) else character(0))
+  allelematrix = do.call(cbind, x$markerdata)
+  emptyrows = rowSums(allelematrix != 0) == 0
+  if(internal) which(!emptyrows) else x$LABELS[!emptyrows]
+}
+
+#' @rdname ped_subsets
+#' @export
+untypedMembers = function(x, internal = FALSE) {
+  if (nMarkers(x) == 0)
+    return(if(internal) seq_len(pedSize(x)) else x$LABELS)
+  allelematrix = do.call(cbind, x$markerdata)
+  emptyrows = rowSums(allelematrix != 0) == 0
+  if(internal) which(emptyrows) else x$LABELS[emptyrows]
 }
 
 #' @rdname ped_subsets
