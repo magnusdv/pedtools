@@ -1,5 +1,17 @@
 context("various utils")
 
+
+test_that("getSex() works with and without labels", {
+  x = nuclearPed(1)
+  expect_equal(getSex(x, 1), 1)
+  expect_equal(getSex(x, 1:3), c(1,2,1))
+
+  y = relabel(x, c('fa', 'mo', 'ch'))
+  expect_equal(getSex(y, 'mo'), 2)
+  expect_equal(getSex(y, y$LABELS), c(1,2,1))
+
+})
+
 test_that("is.pedList() is FALSE for empty list", {
   expect_false(is.pedList(list()))
 })

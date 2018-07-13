@@ -32,6 +32,20 @@ has_numlabs = function(x) {
 }
 
 
+#'
+#'
+#' Return the sex of specified pedigree members.
+#' @param x A `ped` object.
+#' @param labels A character vector (or coercible to one) containing ID labels.
+#'
+#' @return An integer vector of the same length as `labels`, with entries 0
+#'   (unknown), 1 (male) or 2 (female).
+#'
+#' @examples
+#' x = nuclearPed(1)
+#' stopifnot(getSex(x, 1) == 1)
+#'
+#' @export
 getSex = function(x, labels) {
   assert_that(is.ped(x))
   x$SEX[internalID(x, labels)]
