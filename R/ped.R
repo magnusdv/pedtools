@@ -1,7 +1,7 @@
 #' Pedigree construction
 #'
 #' Basic construction of `ped` objects. Utility functions for creating many
-#' common pedigree structures are described in [pedCreate()].
+#' common pedigree structures are described in [ped_create].
 #'
 #' Internally, this happens: ...
 #'
@@ -46,8 +46,7 @@
 #'   This is usually set by [breakLoops()].}
 #'   }
 #' @author Magnus Dehli Vigeland
-#' @seealso [pedCreate()], [pedModify()],
-#'   [pedParts()]
+#' @seealso [ped_create], [ped_modify], [ped_subsets]
 #'
 #' @examples
 #' x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))
@@ -68,7 +67,7 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   x = list(ID = ID, FID = FID, MID = MID, SEX = sex, NIND = n,
            LABELS = NULL, FAMID = NULL,
            FOUNDERS = which(FID == 0), NONFOUNDERS = which(FID > 0),
-           hasLoops = NULL, loop_breakers = NULL)
+           hasLoops = NULL, loop_breakers = NULL, markerdata = NULL)
 
   class(x) = "ped"
   x = setFamid(x, famid)
@@ -82,7 +81,7 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   if (check) checkped(x)
 
   # Detect loops (by trying to find a peeling order)
-  nucs = peeling_order(x)
+  nucs = peelingOrder(x)
   lastnuc_link = nucs[[length(nucs)]]$link
   x$hasLoops = is.null(lastnuc_link)
 

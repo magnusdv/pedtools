@@ -59,7 +59,7 @@ This is usually set by \code{\link[=breakLoops]{breakLoops()}}.}
 }
 \description{
 Basic construction of \code{ped} objects. Utility functions for creating many
-common pedigree structures are described in \code{\link[=pedCreate]{pedCreate()}}.
+common pedigree structures are described in \link{ped_create}.
 }
 \details{
 Internally, this happens: ...
@@ -73,8 +73,7 @@ y = singleton('NN', sex=2, famid="SINGLETON GIRL")
 
 }
 \seealso{
-\code{\link[=pedCreate]{pedCreate()}}, \code{\link[=pedModify]{pedModify()}},
-\code{\link[=pedParts]{pedParts()}}
+\link{ped_create}, \link{ped_modify}, \link{ped_subsets}
 }
 \author{
 Magnus Dehli Vigeland
