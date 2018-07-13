@@ -6,23 +6,38 @@
 \alias{as.kinship2_pedigree}
 \title{Plot pedigrees with genotypes}
 \usage{
-\method{plot}{ped}(x, id.labels = x$LABELS, text = NULL, title = NULL,
+\method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
+  skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
   col = 1, deceased = numeric(0), starred = numeric(0), margins = c(0.6,
   1, 4.1, 1), ...)
 
-\method{plot}{singleton}(x, id.labels = x$LABELS, title = NULL, col = 1,
-  deceased = numeric(0), starred = numeric(0), margins = c(8, 0, 0, 0),
-  ...)
+\method{plot}{singleton}(x, marker = NULL, sep = "/", missing = "-",
+  skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
+  col = 1, deceased = numeric(0), starred = numeric(0), margins = c(8,
+  0, 0, 0), ...)
 
 as.kinship2_pedigree(x, deceased = numeric(0))
 }
 \arguments{
 \item{x}{a \code{\link[=ped]{ped()}} object.}
 
-\item{id.labels}{a vector with labels for each pedigree member. This
-defaults to \code{x$LABELS} (see \code{\link[=setLabels]{setLabels()}}).}
+\item{marker}{either NULL, a vector of positive integers, a \code{\link{marker}}
+object, or a list of such. If NULL, no genotypes are plotted.  If a vector
+of integers is given, the corresponding marker objects are extracted from
+\code{x$markerdata}. The genotypes are written below each individual in the
+pedigree, in the format determined by \code{sep} and \code{missing}. See also
+\code{skip.empty.genotypes} below.}
 
-\item{text}{a character vector of length \code{x$NIND}.}
+\item{sep}{a character of length 1 separating alleles for diploid markers.}
+
+\item{missing}{the symbol (integer or character) for missing alleles.}
+
+\item{skip.empty.genotypes}{a logical. If TRUE, and \code{marker} is
+non-NULL, empty genotypes (which by default looks like '-/-') are not
+printed.}
+
+\item{id.labels}{a vector with labels for each pedigree member. This defaults
+to \code{x$LABELS} (see \code{\link[=setLabels]{setLabels()}}).}
 
 \item{title}{the plot title. If NULL or '', no title is added to the plot.}
 
@@ -37,19 +52,17 @@ marked with a star in the pedigree plot.}
 \item{margins}{a numeric of length 4 indicating the plot margins. For
 singletons only the first element (the 'bottom' margin) is used.}
 
-\item{\dots}{arguments passed on to \code{plot.pedigree} in the
-\code{kinship2} package. In particular \code{symbolsize} and \code{cex} can
-be useful.}
+\item{\dots}{arguments passed on to \code{plot.pedigree} in the \code{kinship2}
+package. In particular \code{symbolsize} and \code{cex} can be useful.}
 }
 \description{
 This is the main function for pedigree plotting, with many options for
-controlling the appearance of pedigree symbols and accompanying labels.
-Most of the work is done by the plotting functionality in the 'kinship2'
-package.
+controlling the appearance of pedigree symbols and accompanying labels. Most
+of the work is done by the plotting functionality in the 'kinship2' package.
 }
 \details{
-\code{plot.ped} is in essence a wrapper for \code{plot.pedigree} in the
-\code{kinship2} package.
+\code{plot.ped} is in essence a wrapper for \code{plot.pedigree} in the \code{kinship2}
+package.
 }
 \examples{
 
