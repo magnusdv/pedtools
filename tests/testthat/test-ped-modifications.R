@@ -71,6 +71,23 @@ test_that("adding and removing child restores original", {
 
 })
 
+test_that("adding and removing child restores original - with markers", {
+  x = nuclearPed(1)
+  x = setMarkers(x, marker(x, '3'=1:2))
+  y = addChildren(x, father=3, verbose=F)
+  z = removeIndividuals(y, 5, verbose=F)
+  expect_equal(x, z)
+})
+
+test_that("adding and removing parents restores original - with markers", {
+  skip("`branch()` not implemented yet")
+  x = nuclearPed(1)
+  x = setMarkers(x, marker(x, '1'=1:2))
+  y = addParents(x, id=1, verbose=F)
+  z = branch(y, 1)
+  expect_equal(x, z)
+})
+
 test_that("addParents() to nonfounder gives error", {
   x = nuclearPed(1)
   expect_error(addParents(x,3), "Individual 3 already has parents in the pedigree")
@@ -95,13 +112,13 @@ test_that("addParents() gives error if parent is impossible", {
 
 test_that("addParents() gives message about new parents", {
   x = addSon(nuclearPed(1), 3, verbose=F)
-  expect_message(addParents(x, 4, father=1), "Mother: Creating new individual with ID 6")
-  expect_message(addParents(x, 4, father=1, mother=123), "Mother: Creating new individual with ID 123")
-  expect_message(addParents(x, 4, father="1", mother="123"), "Mother: Creating new individual with ID 123")
+  expect_message(addParents(x, 4, father=1), "Mother: Creating new individual with ID = 6")
+  expect_message(addParents(x, 4, father=1, mother=123), "Mother: Creating new individual with ID = 123")
+  expect_message(addParents(x, 4, father="1", mother="123"), "Mother: Creating new individual with ID = 123")
 
-  expect_message(addParents(x, 4, mother=2), "Father: Creating new individual with ID 6")
-  expect_message(addParents(x, 4, father=123, mother=2), "Father: Creating new individual with ID 123")
-  expect_message(addParents(x, 4, father="123", mother="2"), "Father: Creating new individual with ID 123")
+  expect_message(addParents(x, 4, mother=2), "Father: Creating new individual with ID = 6")
+  expect_message(addParents(x, 4, father=123, mother=2), "Father: Creating new individual with ID = 123")
+  expect_message(addParents(x, 4, father="123", mother="2"), "Father: Creating new individual with ID = 123")
 })
 
 test_that("addParents() creates new parents", {

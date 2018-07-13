@@ -4,17 +4,24 @@
 \alias{print.ped}
 \title{Printing pedigrees}
 \usage{
-\method{print}{ped}(x, ...)
+\method{print}{ped}(x, ..., markers, verbose = TRUE)
 }
 \arguments{
 \item{x}{object of class \code{ped}.}
 
-\item{...}{optional arguments passed on to \code{\link[=print.data.frame]{print.data.frame()}}.}
+\item{...}{(optional) arguments passed on to \code{\link[=print.data.frame]{print.data.frame()}}.}
+
+\item{markers}{(optional) vector of marker indices. If missing, and \code{x} has
+less than 10 markers, they are all displayed. If \code{x} has 10 or more
+markers, the first 5 are displayed.}
+
+\item{verbose}{If TRUE, a message is printed if only the first 5 markers are
+printed. (See above).}
 }
 \description{
 Print a \code{ped} object using original labels.
 }
 \details{
-This first calls \code{\link[=as.data.frame.ped]{as.data.frame.ped()}} and then prints the
-resulting data.frame. The data.frame is returned invisibly.
+This first calls \code{\link[=as.data.frame.ped]{as.data.frame.ped()}} and then prints the resulting
+data.frame. The data.frame is returned invisibly.
 }
