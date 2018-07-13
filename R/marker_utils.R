@@ -77,8 +77,8 @@ checkConsistency = function(x, mlist) {
   if(any(wrongSize)) {
     erri = which(wrongSize)[1]
     errsize = nrow(mlist[[erri]])
-    stop("Incompatible input. Pedigree has size ", pedSize(x),
-         " but marker ", erri, " has ", errsize, " rows", calls.=FALSE)
+    stop("Incompatible input: Pedigree has size ", pedSize(x),
+         " but marker ", erri, " has ", errsize, " rows", call.=FALSE)
   }
   #TODO: check loop breakers
   return(TRUE)
