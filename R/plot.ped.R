@@ -16,7 +16,7 @@
 #'   `skip.empty.genotypes` below.
 #' @param sep a character of length 1 separating alleles for diploid markers.
 #' @param missing the symbol (integer or character) for missing alleles.
-#' @param skip.empty.genotypes a logical. If TRUE, and \code{marker} is
+#' @param skip.empty.genotypes a logical. If TRUE, and `marker` is
 #'   non-NULL, empty genotypes (which by default looks like '-/-') are not
 #'   printed.
 #' @param id.labels a vector with labels for each pedigree member. This defaults

@@ -4,17 +4,20 @@
 \alias{as.data.frame.ped}
 \title{Convert ped to data.frame}
 \usage{
-\method{as.data.frame}{ped}(x, ...)
+\method{as.data.frame}{ped}(x, ..., markers)
 }
 \arguments{
-\item{x}{object of class \code{ped}.}
+\item{x}{Object of class \code{ped}.}
 
-\item{...}{Not used.}
+\item{...}{Further parameters}
+
+\item{markers}{(Optional) Vector of marker indices. By default, all markers
+are included.}
 }
 \description{
-Convert a \code{ped} object to a data.frame with columns id, fid, mid and sex.
-The output uses the original ID labels, unlike \code{\link[=as.matrix.ped]{as.matrix.ped()}} which uses
-internal numeric IDs. The latter is safer for manipulating the pedigree structure,
-since the internal IDs are always distinct. (See \code{\link[=setLabels]{setLabels()}}.)
+Convert a \code{ped} object to a data.frame with columns id, fid, mid and sex. The
+output uses the original ID labels, unlike \code{\link[=as.matrix.ped]{as.matrix.ped()}} which uses
+internal numeric IDs. The latter is safer for manipulating the pedigree
+structure, since the internal IDs are always distinct. (See \code{\link[=setLabels]{setLabels()}}.)
 The main use of the data.frame method is printing.
 }
