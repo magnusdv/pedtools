@@ -109,10 +109,20 @@ nextNN = function(labs) { # labs a character vector
     })
 }
 
+
+#' Nuclear subsets of a pedigree
+#'
+#' @param x A `ped` object.
+#' @param ... Not used.
+#'
+#' @return A list of `nucleus` objects. Each nucleus is a list with elements `father`, `mother` and `children`.
+#'
+#' @examples
+#' x = cousinsPed(0, child=TRUE)
+#' subnucs(x)
+#'
 #' @export
-peelingOrder = function(x) {
-  # output: list of nuclear subfamilies. Format for each nuc:
-  # list(father,mother,children,link), where link=0 for the last nuc.
+subnucs = function(x) {
   n = pedSize(x)
   if (n == 1)
     return(list())
@@ -123,24 +133,33 @@ peelingOrder = function(x) {
   p_pairs_idx = which(!duplicated(p_pairs) & p_pairs != "0 0")
 
   # List all nucs: Format = c(father, mother, children)
-  list1 = lapply(rev(p_pairs_idx), function(j) {
+  lapply(rev(p_pairs_idx), function(j) {
     nuc = list(father=FID[j], mother=MID[j], children=which(FID == FID[j] & MID == MID[j]))
     class(nuc) = "nucleus"
     attr(nuc, 'labels') = x$LABELS
     nuc
   })
+}
 
-  peeling = vector("list", Nnucs <- length(list1))
+#' @export
+peelingOrder = function(x) {
+  # output: list of nuclear subfamilies. Format for each nuc:
+  # list(father,mother,children,link), where link=0 for the last nuc.
+  nucs = subnucs(x)
+  if(length(nucs) == 0)
+    return(nucs)
+
+  peeling = vector("list", Nnucs <- length(nucs))
   i = k = 1
 
-  while (length(list1)) {
+  while (length(nucs)) {
     # Start searching for a nuc with only one link to others
-    nuc = list1[[i]]
+    nuc = nucs[[i]]
 
     # Identify links to other remaining nucs
-    if(length(list1) > 1) {
+    if(length(nucs) > 1) {
       nucmembers = c(nuc$father, nuc$mother, nuc$children)
-      links = nucmembers[nucmembers %in% unlist(list1[-i], use.names=F)]
+      links = nucmembers[nucmembers %in% unlist(nucs[-i], use.names=F)]
     }
     else
       links = 0 # if nuc is the last
@@ -149,23 +168,23 @@ peelingOrder = function(x) {
     if (length(links) == 1) {
       nuc$link = links
       peeling[[k]] = nuc
-      list1[i] = NULL
+      nucs[i] = NULL
       i = 1
       k = k+1
     }
     else {
-      if (i == length(list1)) { # LOOP! Include remaining nucs without 'link', and break.
-        peeling[k:Nnucs] = list1
+      if (i == length(nucs)) { # LOOP! Include remaining nucs without 'link', and break.
+        peeling[k:Nnucs] = nucs
         break
       }
       # Otherwise try next remaining nuc
       i = i+1
     }
   }
-
   peeling
 }
 
+#' @rdname subnucs
 #' @export
 print.nucleus = function(x, ...) {
   labs = attr(x, 'labels')
@@ -175,7 +194,7 @@ print.nucleus = function(x, ...) {
 
   link = x$link
   if (is.null(link))
-    linktext = "PART OF LOOP; NO LINK ASSIGNED"
+    linktext = "NO LINK ASSIGNED"
   else if (link==0)
     linktext = "0  (end of chain)"
   else {
