@@ -153,7 +153,7 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
   else {
     if (any(markers > nm)) stop("Nonexisting marker(s) indicated")
   }
-  datafr = as.data.frame(x, markers=markers)
+  datafr = as.data.frame(x, markers=markers, singleCol=TRUE)
   print(datafr, ...)
 
   if(showmess && verbose)
