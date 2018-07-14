@@ -7,35 +7,35 @@
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
 #'   the ID label of a member of `x`, and genotype is a numeric or character
 #'   vector of length 2 (see Examples).
-#' @param alleles (optional) a character (or coercible to character) containing
-#'   allele names. If not given, the default is to take the sorted vector of
-#'   distinct alleles occuring in `...`.
-#' @param afreq (optional) a numeric of the same length as `alleles`, indicating
-#'   the population frequency of each allele. A warning is issued if the
-#'   frequencies don't sum to 1 after rounding to 3 decimals. If `afreq` is not
-#'   specified, the default is to give all alleles equal frequencies.
-#' @param chrom (optional) a single integer: the chromosome number).
-#' @param posMb (optional) a single numeric: the phsyical position of the
-#'   marker, in megabases.
-#' @param posCm (optional) a single numeric: the centiMorgan position of the
-#'   marker.
-#' @param name (optional) a single character: the name of the marker.
-#' @param mutmat (optional) a mutation matrix, or a list of two such matrices
-#'   named 'female' and 'male'. If given, the mutation matrices must be square,
-#'   with the allele labels as dimnames, and each row must sum to 1 (after
-#'   rounding to 3 decimals).
+#' @param alleles a character (or coercible to character) containing allele
+#'   names. If not given, the default is to take the sorted vector of distinct
+#'   alleles occuring in `...`.
+#' @param afreq a numeric of the same length as `alleles`, indicating the
+#'   population frequency of each allele. A warning is issued if the frequencies
+#'   don't sum to 1 after rounding to 3 decimals. If `afreq` is not specified,
+#'   all alleles are given equal frequencies.
+#' @param chrom a single integer: the chromosome number. Default: NA.
+#' @param posMb a single numeric: the phsyical position of the marker, in
+#'   megabases. Default: NA.
+#' @param posCm a single numeric: the centiMorgan position of the marker.
+#'   Default: NA.
+#' @param name a single character: the name of the marker. Default: NA.
+#' @param mutmat a mutation matrix, or a list of two such matrices named
+#'   'female' and 'male'. If given, the mutation matrices must be square, with
+#'   the allele labels as dimnames, and each row must sum to 1 (after rounding
+#'   to 3 decimals). Default: NULL.
 #'
 #' @return An object of class `marker`: This is a numerical 2-column matrix with
 #'   one row per individual, and attributes 'alleles' (a character vector with
-#'   allele names), 'afreq` (allele frequencies), 'chrom' (chromosome number),
-#'   'posMb' (physical location in megabases),'posCm' (position in centiMorgan)
-#'   and 'name' (marker identifier).
+#'   allele labels), 'afreq` (allele frequencies), 'chrom' (chromosome number),
+#'   'posMb' (physical location in megabases),'posCm' (position in centiMorgan),
+#'   'name' (marker identifier) and 'mutmat' (a list of two (male and female)
+#'   mutation matrices).
 #'
 #' @author Magnus Dehli Vigeland
 #'
 #' @examples
-#' x = pedtools::nuclearPed(1)
-#' x = pedtools::relabel(x, c("fa", "mo", "child"))
+#' x = nuclearPed(father="fa", mother="mo", children="child")
 #'
 #' # Create a SNP marker with alleles 1 and 2.
 #' # Father is homozygous 1/1; mother is 2/2; child is heterozygous.
