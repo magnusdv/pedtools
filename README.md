@@ -25,14 +25,14 @@ devtools::install_github("magnusdv/pedtools")
 Example
 -------
 
-The following shows how to create a pedigree with a consanguineous mating between first cousins. We attach a SNP marker for which the child is homozygous for the 'a' allele.
+We create a pedigree with a consanguineous mating between half siblings. The child has genotype A/B at a SNP marker.
 
 ``` r
 library(pedtools)
 
-x = cousinsPed(degree=1, child=TRUE)
-m = marker(x, '9'='a', alleles=c('a','b'))
-plot(x, m)
+x = halfCousinsPed(0, child = TRUE)
+m = marker(x, "6" = c("A", "B"))
+plot(x, m, skip.empty.genotypes = TRUE)
 ```
 
 ![](man/figures/README-example-1.png)
