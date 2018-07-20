@@ -64,7 +64,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
     else if (is.markerList(marker))
       mlist = marker
     else if (is.numeric(marker))
-      mlist = getMarkers(x, idx=marker)
+      mlist = getMarkers(x, markeridx=marker)
     else if (is.character(marker))
       mlist = getMarkers(x, markernames=marker)
     else

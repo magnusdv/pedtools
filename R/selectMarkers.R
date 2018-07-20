@@ -4,7 +4,7 @@
 #' with specified properties.
 #'
 #' @param x A `ped` object
-#' @param idx A numeric index vector specifying the markers to be
+#' @param markeridx A numeric index vector specifying the markers to be
 #'   selected/removed.
 #' @param markernames A character vector with marker names, or NULL
 #' @param chroms An integer vector, or NULL
@@ -20,39 +20,37 @@
 #' @seealso [`setMarkers()`]
 #'
 #' @export
-selectMarkers = function(x, idx = NULL, markernames = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
-  if(is.null(idx)) {
-    idx = whichMarkers(x, markernames = markernames, chroms = chroms, fromPos = fromPos, toPos = toPos)
+selectMarkers = function(x, markeridx = NULL, markernames = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  if(is.null(markeridx)) {
+    markeridx = whichMarkers(x, markernames = markernames, chroms = chroms, fromPos = fromPos, toPos = toPos)
   }
-  assert_that(is.numeric(idx), all(idx == as.integer(idx)), all(idx <= nMarkers(x))) # TRUE also when empty
-  if (length(idx) == 0)
+  assert_that(is.numeric(markeridx), all(markeridx == as.integer(markeridx)), all(markeridx <= nMarkers(x))) # TRUE also when empty
+  if (length(markeridx) == 0)
     x$markerdata = NULL
   else
-    x$markerdata = x$markerdata[idx]
+    x$markerdata = x$markerdata[markeridx]
   x
 }
 
-
 #' @export
 #' @rdname selectMarkers
-getMarkers = function(x, idx = NULL, markernames = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
-  if(is.null(idx)) {
-    idx = whichMarkers(x, markernames = markernames, chroms = chroms, fromPos = fromPos, toPos = toPos)
+getMarkers = function(x, markeridx = NULL, markernames = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  if(is.null(markeridx)) {
+    markeridx = whichMarkers(x, markernames = markernames, chroms = chroms, fromPos = fromPos, toPos = toPos)
   }
-  assert_that(is.numeric(idx), all(idx == as.integer(idx)), all(idx <= nMarkers(x))) # TRUE also when empty
-  x$markerdata[idx]
+  assert_that(is.numeric(markeridx), all(markeridx == as.integer(markeridx)), all(markeridx <= nMarkers(x))) # TRUE also when empty
+  x$markerdata[markeridx]
 }
 
 #' @export
 #' @rdname selectMarkers
-removeMarkers = function(x, idx = NULL, markernames = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
-  if (is.null(markers))
-    markers = whichMarkers(x, markernames, chroms, fromPos, toPos)
-  if (is.null(markers) || length(markers) == 0)
+removeMarkers = function(x, markeridx = NULL, markernames = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  if (is.null(markeridx))
+    markeridx = whichMarkers(x, markernames, chroms, fromPos, toPos)
+  if (is.null(markeridx) || length(markeridx) == 0)
     return(x)
-  m = x$markerdata
-  m[markers] = NULL
-  setMarkers(x, m)
+  x$markerdata[markeridx] = NULL
+  x
 }
 
 #' @export

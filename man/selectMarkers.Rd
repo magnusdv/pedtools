@@ -7,13 +7,13 @@
 \alias{whichMarkers}
 \title{Select or remove marker objects}
 \usage{
-selectMarkers(x, idx = NULL, markernames = NULL, chroms = NULL,
+selectMarkers(x, markeridx = NULL, markernames = NULL, chroms = NULL,
   fromPos = NULL, toPos = NULL)
 
-getMarkers(x, idx = NULL, markernames = NULL, chroms = NULL,
+getMarkers(x, markeridx = NULL, markernames = NULL, chroms = NULL,
   fromPos = NULL, toPos = NULL)
 
-removeMarkers(x, idx = NULL, markernames = NULL, chroms = NULL,
+removeMarkers(x, markeridx = NULL, markernames = NULL, chroms = NULL,
   fromPos = NULL, toPos = NULL)
 
 whichMarkers(x, markernames = NULL, chroms = NULL, fromPos = NULL,
@@ -22,7 +22,7 @@ whichMarkers(x, markernames = NULL, chroms = NULL, fromPos = NULL,
 \arguments{
 \item{x}{A \code{ped} object}
 
-\item{idx}{A numeric index vector specifying the markers to be
+\item{markeridx}{A numeric index vector specifying the markers to be
 selected/removed.}
 
 \item{markernames}{A character vector with marker names, or NULL}
