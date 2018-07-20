@@ -1,6 +1,6 @@
 context("marker creation")
 
-test_that("empty marker is created correctly", {
+test_that("empty markers are created correctly", {
   x = nuclearPed(2)
 
   # Adding an empty SNP (all genotypes are missing):
@@ -23,4 +23,24 @@ test_that("empty marker is created correctly", {
   # pedigree members are homozygous for an allele (say 'b'):
   marker(x, 'b')
   # Alternative: m = marker(x, 'b'); addMarker(x, m)
+})
+
+test_that("alleles and freqs are sorted together", {
+  x = nuclearPed(1)
+  p = .8; q = 1-p
+
+  # empty
+  m1 = marker(x, alleles=2:1, afreq=c(q, p))
+  expect_equal(attr(m1, 'alleles'), c('1','2'))
+  expect_equal(attr(m1, 'afreq'), c(p, q))
+
+  # the "2" allele observed
+  m2 = marker(x, '1'=2, alleles=1:2, afreq=c(p, q))
+  expect_equal(attr(m2, 'alleles'), c('1','2'))
+  expect_equal(attr(m2, 'afreq'), c(p, q))
+
+  # alleles not explicitly stated observed
+  #m3 = marker(x, '1'=2:1, afreq=c(p, q))
+  #expect_equal(attr(m3, 'alleles'), c('1','2'))
+  #expect_equal(attr(m3, 'afreq'), c(p, q))
 })
