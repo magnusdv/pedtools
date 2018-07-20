@@ -1,4 +1,22 @@
 
+#' Check if a marker allows mutatations
+#'
+#' @param marker A `marker` object
+#'
+#' @return Returns TRUE if the `mutmat` attribute of marker is non-NULL and differs from the identity matrix.
+#' @export
+allowsMutations = function(marker) {
+  mutmat = attr(marker, 'mutmat')
+  if(is.null(mutmat))
+    return(FALSE)
+  n = nAlleles(marker)
+  male = mutmat$male
+  female = mutmat$female
+  if(all(diag(male) == 1) && all(diag(female) == 1))
+    return(FALSE)
+  return(TRUE)
+}
+
 #' Number of marker alleles
 #'
 #' @param m An object of class [marker].
