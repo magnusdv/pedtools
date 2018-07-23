@@ -46,10 +46,68 @@ test_that("swapSex() of all indivs", {
   expect_equal(parents(x, 3), c("2", "1"))
 })
 
-test_that("addChildren works in nuclear", {
-  x = addChildren(nuclearPed(1),3, verbose=F)
-  expect_is(x, "ped")
-  expect_equal(pedsize(x), 5)
+test_that("addChildren works with num labels", {
+  # start with male singleton
+  m = singleton(4)
+  expect_equal(addChildren(m, father=4, nch=2),
+               nuclearPed(father=4, mother=5, children=6:7))
+  expect_equal(addChildren(m, father=4, mother=1, nch=2, ids=2:3),
+               nuclearPed(father=4, mother=1, children=2:3))
+
+  # start with female singleton
+  f = singleton(4, sex=2)
+
+  f1 = addChildren(f, mother=4, nch=2)
+  expect_equal(reorder(f1, c(2,1,3,4)),
+               nuclearPed(mother=4, father=5, children=6:7))
+
+  f2 = addChildren(f, mother=4, father=1, nch=2, ids=2:3)
+  expect_equal(reorder(f2, c(2,1,3,4)),
+               nuclearPed(mother=4, father=1, children=2:3))
+
+  # inbreeding example
+  x = nuclearPed(1, sex=2)
+  y = addChildren(x, father=1, mother=3, nch=2, sex=2)
+  expect_equal(spouses(y, 1), c("2", "3"))
+  expect_equal(children(y, 1), c("3","4","5"))
+  expect_equal(getSex(y, 4:5), c(2,2))
+})
+
+test_that("addChildren works with char labels", {
+  m = singleton("fa")
+  expect_equal(addChildren(m, father="fa", nch=2),
+               nuclearPed(father="fa", mother="NN_1", children=c("NN_2","NN_3")))
+  expect_equal(addChildren(m, father="fa", mother="mo", nch=2, ids=c("b1", "b2")),
+               nuclearPed(father="fa", mother="mo", children=c("b1", "b2")))
+
+  # start with female singleton
+  f = singleton("mo", sex=2)
+
+  f1 = addChildren(f, mother="mo", nch=2)
+  expect_equal(reorder(f1, c(2,1,3,4)),
+               nuclearPed(father="NN_1", mother="mo", children=c("NN_2","NN_3")))
+
+  f2 = addChildren(f, mother="mo", father="fa", nch=2, ids=c("b1", "b2"))
+  expect_equal(reorder(f2, c(2,1,3,4)),
+               nuclearPed(father="fa", mother="mo", children=c("b1", "b2")))
+
+  # inbreeding example
+  x = nuclearPed(father="fa", mother="mo", children="da", sex=2)
+  y = addChildren(x, father="fa", mother="da", nch=2, ids=c("g1", "g2"), sex=2)
+  expect_equal(spouses(y, "fa"), c("mo", "da"))
+  expect_equal(children(y, "fa"), c("da","g1","g2"))
+  expect_equal(getSex(y, c("g1", "g2")), c(2,2))
+})
+
+test_that("addSon + addDaughter gives half sibs", {
+  expect_equal(addDaughter(addSon(singleton(1), 1), 1),
+               halfCousinsPed(0))
+})
+
+test_that("addChildren with nch=2 gives same result as twice with nch=1", {
+  x = singleton(1)
+  expect_equal(addChildren(addChildren(x, fa=1, mo=2), fa=1, mo=2),
+               addChildren(x, fa=1, mo=2, nch=2))
 })
 
 test_that("adding and removing child restores original", {
@@ -63,7 +121,6 @@ test_that("adding and removing child restores original", {
   z1 = removeIndividuals(y1, "99", verbose=F)
   expect_identical(x1, z1)
 
-  skip("addChildren with labels not implemented")
   x2 = setLabels(nuclearPed(1), c("F", "M", "C"))
   y2 = addChildren(x2, father="C", ids="baby", verbose=F)
   z2 = removeIndividuals(y2, "baby", verbose=F)
