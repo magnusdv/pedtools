@@ -6,8 +6,8 @@
 #' founders remaining without offspring.
 #'
 #' @param x A `ped` object.
-#' @param id,ids Individual ID label(s). In `addOffspring` the (optional) `ids`
-#'   argument is used to specify ID labels for the offspring to be created.
+#' @param id,ids Individual ID label(s). In `addChildren` the (optional) `ids`
+#'   argument is used to specify ID labels for the created children.
 #' @param father,mother Integers indicating the IDs of parents. If missing, a
 #'   new founder individual is created (whose ID will be 1+the largest ID
 #'   already in the pedigree).
@@ -127,10 +127,6 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
   attrs$labels = as.character(numlabs)
   restore_ped(p, attrs = attrs)
 }
-
-#' @rdname ped_modify
-#' @export
-addOffspring = addChildren
 
 
 #' @rdname ped_modify

@@ -4,7 +4,6 @@
 \alias{ped_modify}
 \alias{swapSex}
 \alias{addChildren}
-\alias{addOffspring}
 \alias{addSon}
 \alias{addDaughter}
 \alias{addParents}
@@ -15,9 +14,6 @@
 swapSex(x, ids, verbose = TRUE)
 
 addChildren(x, father = NULL, mother = NULL, nch = 1, sex = 1,
-  ids = NULL, verbose = TRUE)
-
-addOffspring(x, father = NULL, mother = NULL, nch = 1, sex = 1,
   ids = NULL, verbose = TRUE)
 
 addSon(x, parent, id = NULL, verbose = TRUE)
