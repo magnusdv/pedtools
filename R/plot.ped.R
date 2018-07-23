@@ -45,8 +45,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
                     starred = numeric(0), margins = c(0.6, 1, 4.1, 1), ...) {
 
   # Labels
-  if (is.null(id.labels)) id.labels=rep("", pedSize(x))
-  else if(identical(id.labels, "")) id.labels=rep("", pedSize(x))
+  if (is.null(id.labels)) id.labels=rep("", pedsize(x))
+  else if(identical(id.labels, "")) id.labels=rep("", pedsize(x))
   else if(identical(id.labels, "num")) id.labels = as.character(x$ID)
 
   id.labels[is.na(id.labels)] = ""
@@ -87,7 +87,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   oldmar = par(mar = margins)
 
   # Colors
-  cols = rep(col, length = pedSize(x))
+  cols = rep(col, length = pedsize(x))
 
   # Special treatment for option 'available=shaded'
   #if (identical(available, "shaded")) {

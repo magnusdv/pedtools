@@ -89,7 +89,7 @@ typedMembers = function(x, internal = FALSE) {
 #' @export
 untypedMembers = function(x, internal = FALSE) {
   if (nMarkers(x) == 0)
-    return(if(internal) seq_len(pedSize(x)) else x$LABELS)
+    return(if(internal) seq_len(pedsize(x)) else x$LABELS)
   allelematrix = do.call(cbind, x$markerdata)
   emptyrows = rowSums(allelematrix != 0) == 0
   if(internal) which(emptyrows) else x$LABELS[emptyrows]

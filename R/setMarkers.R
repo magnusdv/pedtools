@@ -31,8 +31,8 @@ setMarkers = function(x, m, annotations = NULL) {
   m = as.matrix(m)
   nc = ncol(m)
   nr = nrow(m)
-  if(nr != pedSize(x))
-    stop("Incompatible input. Pedigree has size ", pedSize(x),
+  if(nr != pedsize(x))
+    stop("Incompatible input. Pedigree has size ", pedsize(x),
          " but allele matrix has ", nr, " rows.", calls.=FALSE)
 
   # If input has 1 genotype per column, split alleles to separate columns
@@ -77,7 +77,7 @@ setMarkers = function(x, m, annotations = NULL) {
 
 #' @export
 addMarker = function(x, m, ...) {
-  N = pedSize(x)
+  N = pedsize(x)
   if (is.matrix(m) || is.data.frame(m))
     stopifnot(nrow(m) == N, ncol(m) == 2)
   if (inherits(m, "marker"))

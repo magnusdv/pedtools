@@ -91,11 +91,11 @@ hasMarkers = function(x) {
 
 
 checkConsistency = function(x, mlist) {
-  wrongSize = unlist(lapply(mlist, nrow) != pedSize(x))
+  wrongSize = unlist(lapply(mlist, nrow) != pedsize(x))
   if(any(wrongSize)) {
     erri = which(wrongSize)[1]
     errsize = nrow(mlist[[erri]])
-    stop("Incompatible input: Pedigree has size ", pedSize(x),
+    stop("Incompatible input: Pedigree has size ", pedsize(x),
          " but marker ", erri, " has ", errsize, " rows", call.=FALSE)
   }
   #TODO: check loop breakers

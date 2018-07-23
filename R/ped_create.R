@@ -85,12 +85,12 @@ cousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
 
   # Chain on the left side
   x = nuclearPed(1)
-  for (i in seq_len(degree)) x = addSon(x, pedSize(x), verbose = F)
+  for (i in seq_len(degree)) x = addSon(x, pedsize(x), verbose = F)
 
   # Chain on the right side
   x = addChildren(x, father = 1, mother = 2, nch = 1, verbose = F)
-  for (i in seq_len(degree2)) x = addSon(x, pedSize(x), verbose = F)
-  x = swapSex(x, pedSize(x), verbose = F)
+  for (i in seq_len(degree2)) x = addSon(x, pedsize(x), verbose = F)
+  x = swapSex(x, pedsize(x), verbose = F)
 
   if (child) {
       cous = leaves(x)
@@ -112,12 +112,12 @@ halfCousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
 
   # Chain on the left side
   x = nuclearPed(1)
-  for (i in seq_len(degree)) x = addSon(x, pedSize(x), verbose = F)
+  for (i in seq_len(degree)) x = addSon(x, pedsize(x), verbose = F)
 
   # Chain on the right side
   x = addSon(x, 1, verbose = F)
-  for (i in seq_len(degree2)) x = addSon(x, pedSize(x), verbose = F)
-  x = swapSex(x, pedSize(x), verbose = F)
+  for (i in seq_len(degree2)) x = addSon(x, pedsize(x), verbose = F)
+  x = swapSex(x, pedsize(x), verbose = F)
 
   if (child) {
     cous = leaves(x)

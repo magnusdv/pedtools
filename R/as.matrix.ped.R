@@ -17,7 +17,7 @@
 #' checks for pedigree errors are performed.
 #' @param \dots not used.
 #'
-#' @return For `as.matrix`: A matrix with `pedSize(x)` rows.
+#' @return For `as.matrix`: A matrix with `pedsize(x)` rows.
 #' If `include.attrs = TRUE` the matrix has the following attributes:
 #' \itemize{
 #' \item{`labels`}{ a list of marker annotations}
@@ -111,7 +111,7 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
 #' @export
 as.data.frame.ped = function(x, ..., markers) {
   lab = x$LABELS
-  fid = mid = rep("0", pedSize(x))
+  fid = mid = rep("0", pedsize(x))
   fid[x$FID > 0] = lab[x$FID]
   mid[x$MID > 0] = lab[x$MID]
   df = data.frame(id = lab, fid=fid, mid=mid, sex=x$SEX, stringsAsFactors = F)

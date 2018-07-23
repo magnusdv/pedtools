@@ -66,7 +66,7 @@
 #'
 #' @export
 inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedingLoops
-  n = pedSize(x)
+  n = pedsize(x)
   dls = .descentPaths(x, 1:n, internal=TRUE)
   dls = dls[lengths(dls) > 1]
 
@@ -121,7 +121,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
 
   ### Old ped data
   oldpedm = as.matrix(x)  #data.frame(x, famid=T, missing=0)
-  n = pedSize(x)
+  n = pedsize(x)
 
   ### New ped matrix
   # Setup for creating pedm by replicating lb rows
@@ -222,7 +222,7 @@ findLoopBreakers2 = function(x) {
   }
 
   breakers = numeric()
-  N = pedSize(x)
+  N = pedsize(x)
 
   ped2edge = function(id, fid, mid) {
     # input: ped-kolonner UTEN founder-rader

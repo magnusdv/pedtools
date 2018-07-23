@@ -9,7 +9,7 @@ setLabels(x, labels)
 \arguments{
 \item{x}{a \code{ped} object}
 
-\item{labels}{a character (or coercible to character) of length \code{pedSize(x)}}
+\item{labels}{a character (or coercible to character) of length \code{pedsize(x)}}
 }
 \description{
 Set labels of pedigree members

@@ -207,7 +207,7 @@ parents_before_children = function(x) {
 
   neworder = x$ID
   i=1
-  while (i < pedSize(x)) {
+  while (i < pedsize(x)) {
     current = neworder[i]
     maxpar = max(match(c(x$FID[current], x$MID[current]), neworder, nomatch = 0))
     if (maxpar > i) { # push current indiv below below parents

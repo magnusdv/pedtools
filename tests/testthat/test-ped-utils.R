@@ -16,13 +16,13 @@ test_that("is.pedList() is FALSE for empty list", {
   expect_false(is.pedList(list()))
 })
 
-test_that("pedSize of singleton is 1", {
-  expect_equal(pedSize(singleton(1)), 1)
+test_that("pedsize of singleton is 1", {
+  expect_equal(pedsize(singleton(1)), 1)
 })
 
-test_that("pedSize works", {
-  expect_equal(pedSize(nuclearPed(1)), 3)
-  expect_equal(pedSize(fullSibMating(2)), 6)
+test_that("pedsize works", {
+  expect_equal(pedsize(nuclearPed(1)), 3)
+  expect_equal(pedsize(fullSibMating(2)), 6)
 })
 
 test_that("internalID gives empty output on empty intput", {

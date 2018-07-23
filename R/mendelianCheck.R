@@ -37,7 +37,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
   chromX = whichMarkers(x, chroms=23)
   chromAUT = .mysetdiff(seq_len(nMarkers(x)), chromX)
 
-  errorlist = vector(length=pedSize(x), mode="list")
+  errorlist = vector(length=pedsize(x), mode="list")
   names(errorlist) = x$LABELS
   nuc_errors = numeric()  # container for allele count errors...belongs to the whole subnuc.
 

@@ -84,7 +84,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
     stop("Individuals already exist: ", catLabels(x, ids[ids %in% x$LABELS]), call.=FALSE)
 
   sex = rep_len(sex, nch)
-  n = pedSize(x)
+  n = pedsize(x)
 
   # Check if labels are coercible to integers
   if(!has_numlabs(x))
@@ -299,12 +299,12 @@ relabel = function(x, new, old=x$LABELS) {
 #' Set labels of pedigree members
 #'
 #' @param x a `ped` object
-#' @param labels a character (or coercible to character) of length `pedSize(x)`
+#' @param labels a character (or coercible to character) of length `pedsize(x)`
 #'
 #' @export
 setLabels = function(x, labels) {
   labels = as.character(labels)
-  assert_that(is.ped(x), length(labels) == pedSize(x), !anyDuplicated(labels))
+  assert_that(is.ped(x), length(labels) == pedsize(x), !anyDuplicated(labels))
   x$LABELS = labels
   x
 }

@@ -46,7 +46,7 @@ marker = function(x, ...,  alleles = NULL, afreq = NULL, chrom = NA,
                   posMb = NA, posCm = NA, name = NA, mutmat = NULL) {
 
   # Initalize empty allele matrix
-  m = matrix(0, ncol = 2, nrow = pedSize(x))
+  m = matrix(0, ncol = 2, nrow = pedsize(x))
 
   # Capture genotypes given in dots
   dots = eval(substitute(alist(...)))

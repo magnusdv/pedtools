@@ -12,7 +12,7 @@
 #'
 #' @export
 hasCA = function(x) {
-  N = pedSize(x)
+  N = pedsize(x)
   if(isFALSE(all(x$LABELS == 1:N)))
     stop("This is currently only implemented for pedigrees with ordering 1,2,...")
   A = matrix(F, ncol=N, nrow=N)
@@ -63,9 +63,9 @@ getSex = function(x, labels) {
 #'
 #' @examples
 #' x = nuclearPed(1)
-#' stopifnot(pedSize(x)==3)
+#' stopifnot(pedsize(x)==3)
 #'
-pedSize = function(x) {
+pedsize = function(x) {
   assert_that(is.ped(x))
   length(x$ID)
 }
@@ -93,7 +93,7 @@ nextNN = function(labs) { # labs a character vector
 .descentPaths = function(x, ids, internal = FALSE) {
     if (!internal) ids = internalID(x, ids)
 
-    offs = lapply(1:pedSize(x), children, x = x, internal = TRUE)
+    offs = lapply(1:pedsize(x), children, x = x, internal = TRUE)
     lapply(ids, function(id) {
         res = list(id)
         while (TRUE) {
@@ -124,7 +124,7 @@ nextNN = function(labs) { # labs a character vector
 #'
 #' @export
 subnucs = function(x) {
-  n = pedSize(x)
+  n = pedsize(x)
   if (n == 1)
     return(list())
   FID = x$FID; MID = x$MID
