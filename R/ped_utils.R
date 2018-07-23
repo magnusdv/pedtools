@@ -27,9 +27,8 @@ hasCA = function(x) {
 
 # Checks whether the labels of a ped oject are coercible to integers
 has_numlabs = function(x) {
-  assert_that(is.ped(x))
-  numlabs = suppressWarnings(as.numeric(x$LABELS))
-  isTRUE(all(numlabs == as.integer(numlabs)))
+  numlabs = suppressWarnings(as.character(as.integer(x$LABELS)))
+  isTRUE(all(x$LABELS == numlabs))
 }
 
 
