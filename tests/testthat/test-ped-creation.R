@@ -27,7 +27,7 @@ test_that("simple ped", {
 test_that("random ped", {
   x = randomPed(3, 3)
   expect_is(x, "ped")
-  expect_equal(x$NIND, 6)
+  expect_equal(pedSize(x), 6)
 })
 
 test_that("singleton creation works as expected", {

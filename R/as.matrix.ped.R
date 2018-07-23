@@ -17,7 +17,7 @@
 #' checks for pedigree errors are performed.
 #' @param \dots not used.
 #'
-#' @return For `as.matrix`: A matrix with `x$NIND` rows.
+#' @return For `as.matrix`: A matrix with `pedSize(x)` rows.
 #' If `include.attrs = TRUE` the matrix has the following attributes:
 #' \itemize{
 #' \item{`labels`}{ a list of marker annotations}

@@ -299,7 +299,7 @@ relabel = function(x, new, old=x$LABELS) {
 #' Set labels of pedigree members
 #'
 #' @param x a `ped` object
-#' @param labels a character (or coercible to character) of length `x$NIND`
+#' @param labels a character (or coercible to character) of length `pedSize(x)`
 #'
 #' @export
 setLabels = function(x, labels) {

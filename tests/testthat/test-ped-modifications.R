@@ -10,7 +10,7 @@ test_that("labels are correct after reordering", {
 
 test_that("trivial reorder has no effect", {
   x = setLabels(nuclearPed(1), letters[1:3])
-  y = reorder(x, 1:x$NIND)
+  y = reorder(x, 1:pedSize(x))
   expect_identical(x, y)
 })
 
@@ -49,7 +49,7 @@ test_that("swapSex() of all indivs", {
 test_that("addChildren works in nuclear", {
   x = addChildren(nuclearPed(1),3, verbose=F)
   expect_is(x, "ped")
-  expect_equal(x$NIND, 5)
+  expect_equal(pedSize(x), 5)
 })
 
 test_that("adding and removing child restores original", {

@@ -46,7 +46,6 @@ this equals the input argument \code{sex}.}
 \item{FAMID}{The family ID.}
 \item{LABELS}{A character vector containing the original id labels.
 Unless the pedigree has been reordered, this equals the input argument \code{id}.}
-\item{NIND}{The number of individuals in the pedigree, i.e. length(id)}
 \item{FOUNDERS}{A numerical vector containing the internal IDs of the founder
 individuals. Equals \code{which(FID==0)}.}
 \item{NONFOUNDERS}{A numerical vector containing the internal IDs of the nonfounder

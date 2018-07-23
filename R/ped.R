@@ -35,7 +35,6 @@
 #'   \item{FAMID}{The family ID.}
 #'   \item{LABELS}{A character vector containing the original id labels.
 #'     Unless the pedigree has been reordered, this equals the input argument `id`.}
-#'   \item{NIND}{The number of individuals in the pedigree, i.e. length(id)}
 #'   \item{FOUNDERS}{A numerical vector containing the internal IDs of the founder
 #'     individuals. Equals `which(FID==0)`.}
 #'   \item{NONFOUNDERS}{A numerical vector containing the internal IDs of the nonfounder
@@ -64,9 +63,9 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   MID = match(mid, id, nomatch=0)
 
   # Initialise ped object
-  x = list(ID = ID, FID = FID, MID = MID, SEX = sex, NIND = n,
-           LABELS = NULL, FAMID = NULL,
+  x = list(ID = ID, FID = FID, MID = MID, SEX = sex,
            FOUNDERS = which(FID == 0), NONFOUNDERS = which(FID > 0),
+           LABELS = NULL, FAMID = NULL,
            hasLoops = NULL, loop_breakers = NULL, markerdata = NULL)
 
   class(x) = "ped"
@@ -208,7 +207,7 @@ parents_before_children = function(x) {
 
   neworder = x$ID
   i=1
-  while (i < x$NIND) {
+  while (i < pedSize(x)) {
     current = neworder[i]
     maxpar = max(match(c(x$FID[current], x$MID[current]), neworder, nomatch = 0))
     if (maxpar > i) { # push current indiv below below parents

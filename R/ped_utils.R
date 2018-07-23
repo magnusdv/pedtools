@@ -12,9 +12,10 @@
 #'
 #' @export
 hasCA = function(x) {
-  if(isFALSE(all(x$LABELS == 1:x$NIND)))
+  N = pedSize(x)
+  if(isFALSE(all(x$LABELS == 1:N)))
     stop("This is currently only implemented for pedigrees with ordering 1,2,...")
-  A = matrix(F, ncol=x$NIND, nrow=x$NIND)
+  A = matrix(F, ncol=N, nrow=N)
   for(i in x$FOUNDERS) {
     # vector of all descendants of i, including i
     desc = c(i, descendants(x,i,internal=TRUE))

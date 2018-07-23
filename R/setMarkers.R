@@ -77,13 +77,13 @@ setMarkers = function(x, m, annotations = NULL) {
 
 #' @export
 addMarker = function(x, m, ...) {
-  xsize =pedSize(x)
+  N = pedSize(x)
   if (is.matrix(m) || is.data.frame(m))
-    stopifnot(nrow(m) == xsize, ncol(m) == 2)
+    stopifnot(nrow(m) == N, ncol(m) == 2)
   if (inherits(m, "marker"))
     m = list(m)
   if (!is.list(m) && length(m) == 1)
-    m = matrix(m, ncol = 2, nrow = x$nInd)  #gives a nice way of setting an empty or everywhere-homozygous marker, e.g.: x=addMarker(x,0)
+    m = matrix(m, ncol = 2, nrow = N)  #gives a nice way of setting an empty or everywhere-homozygous marker, e.g.: x=addMarker(x,0)
   mm = .createMarkerObject(m, ...)
   setMarkers(x, structure(c(x$markerdata, list(mm)), class = "markerdata"))
 }

@@ -26,7 +26,7 @@ If NULL, the attributes of \code{x} itself are used.}
 checks for pedigree errors are performed.}
 }
 \value{
-For \code{as.matrix}: A matrix with \code{x$NIND} rows.
+For \code{as.matrix}: A matrix with \code{pedSize(x)} rows.
 If \code{include.attrs = TRUE} the matrix has the following attributes:
 \itemize{
 \item{\code{labels}}{ a list of marker annotations}
