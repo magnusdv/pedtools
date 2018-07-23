@@ -10,35 +10,38 @@
 restore_ped(x, attrs = NULL, check = TRUE)
 }
 \arguments{
-\item{x}{a \code{\link[=ped]{ped()}} object. In \code{restore_ped}: A
-numerical matrix.}
+\item{x}{a \code{ped} object. In \code{restore_ped}: A numerical matrix.}
 
 \item{include.attrs}{a logical indicating if marker annotations and other
 info should be attached as attributes. See value.}
 
 \item{\dots}{not used.}
 
-\item{attrs}{a list containing labels and other \code{ped}
-info compatible with \code{x}, in the format produced by \code{as.matrix}.
-If NULL, the attributes of \code{x} itself are used.}
+\item{attrs}{a list containing labels and other \code{ped} info compatible with
+\code{x}, in the format produced by \code{as.matrix}. If NULL, the attributes of \code{x}
+itself are used.}
 
-\item{check}{a logical, forwarded to \code{\link[=ped]{ped()}}. If FALSE, no
-checks for pedigree errors are performed.}
+\item{check}{a logical, forwarded to \code{\link[=ped]{ped()}}. If FALSE, no checks for
+pedigree errors are performed.}
 }
 \value{
-For \code{as.matrix}: A matrix with \code{pedsize(x)} rows.
-If \code{include.attrs = TRUE} the matrix has the following attributes:
+For \code{as.matrix}: A numerical matrix with \code{pedsize(x)} rows.
+If \code{include.attrs = TRUE} the following attributes are added to the matrix,
+allowing \code{x} to be exactly reproduced by \code{restore_ped}:
 \itemize{
-\item{\code{labels}}{ a list of marker annotations}
-\item{\code{famid}}{ the availability vector}
+\item \code{famid} the family identifier (a string)
+\item \code{labels} the ID labels (a character vector)
+\item \code{hasLoops} a logical indicating whether \code{x} has unboken loops
+\item \code{loop_breakers} a numerical matrix, or NULL
+\item \code{markerattr} a list of length \code{nMarkers(x)}, containing the attributes of each marker
 }
 
 For \code{restore_ped}: A \code{ped} object.
 }
 \description{
-Converts a \code{ped} object to a numeric matrix using internal labels,
-with additional info neccessary to recreate the original \code{ped}
-attached as attributes.
+Converts a \code{ped} object to a numeric matrix using internal labels, with
+additional info neccessary to recreate the original \code{ped} attached as
+attributes.
 }
 \details{
 \code{restore_ped} is the reverse of \code{as.matrix.ped}.

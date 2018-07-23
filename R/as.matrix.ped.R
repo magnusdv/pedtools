@@ -1,30 +1,32 @@
 #' Convert ped to matrix
 #'
-#' Converts a `ped` object to a numeric matrix using internal labels,
-#' with additional info neccessary to recreate the original `ped`
-#' attached as attributes.
+#' Converts a `ped` object to a numeric matrix using internal labels, with
+#' additional info neccessary to recreate the original `ped` attached as
+#' attributes.
 #'
 #' `restore_ped` is the reverse of `as.matrix.ped`.
 #'
-#' @param x a [ped()] object. In `restore_ped`: A
-#' numerical matrix.
+#' @param x a `ped` object. In `restore_ped`: A numerical matrix.
 #' @param include.attrs a logical indicating if marker annotations and other
-#' info should be attached as attributes. See value.
-#' @param attrs a list containing labels and other `ped`
-#' info compatible with `x`, in the format produced by `as.matrix`.
-#' If NULL, the attributes of `x` itself are used.
-#' @param check a logical, forwarded to [ped()]. If FALSE, no
-#' checks for pedigree errors are performed.
+#'   info should be attached as attributes. See value.
+#' @param attrs a list containing labels and other `ped` info compatible with
+#'   `x`, in the format produced by `as.matrix`. If NULL, the attributes of `x`
+#'   itself are used.
+#' @param check a logical, forwarded to [ped()]. If FALSE, no checks for
+#'   pedigree errors are performed.
 #' @param \dots not used.
 #'
-#' @return For `as.matrix`: A matrix with `pedsize(x)` rows.
-#' If `include.attrs = TRUE` the matrix has the following attributes:
-#' \itemize{
-#' \item{`labels`}{ a list of marker annotations}
-#' \item{`famid`}{ the availability vector}
-#' }
+#' @return For `as.matrix`: A numerical matrix with `pedsize(x)` rows.
+#'   If `include.attrs = TRUE` the following attributes are added to the matrix,
+#'   allowing `x` to be exactly reproduced by `restore_ped`:
 #'
-#' For `restore_ped`: A `ped` object.
+#' * `famid` the family identifier (a string)
+#' * `labels` the ID labels (a character vector)
+#' * `hasLoops` a logical indicating whether `x` has unboken loops
+#' * `loop_breakers` a numerical matrix, or NULL
+#' * `markerattr` a list of length `nMarkers(x)`, containing the attributes of each marker
+#'
+#'  For `restore_ped`: A `ped` object.
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
 #'
