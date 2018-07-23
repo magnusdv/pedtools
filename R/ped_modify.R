@@ -1,16 +1,14 @@
 #' Pedigree modifications
 #'
-#' Functions for modifying attributes of 'ped' object.
+#' Functions for modifying various attributes of a 'ped' object.
 #'
 #' @param x A `ped` object.
-#' @param ids A character (or coercible to character). In `addChildren()` this
-#'   is an optional argument used to specify ID labels for the created children.
-#'   In `removeIndividuals()` it must point to existing pedigree members, which
-#'   will be removed.
+#' @param ids A character (or coercible to character) with ID labels of one or
+#'   more pedigree members.
 #' @param labels A character (or coercible to character) of length `pedsize(x)`
 #' @param new,old Character vectors (or coercible to character) of the same
 #'   length. ID labels in `old` are replaced by those in `new`.
-#' @param famid a character of length 1. If missing, an emtpy string is used.
+#' @param famid A character of length 1. If missing, an emtpy string is used.
 #' @param verbose A logical: Verbose output or not.
 #'
 #' @return The modified `ped` object.

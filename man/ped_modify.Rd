@@ -3,75 +3,52 @@
 \name{ped_modify}
 \alias{ped_modify}
 \alias{swapSex}
-\alias{addChildren}
-\alias{addSon}
-\alias{addDaughter}
-\alias{addParents}
-\alias{removeIndividuals}
 \alias{relabel}
+\alias{setLabels}
+\alias{setFamid}
 \title{Pedigree modifications}
 \usage{
 swapSex(x, ids, verbose = TRUE)
 
-addChildren(x, father = NULL, mother = NULL, nch = 1, sex = 1,
-  ids = NULL, verbose = TRUE)
-
-addSon(x, parent, id = NULL, verbose = TRUE)
-
-addDaughter(x, parent, id = NULL, verbose = TRUE)
-
-addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
-
-removeIndividuals(x, ids, verbose = TRUE)
-
 relabel(x, new, old = x$LABELS)
+
+setLabels(x, labels)
+
+setFamid(x, famid)
 }
 \arguments{
 \item{x}{A \code{ped} object.}
 
+\item{ids}{A character (or coercible to character) with ID labels of one or
+more pedigree members.}
+
 \item{verbose}{A logical: Verbose output or not.}
 
-\item{father, mother}{Integers indicating the IDs of parents. If missing, a
-new founder individual is created (whose ID will be 1+the largest ID
-already in the pedigree).}
+\item{new, old}{Character vectors (or coercible to character) of the same
+length. ID labels in \code{old} are replaced by those in \code{new}.}
 
-\item{nch}{A single integer indicating the number of children to be created.
-Default: 1.}
+\item{labels}{A character (or coercible to character) of length \code{pedsize(x)}}
 
-\item{sex}{Integer vectors indicating the genders of the offspring to be
-created (recycled if less than \code{nch} elements).}
-
-\item{parent}{Integer ID of any pedigree member, which will be the father or
-mother (depending on its gender) of the new child.}
-
-\item{id, ids}{Individual ID label(s). In \code{addOffspring} the (optional) \code{ids}
-argument is used to specify ID labels for the offspring to be created.}
-
-\item{new, old}{Vectors of the same length. ID labels in \code{old} are replaced by those in \code{new}.}
+\item{famid}{A character of length 1. If missing, an emtpy string is used.}
 }
 \value{
 The modified \code{ped} object.
 }
 \description{
-Functions to modify the pedigree of a 'ped' object.
-}
-\details{
-When removing an individual, all descendants are also removed as well as
-founders remaining without offspring.
+Functions for modifying various attributes of a 'ped' object.
 }
 \examples{
 
 x = nuclearPed(1)
 
 # To see the effect of each command below, use plot(x) in between.
-x = addSon(x, 3)
-x = addParents(x, id=4, father=6, mother=7)
-x = swapSex(x, c(1,4))
-x = removeIndividuals(x, 4)
+x = swapSex(x, 3)
+x = relabel(x, new="girl", old=3)
+x = setFamid(x, "Family 1")
 
 }
 \seealso{
-\code{\link[=ped]{ped()}}, \code{\link[=nuclearPed]{nuclearPed()}}
+\code{\link[=ped]{ped()}}, \link{ped_add}
 }
 \author{
 Magnus Dehli Vigeland
