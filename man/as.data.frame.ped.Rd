@@ -14,10 +14,29 @@
 \item{markers}{(Optional) Vector of marker indices. By default, all markers
 are included.}
 }
+\value{
+A \code{data.frame} with \code{pedsize(x)} rows and \code{4 + nMarkers(x)} columns.
+}
 \description{
-Convert a \code{ped} object to a data.frame with columns id, fid, mid and sex. The
-output uses the original ID labels, unlike \code{\link[=as.matrix.ped]{as.matrix.ped()}} which uses
-internal numeric IDs. The latter is safer for manipulating the pedigree
-structure, since the internal IDs are always distinct. (See \code{\link[=setLabels]{setLabels()}}.)
-The main use of the data.frame method is printing.
+Convert a \code{ped} object to a data.frame. The first columns are id, fid, mid
+and sex, followed by genotype columns for all (or a selection of) markers.
+}
+\details{
+Note that the output of \code{\link[=as.data.frame.ped]{as.data.frame.ped()}} is quite different from that of
+\code{\link[=as.matrix.ped]{as.matrix.ped()}}. This reflects the fact that these functions have different
+purposes.
+
+Conversion to data.frame is primarily intended for pretty printing. It uses
+correct labels for pedigree members and marker alleles, and pastes alleles to
+form nice-looking genotypes.
+
+The matrix method, on the other hand, is a handy tool for manipulating the
+pedigree structure. It produces a numeric matrix, using the internal index
+labeling both for individuals and alleles, making it very fast. In addition,
+all neccessary meta information (loop breakers, allele frequencies a.s.o) is
+kept as attributes, which makes it possible to recreate the original \code{ped}
+object.
+}
+\seealso{
+\code{\link[=as.matrix.ped]{as.matrix.ped()}}
 }

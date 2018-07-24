@@ -99,16 +99,30 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
 
 #' Convert ped to data.frame
 #'
-#' Convert a `ped` object to a data.frame with columns id, fid, mid and sex. The
-#' output uses the original ID labels, unlike [as.matrix.ped()] which uses
-#' internal numeric IDs. The latter is safer for manipulating the pedigree
-#' structure, since the internal IDs are always distinct. (See [setLabels()].)
-#' The main use of the data.frame method is printing.
+#' Convert a `ped` object to a data.frame. The first columns are id, fid, mid
+#' and sex, followed by genotype columns for all (or a selection of) markers.
+#'
+#' Note that the output of [as.data.frame.ped()] is quite different from that of
+#' [as.matrix.ped()]. This reflects the fact that these functions have different
+#' purposes.
+#'
+#' Conversion to data.frame is primarily intended for pretty printing. It uses
+#' correct labels for pedigree members and marker alleles, and pastes alleles to
+#' form nice-looking genotypes.
+#'
+#' The matrix method, on the other hand, is a handy tool for manipulating the
+#' pedigree structure. It produces a numeric matrix, using the internal index
+#' labeling both for individuals and alleles, making it very fast. In addition,
+#' all neccessary meta information (loop breakers, allele frequencies a.s.o) is
+#' kept as attributes, which makes it possible to recreate the original `ped`
+#' object.
 #'
 #' @param x Object of class `ped`.
 #' @param ... Further parameters
 #' @param markers (Optional) Vector of marker indices. By default, all markers
 #'   are included.
+#' @return A `data.frame` with `pedsize(x)` rows and `4 + nMarkers(x)` columns.
+#' @seealso [as.matrix.ped()]
 #'
 #' @export
 as.data.frame.ped = function(x, ..., markers) {
@@ -116,12 +130,12 @@ as.data.frame.ped = function(x, ..., markers) {
   fid = mid = rep("0", pedsize(x))
   fid[x$FID > 0] = lab[x$FID]
   mid[x$MID > 0] = lab[x$MID]
-  df = data.frame(id = lab, fid=fid, mid=mid, sex=x$SEX, stringsAsFactors = F)
+  df = data.frame(id = lab, fid=fid, mid=mid, sex=x$SEX, stringsAsFactors=FALSE)
 
   if(hasMarkers(x)) {
     mlist = if(missing(markers)) x$markerdata else getMarkers(x, markers)
-    geno = .prettyMarkers(mlist, ...)
-    df = cbind(df, geno)
+    geno = do.call(cbind, lapply(mlist, format))
+    df = cbind(df, geno, stringsAsFactors=FALSE)
   }
   df
 }
