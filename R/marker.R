@@ -62,7 +62,8 @@ marker = function(x, ...,  alleles = NULL, afreq = NULL, chrom = NA,
   }
 
   .createMarkerObject(m, alleles = alleles, afreq = afreq, chrom = chrom,
-      posMb = posMb, posCm=posCm, name = name, mutmat = mutmat)
+      posMb = posMb, posCm=posCm, name = name, mutmat = mutmat,
+      pedmembers = x$LABELS, sex = x$SEX)
 }
 
 
@@ -73,27 +74,48 @@ NULL
 
 
 .createMarkerObject = function(matr, alleles = NULL, afreq = NULL, chrom = NA,
-                               posMb = NA, posCm = NA, name = NA, mutmat = NULL) {
+                               posMb = NA, posCm = NA, name = NA, mutmat = NULL,
+                               pedmembers = NULL, sex = NULL) {
+  if(!is.null(alleles) && !all(matr %in% c(0, alleles))) {
+    notfound = setdiff(matr, c(0, alleles))
+    stop("Alleles used in genotypes but not included in `alleles` argument: ",
+         paste(notfound, collapse=", "), call.=FALSE)
+  }
+  if(!is.null(afreq)) {
+    if(is.null(alleles))
+       stop("Argument `alleles` cannot be NULL if `afreq` is non-NULL", call.=FALSE)
+    if (length(afreq) != length(alleles))
+      stop("Number of alleles doesn't match length of frequency vector", call.=FALSE)
+    if (round(sum(afreq), 3) != 1)
+      stop("Allele frequencies do not sum to 1: ", paste(afreq, collapse = ", "), call.=FALSE)
+  }
+  if(length(pedmembers) != nrow(matr))
+    stop("Number of allele matrix must equal the length of `pedmembers`", call.=FALSE)
+  if(length(sex) != nrow(matr))
+    stop("Number of allele matrix must equal the length of `sex`", call.=FALSE)
+
+  ### Alleles
   if (is.null(alleles)) {
     vec = as.vector(matr)
     alleles = unique.default(vec[vec != 0])
     if (!length(alleles)) alleles = 1
   }
-  if (!is.numeric(alleles) && !any(grepl("[^0-9\\.]", alleles)))
-    alleles = as.numeric(alleles)
-  all_ord = order(alleles)
-  alleles = alleles[all_ord]
-  nalleles = length(alleles)
+  else if (!anyNA(suppressWarnings(as.numeric(alleles))))
+    alleles = as.numeric(alleles) # ensure numerical sorting if appropriate
 
-  if (is.null(afreq))
+  # Sort (same order used below for frequencies)
+  allele_order = order(alleles)
+  alleles = alleles[allele_order]
+
+  ### Frequencies
+  if (is.null(afreq)) {
+    nalleles = length(alleles)
     afreq = rep.int(1, nalleles)/nalleles
-  else {
-    if (length(afreq) != nalleles)
-      stop("Number of alleles don't match length of frequency vector")
-    if (round(sum(afreq), 2) != 1)
-      warning("Allele frequencies for marker ", name, " do not sum to 1: ", paste(afreq, collapse = ", "))
-    afreq = afreq[all_ord]
   }
+  else
+    afreq = afreq[allele_order]
+
+  ### Mutation matrices
   if (!is.null(mutmat)) {
     stopifnot(is.list(mutmat) || is.matrix(mutmat))
     # If single matrix given: make sex specific list
@@ -106,11 +128,16 @@ NULL
       mutmat$male = .checkMutationMatrix(mutmat$male, alleles, label = "male")
     }
   }
-  m_obj = match(matr, alleles, nomatch = 0)
-  attributes(m_obj) = list(dim = dim(matr), alleles = as.character(alleles), afreq = afreq,
-                           chrom = chrom, posMb = posMb, posCm=posCm, name = name, mutmat = mutmat,
-      class = "marker")
-  m_obj
+
+  ### Create the internal allele matrix
+  m = match(matr, alleles, nomatch = 0)
+
+  ### Add everything else as attributes, including class = "marker".
+  attributes(m) = list(dim = dim(matr), alleles = as.character(alleles),
+                           afreq = afreq, chrom = chrom, posMb = posMb,
+                           posCm=posCm, name = name, mutmat = mutmat,
+                           pedmembers = pedmembers, sex = sex, class = "marker")
+  m
 }
 
 .checkMutationMatrix = function(mutmat, alleles, label = "") {
