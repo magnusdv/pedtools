@@ -1,4 +1,5 @@
 
+#' @export
 format.marker = function(x, sep = "/", missing = "-", ...) {
   als = c(missing, alleles(x))
   al1 = als[x[, 1] + 1]
@@ -11,6 +12,7 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
   gt
 }
 
+#' @export
 print.marker = function(x, sep = "/", missing = "-", ...) {
   gt = format(x, sep=sep, missing=missing)
   df = data.frame(id = attr(x, 'pedmembers'), geno=gt)

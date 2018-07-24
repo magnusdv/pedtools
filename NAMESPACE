@@ -2,8 +2,10 @@
 
 S3method(as.data.frame,ped)
 S3method(as.matrix,ped)
+S3method(format,marker)
 S3method(plot,ped)
 S3method(plot,singleton)
+S3method(print,marker)
 S3method(print,nucleus)
 S3method(print,ped)
 export(addChildren)
