@@ -1,7 +1,7 @@
 #' Complex pedigree structures
 #'
 #' These functions create certain classes of pedigrees that are not
-#' straigthforward to make with the simpler utilities described in [ped_create].
+#' straightforward to construct starting from the simple structures described in [ped_basic].
 #'
 #' The function `doubleCousins` returns a pedigree linking two individuals whose
 #' fathers are cousins of type (`degree1`, `removal1`), while the mothers are
@@ -27,7 +27,7 @@
 #'
 #' @return A [`ped`] object.
 #'
-#' @seealso [ped_create]
+#' @seealso [ped_basic]
 #'
 #' @examples
 #'
@@ -42,14 +42,13 @@
 #' plot(x)
 #'
 #' # Quadruple half first cousins
-#' # Weird plotting behaviour for this pedigree.
 #' x = quadHalfFirstCousins()
-#' # plot(x)
+#' # plot(x) # Weird plotting behaviour for this pedigree.
 #'
-#' @name ped_create_complex
+#' @name ped_complex
 NULL
 
-#' @rdname ped_create_complex
+#' @rdname ped_complex
 #' @export
 doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = FALSE, half2 = FALSE, child = FALSE) {
   assert_that(is_count0(degree1), is_count0(degree2), is_count0(removal1), is_count0(removal2))
@@ -101,13 +100,13 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
   x
 }
 
-#' @rdname ped_create_complex
+#' @rdname ped_complex
 #' @export
 doubleFirstCousins = function()
     # Wrapper for the most common case of doubleCousins()
     doubleCousins(1, 1)
 
-#' @rdname ped_create_complex
+#' @rdname ped_complex
 #' @export
 quadHalfFirstCousins = function() {
     # Creates quad half fist cousins pedigree. NB: Does not draw well!
@@ -115,7 +114,7 @@ quadHalfFirstCousins = function() {
         sex=rep(1:2, 5))
 }
 
-#' @rdname ped_create_complex
+#' @rdname ped_complex
 #' @export
 fullSibMating = function(generations) {
     # Creates a pedigree resulting from repeated brother-sister matings.
@@ -126,7 +125,7 @@ fullSibMating = function(generations) {
     x
 }
 
-#' @rdname ped_create_complex
+#' @rdname ped_complex
 #' @export
 halfSibStack = function(generations) {
     # Creates pedigree resulting from a breeding scheme where each generation adds two half

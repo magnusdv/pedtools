@@ -1,7 +1,7 @@
 #' Pedigree construction
 #'
 #' Basic construction of `ped` objects. Utility functions for creating many
-#' common pedigree structures are described in [ped_create].
+#' common pedigree structures are described in [ped_basic].
 #'
 #' Internally, this happens: ... #TODO
 #'
@@ -41,7 +41,7 @@
 #'   This is usually set by [breakLoops()].}
 #'   }
 #' @author Magnus Dehli Vigeland
-#' @seealso [ped_create], [ped_modify], [ped_subsets]
+#' @seealso [ped_basic], [ped_add], [ped_modify], [ped_subsets]
 #'
 #' @examples
 #' x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))

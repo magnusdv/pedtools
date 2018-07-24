@@ -51,10 +51,10 @@
 #' # A child of first cousin parents.
 #' cousinsPed(degree=1, child=TRUE)
 #'
-#' @name ped_create
+#' @name ped_basic
 NULL
 
-#' @rdname ped_create
+#' @rdname ped_basic
 #' @export
 nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
                       children = as.character(seq.int(3, length.out=nch))) {
@@ -72,7 +72,7 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
   setLabels(x, c(father, mother, children))
 }
 
-#' @rdname ped_create
+#' @rdname ped_basic
 #' @export
 cousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
   # Creates a pedigree linking two n'th cousins k times removed, where
@@ -99,7 +99,7 @@ cousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
   x
 }
 
-#' @rdname ped_create
+#' @rdname ped_basic
 #' @export
 halfCousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
   # Creates a pedigree linking two n'th half cousins k times removed, where

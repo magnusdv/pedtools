@@ -54,10 +54,10 @@ This is usually set by \code{\link[=breakLoops]{breakLoops()}}.}
 }
 \description{
 Basic construction of \code{ped} objects. Utility functions for creating many
-common pedigree structures are described in \link{ped_create}.
+common pedigree structures are described in \link{ped_basic}.
 }
 \details{
-Internally, this happens: ...
+Internally, this happens: ... #TODO
 
 A singleton is a special \code{ped} object whose pedigree contains 1
 individual. The class attribute of a singleton is \code{c('singleton', 'ped')}
@@ -68,7 +68,7 @@ y = singleton('NN', sex=2, famid="SINGLETON GIRL")
 
 }
 \seealso{
-\link{ped_create}, \link{ped_modify}, \link{ped_subsets}
+\link{ped_basic}, \link{ped_add}, \link{ped_modify}, \link{ped_subsets}
 }
 \author{
 Magnus Dehli Vigeland
