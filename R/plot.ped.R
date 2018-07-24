@@ -74,8 +74,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
            "  * a `marker` or `markerList` object", call.=FALSE)
     checkConsistency(x, mlist)
 
-    gg = .prettyMarkers(mlist, sep = sep, missing = missing, singleCol = TRUE,
-                        sex = x$pedigree[, "SEX"])
+    gg = do.call(cbind, lapply(mlist, format, sep=sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
     if (skip.empty.genotypes)
       geno[rowSums(do.call(cbind, mlist)) == 0] = ""

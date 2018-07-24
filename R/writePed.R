@@ -32,11 +32,11 @@ writePed = function(x, prefix = x$famid, what = c("ped", "map", "dat", "freq"), 
   generated.files = character(0)
 
   if (merlin) {
-    pedmatr = cbind(1, as.matrix(x, FALSE))
+    pedmatr = cbind(1, as.matrix(x, FALSE)) # 1 is FAMID
   }
   else { #TODO: avoid actual data.frame here. Slow! (Paramlink original ok...)
     famid = if(x$FAMID == "") 1 else x$FAMID
-    pedmatr = cbind(famid=famid, as.data.frame(x)) #.prettyMarkers(x$markerdata, singleCol = FALSE))
+    pedmatr = cbind(famid=famid, as.data.frame(x))
   }
 
   if ("ped" %in% what) {
