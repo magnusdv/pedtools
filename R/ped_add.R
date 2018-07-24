@@ -165,11 +165,11 @@ addDaughter = function(x, parent, id = NULL, verbose = TRUE) {
 addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
   if (length(id) > 1)
       stop("Only one individual at the time, please")
-
-  id_int = internalID(x, id)
-  if (id_int %in% x$NONFOUNDERS)
+  if (id %in% nonfounders(x))
     stop("Individual ", id, " already has parents in the pedigree", call. = FALSE)
 
+  id_int = internalID(x, id)
+  
   # Check that assigned parents are OK
   desc = descendants(x, id)
   if (!is.null(father)) {
@@ -259,7 +259,8 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   parents_of_remain = c(x$FID[-c(ids_int, desc)], x$MID[-c(ids_int, desc)])
 
   # But remove founders that are NOT among the above
-  leftover_spouses = setdiff(x$FOUNDERS, c(ids_int, parents_of_remain))
+  FOU = founders(x, internal=T)
+  leftover_spouses = setdiff(FOU, c(ids_int, parents_of_remain))
 
   if (verbose && length(leftover_spouses))
     message("Removing leftover spouses: ", catLabels(x, leftover_spouses))

@@ -45,13 +45,15 @@ NULL
 #' @rdname ped_subsets
 #' @export
 founders = function(x, internal = FALSE) {
-  if (internal) x$FOUNDERS else x$LABELS[x$FOUNDERS]
+  is_fou = x$FID == 0
+  if (internal) which(is_fou) else x$LABELS[is_fou]
 }
 
 #' @rdname ped_subsets
 #' @export
 nonfounders = function(x, internal = FALSE) {
-  if (internal) x$NONFOUNDERS else x$LABELS[x$NONFOUNDERS]
+  is_nonfou = x$FID > 0
+  if (internal) which(is_nonfou) else x$LABELS[is_nonfou]
 }
 
 #' @rdname ped_subsets
@@ -171,9 +173,9 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
 #' @export
 siblings = function(x, id, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
-  if (id %in% x$FOUNDERS) return(numeric(0))
   fa = x$FID[id]
   mo = x$MID[id]
+  if (fa==0 && mo==0) return(numeric(0))
 
   samefather = x$FID == fa
   samemother = x$MID == mo

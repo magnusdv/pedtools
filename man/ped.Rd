@@ -46,10 +46,6 @@ this equals the input argument \code{sex}.}
 \item{FAMID}{The family ID.}
 \item{LABELS}{A character vector containing the original id labels.
 Unless the pedigree has been reordered, this equals the input argument \code{id}.}
-\item{FOUNDERS}{A numerical vector containing the internal IDs of the founder
-individuals. Equals \code{which(FID==0)}.}
-\item{NONFOUNDERS}{A numerical vector containing the internal IDs of the nonfounder
-individuals. Equals \code{which(FID > 0)}.}
 \item{hasLoops}{A logical: TRUE if the pedigree is inbred.}
 \item{loop_breakers}{A matrix with loop breaker ID's in the first
 column and their duplicates in the second column. All entries refer to the internal IDs.

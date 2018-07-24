@@ -35,10 +35,6 @@
 #'   \item{FAMID}{The family ID.}
 #'   \item{LABELS}{A character vector containing the original id labels.
 #'     Unless the pedigree has been reordered, this equals the input argument `id`.}
-#'   \item{FOUNDERS}{A numerical vector containing the internal IDs of the founder
-#'     individuals. Equals `which(FID==0)`.}
-#'   \item{NONFOUNDERS}{A numerical vector containing the internal IDs of the nonfounder
-#'     individuals. Equals `which(FID > 0)`.}
 #'   \item{hasLoops}{A logical: TRUE if the pedigree is inbred.}
 #'   \item{loop_breakers}{A matrix with loop breaker ID's in the first
 #'   column and their duplicates in the second column. All entries refer to the internal IDs.
@@ -64,7 +60,6 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
 
   # Initialise ped object
   x = list(ID = ID, FID = FID, MID = MID, SEX = sex,
-           FOUNDERS = which(FID == 0), NONFOUNDERS = which(FID > 0),
            LABELS = NULL, FAMID = NULL,
            hasLoops = NULL, loop_breakers = NULL, markerdata = NULL)
 

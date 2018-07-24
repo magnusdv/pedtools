@@ -113,7 +113,8 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
   # Convert to internal IDs and sort (don't skip this)
   loop_breakers = sort.int(internalID(x, loop_breakers))
 
-  if (any(loop_breakers %in% x$FOUNDERS))
+  FOU = founders(x, internal=T)
+  if (any(loop_breakers %in% FOU))
     stop("Pedigree founders cannot be loop breakers.")
 
   if (verbose)
@@ -233,10 +234,12 @@ findLoopBreakers2 = function(x) {
     rbind(edge.marriage_F, edge.marriage_M, edge.children)
   }
 
-  id = x$ID[x$NONFOUNDERS]
-  fid = x$FID[x$NONFOUNDERS]
-  mid = x$MID[x$NONFOUNDERS]
-  nonf = as.character(x$NONFOUNDERS)
+  NONFOU = nonfounders(x, internal=T)
+  id = x$ID[NONFOU]
+  fid = x$FID[NONFOU]
+  mid = x$MID[NONFOU]
+  nonf = as.character(NONFOU)
+  
   while (T) {
     g = igraph::graph_from_edgelist(ped2edge(id, fid, mid))
     loop = igraph::girth(g)$circle

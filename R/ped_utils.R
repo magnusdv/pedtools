@@ -16,9 +16,10 @@ hasCA = function(x) {
   if(isFALSE(all(x$LABELS == 1:N)))
     stop("This is currently only implemented for pedigrees with ordering 1,2,...")
   A = matrix(F, ncol=N, nrow=N)
-  for(i in x$FOUNDERS) {
+  FOU = founders(x, internal=T)
+  for(i in FOU) {
     # vector of all descendants of i, including i
-    desc = c(i, descendants(x,i,internal=TRUE))
+    desc = c(i, descendants(x, i, internal=TRUE))
     A[fast.grid(rep(list(desc), 2))] = T
   }
   A
@@ -69,10 +70,13 @@ pedsize = function(x) {
   length(x$ID)
 }
 
-catLabels = function(x, int_ids) paste(x$LABELS[int_ids], collapse = ", ")
+catLabels = function(x, int_ids) {
+  paste(x$LABELS[int_ids], collapse = ", ")
+}
 
 .generations = function(x) {
-    max(lengths(unlist(.descentPaths(x, x$FOUNDERS, internal = TRUE), recursive = F)))
+  FOU = founders(x, internal=T)
+  max(lengths(unlist(.descentPaths(x, FOU, internal=T), recursive=F)))
 }
 
 # Utility function for generating numbered "NN" labels.
