@@ -135,6 +135,13 @@ as.data.frame.ped = function(x, ..., markers) {
   if(hasMarkers(x)) {
     mlist = if(missing(markers)) x$markerdata else getMarkers(x, markers)
     geno = do.call(cbind, lapply(mlist, format))
+
+    # headers of genotype columns: name if present, otherwise <idx>
+    nms = vapply(mlist, name, character(1))
+    if(any(na_name <- is.na(nms)))
+      nms[na_name] = sprintf("<%d>", which(na_name))
+    colnames(geno) = nms
+
     df = cbind(df, geno, stringsAsFactors=FALSE)
   }
   df
