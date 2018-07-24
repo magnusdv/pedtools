@@ -8,7 +8,7 @@ test_that("example ped from identity package", {
   y = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), famid="identity-example")
   expect_identical(restore_ped(as.matrix(y)), y)
 
-  z = reorder(y, order(as.numeric(y$LABELS)))
+  z = reorderPed(y, order(as.numeric(y$LABELS)))
   expect_identical(restore_ped(as.matrix(z)), z)
 })
 
@@ -17,7 +17,7 @@ test_that("ped -> matrix -> ped", {
   y = restore_ped(as.matrix(x))
   expect_identical(x, y)
 
-  x2 = reorder(x, 3:1)
+  x2 = reorderPed(x, 3:1)
   y2 = restore_ped(as.matrix(x2))
   expect_identical(x2, y2)
 })

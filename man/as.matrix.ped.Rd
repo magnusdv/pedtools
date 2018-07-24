@@ -62,8 +62,8 @@ attrs$labels = rev(attrs$labels)
 # Restore ped:
 y = restore_ped(m, attrs=attrs)
 
-# Of course a simpler way is use reorder():
-z = reorder(x, 3:1)
+# Of course a simpler way is use reorderPed():
+z = reorderPed(x, 3:1)
 stopifnot(identical(y, z))
 
 }

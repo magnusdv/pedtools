@@ -4,13 +4,13 @@ test_that("labels are correct after reordering", {
   x = setLabels(nuclearPed(1), letters[1:3])
   expect_identical(x$LABELS, letters[1:3])
 
-  x = reorder(x, 3:1)
+  x = reorderPed(x, 3:1)
   expect_identical(x$LABELS, letters[3:1])
 })
 
 test_that("trivial reorder has no effect", {
   x = setLabels(nuclearPed(1), letters[1:3])
-  y = reorder(x, 1:pedsize(x))
+  y = reorderPed(x, 1:pedsize(x))
   expect_identical(x, y)
 })
 
@@ -34,7 +34,7 @@ test_that("swapSex() works with nonnumeric labels", {
 })
 
 test_that("swapSex() works after reorder", {
-  x = reorder(nuclearPed(1, sex=1), 3:1)
+  x = reorderPed(nuclearPed(1, sex=1), 3:1)
   y = swapSex(x, 3)
   expect_equal(y$SEX[1], 2)
   expect_equal(getSex(y, 3), 2)
@@ -58,11 +58,11 @@ test_that("addChildren works with num labels", {
   f = singleton(4, sex=2)
 
   f1 = addChildren(f, mother=4, nch=2)
-  expect_equal(reorder(f1, c(2,1,3,4)),
+  expect_equal(reorderPed(f1, c(2,1,3,4)),
                nuclearPed(mother=4, father=5, children=6:7))
 
   f2 = addChildren(f, mother=4, father=1, nch=2, ids=2:3)
-  expect_equal(reorder(f2, c(2,1,3,4)),
+  expect_equal(reorderPed(f2, c(2,1,3,4)),
                nuclearPed(mother=4, father=1, children=2:3))
 
   # inbreeding example
@@ -84,11 +84,11 @@ test_that("addChildren works with char labels", {
   f = singleton("mo", sex=2)
 
   f1 = addChildren(f, mother="mo", nch=2)
-  expect_equal(reorder(f1, c(2,1,3,4)),
+  expect_equal(reorderPed(f1, c(2,1,3,4)),
                nuclearPed(father="NN_1", mother="mo", children=c("NN_2","NN_3")))
 
   f2 = addChildren(f, mother="mo", father="fa", nch=2, ids=c("b1", "b2"))
-  expect_equal(reorder(f2, c(2,1,3,4)),
+  expect_equal(reorderPed(f2, c(2,1,3,4)),
                nuclearPed(father="fa", mother="mo", children=c("b1", "b2")))
 
   # inbreeding example

@@ -3,7 +3,7 @@
 #' Basic construction of `ped` objects. Utility functions for creating many
 #' common pedigree structures are described in [ped_create].
 #'
-#' Internally, this happens: ...
+#' Internally, this happens: ... #TODO
 #'
 #' A singleton is a special `ped` object whose pedigree contains 1
 #' individual. The class attribute of a singleton is `c('singleton',
@@ -155,85 +155,6 @@ checkped = function(x) {
 #TODO
 as_ped.matrix = function(m) ped(id=m[,1], fid=m[,2], mid=m[,3], sex=m[,4])
 
-
-#' Internal pedigree order
-#'
-#' Return the internal indices of pedigree members.
-#'
-#' @param x A `ped` object.
-#' @param labels A character vector (or coercible to one) of original ID labels.
-#'
-#' @return A numeric vector
-#' @export
-#'
-#' @examples
-#' x = nuclearPed(1)
-#' x = relabel(x, c("fa", "mo", "ch"))
-#' internalID(x, "ch")
-#'
-internalID = function(x, labels) {
-  assert_that(is.ped(x))
-  int_ids = match(labels, x$LABELS)
-  if (anyNA(int_ids)) {
-    wrong = labels[is.na(int_ids)]
-    stop(sprintf("Unknown member%s of %s: %s", if(length(wrong)>1) "s" else "",
-                 deparse(substitute(x)), paste(wrong, collapse=", ")),
-                 call.=FALSE)
-  }
-  int_ids
-}
-
-#' Standard pedigree order
-#'
-#' Reorder a `ped` object so parents come before their children.
-#'
-#' @param x a [ped()] object
-#'
-#' @examples
-#' x = reorder(nuclearPed(1), 3:1)
-#' x
-#' parents_before_children(x)
-#'
-#' @export
-parents_before_children = function(x) {
-  assert_that(is.ped(x))
-  if(is.singleton(x) || has_parents_before_children(x))
-    return(x)
-
-  neworder = x$ID
-  i=1
-  while (i < pedsize(x)) {
-    current = neworder[i]
-    maxpar = max(match(c(x$FID[current], x$MID[current]), neworder, nomatch = 0))
-    if (maxpar > i) { # push current indiv below below parents
-      neworder[i:maxpar] = neworder[c((i+1):maxpar, i)]
-    }
-    else i = i + 1
-  }
-  reorder(x, neworder)
-}
-
-#' @export
-reorder = function(x, neworder) {
-  assert_that(is.ped(x))
-  if(is.singleton(x))
-    return(x)
-  xmatr = as.matrix(x)
-  attr = attributes(xmatr)
-  attr$labels = attr$labels[neworder]
-  if(!is.null(lp <- attr$loop_breakers))
-    attr$loop_breakers = matrix(match(lp, neworder), ncol=2)
-  restore_ped(xmatr[neworder, ], attrs = attr)
-}
-
-#' @rdname parents_before_children
-#' @export
-has_parents_before_children = function(x) {
-  assert_that(is.ped(x))
-  father_before_child = x$FID < x$ID
-  mother_before_child = x$MID < x$ID
-  all(father_before_child & mother_before_child)
-}
 
 # TODO
 any_self_ancest = function(id, fid, mid) {

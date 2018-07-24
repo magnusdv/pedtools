@@ -11,7 +11,7 @@ test_that("example ped from identity package", {
   y = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), famid="identity-example")
   expect_identical(restore_ped(as.matrix(y)), y)
 
-  z = reorder(y, order(as.numeric(y$LABELS)))
+  z = reorderPed(y, order(as.numeric(y$LABELS)))
   expect_identical(restore_ped(as.matrix(z)), z)
 })
 
@@ -65,7 +65,7 @@ test_that("tieLoops restores broken loops (fullSib)", {
   x2 = fullSibMating(3)
   expect_identical(x2, tie_silent(break_silent(x2)))
 
-  x3 = reorder(x2, 8:1)
+  x3 = reorderPed(x2, 8:1)
   expect_identical(x3, tie_silent(break_silent(x3)))
 
   x4 = relabel(x3, letters[1:8])
