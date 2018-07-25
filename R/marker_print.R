@@ -14,28 +14,25 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
 
 #' @export
 print.marker = function(x, sep = "/", missing = "-", ...) {
+  pedlabels = attr(x, 'pedmembers')
   gt = format(x, sep=sep, missing=missing)
-  df = data.frame(id = attr(x, 'pedmembers'), geno=gt)
-  print(df, row.names=FALSE)
+  df = data.frame(pedlabels, gt, stringsAsFactors=F)
 
-  cat("---------\n")
-  # Name
-  cat("Name:", attr(x, 'name'), "\n")
+  # Use marker name as column header, or "<NA>"
+  mname = name(x)
+  if(is.na(mname))
+    mname = "<NA>"
+  names(df) = c("", mname)
+
+  print(df, row.names = FALSE)
+
+  cat(strrep("-", max(nchar(pedlabels)) + nchar(mname) +3), "\n")
 
   # Chromosome - position
-  chr = attr(x, 'chrom')
-  mb = attr(x, 'posMb')
-  cm = attr(x, 'posCm')
-  if(!is.na(mb) && !is.na(cm))
-    pos = sprintf("%f (mb); %f (cm)", mb, cm)
-  else if(!is.na(mb))
-    pos = sprintf("%f (Mb)", mb)
-  else if(!is.na(cm))
-    pos = sprintf("%f (cM)", cm)
-  else
-    pos = NA
-  chr_pos = if(is.na(chr) && is.na(pos)) NA else sprintf("%s - %s", chr, pos)
-  cat(sprintf("Position: %s\n", chr_pos))
+  chr = chrom(x)
+  mb = posMb(x)
+  cm = posCm(x)
+  cat(sprintf("Chrom %s: %s (Mb), %s (cM)\n", chr, mb, cm))
 
   # Mutations
   mut = attr(x, "mutmat")
