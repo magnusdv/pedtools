@@ -12,7 +12,7 @@ genotype.marker = function(x, id, ...) {
 
   id_int = match(id, attr(x, 'pedmembers'))
   if(is.na(id_int))
-    stop("ID label not associated with this marker: ", id, call.=F)
+    stop("Unknown ID label: ", id, call.=F)
 
   g_num = x[id_int, ]
 
@@ -22,10 +22,10 @@ genotype.marker = function(x, id, ...) {
 }
 
 #' @export
-genotype.ped = function(x, markeridx=NULL, markername=NULL, id, ...) {
-  mlist = getMarkers(x, markeridx=markeridx, markername=markername)
+genotype.ped = function(x, markers=NULL, id, ...) {
+  mlist = getMarkers(x, markers=markers)
   if(length(mlist) == 0)
-    stop("No markers selected")
+    stop("No markers selected") #TODO
   if(length(mlist) > 1)
     stop("More than one marker selected")
 
@@ -40,46 +40,44 @@ genotype.ped = function(x, markeridx=NULL, markername=NULL, id, ...) {
 
 #' @export
 `genotype<-.marker` = function(x, id, ..., value) {
-  id_int = match(id, attr(x, 'pedmembers'))
+  pedlabels = attr(x, 'pedmembers')
+  id_int = match(id, pedlabels)
 
-  if(anyNA(id_int))
-    stop("ID label not associated with this marker: ",
-         paste(setdiff(id, x$LABELS), collapse=", "), call.=F)
+  if (anyNA(id_int))
+    stop("Unknown ID label: ", paste(setdiff(id, pedlabels), collapse=", "),
+         call.=F)
 
-  if(length(value)==1)
+  if (!length(value) %in% 1:2)
+    stop("Length of genotype vector must be 1 or 2", call.=F)
+
+  if(length(value) == 1)
     value = rep(value, 2)
 
-  if(length(id_int)==1 && length(value) != 2)
-    stop("When replacing the genotype of a single individual, ",
-         "the replacement vector must have length either 1 or 2", call.=F)
-
   if(length(id_int) > 1)
-    if(length(value) == 2)
-      value = rep(value, each=length(id_int))
-    else if(length(value) != 2*length(id_int))
-      stop("Wrong length of replacement vector. See ?genotype", call.=F)
+    value = rep(value, each=length(id_int))
 
-    a = alleles(x)
-    g_num = match(value, a, nomatch=0)
+  a = alleles(x)
+  g_num = match(value, a, nomatch=0)
 
-    miss = value[g_num == 0]
-    if(!all(miss %in% c("0", "", "-", NA)))
-      stop("Alleles associated with this marker are: ", paste(a, collapse=", "), call.=F)
+  miss = value[g_num == 0]
+  unknown = setdiff(miss, c("0", "", "-", NA))
+  if(length(unknown) > 0)
+    stop("Unknown allele for this marker: ", paste(unknown, collapse=", "),
+         call.=F)
 
-    x[id_int, ] = g_num
-    x
+  x[id_int, ] = g_num
+  x
 }
 
 #' @export
-`genotype<-.ped` = function(x, markeridx=NULL, markername=NULL, id, ..., value) {
-  if(is.null(markeridx))
-    markeridx = whichMarkers(x, markername=markername)
-  if(length(markeridx) == 0)
-    stop("No markers selected", call.=F)
-  if(length(markeridx) > 1)
+`genotype<-.ped` = function(x, marker, id, ..., value) {
+  if(missing(marker) || length(marker) == 0)
+    stop("Argument `marker` cannot be empty", call.=F)
+  if(length(marker) > 1)
     stop("Genotype replacement can only be done for a single marker", call.=F)
 
-  genotype(x$markerdata[[markeridx]], id) = value
+  idx = whichMarkers(x, markers=marker)
+  genotype(x$markerdata[[idx]], id) = value
   x
 }
 
@@ -97,13 +95,13 @@ alleles.marker = function(x, ...) {
 }
 
 #' @export
-alleles.ped = function(x, markeridx=NULL, markername=NULL, ...) {
-  mlist = getMarkers(x, markeridx=markeridx, markername=markername)
-  if(length(mlist) == 0)
-    stop("No markers selected")
-  if(length(mlist) > 1)
-    stop("More than one marker selected")
+alleles.ped = function(x, marker, ...) {
+  if(missing(marker) || length(marker) == 0)
+    stop("Argument `marker` cannot be empty", call.=F)
+  if(length(marker) > 1)
+    stop("Allele extraction can only be done for a single marker", call.=F)
 
+  mlist = getMarkers(x, markers=marker)
   m = mlist[[1]]
   alleles(m)
 }
@@ -118,16 +116,18 @@ afreq = function(x, ...) {
 
 #' @export
 afreq.marker = function(x, ...) {
-  attr(x, "afreq")
+  afr = attr(x, "afreq")
+  names(afr) = alleles(x)
+  afr
 }
 
 #' @export
-afreq.ped = function(x, markeridx=NULL, markername=NULL, ...) {
-  mlist = getMarkers(x, markeridx=markeridx, markername=markername)
-  if(length(mlist) == 0)
-    stop("No markers selected")
-  if(length(mlist) > 1)
-    stop("More than one marker selected")
+afreq.ped = function(x, marker, ...) {
+  if(missing(marker) || length(marker) == 0)
+    stop("Argument `marker` cannot be empty", call.=F)
+  if(length(marker) > 1)
+    stop("Frequency extraction can only be done for a single marker", call.=F)
+  mlist = getMarkers(x, markers=marker)
 
   m = mlist[[1]]
   afreq(m)
@@ -140,16 +140,41 @@ afreq.ped = function(x, markeridx=NULL, markername=NULL, ...) {
 
 #' @export
 `afreq<-.marker` = function(x, ..., value) {
-  old = attr(x, 'afreq')
-  if(length(value) != length(old))
-    stop("Replacement vector must have same length as the original: ",
-         length(old), call.=F)
+  als = alleles(x)
+  freqnames = names(value)
+
+  if(is.null(freqnames))
+    stop("Frequency vector must be named (with allele labels)", call.=F)
+
+  if(anyDuplicated(freqnames))
+    stop("Duplicated alleles in frequency vector: ", value[duplicated(value)], call.=F)
+
+  if(length(freqnames) != length(als) || anyNA(als_order <- match(freqnames, als))) {
+    if(length(unknown <- setdiff(freqnames, als)) > 0)
+      stop("Unknown allele: ", paste(unknown, collapse=", "), call.=F)
+
+    if(length(miss <- setdiff(als, freqnames)) > 0)
+      stop("Alleles missing from frequency vector: ", paste(miss, collapse=", "), call.=F)
+  }
+
   if(round(sum(value), 3) != 1)
-    stop("Frequency vector must sum to 1", call.=F)
-  attr(x, 'afreq') = value
+    stop("Frequencies must sum to 1", call.=F)
+
+  attr(x, 'afreq') = value[als_order]
   x
 }
 
+#' @export
+`afreq<-.ped` = function(x, marker, ..., value) {
+  if(missing(marker) || length(marker) == 0)
+    stop("Argument `marker` cannot be empty", call.=F)
+  if(length(marker) > 1)
+    stop("Frequency replacement can only be done for a single marker", call.=F)
+
+  idx = whichMarkers(x, markers=marker)
+  afreq(x$markerdata[[idx]]) = value
+  x
+}
 
 ######################
 # simple accessors:
@@ -173,8 +198,8 @@ name.marker = function(x, ...) {
 }
 
 #' @export
-name.ped = function(x, markeridx=NULL, ...) {
-  mlist = getMarkers(x, markeridx=markeridx)
+name.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers=markers)
   vapply(mlist, name, character(1))
 }
 
@@ -189,8 +214,8 @@ chrom.marker = function(x, ...) {
 }
 
 #' @export
-chrom.ped = function(x, markeridx=NULL, markername=NULL, ...) {
-  mlist = getMarkers(x, markeridx=markeridx, markername=markername)
+chrom.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers=markers)
   vapply(mlist, chrom, character(1))
 }
 
@@ -205,8 +230,8 @@ posMb.marker = function(x, ...) {
 }
 
 #' @export
-posMb.ped = function(x, markeridx=NULL, markername=NULL, ...) {
-  mlist = getMarkers(x, markeridx=markeridx, markername=markername)
+posMb.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers=markers)
   vapply(mlist, posMb, numeric(1))
 }
 
@@ -221,8 +246,8 @@ posCm.marker = function(x, ...) {
 }
 
 #' @export
-posCm.ped = function(x, markeridx=NULL, markername=NULL, ...) {
-  mlist = getMarkers(x, markeridx=markeridx, markername=markername)
+posCm.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers=markers)
   vapply(mlist, posCm, numeric(1))
 }
 
@@ -242,21 +267,20 @@ posCm.ped = function(x, markeridx=NULL, markername=NULL, ...) {
 }
 
 #' @export
-`name<-.ped` = function(x, markeridx=NULL, markername=NULL, ..., value) {
+`name<-.ped` = function(x, markers, ..., value) {
+  if(missing(markers) || length(markers) == 0)
+    stop("Argument `marker` cannot be empty", call.=F)
+  if(length(value) != length(markers))
+    stop("Length of replacement vector must equal the number of markers", call.=F)
   if(!is.character(value))
     stop("Replacement must be a character vector", call.=F)
-
-  if(is.null(markeridx))
-    markeridx = whichMarkers(x, markername=markername)
-  if(length(markeridx) == 0)
-    stop("No markers selected", call.=F)
-  if(length(value) != length(markeridx))
-    stop("Length of replacement vector must equal the number of markers", call.=F)
   if(anyDuplicated(value))
     stop("Replacement values must be unique", call.=F)
 
-  x$markerdata[markeridx] = lapply(seq_along(markeridx), function(i) {
-    m = x$markerdata[[markeridx[i]]]
+  idx = whichMarkers(x, markers=markers)
+
+  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
+    m = x$markerdata[[idx[i]]]
     name(m) = value[i]
     m
   })
