@@ -63,10 +63,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
       mlist = list(marker)
     else if (is.markerList(marker))
       mlist = marker
-    else if (is.numeric(marker))
-      mlist = getMarkers(x, markeridx=marker)
-    else if (is.character(marker))
-      mlist = getMarkers(x, markernames=marker)
+    else if (is.numeric(marker) || is.character(marker))
+      mlist = getMarkers(x, markers=marker)
     else
       stop("Argument `marker` must be either:\n",
            "  * an integer vector (of marker indices)\n",

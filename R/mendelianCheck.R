@@ -34,7 +34,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
 
   nucs = subnucs(x)
 
-  chromX = whichMarkers(x, chroms=23)
+  chromX = whichMarkers(x, chrom=23)
   chromAUT = .mysetdiff(seq_len(nMarkers(x)), chromX)
 
   errorlist = vector(length=pedsize(x), mode="list")
@@ -43,8 +43,8 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
 
   ### AUTOSOMAL
   if (length(chromAUT) > 0) {
-    if (verbose)
-        cat("\n### Checking autosomal markers ###\n")
+    #if (verbose)
+    #    cat("\n### Checking autosomal markers ###\n")
     allelematr = do.call(cbind, x$markerdata[chromAUT])
     for (sub in nucs) {
       fa = allelematr[sub$father, ]
@@ -83,8 +83,8 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
 
   ### X
   if (length(chromX) > 0) {
-    if (verbose)
-        cat("\n### Checking X-linked markers ###\n")
+    #if (verbose)
+    #    cat("\n### Checking X-linked markers ###\n")
     sex = x$SEX
     allelematr = do.call(cbind, x$markerdata[chromX])
 
