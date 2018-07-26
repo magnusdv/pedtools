@@ -194,7 +194,7 @@ name = function(x, ...) {
 
 #' @export
 name.marker = function(x, ...) {
-  as.character(attr(x, 'name'))
+  attr(x, 'name')
 }
 
 #' @export
@@ -210,7 +210,7 @@ chrom = function(x, ...) {
 
 #' @export
 chrom.marker = function(x, ...) {
-  as.character(attr(x, 'chrom'))
+  attr(x, 'chrom')
 }
 
 #' @export
@@ -252,7 +252,7 @@ posCm.ped = function(x, markers, ...) {
 }
 
 
-### setters
+### name setter
 #' @export
 `name<-` = function(x, ..., value) {
   UseMethod("name<-")
@@ -260,16 +260,21 @@ posCm.ped = function(x, markers, ...) {
 
 #' @export
 `name<-.marker` = function(x, ..., value) {
-  if(!is.character(value) || length(value) != 1)
-    stop("Replacement value must be a string", call.=F)
-  attr(x, 'name') = value
+  name = as.character(value)
+
+  if(length(name) != 1)
+    stop("Length of `name` must be 1: ", name, call.=F)
+  if (isTRUE(suppressWarnings(name == as.integer(name))))
+    stop("Attribute `name` cannot consist entirely of digits: ", name, call.=F)
+
+  attr(x, 'name') = name
   x
 }
 
 #' @export
 `name<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
-    stop("Argument `marker` cannot be empty", call.=F)
+    stop("Argument `markers` cannot be empty", call.=F)
   if(length(value) != length(markers))
     stop("Length of replacement vector must equal the number of markers", call.=F)
   if(!is.character(value))
@@ -282,6 +287,44 @@ posCm.ped = function(x, markers, ...) {
   x$markerdata[idx] = lapply(seq_along(idx), function(i) {
     m = x$markerdata[[idx[i]]]
     name(m) = value[i]
+    m
+  })
+  x
+}
+
+### chrom setter
+#' @export
+`chrom<-` = function(x, ..., value) {
+  UseMethod("chrom<-")
+}
+
+#' @export
+`chrom<-.marker` = function(x, ..., value) {
+  chrom = as.character(value)
+
+  if(length(chrom) != 1)
+    stop("Length of `chrom` must be 1: ", chrom, call.=F)
+
+  attr(x, 'chrom') = chrom
+  x
+}
+
+#' @export
+`chrom<-.ped` = function(x, markers, ..., value) {
+  if(missing(markers) || length(markers) == 0)
+    stop("Argument `markers` cannot be empty", call.=F)
+  if(length(value) != length(markers))
+    stop("Length of replacement vector must equal the number of markers", call.=F)
+  if(!is.character(value))
+    stop("Replacement must be a character vector", call.=F)
+  if(anyDuplicated(value))
+    stop("Replacement values must be unique", call.=F)
+
+  idx = whichMarkers(x, markers=markers)
+
+  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
+    m = x$markerdata[[idx[i]]]
+    chrom(m) = value[i]
     m
   })
   x
