@@ -2,3 +2,4 @@ R/.*
 .Rproj.user
 .Rhistory
 .RData
+inst/doc

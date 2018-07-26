@@ -10,8 +10,11 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat,
-    igraph
+    igraph,
+    knitr,
+    rmarkdown
 Imports: assertthat,
     kinship2
 RoxygenNote: 6.0.1
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr
