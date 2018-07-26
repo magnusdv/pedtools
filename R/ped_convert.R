@@ -22,8 +22,8 @@
 #'
 #' * `famid` the family identifier (a string)
 #' * `labels` the ID labels (a character vector)
-#' * `hasLoops` a logical indicating whether `x` has unboken loops
-#' * `loop_breakers` a numerical matrix, or NULL
+#' * `UNBROKEN_LOOPS` a logical indicating whether `x` has unboken loops
+#' * `LOOP_BREAKERS` a numerical matrix, or NULL
 #' * `markerattr` a list of length `nMarkers(x)`, containing the attributes of each marker
 #'
 #'  For `restore_ped`: A `ped` object.
@@ -60,8 +60,8 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
   if (include.attrs) {
     attr(m, "famid") = x$FAMID
     attr(m, "labels") = x$LABELS
-    attr(m, "hasLoops") = x$hasLoops
-    attr(m, "loop_breakers") = x$loop_breakers
+    attr(m, "UNBROKEN_LOOPS") = x$UNBROKEN_LOOPS
+    attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
     if(hasMarkers(x)) {
       attr(m, "markerattr") = lapply(x$markerdata, attributes)
     }
@@ -77,7 +77,7 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
     attrs = attributes(x)
   p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attr(x, "famid"), check = check, reorder=F)
   p = setLabels(p, attrs$labels)
-  p['loop_breakers'] = list(attrs$loop_breakers) # Trick to keep explicit NULLs
+  p['LOOP_BREAKERS'] = list(attrs$LOOP_BREAKERS) # Trick to keep explicit NULLs
 
   ### Markers
   if((nc <- ncol(x)) > 4) {

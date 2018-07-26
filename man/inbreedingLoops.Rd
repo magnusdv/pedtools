@@ -34,7 +34,7 @@ non-null \code{loop_breakers} entry, namely a matrix with the IDs of the
 original loop breakers in the first column and the duplicates in the second.
 
 For \code{tieLoops}, a \code{ped} object in which any duplicated
-individuals (as given in the \code{x$loop_breakers} entry) are merged. For
+individuals (as given in the \code{x$LOOP_BREAKERS} entry) are merged. For
 any ped object \code{x}, the call \code{tieLoops(breakLoops(x))} should
 return \code{x}.
 
@@ -56,7 +56,7 @@ Functions for identifying, breaking and restoring loops in pedigrees.
 Pedigree loops are usually handled (by pedtools and related packages) under the hood -
 using the functions described here - without need for explicit action from
 end users. When a ped object \code{x} is created, an internal routine
-detects if the pedigree contains loops, in which case \code{x$hasLoops} is
+detects if the pedigree contains loops, in which case \code{x$UNBROKEN_LOOPS} is
 set to TRUE.
 
 In cases with complex inbreeding, it can be instructive to plot the

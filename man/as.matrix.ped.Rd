@@ -31,8 +31,8 @@ allowing \code{x} to be exactly reproduced by \code{restore_ped}:
 \itemize{
 \item \code{famid} the family identifier (a string)
 \item \code{labels} the ID labels (a character vector)
-\item \code{hasLoops} a logical indicating whether \code{x} has unboken loops
-\item \code{loop_breakers} a numerical matrix, or NULL
+\item \code{UNBROKEN_LOOPS} a logical indicating whether \code{x} has unboken loops
+\item \code{LOOP_BREAKERS} a numerical matrix, or NULL
 \item \code{markerattr} a list of length \code{nMarkers(x)}, containing the attributes of each marker
 }
 

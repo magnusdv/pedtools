@@ -16,17 +16,17 @@ test_that("example ped from identity package", {
 })
 
 test_that("loops are detected correctly in fullSibMating peds", {
-  expect_false(fullSibMating(1)$hasLoops)
-  expect_true(fullSibMating(2)$hasLoops)
-  expect_true(fullSibMating(3)$hasLoops)
+  expect_false(fullSibMating(1)$UNBROKEN_LOOPS)
+  expect_true(fullSibMating(2)$UNBROKEN_LOOPS)
+  expect_true(fullSibMating(3)$UNBROKEN_LOOPS)
 })
 
 test_that("loops are gone after breaking in fullSibMating", {
   x = breakLoops(fullSibMating(2), verbose=F)
-  expect_false(x$hasLoops)
+  expect_false(x$UNBROKEN_LOOPS)
 
   x = breakLoops(fullSibMating(3), verbose=F)
-  expect_false(x$hasLoops)
+  expect_false(x$UNBROKEN_LOOPS)
 })
 
 test_that("breaking one loop at a time is same as all at once", {

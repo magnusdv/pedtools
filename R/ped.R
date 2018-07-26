@@ -35,8 +35,8 @@
 #'   \item{FAMID}{The family ID.}
 #'   \item{LABELS}{A character vector containing the original id labels.
 #'     Unless the pedigree has been reordered, this equals the input argument `id`.}
-#'   \item{hasLoops}{A logical: TRUE if the pedigree is inbred.}
-#'   \item{loop_breakers}{A matrix with loop breaker ID's in the first
+#'   \item{UNBROKEN_LOOPS}{A logical: TRUE if the pedigree is inbred.}
+#'   \item{LOOP_BREAKERS}{A matrix with loop breaker ID's in the first
 #'   column and their duplicates in the second column. All entries refer to the internal IDs.
 #'   This is usually set by [breakLoops()].}
 #'   }
@@ -61,7 +61,7 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   # Initialise ped object
   x = list(ID = ID, FID = FID, MID = MID, SEX = sex,
            LABELS = NULL, FAMID = NULL,
-           hasLoops = NULL, loop_breakers = NULL, markerdata = NULL)
+           UNBROKEN_LOOPS = NULL, LOOP_BREAKERS = NULL, markerdata = NULL)
 
   class(x) = "ped"
   x = setFamid(x, famid)
@@ -77,7 +77,7 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   # Detect loops (by trying to find a peeling order)
   nucs = peelingOrder(x)
   lastnuc_link = nucs[[length(nucs)]]$link
-  x$hasLoops = is.null(lastnuc_link)
+  x$UNBROKEN_LOOPS = is.null(lastnuc_link)
 
   # reorder so that parents preceede their children
   if(reorder) x = parents_before_children(x)

@@ -5,7 +5,7 @@
 #' Pedigree loops are usually handled (by pedtools and related packages) under the hood -
 #' using the functions described here - without need for explicit action from
 #' end users. When a ped object `x` is created, an internal routine
-#' detects if the pedigree contains loops, in which case `x$hasLoops` is
+#' detects if the pedigree contains loops, in which case `x$UNBROKEN_LOOPS` is
 #' set to TRUE.
 #'
 #' In cases with complex inbreeding, it can be instructive to plot the
@@ -35,7 +35,7 @@
 #' original loop breakers in the first column and the duplicates in the second.
 #'
 #' For `tieLoops`, a `ped` object in which any duplicated
-#' individuals (as given in the `x$loop_breakers` entry) are merged. For
+#' individuals (as given in the `x$LOOP_BREAKERS` entry) are merged. For
 #' any ped object `x`, the call `tieLoops(breakLoops(x))` should
 #' return `x`.
 #'
@@ -99,7 +99,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
 
   auto = is.null(loop_breakers)
   if (auto) {
-    if (!x$hasLoops) return(x)
+    if (!x$UNBROKEN_LOOPS) return(x)
     loop_breakers = findLoopBreakers(x)
     if (length(loop_breakers) == 0) {
       if (verbose)
@@ -151,14 +151,14 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
 
   ### Loop breaker matrix.
   # Previous loop_breakers must be fixed!
-  if(!is.null(old_lb_matr <- attrs$loop_breakers))
+  if(!is.null(old_lb_matr <- attrs$LOOP_BREAKERS))
     old_lb_matr[] = match(old_lb_matr, pedm[,1])
 
   # New rows. (Remember internal numbering, i.e. indices.)
   new_lb_matr = cbind(orig=which(new_rows)-1, copy=which(new_rows))
 
   # Append the new lb matrix to the old
-  attrs$loop_breakers = rbind(old_lb_matr, new_lb_matr)
+  attrs$LOOP_BREAKERS = rbind(old_lb_matr, new_lb_matr)
 
   ### Create new ped
   newx = restore_ped(pedm, attrs = attrs)
@@ -170,7 +170,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
 #' @export
 #' @rdname inbreedingLoops
 tieLoops = function(x, verbose=TRUE) {
-  dups = x$loop_breakers
+  dups = x$LOOP_BREAKERS
   if (is.null(dups) || nrow(dups) == 0) {
     if(verbose) cat("No loops to tie\n")
     return(x)
@@ -186,7 +186,7 @@ tieLoops = function(x, verbose=TRUE) {
 
   # Remove copy labels
   attrs$labels = attrs$labels[-copies]
-  attrs$loop_breakers = NULL
+  attrs$LOOP_BREAKERS = NULL
 
   # Discard the duplicated rows
   newpedm = oldpedm[-copies, ]

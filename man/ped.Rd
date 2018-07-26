@@ -46,8 +46,8 @@ this equals the input argument \code{sex}.}
 \item{FAMID}{The family ID.}
 \item{LABELS}{A character vector containing the original id labels.
 Unless the pedigree has been reordered, this equals the input argument \code{id}.}
-\item{hasLoops}{A logical: TRUE if the pedigree is inbred.}
-\item{loop_breakers}{A matrix with loop breaker ID's in the first
+\item{UNBROKEN_LOOPS}{A logical: TRUE if the pedigree is inbred.}
+\item{LOOP_BREAKERS}{A matrix with loop breaker ID's in the first
 column and their duplicates in the second column. All entries refer to the internal IDs.
 This is usually set by \code{\link[=breakLoops]{breakLoops()}}.}
 }
