@@ -1,23 +1,27 @@
-#' Select or remove marker objects
+#' Select or remove attached markers
 #'
-#' Get the index (position in the markerdata list) of one or several markers
-#' with specified properties.
+#' Functions for manipulating markers attached to a `ped` object.
 #'
 #' @param x A `ped` object
 #' @param markers Either a character vector (with marker names), a numeric
-#'   vector (with marker indices), or NULL.
+#'   vector (with marker indices), or NULL
 #' @param chrom An integer vector, or NULL
 #' @param fromPos A single number or NULL
 #' @param toPos A single number or NULL
 #'
-#' @return Each of `selectMarkers()` and `removeMarkers()` returns a `ped`
-#'   object, where the specified markers are kept/removed. The function
-#'   `getMarkers()` returns only the `markerList` object, while `whichMarkers()`
-#'   returns an integer vector with the indicies (position in `x$markerdata`) of
-#'   the specified markers. NULL arguments are skipped, so `whichMarkers(x)`
-#'   will return `seq_len(nMarkers(x))` (i.e. all markers).
+#' @return The return values of these functions are:
+#'
+#' * `selectMarkers()` : a `ped` object where only the indicated markers are kept
+#' * `removeMarkers()` : a `ped` object where the indicated markers are removed
+#' * `getMarkers()` : a list of `marker` objects
+#' * `whichMarkers()` : an integer vector with indices of the indicated markers
+#'
 #' @seealso [`setMarkers()`]
 #'
+#' @name marker_select
+NULL
+
+#' @rdname marker_select
 #' @export
 selectMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
   idx = whichMarkers(x, markers=markers, chrom=chrom, fromPos=fromPos, toPos=toPos)
@@ -25,23 +29,23 @@ selectMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos 
   x
 }
 
+#' @rdname marker_select
 #' @export
-#' @rdname selectMarkers
 getMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
   idx = whichMarkers(x, markers=markers, chrom=chrom, fromPos=fromPos, toPos=toPos)
   x$markerdata[idx]
 }
 
+#' @rdname marker_select
 #' @export
-#' @rdname selectMarkers
 removeMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
   idx = whichMarkers(x, markers=markers, chrom=chrom, fromPos=fromPos, toPos=toPos)
   x$markerdata[idx] = NULL
   x
 }
 
+#' @rdname marker_select
 #' @export
-#' @rdname selectMarkers
 whichMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
 
   # Early returns if nothing to do
