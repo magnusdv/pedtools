@@ -68,8 +68,8 @@ assertthat::on_failure(is.markerList) = function (call, env) {
 #' @return TRUE or FALSE.
 #' @export
 is_Xmarker = function(x) {
-  assert_that(is.marker(x))
-  isTRUE(attr(x, 'chrom') == 23)
+  chr = chrom(x)
+  isTRUE(chr == "X" || chr == "23")
 }
 
 #' The number of markers attached to a pedigree
