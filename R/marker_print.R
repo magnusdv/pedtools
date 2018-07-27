@@ -26,7 +26,7 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
 
   print(df, row.names = FALSE)
 
-  cat(strrep("-", max(nchar(pedlabels)) + nchar(mname) +3), "\n")
+  cat(strrep("-", max(nchar(pedlabels)) + max(4, nchar(mname)) +3), "\n")
 
   # Chromosome - position
   chr = chrom(x)
@@ -39,11 +39,10 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   possible = if(is.null(mut)) "No" else "Yes"
   cat("Mutations possible:", possible, "\n")
 
-  # Allele freqs
+  # Allele freqs - use hack to get one space indentation
   cat("Allele frequencies:\n")
-  afr = attr(x, 'afreq')
-  names(afr) = attr(x, 'alleles')
-  print(afr)
+  afr = afreq(x)
+  print(data.frame(as.list(afr), check.names = F), row.names = F)
 }
 
 # TODO: check that this is never used and remove it
