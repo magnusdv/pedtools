@@ -4,8 +4,8 @@
 #' @param prefix A character string giving the prefix of the files. For
 #'   instance, if `prefix="myped"` and `what=c("ped", "map")`, the output files
 #'   are "myped.ped" and "myped.map" in the current directory. Paths to other
-#'   folder may be included, e.g. `prefix = "path-to-my-dir/myped". By default,
-#'   the family identifier `x$famid` is used. Note that if this is empty, the
+#'   folder may be included, e.g. `prefix = "path-to-my-dir/myped"`. By default,
+#'   the family identifier `famid(x)` is used. Note that if this is empty, the
 #'   files become ".ped" and so on.
 #' @param what A subset of the character vector c("ped", "map", "dat" and
 #'   "freq"), indicating which files should be created. All files are written in
@@ -48,7 +48,7 @@ writePed = function(x, prefix = x$famid, what = c("ped", "map", "dat", "freq"), 
 
   if (any(c("map", "dat", "freq") %in% what)) {
     mapmatr = getMap(x, na.action = 1, verbose = F)
-    markerdata = getMarkers(x)
+    markerdata = x$markerdata
   }
 
   if ("map" %in% what) {
@@ -84,12 +84,12 @@ writePed = function(x, prefix = x$famid, what = c("ped", "map", "dat", "freq"), 
     if (merlin)
       allalleles = unlist(lapply(nalls, seq_len))
     else
-      allalleles = unlist(lapply(markerdata, attr, 'alleles'))
+      allalleles = unlist(lapply(markerdata, alleles))
 
     col2[-cum] = allalleles
 
     col3 = character(L)
-    allfreqs = unlist(lapply(markerdata, attr, 'afreq'))
+    allfreqs = unlist(lapply(markerdata, afreq))
     col3[-cum] = format(allfreqs, scientifit = F, digits = 6)
 
     freqmatr = cbind(col1, col2, col3)

@@ -13,7 +13,8 @@ writePed(x, prefix = x$famid, what = c("ped", "map", "dat", "freq"),
 \item{prefix}{A character string giving the prefix of the files. For
 instance, if \code{prefix="myped"} and \code{what=c("ped", "map")}, the output files
 are "myped.ped" and "myped.map" in the current directory. Paths to other
-folder may be included, e.g. \code{prefix = "path-to-my-dir/myped". By default, the family identifier}x$famid` is used. Note that if this is empty, the
+folder may be included, e.g. \code{prefix = "path-to-my-dir/myped"}. By default,
+the family identifier \code{famid(x)} is used. Note that if this is empty, the
 files become ".ped" and so on.}
 
 \item{what}{A subset of the character vector c("ped", "map", "dat" and
