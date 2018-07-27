@@ -1,9 +1,9 @@
 
-#' Check if a marker allows mutatations
+#' Check if a marker allows mutations
 #'
 #' @param marker A `marker` object
 #'
-#' @return Returns TRUE if the `mutmat` attribute of marker is non-NULL and differs from the identity matrix.
+#' @return Returns TRUE if the `mutmat` attribute of the input is non-NULL and differs from the identity matrix.
 #' @export
 allowsMutations = function(marker) {
   mutmat = attr(marker, 'mutmat')
@@ -98,7 +98,7 @@ checkConsistency = function(x, mlist) {
     stop("Incompatible input: Pedigree has size ", pedsize(x),
          " but marker ", erri, " has ", errsize, " rows", call.=FALSE)
   }
-  #TODO: check loop breakers
+  #TODO: check loop breakers, ped labels, sex
   return(TRUE)
 }
 

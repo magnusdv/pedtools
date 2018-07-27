@@ -261,10 +261,8 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
     }
     else {
         # if list of ped with plot arguments
-        if (!is.ped(p[[1]])) {
-          print(p)
-          stop("First element is not a ped object.")
-        }
+        if (!is.ped(p[[1]]))
+          stop2("First element must be a `ped` object", p[[1]])
         p = list(p)
         plot.list.flattened = append(plot.list.flattened, p)
       }
@@ -316,11 +314,10 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
   if (is.list(frames)) {
     for (v in frames)
       if (!identical(TRUE, all.equal(v, v[1]:v[length(v)])))
-        stop(sprintf("Each element of 'frames' must consist of consecutive integers: %s",
-                   paste(v, collapse = ",")))
+        stop2("Each element of `frames` must consist of consecutive integers: ", v)
     dup = anyDuplicated(unlist(frames))
     if (dup > 0)
-      stop(sprintf("Plot %d occurs twice in 'frames' list", dup))
+      stop("Plot occurring twice in `frames` list: ", dup)
   }
 
 

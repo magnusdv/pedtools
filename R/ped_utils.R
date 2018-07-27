@@ -13,14 +13,12 @@
 #' @export
 hasCA = function(x) {
   N = pedsize(x)
-  if(isFALSE(all(x$LABELS == 1:N)))
-    stop("This is currently only implemented for pedigrees with ordering 1,2,...")
-  A = matrix(F, ncol=N, nrow=N)
-  FOU = founders(x, internal=T)
+  A = matrix(FALSE, ncol=N, nrow=N)
+  FOU = founders(x, internal=TRUE)
   for(i in FOU) {
     # vector of all descendants of i, including i
     desc = c(i, descendants(x, i, internal=TRUE))
-    A[fast.grid(rep(list(desc), 2))] = T
+    A[fast.grid(rep(list(desc), 2))] = TRUE
   }
   A
 }
@@ -66,12 +64,8 @@ getSex = function(x, labels) {
 #' stopifnot(pedsize(x)==3)
 #'
 pedsize = function(x) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   length(x$ID)
-}
-
-catLabels = function(x, int_ids) {
-  paste(x$LABELS[int_ids], collapse = ", ")
 }
 
 .generations = function(x) {
@@ -199,15 +193,15 @@ print.nucleus = function(x, ...) {
   link = x$link
   if (is.null(link))
     linktext = "NO LINK ASSIGNED"
-  else if (link==0)
+  else if (link == 0)
     linktext = "0  (end of chain)"
   else {
     who = if (link == fa) "father"
           else if (link == mo) "mother"
           else if (link %in% ch) "child"
-          else stop("link individual ", link, " is not a member of the nucleus")
+          else stop2("Erroneous link individual (not a member of nucleus): ", link)
     linktext = sprintf("%s (%s)", labs[link], who)
   }
   cat(sprintf("Pedigree nucleus.\nFather: %s\nMother: %s\nChildren: %s\nLink individual: %s\n",
-              labs[fa], labs[mo], paste(labs[ch], collapse=", "), linktext))
+              labs[fa], labs[mo], toString(labs[ch]), linktext))
 }

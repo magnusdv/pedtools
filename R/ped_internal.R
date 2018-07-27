@@ -44,7 +44,7 @@ NULL
 #' @rdname ped_internal
 #' @export
 reorderPed = function(x, neworder) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x))
     return(x)
   xmatr = as.matrix(x)
@@ -58,7 +58,7 @@ reorderPed = function(x, neworder) {
 #' @rdname ped_internal
 #' @export
 parents_before_children = function(x) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x) || has_parents_before_children(x))
     return(x)
 
@@ -78,7 +78,7 @@ parents_before_children = function(x) {
 #' @rdname ped_internal
 #' @export
 has_parents_before_children = function(x) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   father_before_child = x$FID < x$ID
   mother_before_child = x$MID < x$ID
   all(father_before_child & mother_before_child)
@@ -88,13 +88,9 @@ has_parents_before_children = function(x) {
 #' @rdname ped_internal
 #' @export
 internalID = function(x, labels) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   int_ids = match(labels, x$LABELS)
-  if (anyNA(int_ids)) {
-    wrong = labels[is.na(int_ids)]
-    stop(sprintf("Unknown member%s of %s: %s", if(length(wrong)>1) "s" else "",
-                 deparse(substitute(x)), paste(wrong, collapse=", ")),
-         call.=FALSE)
-  }
+  if (anyNA(int_ids))
+    stop2("Unknown ID label: ", labels[is.na(int_ids)])
   int_ids
 }

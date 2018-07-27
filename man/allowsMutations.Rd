@@ -2,7 +2,7 @@
 % Please edit documentation in R/marker_utils.R
 \name{allowsMutations}
 \alias{allowsMutations}
-\title{Check if a marker allows mutatations}
+\title{Check if a marker allows mutations}
 \usage{
 allowsMutations(marker)
 }
@@ -10,8 +10,8 @@ allowsMutations(marker)
 \item{marker}{A \code{marker} object}
 }
 \value{
-Returns TRUE if the \code{mutmat} attribute of marker is non-NULL and differs from the identity matrix.
+Returns TRUE if the \code{mutmat} attribute of the input is non-NULL and differs from the identity matrix.
 }
 \description{
-Check if a marker allows mutatations
+Check if a marker allows mutations
 }

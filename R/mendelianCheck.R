@@ -30,8 +30,6 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
   if (is.singleton(x) || !hasMarkers(x))
     return(if(remove) x else numeric(0))
 
-  pasteNum = function(u) paste(u, collapse=",")
-
   nucs = subnucs(x)
 
   chromX = whichMarkers(x, chrom=23)
@@ -62,7 +60,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
         errorlist[[of]] = c(errorlist[[of]], new_errs)
         if (verbose)
           message(sprintf("Individual `%s` incompatible with parents at markers: %s",
-                          labs[of], pasteNum(new_errs)))
+                          labs[of], toString(new_errs)))
       }
 
       # Check sibshibs
@@ -77,7 +75,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
       nuc_errors = c(nuc_errors, new_errs)
       if (verbose)
         message(sprintf("Sibship with parents `%s` and `%s` have too many alleles at markers: %s",
-                        labs[sub$father], labs[sub$mother], pasteNum(new_errs)))
+                        labs[sub$father], labs[sub$mother], toString(new_errs)))
     }
   }
 
@@ -100,7 +98,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
         new_errs = chromX[error_markers[error_males_int == i]]
         errorlist[[i]] = c(errorlist[[i]], new_errs)
         if (verbose)
-          message(sprintf("Male `%s` heterozygous at markers: ", x$LABELS[i], pasteNum(new_errs)))
+          message(sprintf("Male `%s` heterozygous at markers: ", x$LABELS[i], toString(new_errs)))
       }
     }
 
@@ -121,7 +119,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
           errorlist[[of]] = c(errorlist[[of]], new_errs)
           if (verbose)
             message(sprintf("Male `%s` incompatible with mother at markers: %s",
-                            labs[of], pasteNum(new_errs)))
+                            labs[of], toString(new_errs)))
         }
         else {
           triopass = trioCheckFast(fa, mo, ofdat)
@@ -132,7 +130,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
           errorlist[[of]] = c(errorlist[[of]], new_errs)
           if (verbose)
             message(sprintf("Female `%s` incompatible with parents at markers: %s",
-                            labs[of], pasteNum(new_errs)))
+                            labs[of], toString(new_errs)))
         }
       }
 
@@ -148,7 +146,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
       nuc_errors = c(nuc_errors, new_errs)
       if (verbose)
         message(sprintf("Sibship with parents `%s` and `%s` have too many alleles at markers: %s",
-                        labs[sub$father], labs[sub$mother], pasteNum(new_errs)))
+                        labs[sub$father], labs[sub$mother], toString(new_errs)))
     }
   }
   err_index = sort.int(unique.default(c(unlist(errorlist), nuc_errors)))

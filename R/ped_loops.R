@@ -95,7 +95,7 @@ inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedi
 #' @rdname inbreedingLoops
 breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
   if (is.singleton(x))
-    stop("This function does not apply to singleton objects.")
+    stop2("Loop breaking does not make sense for singleton objects")
 
   auto = is.null(loop_breakers)
   if (auto) {
@@ -103,22 +103,23 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
     loop_breakers = findLoopBreakers(x)
     if (length(loop_breakers) == 0) {
       if (verbose)
-        cat("Marriage loops detected, trying different selection method.\n")
+        message("Marriage loops detected, trying different selection method")
       loop_breakers = findLoopBreakers2(x)
     }
   }
   if (!length(loop_breakers))
-    stop("Loop breaking unsuccessful.")
+    stop2("Loop breaking unsuccessful")
 
   # Convert to internal IDs and sort (don't skip this)
   loop_breakers = sort.int(internalID(x, loop_breakers))
 
   FOU = founders(x, internal=T)
   if (any(loop_breakers %in% FOU))
-    stop("Pedigree founders cannot be loop breakers.")
+    stop2("Pedigree founders cannot be loop breakers: ", 
+          x$LABELS[intersect(loop_breakers, FOU)])
 
   if (verbose)
-    cat(sprintf("Loop breakers: %s\n", catLabels(x, loop_breakers)))
+    cat("Loop breakers:", toString(x$LABELS[loop_breakers]), "\n")
 
   ### Old ped data
   oldpedm = as.matrix(x)  #data.frame(x, famid=T, missing=0)
@@ -176,7 +177,7 @@ tieLoops = function(x, verbose=TRUE) {
     return(x)
   }
   if (!all(dups %in% x$ID))
-    stop("Something's wrong: Duplicated individuals no longer in pedigree.")
+    stop2("Something's wrong - duplicated individual is out of range: ", setdiff(dups, x$ID))
 
   origs = dups[, 1]
   copies = dups[, 2]
@@ -249,7 +250,7 @@ findLoopBreakers2 = function(x) {
     if (length(good.breakers) == 0)
       stop("\
 This pedigree requires founders as loop breakers, which is not implemented in pedtools yet.\
-Please contact magnusdv at medisin.uio.no if this is important to you.")
+Please contact magnusdv at medisin.uio.no if this is important to you.", call.=FALSE)
     b = as.numeric(good.breakers[1])
     breakers = c(breakers, b)
     N = N+1

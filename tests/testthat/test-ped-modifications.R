@@ -155,7 +155,8 @@ test_that("addParents() to nonfounder gives error", {
 
 test_that("addParents() to multiple indivs gives error", {
   x = nuclearPed(1)
-  expect_error(addParents(x, 1:2), "Only one individual at the time, please")
+  expect_error(addParents(x, 1:2),
+               "Parents cannot be added to multiple individuals at once: 1, 2")
 })
 
 test_that("addParents() gives error if parent is impossible", {

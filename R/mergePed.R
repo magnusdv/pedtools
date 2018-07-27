@@ -35,21 +35,25 @@
 #' @export
 mergePed = function(x, y, ...) {
   if (!is.null(x$markerdata) || !is.null(y$markerdata))
-      stop("Merging is only supported for pedigrees without marker data", call.=FALSE)
+    stop2("Merging is only supported for pedigrees without marker data")
   ids = intersect(x$LABELS, y$LABELS)
   if (length(ids) == 0)
-      stop("Merging impossible: No common IDs", call.=FALSE)
+    stop2("Merging impossible: No common IDs")
 
   del = list(x = numeric(), y = numeric())
   for (i in ids) {
-      if (getSex(x, i) != getSex(y, i))
-          stop("Gender mismatch for individual ", i, call.=FALSE)
-      parx = parents(x, i)
-      pary = parents(y, i)
-      if (length(pary) == 0)
-          del$y = c(del$y, i) else if (length(parx) == 0)
-          del$x = c(del$x, i) else if (all(parx == pary))
-          del$y = c(del$y, i) else stop("Parent mismatch for individual ", i, call.=FALSE)
+    if (getSex(x, i) != getSex(y, i))
+      stop2("Gender mismatch for individual ", i)
+    parx = parents(x, i)
+    pary = parents(y, i)
+    
+    if (length(pary) == 0)
+      del$y = c(del$y, i) 
+    else if (length(parx) == 0)
+      del$x = c(del$x, i) 
+    else if (all(parx == pary))
+      del$y = c(del$y, i) 
+    else stop2("Parent mismatch for individual ", i)
   }
   xm = as.data.frame(x)
   ym = as.data.frame(y)

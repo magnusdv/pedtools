@@ -66,11 +66,11 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
   father_exists = isTRUE(father %in% x$LABELS)
   mother_exists = isTRUE(mother %in% x$LABELS)
   if (!father_exists && !mother_exists)
-    stop("At least one parent must be an existing pedigree member.", call. = FALSE)
+    stop2("At least one parent must be an existing pedigree member")
   if (!is.null(ids) && length(ids) != nch)
-    stop("Length of 'ids' must equal the number of children.", call. = FALSE)
+    stop2("Length of 'ids' must equal the number of children")
   if (any(ids %in% x$LABELS))
-    stop("Individuals already exist: ", catLabels(x, ids[ids %in% x$LABELS]), call.=FALSE)
+    stop2("Individuals already exist: ", intersect(ids, x$LABELS))
 
   # Recycle `sex` if needed
   sex = rep_len(sex, nch)
@@ -127,7 +127,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
   if(is.null(ids)) ids = nextlabs(labs, len=nch)
   labs = c(labs, ids)
 
-  if (anyDuplicated(labs)) stop("Duplicated ID labels", call. = FALSE)
+  if (anyDuplicated(labs)) stop2("Duplicated ID labels")
 
   children_pedcols = cbind(nrow(p) + (1:nch), father_int, mother_int, sex)
   children_markers = matrix(0, nrow=nch, ncol = nmark*2)
@@ -146,7 +146,7 @@ addSon = function(x, parent, id = NULL, verbose = TRUE) {
     addChildren(x, father = parent, nch = 1, sex = 1, ids = id, verbose = verbose)
   else if (parent_sex == 2)
     addChildren(x, mother = parent, nch = 1, sex = 1, ids = id, verbose = verbose)
-  else stop("Not implemented for parents of unknown sex")
+  else stop2("Not implemented for parents of unknown sex: ", parent)
 }
 
 #' @rdname ped_add
@@ -157,30 +157,30 @@ addDaughter = function(x, parent, id = NULL, verbose = TRUE) {
     addChildren(x, father = parent, nch = 1, sex = 2, ids = id, verbose = verbose)
   else if (parent_sex == 2)
     addChildren(x, mother = parent, nch = 1, sex = 2, ids = id, verbose = verbose)
-  else stop("Not implemented for parents of unknown sex")
+  else stop2("Not implemented for parents of unknown sex: ", parent)
 }
 
 #' @rdname ped_add
 #' @export
 addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
   if (length(id) > 1)
-      stop("Only one individual at the time, please")
+      stop2("Parents cannot be added to multiple individuals at once: ", id)
   if (id %in% nonfounders(x))
-    stop("Individual ", id, " already has parents in the pedigree", call. = FALSE)
+    stop2("Individual ", id, " already has parents in the pedigree")
 
   id_int = internalID(x, id)
   
   # Check that assigned parents are OK
   desc = descendants(x, id)
   if (!is.null(father)) {
-    if (father == id) stop("Pedigree error: Father and child are equal", call. = FALSE)
-    if (father %in% desc) stop("Pedigree error: Assigned father is a descendant of ", id, call. = FALSE)
-    if (father %in% x$LABELS && getSex(x, father) == 2) stop("Pedigree error: Assigned father is female", call. = FALSE)
+    if (father == id) stop2("Father and child are equal")
+    if (father %in% desc) stop2("Assigned father is a descendant of ", id)
+    if (father %in% x$LABELS && getSex(x, father) == 2) stop2("Assigned father is female")
   }
   if (!is.null(mother)) {
-    if (mother == id) stop("Pedigree error: Mother and child are equal", call. = FALSE)
-    if (mother %in% desc) stop("Pedigree error: Assigned mother is a descendant of ", id, call. = FALSE)
-    if (mother %in% x$LABELS && getSex(x, mother) == 1) stop("Pedigree error: Assigned mother is male", call. = FALSE)
+    if (mother == id) stop2("Mother and child are equal")
+    if (mother %in% desc) stop2("Assigned mother is a descendant of ", id)
+    if (mother %in% x$LABELS && getSex(x, mother) == 1) stop2("Assigned mother is male")
   }
 
   # If no labels are given, create them
@@ -249,7 +249,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
     if (verbose) {
       if(length(dd)) {
         hisher = switch(x$SEX[id] + 1, "its", "his", "her")
-        message("Removing ", x$LABELS[id], " and ", hisher, " descendants: ", catLabels(x, dd))
+        message("Removing ", x$LABELS[id], " and ", hisher, " descendants: ", toString(x$LABELS[dd]))
       }
       else message("Removing ", x$LABELS[id], " (no descendants)")
     }
@@ -263,7 +263,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   leftover_spouses = setdiff(FOU, c(ids_int, parents_of_remain))
 
   if (verbose && length(leftover_spouses))
-    message("Removing leftover spouses: ", catLabels(x, leftover_spouses))
+    message("Removing leftover spouses: ", toString(x$LABELS[leftover_spouses]))
 
   # These are the ones to be removed (redundancy harmless)
   remov = c(ids_int, desc, leftover_spouses)

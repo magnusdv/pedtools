@@ -46,6 +46,7 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   print(afr)
 }
 
+# TODO: check that this is never used and remove it
 .prettyMarkers = function(m, alleles = NULL, sep = "/", missing = NULL, singleCol = FALSE, sex) {
   if (is.null(m))
     return(m)
@@ -57,9 +58,9 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
     alleles = lapply(m, attr, "alleles")
   else {
     if (!is.atomic(alleles))
-      stop("The parameter 'alleles' must be NULL, or an atomic vector.")
+      stop2("The parameter 'alleles' must be NULL, or an atomic vector.")
     if (length(alleles) < max(unlist(lapply(m, attr, "nalleles"))))
-      stop("The indicated 'alleles' vector has too few alleles for some markers.")
+      stop2("The indicated 'alleles' vector has too few alleles for some markers.")
     alleles = rep(list(alleles), n)
     }
   if (is.null(missing)) missing = 0

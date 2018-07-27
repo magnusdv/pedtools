@@ -58,28 +58,25 @@ whichMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos =
   if (is.numeric(markers)) {
     idx = as.integer(markers)
 
-    if(any(markers != idx)) {
-      stop("Marker index must be integer: ",
-           paste(markers[markers != idx], collapse=","), call.=F)
-    }
+    if(any(markers != idx))
+      stop2("Marker index must be integer: ", markers[markers != idx])
+    
     outside = idx < 1 | idx > nMarkers(x)
     if(any(outside))
-      stop("Marker index out of range: ", paste(markers[outside], collapse=", "), call.=F)
+      stop2("Marker index out of range: ", markers[outside])
 
   }
   else if (is.character(markers)) {
     allnames = vapply(x$markerdata, name, character(1))
     idx = match(markers, allnames)
 
-    if(anyNA(idx)) {
-      na_name = markers[is.na(idx)]
-      stop("Unknown marker name: ", paste(na_name, collapse=", "), call.=F)
-    }
+    if(anyNA(idx)) 
+      stop2("Unknown marker name: ", markers[is.na(idx)])
   }
   else if(is.null(markers))
     idx = seq_len(nMarkers(x))
   else
-    stop("Argument `markers` must be a numeric, a character, or NULL", call. =F)
+    stop2("Argument `markers` must be a numeric, a character, or NULL")
 
   # Return if already empty
   if (length(idx) == 0)

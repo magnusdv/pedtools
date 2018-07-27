@@ -30,7 +30,7 @@ NULL
 #' @rdname ped_modify
 #' @export
 swapSex = function(x, ids, verbose = TRUE) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!length(ids)) return(x)
   ids = internalID(x, ids)
   FID = x$FID
@@ -40,7 +40,7 @@ swapSex = function(x, ids, verbose = TRUE) {
   if (!all(spouses %in% ids)) {
     if (verbose) {
       extra = setdiff(spouses, ids)
-      message("Changing sex of spouses as well: ", catLabels(x, extra))
+      message("Changing sex of spouses as well: ", toString(x$LABELS[extra]))
     }
     return(swapSex(x, x$LABELS[union(ids, spouses)]))
   }

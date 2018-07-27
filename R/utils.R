@@ -1,3 +1,8 @@
+stop2 = function(...) {
+  a = lapply(list(...), toString)
+  a = append(a, list(call.=FALSE))
+  do.call(stop, a)
+}
 
 # Test that input is a nonegative integer.
 is_count0 <- function(x) {
@@ -25,9 +30,6 @@ safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 }
 
 .rand01 = function(n) sample.int(2, size = n, replace = T) - 1  #random 0/1 vector of length n.
-
-#.prettycat = function(v, andor) switch(min(len <- length(v), 3), toString(v), paste(v, collapse = " and "),
-#    paste(paste(v[-len], collapse = ", "), andor, v[len]))
 
 # Stripped version of expand.grid
 fast.grid = function(argslist, as.list = FALSE) {

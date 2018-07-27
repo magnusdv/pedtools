@@ -51,7 +51,8 @@
 ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verbose = FALSE) {
   n = length(id)
   assert_that(n>0, length(fid)==n, length(mid)==n, length(sex)==n)
-  if(n == 1 && (fid!=0 || mid!=0)) stop("singleton error: Parent IDs must be 0", call. = FALSE)
+  if(n == 1 && (fid!=0 || mid!=0)) 
+    stop2("Singleton error: Parent IDs must be 0")
 
   # Internal order 1,2,...
   ID = 1:n
@@ -89,9 +90,9 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
 #' @rdname ped
 singleton = function(id, sex = 1, famid = NULL) {
   if (length(id) != 1)
-    stop("Singleton error: Parameter 'id' must have length 1.", call. = FALSE)
-  if (!sex %in% 0:2)
-    stop("Singleton error: parameter 'sex' must be either 0 (unknown), 1 (male) or 2 (female).", call. = FALSE)
+    stop2("Parameter `id` must have length 1")
+  if (length(sex) != 1 || !sex %in% 0:2)
+    stop2("Parameter `sex` must be either 0 (unknown), 1 (male) or 2 (female)")
   ped(id=id, fid=0, mid=0, sex=sex, famid=famid)
 }
 
@@ -149,7 +150,7 @@ checkped = function(x) {
     if (self_ancest[i])
       message(intro, "Is", switch(SEX[i]+1, "its", "his", "her"), "own ancestor.")
   }
-  stop("Pedigree errors detected.", call. = FALSE)
+  stop2("Pedigree errors detected")
 }
 
 #TODO

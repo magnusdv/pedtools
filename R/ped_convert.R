@@ -81,7 +81,7 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
 
   ### Markers
   if((nc <- ncol(x)) > 4) {
-    if(nc %% 2 != 0) stop("The number of allele columns must be even")
+    if(nc %% 2 != 0) stop2("Something is wrong: Odd number of allele columns!")
     markerattr = attrs$markerattr
 
     mlist = lapply(seq_len((nc-4)/2), function(k) {
@@ -174,7 +174,7 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
     }
   }
   else {
-    if (any(markers > nm)) stop("Nonexisting marker(s) indicated")
+    if (any(markers > nm)) stop2("Markers out of range: ", markers[markers > nm])
   }
   datafr = as.data.frame(x, markers=markers, singleCol=TRUE, missing="-")
   datafr$fid[datafr$fid == "0"] = "*"

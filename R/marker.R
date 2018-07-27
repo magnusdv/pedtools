@@ -57,7 +57,7 @@ marker = function(x, ...,  alleles = NULL, afreq = NULL, chrom = NA,
   for(i in seq_along(dots)) {
     g = genos[[i]]
     if(!is.vector(g) || !length(g) %in% 1:2) # TODO: deal with NA and '' inputs
-      stop("Genotype must be a vector of length 1 or 2: ", deparse(g), call.=FALSE)
+      stop2("Genotype must be a vector of length 1 or 2: ", deparse(g))
     m[ids_int[i], ] = g
   }
 
@@ -80,26 +80,25 @@ NULL
 
   if(!is.null(alleles)) {
     if(any(alleles %in% NA_allele_))
-      stop("Invalid entry in `alleles`: ",
-           paste(intersect(alleles, NA_allele_), collapse=", "), call.=F)
+      stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
     if(!all(matr %in% c(NA_allele_, alleles))) {
       notfound = setdiff(matr, c(NA_allele_, alleles))
-      stop("Alleles used in genotypes but not included in `alleles` argument: ",
-           paste(notfound, collapse=", "), call.=FALSE)
+      stop2("Alleles used in genotypes but not included in `alleles` argument: ",
+            notfound)
     }
   }
   if(!is.null(afreq)) {
     if(is.null(alleles))
-       stop("Argument `alleles` cannot be NULL if `afreq` is non-NULL", call.=FALSE)
+       stop2("Argument `alleles` cannot be NULL if `afreq` is non-NULL")
     if (length(afreq) != length(alleles))
-      stop("Number of alleles doesn't match length of frequency vector", call.=FALSE)
+      stop2("Number of alleles doesn't match length of frequency vector")
     if (round(sum(afreq), 3) != 1)
-      stop("Allele frequencies do not sum to 1: ", paste(afreq, collapse = ", "), call.=FALSE)
+      stop2("Allele frequencies do not sum to 1: ", afreq)
   }
   if(length(pedmembers) != nrow(matr))
-    stop("Number of allele matrix must equal the length of `pedmembers`", call.=FALSE)
+    stop2("Number of allele matrix must equal the length of `pedmembers`")
   if(length(sex) != nrow(matr))
-    stop("Number of allele matrix must equal the length of `sex`", call.=FALSE)
+    stop2("Number of allele matrix must equal the length of `sex`")
 
   ### Alleles
   if (is.null(alleles)) {
@@ -124,15 +123,15 @@ NULL
   ### Name
   name = as.character(name)
   if(length(name) != 1)
-    stop("Length of `name` must be 1: ", name, call.=F)
+    stop2("Length of `name` must be 1: ", name)
   if (isTRUE(suppressWarnings(name == as.integer(name))))
-    stop("Attribute `name` cannot consist entirely of digits: ", name, call.=F)
+    stop2("Attribute `name` cannot consist entirely of digits: ", name)
 
   ### Chromomsome
   chrom = as.character(chrom)
   if(length(chrom) != 1)
-    stop("Length of `chrom` must be 1: ", chrom, call.=F)
-
+    stop2("Length of `chrom` must be 1: ", chrom)
+    
   ### Mutation matrices
   if (!is.null(mutmat)) {
     stopifnot(is.list(mutmat) || is.matrix(mutmat))
