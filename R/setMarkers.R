@@ -6,11 +6,15 @@
 #'
 #' @export
 setMarkers = function(x, m, annotations = NULL) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
 
-  if (is.null(m))
-    mlist = NULL
-  else if (is.marker(m))
+  if (is.null(m)) {
+    x['markerdata'] = list(NULL)
+    return(x)
+  }
+
+  mlist = NULL
+  if (is.marker(m))
     mlist = list(m)
   else if (is.markerList(m))
     mlist = m
@@ -20,8 +24,8 @@ setMarkers = function(x, m, annotations = NULL) {
          " * a list of `marker` objects\n",
          " * a data.frame or matrix.", call.=F)
 
-  # If any of the above kicked in, append to x and return
-  if(exists("mlist", environment(), inherits=F)) {
+  # If markerlist, attach to x and return
+  if(!is.null(mlist)) {
     class(mlist) = "markerList"
     checkConsistency(x, mlist)
     x$markerdata = mlist
@@ -46,7 +50,7 @@ setMarkers = function(x, m, annotations = NULL) {
   }
 
   if (ncol(m) %% 2 != 0)
-    stop("Uneven number of marker allele columns")
+    stop2("Uneven number of marker allele columns")
 
   nMark = ncol(m)/2
 
@@ -54,7 +58,8 @@ setMarkers = function(x, m, annotations = NULL) {
     if (length(annotations) == 2 && !is.null(names(annotations)))
       annotations = rep(list(annotations), nMark)  # if given attrs for a single marker
     else if (length(annotations) != nMark)
-      stop("Length of marker annotation list does not equal number of markers.")
+      stop2(sprintf("Length of annotation list (%d) does not equal number of markers (%d)",
+                    length(annotations), nMark))
 
     mlist = lapply(1:nMark, function(i) {
       if (is.null(attribs <- annotations[[i]]))
@@ -75,15 +80,26 @@ setMarkers = function(x, m, annotations = NULL) {
   x
 }
 
+#' @rdname setMarkers
 #' @export
-addMarker = function(x, m, ...) {
-  N = pedsize(x)
-  if (is.matrix(m) || is.data.frame(m))
-    stopifnot(nrow(m) == N, ncol(m) == 2)
-  if (inherits(m, "marker"))
-    m = list(m)
-  if (!is.list(m) && length(m) == 1)
-    m = matrix(m, ncol = 2, nrow = N)  #gives a nice way of setting an empty or everywhere-homozygous marker, e.g.: x=addMarker(x,0)
-  mm = .createMarkerObject(m, ...)
-  setMarkers(x, structure(c(x$markerdata, list(mm)), class = "markerdata"))
+addMarkers = function(x, m, annotations = NULL) {
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
+
+  if (is.null(m))
+    return(x)
+
+  mlist = NULL
+  if (is.marker(m))
+    mlist = list(m)
+  else if (is.markerList(m))
+    mlist = m
+  else stop2("Matrix or data.frame input is not implemented yet")
+
+  # If markerlist, append to x and return
+  if(!is.null(mlist)) {
+    checkConsistency(x, mlist)
+    x$markerdata = c(x$markerdata, mlist)
+    class(x$markerdata) = "markerList"
+    return(x)
+  }
 }

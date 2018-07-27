@@ -2,9 +2,12 @@
 % Please edit documentation in R/setMarkers.R
 \name{setMarkers}
 \alias{setMarkers}
+\alias{addMarkers}
 \title{Attach marker objects to a pedigree}
 \usage{
 setMarkers(x, m, annotations = NULL)
+
+addMarkers(x, m, annotations = NULL)
 }
 \arguments{
 \item{x}{A \code{ped} object}
