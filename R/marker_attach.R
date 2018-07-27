@@ -1,9 +1,34 @@
-#' Attach marker objects to a pedigree
+#' Attach markers to pedigrees
+#'
+#' In many applications it is useful to _attach_ markers to their associated
+#' `ped` object. In particular for bigger projects with many markers, this makes
+#' it easier to manipulate the dataset as a unit. The function `setMarkers()`
+#' replaces all existing markers with the supplied ones, while `addMarkers()`
+#' appends them to any existing ones.
 #'
 #' @param x A `ped` object
-#' @param m Either a single `marker` object, a list of `marker` objects, or a data.frame or matrix.
+#' @param m Either a single `marker` object, a list of `marker` objects, or a
+#'   data.frame or matrix.
 #' @param annotations A list of marker annotations.
 #'
+#' @return A `ped` object.
+#' @examples
+#' x = singleton(1)
+#' m1 = marker(x, '1'=1:2)
+#' m2 = marker(x, '1'='a')
+#'
+#' x = setMarkers(x, m1)
+#' x = addMarkers(x, m2)
+#' x
+#'
+#' # Reversing the order of the markers
+#' x = setMarkers(x, list(m2, m1))
+#' x
+#'
+#' @name marker_attach
+NULL
+
+#' @rdname marker_attach
 #' @export
 setMarkers = function(x, m, annotations = NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
@@ -80,7 +105,7 @@ setMarkers = function(x, m, annotations = NULL) {
   x
 }
 
-#' @rdname setMarkers
+#' @rdname marker_attach
 #' @export
 addMarkers = function(x, m, annotations = NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
