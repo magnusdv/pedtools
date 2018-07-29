@@ -5,7 +5,7 @@
 #' @param x A `ped` object
 #' @param markers Either a character vector (with marker names), a numeric
 #'   vector (with marker indices), or NULL
-#' @param chrom An integer vector, or NULL
+#' @param chroms A vector of chromosome names, or NULL
 #' @param fromPos A single number or NULL
 #' @param toPos A single number or NULL
 #'
@@ -23,44 +23,45 @@ NULL
 
 #' @rdname marker_select
 #' @export
-selectMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
-  idx = whichMarkers(x, markers=markers, chrom=chrom, fromPos=fromPos, toPos=toPos)
+selectMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  idx = whichMarkers(x, markers=markers, chroms=chroms, fromPos=fromPos, toPos=toPos)
   x$markerdata = x$markerdata[idx]
   x
 }
 
 #' @rdname marker_select
 #' @export
-getMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
-  idx = whichMarkers(x, markers=markers, chrom=chrom, fromPos=fromPos, toPos=toPos)
+getMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  idx = whichMarkers(x, markers=markers, chroms=chroms, fromPos=fromPos, toPos=toPos)
   x$markerdata[idx]
 }
 
 #' @rdname marker_select
 #' @export
-removeMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
-  idx = whichMarkers(x, markers=markers, chrom=chrom, fromPos=fromPos, toPos=toPos)
+removeMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  idx = whichMarkers(x, markers=markers, chroms=chroms, fromPos=fromPos, toPos=toPos)
   x$markerdata[idx] = NULL
   x
 }
 
 #' @rdname marker_select
 #' @export
-whichMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos = NULL) {
+whichMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
 
   # Early returns if nothing to do
-  if(is.null(markers) && is.null(chrom) && is.null(fromPos) && is.null(toPos))
+  if(is.null(markers) && is.null(chroms) && is.null(fromPos) && is.null(toPos))
     return(integer(0))
   if(!hasMarkers(x))
     return(integer(0))
 
-  # Argument `markers` is either numeric, character or NULL
+  stopifnotSimpleVector(markers, "markers")
+
   if (is.numeric(markers)) {
     idx = as.integer(markers)
 
     if(any(markers != idx))
       stop2("Marker index must be integer: ", markers[markers != idx])
-    
+
     outside = idx < 1 | idx > nMarkers(x)
     if(any(outside))
       stop2("Marker index out of range: ", markers[outside])
@@ -70,7 +71,7 @@ whichMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos =
     allnames = vapply(x$markerdata, name, character(1))
     idx = match(markers, allnames)
 
-    if(anyNA(idx)) 
+    if(anyNA(idx))
       stop2("Unknown marker name: ", markers[is.na(idx)])
   }
   else if(is.null(markers))
@@ -83,9 +84,9 @@ whichMarkers = function(x, markers = NULL, chrom = NULL, fromPos = NULL, toPos =
     return(idx)
 
   ### chrom
-  if (!is.null(chrom)) {
+  if (!is.null(chroms)) {
     chrom_attr = vapply(x$markerdata[idx], chrom, character(1))
-    idx = idx[chrom_attr %in% chrom]
+    idx = idx[chrom_attr %in% chroms]
   }
 
   ### pos

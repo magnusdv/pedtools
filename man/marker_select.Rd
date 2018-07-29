@@ -8,16 +8,16 @@
 \alias{whichMarkers}
 \title{Select or remove attached markers}
 \usage{
-selectMarkers(x, markers = NULL, chrom = NULL, fromPos = NULL,
+selectMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
   toPos = NULL)
 
-getMarkers(x, markers = NULL, chrom = NULL, fromPos = NULL,
+getMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
   toPos = NULL)
 
-removeMarkers(x, markers = NULL, chrom = NULL, fromPos = NULL,
+removeMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
   toPos = NULL)
 
-whichMarkers(x, markers = NULL, chrom = NULL, fromPos = NULL,
+whichMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
   toPos = NULL)
 }
 \arguments{
@@ -26,7 +26,7 @@ whichMarkers(x, markers = NULL, chrom = NULL, fromPos = NULL,
 \item{markers}{Either a character vector (with marker names), a numeric
 vector (with marker indices), or NULL}
 
-\item{chrom}{An integer vector, or NULL}
+\item{chroms}{A vector of chromosome names, or NULL}
 
 \item{fromPos}{A single number or NULL}
 
