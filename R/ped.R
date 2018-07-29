@@ -51,7 +51,7 @@
 ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verbose = FALSE) {
   n = length(id)
   assert_that(n>0, length(fid)==n, length(mid)==n, length(sex)==n)
-  if(n == 1 && (fid!=0 || mid!=0)) 
+  if(n == 1 && (fid!=0 || mid!=0))
     stop2("Singleton error: Parent IDs must be 0")
 
   # Internal order 1,2,...
@@ -62,7 +62,8 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   # Initialise ped object
   x = list(ID = ID, FID = FID, MID = MID, SEX = sex,
            LABELS = NULL, FAMID = NULL,
-           UNBROKEN_LOOPS = NULL, LOOP_BREAKERS = NULL, markerdata = NULL)
+           UNBROKEN_LOOPS = FALSE, LOOP_BREAKERS = NULL,
+           markerdata = NULL)
 
   class(x) = "ped"
   x = setFamid(x, famid)
