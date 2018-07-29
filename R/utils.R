@@ -4,6 +4,21 @@ stop2 = function(...) {
   do.call(stop, a)
 }
 
+stopifnotSimpleVector = function(x, argname="x") {
+  if(is.null(x))
+    return()
+
+  if(!is.vector(x)) {
+    errmess = sprintf("argument `%s` must be a vector", argname)
+
+    cl = class(x)[1]
+    if(!cl %in% c("numeric", "integer", "character", "logical", "double"))
+      errmess = sprintf("%s; received an object of class '%s'", errmess, cl)
+
+    stop2(errmess)
+  }
+}
+
 # Test that input is a nonegative integer.
 is_count0 <- function(x) {
   assert_that(is.numeric(x), length(x) == 1, x == as.integer(x), x >= 0)
