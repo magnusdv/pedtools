@@ -86,22 +86,20 @@ plotPedList(peds, widths=widths, frames=frames, margins=margins, title=title,
 # For more control of individual plots, each plot and all its parameters
 # can be specified in its own list:
 x1 = nuclearPed(3)
-x1$available = 3:5
-m1 = marker(x1, 3, 1:2)
+m1 = marker(x1, '3'=1:2)
 marg1 = c(5,4,5,4)
 plot1 = list(x1, marker=m1, margins=marg1, title='Plot 1', deceased=1:2)
 
 x2 = cousinsPed(2)
-x2$available = leaves(x2)
-m2 = marker(x2, leaves(x2), 'A')
+m2 = marker(x2, alleles='A')
+genotype(m2, leaves(x2)) = 'A'
 marg2 = c(3,4,2,4)
 plot2 = list(x2, marker=m2, margins=marg2, title='Plot 2', symbolsize=1.2,
              skip.empty.genotypes=T)
 
 x3 = singleton(12)
-x3 = setAvailable(x3, 12)
 marg3 = c(10,0,0,0)
-plot3 = list(x3, margins=marg3, title='Plot 3', available='shaded', symbolsize=2)
+plot3 = list(x3, margins=marg3, title='Plot 3', symbolsize=2)
 
 x4 = halfCousinsPed(0)
 names4 = c(Father=1, Brother=3, Sister=5)
