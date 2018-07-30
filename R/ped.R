@@ -53,6 +53,8 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   assert_that(n>0, length(fid)==n, length(mid)==n, length(sex)==n)
   if(n == 1 && (fid!=0 || mid!=0))
     stop2("Singleton error: Parent IDs must be 0")
+  if (!all(sex %in% 0:2))
+    stop2("Illegal gender code: ", setdiff(sex, 0:2))
 
   # Internal order 1,2,...
   ID = 1:n
@@ -60,7 +62,7 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   MID = match(mid, id, nomatch=0)
 
   # Initialise ped object
-  x = list(ID = ID, FID = FID, MID = MID, SEX = sex,
+  x = list(ID = ID, FID = FID, MID = MID, SEX = as.integer(sex),
            LABELS = NULL, FAMID = NULL,
            UNBROKEN_LOOPS = FALSE, LOOP_BREAKERS = NULL,
            markerdata = NULL)

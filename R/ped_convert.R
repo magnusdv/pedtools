@@ -88,6 +88,8 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
       m = x[, c(3 + 2*k, 4 + 2*k), drop = F]
       attr = markerattr[[k]]
       attr$dim = dim(m)
+      attr$pedmembers = p$LABELS
+      attr$sex = p$SEX
       attributes(m) = attr
       m
     })

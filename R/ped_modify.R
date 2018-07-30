@@ -65,6 +65,10 @@ relabel = function(x, new, old=x$LABELS) {
   lab = x$LABELS
   lab[match(old, lab)] = new
   x$LABELS = lab
+
+  if(hasMarkers(x)) {
+    x$markerdata[] = lapply(x$markerdata, `attr<-`, 'pedmembers', lab)
+  }
   x
 }
 
