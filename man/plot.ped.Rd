@@ -8,13 +8,13 @@
 \usage{
 \method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
-  col = 1, deceased = numeric(0), starred = numeric(0), margins = c(0.6,
-  1, 4.1, 1), ...)
+  col = 1, deceased = numeric(0), starred = numeric(0),
+  margins = c(0.6, 1, 4.1, 1), ...)
 
 \method{plot}{singleton}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
-  col = 1, deceased = numeric(0), starred = numeric(0), margins = c(8,
-  0, 0, 0), ...)
+  col = 1, deceased = numeric(0), starred = numeric(0),
+  margins = c(8, 0, 0, 0), ...)
 
 as.kinship2_pedigree(x, deceased = numeric(0))
 }

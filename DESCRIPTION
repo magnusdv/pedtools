@@ -5,7 +5,7 @@ Version: 0.1.0
 Date: 2018-21-06
 Authors@R: person("Magnus Dehli", "Vigeland", email = "m.d.vigeland@medisin.uio.no", 
                   role = c("aut", "cre"))
-Description: A collection of tools for creating, manipulating and visualising pedigrees.
+Description: A collection of tools for creating, manipulating and visualising pedigrees with marker data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -15,6 +15,6 @@ Suggests: testthat,
     rmarkdown
 Imports: assertthat,
     kinship2
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

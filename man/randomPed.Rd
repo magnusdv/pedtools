@@ -4,7 +4,8 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(g, founders = rpois(1, 3) + 1, selfing = FALSE, seed = NULL)
+randomPed(g, founders = rpois(1, 3) + 1, selfing = FALSE,
+  seed = NULL)
 }
 \arguments{
 \item{g}{A positive integer: The number of matings.}

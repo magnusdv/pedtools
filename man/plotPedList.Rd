@@ -4,8 +4,9 @@
 \alias{plotPedList}
 \title{Plot a list of pedigrees.}
 \usage{
-plotPedList(plot.arg.list, widths = NA, frames = T, frametitles = NULL,
-  fmar = NA, newdev = F, dev.height = NA, dev.width = NA, ...)
+plotPedList(plot.arg.list, widths = NA, frames = T,
+  frametitles = NULL, fmar = NA, newdev = F, dev.height = NA,
+  dev.width = NA, ...)
 }
 \arguments{
 \item{plot.arg.list}{A list of lists. Each element of \code{plot.arg.list}

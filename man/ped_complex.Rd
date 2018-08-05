@@ -9,8 +9,8 @@
 \alias{halfSibStack}
 \title{Complex pedigree structures}
 \usage{
-doubleCousins(degree1, degree2, removal1 = 0, removal2 = 0, half1 = FALSE,
-  half2 = FALSE, child = FALSE)
+doubleCousins(degree1, degree2, removal1 = 0, removal2 = 0,
+  half1 = FALSE, half2 = FALSE, child = FALSE)
 
 doubleFirstCousins()
 

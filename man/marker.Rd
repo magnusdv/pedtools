@@ -4,8 +4,8 @@
 \alias{marker}
 \title{Marker objects}
 \usage{
-marker(x, ..., alleles = NULL, afreq = NULL, chrom = NA, posMb = NA,
-  posCm = NA, name = NA, mutmat = NULL)
+marker(x, ..., alleles = NULL, afreq = NULL, chrom = NA,
+  posMb = NA, posCm = NA, name = NA, mutmat = NULL)
 }
 \arguments{
 \item{x}{a \code{\link{ped}} object}
