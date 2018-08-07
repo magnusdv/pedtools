@@ -95,7 +95,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   #    pedigree = as.kinship2_pedigree(x, deceased = deceased, aff2 = aff2)
   #    pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins, density = 25, angle = 45, ...)
 
-  pedigree = as.kinship2_pedigree(x, deceased = deceased)
+  pedigree = as_kinship2_pedigree(x, deceased = deceased)
   pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins, ...)
 
   # Add title
@@ -151,11 +151,13 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
 
 #' @rdname plot.ped
 #' @export
-as.kinship2_pedigree = function(x, deceased = numeric(0)) {
-    ped = as.data.frame(x) # to include original labels
+as_kinship2_pedigree = function(x, deceased = numeric(0)) {
+    ped = as.data.frame(x) # not as.matrix
+    sex = ifelse(ped$sex == 0, 3, ped$sex)
 
     status = ifelse(ped$id %in% deceased, 1, 0)
-    kinship2::pedigree(id = ped$id, dadid = ped$fid, momid = ped$mid, sex = ped$sex,
+
+    kinship2::pedigree(id = ped$id, dadid = ped$fid, momid = ped$mid, sex = sex,
         status = status, missid=0)
 }
 
