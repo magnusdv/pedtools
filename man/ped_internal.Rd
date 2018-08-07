@@ -8,7 +8,7 @@
 \alias{internalID}
 \title{Internal ordering of pedigree members}
 \usage{
-reorderPed(x, neworder)
+reorderPed(x, neworder = order(x$LABELS))
 
 parents_before_children(x)
 
@@ -19,7 +19,8 @@ internalID(x, labels)
 \arguments{
 \item{x}{a \code{ped} object}
 
-\item{neworder}{a permutation of the vector \code{1:pedsize(x)}}
+\item{neworder}{a permutation of the vector \code{1:pedsize(x)}. By default, the
+order of the ID labels is used.}
 
 \item{labels}{A character vector (or coercible to one) of original ID labels.}
 }
@@ -31,8 +32,8 @@ members are listed when a \code{ped} object is printed to the screen.)
 \details{
 The internal ordering is usually of little importance for end users, with one
 important exception: Certain pedigree-traversing algorithms require parents
-to preceede their children. A special function, \code{parents_before_children()}
-is provided for this purpose. This is a wrapper of the more general
+to precede their children. A special function, \code{parents_before_children()} is
+provided for this purpose. This is a wrapper of the more general
 \code{reorderPed()} which allows any permutation of the members.
 
 It should be noted that \code{\link[=ped]{ped()}} by default calls \code{parents_before_children()}
@@ -42,7 +43,8 @@ whenever a pedigree is created, unless explicitly avoided with
 \code{has_parents_before_children()} can be used as a quick test to decide if it
 is neccessary to call \code{parents_before_children()}.
 
-The utility \code{internalID()} converts ID labels to indices in the internal ordering.
+The utility \code{internalID()} converts ID labels to indices in the internal
+ordering.
 }
 \examples{
 x = ped(3:1, fid=c(1,0,0), mid=c(2,0,0), sex=c(1,2,1), reorder=FALSE)

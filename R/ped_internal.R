@@ -6,8 +6,8 @@
 #'
 #' The internal ordering is usually of little importance for end users, with one
 #' important exception: Certain pedigree-traversing algorithms require parents
-#' to preceede their children. A special function, `parents_before_children()`
-#' is provided for this purpose. This is a wrapper of the more general
+#' to precede their children. A special function, `parents_before_children()` is
+#' provided for this purpose. This is a wrapper of the more general
 #' `reorderPed()` which allows any permutation of the members.
 #'
 #' It should be noted that [ped()] by default calls `parents_before_children()`
@@ -17,10 +17,12 @@
 #' `has_parents_before_children()` can be used as a quick test to decide if it
 #' is neccessary to call `parents_before_children()`.
 #'
-#' The utility `internalID()` converts ID labels to indices in the internal ordering.
+#' The utility `internalID()` converts ID labels to indices in the internal
+#' ordering.
 #'
 #' @param x a `ped` object
-#' @param neworder a permutation of the vector `1:pedsize(x)`
+#' @param neworder a permutation of the vector `1:pedsize(x)`. By default, the
+#'   order of the ID labels is used.
 #' @param labels A character vector (or coercible to one) of original ID labels.
 #'
 #'
@@ -43,7 +45,7 @@ NULL
 
 #' @rdname ped_internal
 #' @export
-reorderPed = function(x, neworder) {
+reorderPed = function(x, neworder = order(x$LABELS)) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x))
     return(x)
