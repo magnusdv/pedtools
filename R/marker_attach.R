@@ -7,9 +7,19 @@
 #' appends them to any existing ones.
 #'
 #' @param x A `ped` object
-#' @param m Either a single `marker` object, a list of `marker` objects, or a
-#'   data.frame or matrix.
-#' @param annotations A list of marker annotations.
+#' @param m Either a single `marker` object or a list of `marker` objects
+#' @param allele_matrix A matrix with `pedsize(x)` rows, containing the observed
+#'   alleles for one or several markers. The matrix must have either 1 or 2
+#'   columns per marker. If the former, then the argument `allele_sep` must be
+#'   non-NULL, and will be used to split all entries.
+#' @param locus_annotations A list of lists, with annotations for each marker.
+#'   See [marker()] for possible entries.
+#' @param missing A single character (or coercible to one) indicating the symbol
+#'   for missing alleles.
+#' @param allele_sep If this is a single character (instead of NULL), each entry
+#'   of `allele_matrix` is interpreted as a genotype, and will be split by
+#'   calling `str_split(..., split = allele_sep, fixed = T)`. For example, if
+#'   the entries are formatted as "A/B", put `allele_sep="/"`.
 #'
 #' @return A `ped` object.
 #' @examples
@@ -30,103 +40,44 @@ NULL
 
 #' @rdname marker_attach
 #' @export
-setMarkers = function(x, m, annotations = NULL) {
+setMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NULL, missing=0, allele_sep=NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
-  if (is.null(m)) {
-    x['markerdata'] = list(NULL)
-    return(x)
-  }
-
-  mlist = NULL
   if (is.marker(m))
     mlist = list(m)
   else if (is.markerList(m))
     mlist = m
-  else if (!(is.data.frame(m) || is.matrix(m)))
-    stop("Argument 'm' must be either:\n",
-         " * a single `marker` object`\n",
-         " * a list of `marker` objects\n",
-         " * a data.frame or matrix.", call.=F)
+  else if (is.null(m))
+    mlist = allelematrix2markerlist(x, allele_matrix, locus_annotations, missing, allele_sep)
+  else
+    stop2("Argument `m` must be either a single `marker` object, a list of such, or NULL")
 
-  # If markerlist, attach to x and return
-  if(!is.null(mlist)) {
-    class(mlist) = "markerList"
-    checkConsistency(x, mlist)
-    x$markerdata = mlist
-    return(x)
-  }
-
-  m = as.matrix(m)
-  nc = ncol(m)
-  nr = nrow(m)
-  if(nr != pedsize(x))
-    stop("Incompatible input. Pedigree has size ", pedsize(x),
-         " but allele matrix has ", nr, " rows.", calls.=FALSE)
-
-  # If input has 1 genotype per column, split alleles to separate columns
-  is_merged = is.character(m) && grepl("/", m[1,1])
-  if (is_merged) {
-    splitvec = unlist(strsplit(m, "/", fixed = T))
-    msplit = matrix(0, ncol = 2 * nc, nrow = nr)
-    msplit[, 2 * seq_len(nc) - 1] = splitvec[2 * seq_len(nc * nr) - 1]
-    msplit[, 2 * seq_len(nc)] = splitvec[2 * seq_len(nc * nr)]
-    m = msplit
-  }
-
-  if (ncol(m) %% 2 != 0)
-    stop2("Uneven number of marker allele columns")
-
-  nMark = ncol(m)/2
-
-  if (!is.null(annotations)) {
-    if (length(annotations) == 2 && !is.null(names(annotations)))
-      annotations = rep(list(annotations), nMark)  # if given attrs for a single marker
-    else if (length(annotations) != nMark)
-      stop2(sprintf("Length of annotation list (%d) does not equal number of markers (%d)",
-                    length(annotations), nMark))
-
-    mlist = lapply(1:nMark, function(i) {
-      if (is.null(attribs <- annotations[[i]]))
-        return(NULL)
-      mi = m[, c(2 * i - 1, 2 * i), drop = FALSE]
-      do.call(.createMarkerObject, c(list(matr = mi), attribs))
-    })
-  }
-  else {
-    mlist = lapply(1:nMark, function(i) {
-      mi = m[, c(2 * i - 1, 2 * i), drop = FALSE]
-      .createMarkerObject(mi)
-    })
-  }
-  mlist[sapply(mlist, is.null)] = NULL
   class(mlist) = "markerList"
+  checkConsistency(x, mlist)
   x$markerdata = mlist
   x
 }
 
 #' @rdname marker_attach
 #' @export
-addMarkers = function(x, m, annotations = NULL) {
+addMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NULL, missing=0, allele_sep=NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
-  if (is.null(m))
-    return(x)
-
-  mlist = NULL
   if (is.marker(m))
     mlist = list(m)
   else if (is.markerList(m))
     mlist = m
-  else stop2("Matrix or data.frame input is not implemented yet")
+  else if (is.null(m))
+    mlist = allelematrix2markerlist(x, allele_matrix, locus_annotations, missing, allele_sep)
+  else
+    stop2("Argument `m` must be either a single `marker` object, a list of such, or NULL")
 
-  # If markerlist, append to x and return
-  if(!is.null(mlist)) {
-    checkConsistency(x, mlist)
-    x$markerdata = c(x$markerdata, mlist)
-    class(x$markerdata) = "markerList"
-    return(x)
-  }
+  # Append to x and return
+  checkConsistency(x, mlist)
+  mlist = c(x$markerdata, mlist)
+  class(mlist) = "markerList"
+  x$markerdata = mlist
+  x
 }
 
 
@@ -216,3 +167,96 @@ transferMarkers = function(from, to) {
 
   restore_ped(b, attrs = b.attrs)
 }
+
+
+
+
+allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=0, allele_sep=NULL) {
+
+  if(!is.matrix(allele_matrix) && !is.data.frame(allele_matrix))
+    stop2("Argument `allele_matrix` must be either a matrix or a data.frame")
+
+  m = as.matrix(allele_matrix)
+
+  if(nrow(m) != pedsize(x))
+    stop2("Incompatible input.\n  Pedigree size = ", pedsize(x),
+         "\n  Allele matrix rows = ", nrow(m))
+
+  # If row names are given, use them to re-order matrix
+  if (!is.null(row_nms <- rownames(m))) {
+
+    # Check compatibility
+    missing_labs = setdiff(x$LABELS, row_nms)
+    if (length(missing_labs))
+      stop2("Pedigree member missing in allele matrix row names: ", missing_labs)
+    unknown_labs = setdiff(row_nms, x$LABELS)
+    if (length(unknown_labs))
+      stop2("Unknown row name in allele matrix: ", unknown_labs)
+
+    # Reorder
+    if(!identical(x$LABELS, row_nms))
+      allele_matrix = allele_matrix[x$LABELS, ]
+  }
+
+  # If allele_sep is given, interpret each column as a marker
+  if(!is.null(allele_sep)) {
+
+    if(!grepl(allele_sep, m[1]))
+      stop2("Allele separator not found in first entry of allele matrix: ", m[1])
+
+    nc = ncol(m)
+    nr = nrow(m)
+    splitvec = unlist(strsplit(m, allele_sep, fixed = T))
+    msplit = matrix(0, ncol = 2 * nc, nrow = nr)
+    msplit[, 2 * seq_len(nc) - 1] = splitvec[2 * seq_len(nc * nr) - 1]
+    msplit[, 2 * seq_len(nc)] = splitvec[2 * seq_len(nc * nr)]
+    m = msplit
+  }
+
+  if (ncol(m) %% 2 != 0)
+    stop2("Uneven number of marker allele columns")
+
+  if(missing != 0) {
+    m[m == missing] = 0
+  }
+
+  nMark = ncol(m)/2
+  LABELS = x$LABELS
+  SEX = x$SEX
+
+  ann = locus_annotations
+
+  # Quick return if no annotations given
+  if(is.null(ann)) {
+    mlist = lapply(seq_len(nMark), function(i) {
+      mi = m[, c(2*i - 1, 2*i), drop = FALSE]
+      .createMarkerObject(mi, pedmembers=LABELS, sex=SEX)
+    })
+
+    return(mlist)
+  }
+
+  # If same annotations for all: Recycle
+  if (!is.list(ann[[1]]))
+    ann = rep(list(ann), nMark)
+
+  if (length(ann) != nMark)
+    stop2(sprintf("Length of annotation list (%d) does not equal number of markers (%d)",
+                  length(ann), nMark))
+
+  mlist = lapply(seq_len(nMark), function(i) {
+    attribs = ann[[i]]
+    if (is.null(attribs))
+      return(NULL)
+
+    attribs$matr = m[, c(2*i - 1, 2*i), drop = FALSE]
+    attribs$pedmembers = LABELS
+    attribs$sex = SEX
+    do.call(.createMarkerObject, attribs)
+  })
+
+  mlist[sapply(mlist, is.null)] = NULL
+
+  mlist
+}
+

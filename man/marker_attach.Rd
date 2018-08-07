@@ -6,17 +6,32 @@
 \alias{addMarkers}
 \title{Attach markers to pedigrees}
 \usage{
-setMarkers(x, m, annotations = NULL)
+setMarkers(x, m = NULL, allele_matrix = NULL,
+  locus_annotations = NULL, missing = 0, allele_sep = NULL)
 
-addMarkers(x, m, annotations = NULL)
+addMarkers(x, m = NULL, allele_matrix = NULL,
+  locus_annotations = NULL, missing = 0, allele_sep = NULL)
 }
 \arguments{
 \item{x}{A \code{ped} object}
 
-\item{m}{Either a single \code{marker} object, a list of \code{marker} objects, or a
-data.frame or matrix.}
+\item{m}{Either a single \code{marker} object or a list of \code{marker} objects}
 
-\item{annotations}{A list of marker annotations.}
+\item{allele_matrix}{A matrix with \code{pedsize(x)} rows, containing the observed
+alleles for one or several markers. The matrix must have either 1 or 2
+columns per marker. If the former, then the argument \code{allele_sep} must be
+non-NULL, and will be used to split all entries.}
+
+\item{locus_annotations}{A list of lists, with annotations for each marker.
+See \code{\link[=marker]{marker()}} for possible entries.}
+
+\item{missing}{A single character (or coercible to one) indicating the symbol
+for missing alleles.}
+
+\item{allele_sep}{If this is a single character (instead of NULL), each entry
+of \code{allele_matrix} is interpreted as a genotype, and will be split by
+calling \code{str_split(..., split = allele_sep, fixed = T)}. For example, if
+the entries are formatted as "A/B", put \code{allele_sep="/"}.}
 }
 \value{
 A \code{ped} object.
