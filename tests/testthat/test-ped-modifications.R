@@ -194,3 +194,11 @@ test_that("addParents() works with existing parents", {
   expect_identical(y, z)
 })
 
+test_that("relabeling is passed on to markers", {
+  x = nuclearPed(1)
+  x = setMarkers(x, marker(x))
+  x = relabel(x, old=2, new="mother")
+  expect_identical(attr(x$markerdata[[1]], 'pedmembers'),
+                   c('1','mother','3'))
+})
+
