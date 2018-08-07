@@ -58,9 +58,9 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
     m = cbind(m, markermatr)
   }
   if (include.attrs) {
-    attr(m, "famid") = x$FAMID
+    attr(m, "famid") = famid(x)
     attr(m, "labels") = x$LABELS
-    attr(m, "UNBROKEN_LOOPS") = x$UNBROKEN_LOOPS
+    attr(m, "UNBROKEN_LOOPS") = has_unbroken_loops(x)
     attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
     if(hasMarkers(x)) {
       attr(m, "markerattr") = lapply(x$markerdata, attributes)
