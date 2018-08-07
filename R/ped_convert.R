@@ -189,11 +189,42 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
   invisible(datafr)
 }
 
+#' Conversions to ped objects
+#'
+#' @param x Any object
+#' @param ... Further arguments, passed on to [ped()]
+#'
+#' @return A `ped` object or a list of such.
+#'
+#' @examples
+#' df = data.frame(famid = c("S1", "S2"),
+#'                 id = c("A", "B"),
+#'                 fid = 0,
+#'                 mid = 0,
+#'                 sex = 1)
+#'
+#' # gives a list of two singletons
+#' as.ped(df)
+#'
 #' @export
 as.ped = function(x, ...) {
   UseMethod("as.ped")
 }
 
+#' @param famid_col Index of family ID column. If NA, the program looks for a
+#'   column named "famid" (ignoring case).
+#' @param id_col Index of individual ID column. If NA, the program looks for a
+#'   column named "id" (ignoring case).
+#' @param fid_col Index of father ID column. If NA, the program looks for a
+#'   column named "fid" (ignoring case).
+#' @param mid_col Index of mother ID column. If NA, the program looks for a
+#'   column named "mid" (ignoring case).
+#' @param sex_col Index of column with gender codes (0 = unknown; 1 = male; 2 =
+#'   female). If NA, the program looks for a column named "sex" (ignoring case).
+#'   If this is not found, genders of parents are deduced from the data, leaving
+#'   the remaining as unknown.
+#'
+#' @rdname as.ped
 #' @export
 as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA, sex_col=NA, ...) {
 
@@ -266,6 +297,6 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   fid = x[[fid_col]]
   mid = x[[mid_col]]
 
-  ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, check = TRUE, ...)
+  ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, ...)
 }
 
