@@ -5,7 +5,6 @@
 \alias{swapSex}
 \alias{relabel}
 \alias{setLabels}
-\alias{setFamid}
 \title{Pedigree modifications}
 \usage{
 swapSex(x, ids, verbose = TRUE)
@@ -13,8 +12,6 @@ swapSex(x, ids, verbose = TRUE)
 relabel(x, new, old = x$LABELS)
 
 setLabels(x, labels)
-
-setFamid(x, famid)
 }
 \arguments{
 \item{x}{A \code{ped} object.}
@@ -28,8 +25,6 @@ more pedigree members.}
 length. ID labels in \code{old} are replaced by those in \code{new}.}
 
 \item{labels}{A character (or coercible to character) of length \code{pedsize(x)}}
-
-\item{famid}{A character of length 1. If missing, an emtpy string is used.}
 }
 \value{
 The modified \code{ped} object.
@@ -44,7 +39,6 @@ x = nuclearPed(1)
 # To see the effect of each command below, use plot(x) in between.
 x = swapSex(x, 3)
 x = relabel(x, new="girl", old=3)
-x = setFamid(x, "Family 1")
 
 }
 \seealso{

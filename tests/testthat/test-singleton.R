@@ -1,6 +1,6 @@
 context("singletons")
 
-test_that("singleton are constructed", {
+test_that("singletons are constructed", {
   expect_error(singleton(1), NA)
   expect_error(singleton("A", sex=2, famid="FAM"), NA)
 })
@@ -10,8 +10,8 @@ test_that("singleton modifications commute", {
   y = swapSex(relabel(singleton(1), 10), 10)
   expect_identical(x,y)
 
-  z = relabel(setFamid(singleton(1), "FAM"), old=1, new="A")
-  expect_identical(z, singleton("A", famid="FAM"))
+  z = relabel(singleton(1), old=1, new="A")
+  expect_identical(z, singleton("A"))
 })
 
 test_that("addChildren works on singleton", {

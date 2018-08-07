@@ -8,7 +8,6 @@
 #' @param labels A character (or coercible to character) of length `pedsize(x)`
 #' @param new,old Character vectors (or coercible to character) of the same
 #'   length. ID labels in `old` are replaced by those in `new`.
-#' @param famid A character of length 1. If missing, an emtpy string is used.
 #' @param verbose A logical: Verbose output or not.
 #'
 #' @return The modified `ped` object.
@@ -22,7 +21,6 @@
 #' # To see the effect of each command below, use plot(x) in between.
 #' x = swapSex(x, 3)
 #' x = relabel(x, new="girl", old=3)
-#' x = setFamid(x, "Family 1")
 #'
 #' @name ped_modify
 NULL
@@ -83,12 +81,44 @@ setLabels = function(x, labels) {
 }
 
 
-#' @rdname ped_modify
+#' Family identifier
+#'
+#' Functions for getting or setting the family ID of a `ped` object.
+#'
+#' @param x A `ped` object
+#' @param value The new family ID, which must be (coercible to) a character
+#'   string.
+#' @param ... (Not used)
+#'
+#' @examples
+#' x = nuclearPed(1)
+#' famid(x) # empty string
+#'
+#' famid(x) = "trio"
+#' famid(x)
+#'
 #' @export
-setFamid = function(x, famid) {
-  famid = as.character(famid)
-  if(!length(famid)) famid=""
-  assert_that(is.ped(x), length(famid) == 1)
+`famid` = function(x, ...) {
+  UseMethod("famid")
+}
+
+#' @rdname famid
+#' @export
+`famid.ped` = function(x, ...) {
+  x$FAMID
+}
+
+#' @rdname famid
+#' @export
+`famid<-` = function(x, ..., value) {
+  UseMethod("famid<-")
+}
+
+#' @rdname famid
+#' @export
+`famid<-.ped` = function(x, ..., value) {
+  famid = as.character(value)
+  if(length(famid) != 1) stop2("Replacement value must have length 1: ", famid)
   x$FAMID = famid
   x
 }

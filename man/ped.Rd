@@ -22,10 +22,10 @@ In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]}
 \item{sex}{a numeric of the same length as \code{id}, describing the genders of the individuals
 (in the same order as \code{id}.) Each entry must be either 1 (=male), 2 (=female) or 0 (=unknown).}
 
-\item{famid}{a character of length 1}
+\item{famid}{a character string. Default: An empty string.}
 
 \item{reorder}{a logical. If TRUE, the pedigree is reordered so that all
-parents preceeede their children.}
+parents precede their children.}
 
 \item{check}{a logical. If TRUE, \code{\link[=checkped]{checkped()}} is run on the
 pedigree before it is returned.}

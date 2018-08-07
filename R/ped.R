@@ -16,9 +16,9 @@
 #'   In other words `mid[i]` is the mother of `id[i]`, or 0 if `id[i]` is a founder.
 #' @param sex a numeric of the same length as `id`, describing the genders of the individuals
 #'   (in the same order as `id`.) Each entry must be either 1 (=male), 2 (=female) or 0 (=unknown).
-#' @param famid a character of length 1
+#' @param famid a character string. Default: An empty string.
 #' @param reorder a logical. If TRUE, the pedigree is reordered so that all
-#'   parents preceeede their children.
+#'   parents precede their children.
 #' @param check a logical. If TRUE, [checkped()] is run on the
 #'   pedigree before it is returned.
 #' @param verbose a logical.
@@ -68,7 +68,8 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
            markerdata = NULL)
 
   class(x) = "ped"
-  x = setFamid(x, famid)
+
+  famid(x) = if(is.null(famid)) "" else famid
   x = setLabels(x, id)
 
   if(n == 1) {
@@ -83,7 +84,7 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   lastnuc_link = nucs[[length(nucs)]]$link
   x$UNBROKEN_LOOPS = is.null(lastnuc_link)
 
-  # reorder so that parents preceede their children
+  # reorder so that parents precede their children
   if(reorder) x = parents_before_children(x)
 
   x
