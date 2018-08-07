@@ -75,7 +75,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
 restore_ped = function(x, attrs = NULL, check = TRUE) {
   if (is.null(attrs))
     attrs = attributes(x)
-  p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attr(x, "famid"), check = check, reorder=F)
+  p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$famid, check = check, reorder=F)
   p = setLabels(p, attrs$labels)
   p['LOOP_BREAKERS'] = list(attrs$LOOP_BREAKERS) # Trick to keep explicit NULLs
 
@@ -187,5 +187,85 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
     message("Only 5 (out of ", nm, ") markers are shown. See `?print.ped` for options.")
 
   invisible(datafr)
+}
+
+#' @export
+as.ped = function(x, ...) {
+  UseMethod("as.ped")
+}
+
+#' @export
+as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA, sex_col=NA, ...) {
+
+  colnames = tolower(names(x))
+  if(is.na(famid_col))
+    famid_col = match("famid", colnames)
+
+  if(is.na(famid_col)) {
+    multiple_fams = FALSE
+  }
+  else {
+    famid = x[[famid_col]]
+    unique_fams = sort.default(unique.default(famid))
+    multiple_fams = length(unique_fams) > 1
+  }
+
+  # If famid column present, recurse for each family
+  if(multiple_fams) {
+    pedlist = lapply(unique_fams, function(fam) {
+      as.ped.data.frame(x[famid == fam, , drop=FALSE], famid_col, id_col, fid_col, mid_col, sex_col, ...)
+    })
+    names(pedlist) = unique_fams
+    return(pedlist)
+  }
+
+  #####################################################
+  ### Body of function (for single ped) starts here ###
+  #####################################################
+  # By this stage, `famid_col` is NA or points to column with identical entries
+
+  if(is.na(id_col)) id_col = match("id", colnames)
+  if(is.na(fid_col)) fid_col = match("fid", colnames)
+  if(is.na(mid_col)) mid_col = match("mid", colnames)
+  if(is.na(sex_col)) sex_col = match("sex", colnames)
+  # famid_col has already been dealt with
+
+  ### Various checks
+  col_idx = c(famid=famid_col, id=id_col, fid=fid_col, mid=mid_col, sex=sex_col)
+
+  # id, fid, mid cannot be missing
+  required = col_idx[2:4]
+  if(anyNA(required))
+    stop2("Cannot find required column: ", names(required)[is.na(required)])
+
+  # Catch duplicated column indices
+  dup_idx = anyDuplicated(col_idx, incomparables = NA)
+  if(dup_idx > 0)
+    stop2("Column ", dup_idx, " has mulitple assignments: ", names(col_idx)[col_idx == dup_idx])
+
+  # Chech that columns exist
+  nonexist = !is.na(col_idx) & (col_idx < 1 | col_idx > ncol(x))
+  if(any(nonexist))
+    stop2("Column index out of range: ", col_idx[nonexist])
+
+  ### Get famid string
+  famid = if(is.na(famid_col)) "" else x[[famid_col]][1]
+
+  ### If sex is missing, deduce partially from parental status
+  if(is.na(sex_col)) {
+    sex = integer(nrow(x))
+    sex[match(fid, id)] = 1
+    sex[match(mid, id)] = 2
+    bisex = intersect(fid, mid)
+    sex[match(bisex, id)] = 0
+  }
+  else sex = x[[sex_col]]
+
+  ### Create ped
+  id = x[[id_col]]
+  fid = x[[fid_col]]
+  mid = x[[mid_col]]
+
+  ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, check = TRUE, ...)
 }
 
