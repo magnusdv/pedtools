@@ -35,15 +35,3 @@ is.singleton = function(x)
 is.pedList = function(x) {
     isTRUE(is.list(x) && length(x) > 0 && all(sapply(x, inherits, "ped")))
 }
-
-assertthat::on_failure(is.ped) = function (call, env) {
-  paste0(deparse(call$x), " is not a `ped` object.")
-}
-
-assertthat::on_failure(is.singleton) = function (call, env) {
-    paste0(deparse(call$x), " is not a `singleton` object.")
-}
-
-assertthat::on_failure(is.pedList) = function (call, env) {
-  paste0(deparse(call$x), " is not a list of `ped` and/or `singleton` objects.")
-}

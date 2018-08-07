@@ -19,9 +19,11 @@ stopifnotSimpleVector = function(x, argname="x") {
   }
 }
 
-# Test that input is a nonegative integer.
-is_count0 <- function(x) {
-  assert_that(is.numeric(x), length(x) == 1, x == as.integer(x), x >= 0)
+# Test that input is a positive (or similar) integer.
+is_count = function(x, minimum = 1) {
+  isTRUE(length(x) == 1 &&
+         is.integer(x) || (is.numeric(x) && x == as.integer(x)) &&
+         x >= minimum)
 }
 
 # A safer version of base::sample

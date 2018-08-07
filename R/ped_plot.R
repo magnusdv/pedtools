@@ -110,7 +110,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                           id.labels = x$LABELS, title = NULL, col = 1, deceased = numeric(0),
                           starred = numeric(0), margins = c(8, 0, 0, 0), ...) {
-  assert_that(is.null(id.labels) || is.string(id.labels))
+  if(length(id.labels) > 1) stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
   y = addParents(x, x$LABELS[1], verbose = FALSE) # reorder necessary??
 
@@ -302,7 +302,9 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
   maxGen = max(vapply(plot.arg.list, function(arglist) .generations(arglist[[1]]), 1))
 
   if (hasframetitles <- !is.null(frametitles))
-    assert_that(length(frametitles) == length(frames))
+    if(length(frametitles) != length(frames)) 
+      stop2(sprintf("Length of `frametitles` (%d) does not equal number of frames (%d)", 
+            length(frametitles), length(frames)))
 
   extra.args = list(...)
   if (!"title" %in% names(extra.args))

@@ -13,8 +13,7 @@ Suggests: testthat,
     igraph,
     knitr,
     rmarkdown
-Imports: assertthat,
-    kinship2
+Imports: kinship2
 RoxygenNote: 6.1.0
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

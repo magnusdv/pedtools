@@ -52,7 +52,7 @@ has_numlabs = function(x) {
 #'
 #' @export
 getSex = function(x, labels) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   x$SEX[internalID(x, labels)]
 }
 

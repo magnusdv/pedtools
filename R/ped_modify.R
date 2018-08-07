@@ -59,13 +59,18 @@ swapSex = function(x, ids, verbose = TRUE) {
 #' @rdname ped_modify
 #' @export
 relabel = function(x, new, old=x$LABELS) {
-  assert_that(is.ped(x), all(old %in% x$LABELS), length(new)==length(old))
-  lab = x$LABELS
-  lab[match(old, lab)] = new
-  x$LABELS = lab
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(length(new) != length(old))
+    stop2("Arguments `new` and `old` must have the same length")
+
+  old_idx = match(old, x$LABELS)
+  if(anyNA(old_idx))
+    stop2("Unknown ID label: ", old[is.na(old_idx)])
+
+  x$LABELS[old_idx] = new
 
   if(hasMarkers(x)) {
-    x$markerdata[] = lapply(x$markerdata, `attr<-`, 'pedmembers', lab)
+    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', x$LABELS)
   }
   x
 }
@@ -75,7 +80,7 @@ relabel = function(x, new, old=x$LABELS) {
 #' @export
 setLabels = function(x, labels) {
   labels = as.character(labels)
-  assert_that(is.ped(x), length(labels) == pedsize(x), !anyDuplicated(labels))
+  #assert_that(is.ped(x), length(labels) == pedsize(x), !anyDuplicated(labels))
   x$LABELS = labels
   x
 }

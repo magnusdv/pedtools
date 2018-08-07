@@ -11,7 +11,8 @@
 #' @export
 #'
 getMap = function(x, markers = seq_len(nMarkers(x)), pos=c("cm", "mb"), na.action = 0, verbose = TRUE) {
-  assert_that(is.ped(x))
+  # TODO review this function
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!hasMarkers(x)) return(NULL)
   m = getMarkers(x, markers)
   chrom = unlist(lapply(m, attr, "chrom"))

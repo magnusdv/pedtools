@@ -60,8 +60,11 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
                       children = as.character(seq.int(3, length.out=nch))) {
   if(missing(nch))
     nch = length(children)
-  assert_that(is.count(nch), length(children)==nch, length(father)==1,
-              length(mother)==1, is.numeric(sex), length(sex) <= nch)
+  if(!is_count(nch)) stop2("`nch` must be a positive integer: ", nch)
+  if(length(children) != nch) stop2("`children` must have length equal to `nch`")
+  if(length(father) != 1) stop2("`father` must be (coercible to) a character of length 1")
+  if(length(mother) != 1) stop2("`mother` must be (coercible to) a character of length 1")
+  if(!is.numeric(sex) || length(sex) > nch) stop2("`sex` must be a numeric of length at most `nch`")
 
   if(length(sex) == 1) sex = rep(sex, nch)
   x = ped(id = 1:(2 + nch),
@@ -79,7 +82,11 @@ cousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
   # n=degree, k=removal. By default, removals are added on the right side,
   # i.e. degree2 = degree + removal.  If degree2 is non-NULL, the removal
   # parameter is ignored.
-  assert_that(is_count0(degree), is_count0(removal), is.null(degree2) || is_count0(degree2))
+  if(!is_count(degree, minimum=0)) stop2("`degree` must be a nonnegative integer: ", degree)
+  if(!is_count(removal, minimum=0)) stop2("`removal` must be a nonnegative integer: ", removal)
+  if(!is.null(degree2) && !is_count(degree2, minimum=0))
+    stop2("`degree` must be a positive integer (or NULL): ", degree2)
+
   if (is.null(degree2))
       degree2 = degree + removal
 
@@ -106,7 +113,11 @@ halfCousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
   # n=degree, k=removal.  By default, removals are added on the right side,
   # i.e. degree2 = degree + removal.  If degree2 is non-NULL, the removal
   # parameter is ignored.
-  assert_that(is_count0(degree), is_count0(removal), is.null(degree2) || is_count0(degree2))
+  if(!is_count(degree, minimum=0)) stop2("`degree` must be a nonnegative integer: ", degree)
+  if(!is_count(removal, minimum=0)) stop2("`removal` must be a nonnegative integer: ", removal)
+  if(!is.null(degree2) && !is_count(degree2, minimum=0))
+    stop2("`degree` must be a positive integer (or NULL): ", degree2)
+
   if (is.null(degree2))
     degree2 = degree + removal
 

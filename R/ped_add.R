@@ -62,7 +62,10 @@ NULL
 #' @rdname ped_add
 #' @export
 addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
-  assert_that(is.ped(x), is.count(nch), all(sex %in% 0:2))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(!is_count(nch)) stop2("Argument `nch` must be a positive integer: ", nch)
+  #if(!all(sex %in% 0:2))
+
   father_exists = isTRUE(father %in% x$LABELS)
   mother_exists = isTRUE(mother %in% x$LABELS)
   if (!father_exists && !mother_exists)
@@ -169,7 +172,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
     stop2("Individual ", id, " already has parents in the pedigree")
 
   id_int = internalID(x, id)
-  
+
   # Check that assigned parents are OK
   desc = descendants(x, id)
   if (!is.null(father)) {
@@ -231,7 +234,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
 #' @rdname ped_add
 #' @export
 removeIndividuals = function(x, ids, verbose = TRUE) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   # Remove individuals 'ids' and all their descendants.
   # Spouse-founders are removed as well.
   if(!length(ids))
@@ -283,7 +286,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
 # #' @rdname ped_add
 # #' @export
 branch = function(x, id) {
-  assert_that(is.ped(x))
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
   desc = descendants(x, id)
   spous = unlist(lapply(c(id, desc), spouses, x = x))
   subset(x, subset = c(id, desc, spous))

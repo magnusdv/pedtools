@@ -11,7 +11,7 @@ test_that("nuclearPed() works by giving labels", {
 
 test_that("nuclearPed() gives sensible error messages", {
   expect_error(nuclearPed(), 'argument "nch" is missing')
-  expect_error(nuclearPed(0), 'nch is not a count')
+  expect_error(nuclearPed(0), '`nch` must be a positive integer: 0')
 })
 
 test_that("simple ped", {

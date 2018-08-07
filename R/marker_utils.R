@@ -30,7 +30,7 @@ allowsMutations = function(marker) {
 #' nAlleles(m)
 #'
 nAlleles = function(m) {
-  assert_that(is.marker(m))
+  if(!is.marker(m)) stop2("Input is not a `marker` object")
   length(attr(m, 'alleles'))
 }
 
@@ -45,18 +45,10 @@ is.marker = function(x) {
   inherits(x, "marker")
 }
 
-assertthat::on_failure(is.marker) = function (call, env) {
-  paste0(deparse(call$x), " is not a `marker` object")
-}
-
 #' @export
 #' @rdname is.marker
 is.markerList = function(x) {
   inherits(x, "markerList") || (is.list(x) && all(sapply(x, is.marker)))
-}
-
-assertthat::on_failure(is.markerList) = function (call, env) {
-  paste0(deparse(call$x), " is not a list of `marker` objects")
 }
 
 #' Test if a marker is on the X chromosome

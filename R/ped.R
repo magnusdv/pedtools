@@ -50,12 +50,18 @@
 #' @export
 ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verbose = FALSE) {
   n = length(id)
-  assert_that(n>0, length(fid)==n, length(mid)==n, length(sex)==n)
-  if(n == 1 && (fid!=0 || mid!=0))
-    stop2("Singleton error: Parent IDs must be 0")
+  if(n ==0) stop2("`id` vector has length 0")
+  if(length(fid) != n) 
+    stop2(sprintf("Incompatible input: length(id) = %d and length(fid) = %d", n, length(fid)))
+  if(length(mid) != n) 
+    stop2(sprintf("Incompatible input: length(id) = %d and length(mid) = %d", n, length(mid)))
+  if(length(fid) != n) 
+    stop2(sprintf("Incompatible input: length(id) = %d and length(sex) = %d", n, length(sex)))
   if (!all(sex %in% 0:2))
     stop2("Illegal gender code: ", setdiff(sex, 0:2))
-
+  if(n == 1 && (fid!=0 || mid!=0))
+    stop2("Singleton error: Parent IDs must be 0")
+  
   # Internal order 1,2,...
   ID = 1:n
   FID = match(fid, id, nomatch=0)

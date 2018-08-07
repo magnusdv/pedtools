@@ -51,7 +51,10 @@ NULL
 #' @rdname ped_complex
 #' @export
 doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = FALSE, half2 = FALSE, child = FALSE) {
-  assert_that(is_count0(degree1), is_count0(degree2), is_count0(removal1), is_count0(removal2))
+  if(!is_count(degree1, minimum=0)) stop2("`degree1` must be a nonnegative integer: ", degree1)
+  if(!is_count(degree2, minimum=0)) stop2("`degree2` must be a nonnegative integer: ", degree2)
+  if(!is_count(removal1, minimum=0)) stop2("`removal1` must be a nonnegative integer: ", removal1)
+  if(!is_count(removal2, minimum=0)) stop2("`removal2` must be a nonnegative integer: ", removal2)
 
   if(degree2*2+removal2 > degree1*2+removal1) {
     tmp = degree2; degree2 = degree1; degree1 = tmp
@@ -118,7 +121,7 @@ quadHalfFirstCousins = function() {
 #' @export
 fullSibMating = function(generations) {
     # Creates a pedigree resulting from repeated brother-sister matings.
-    assert_that(is.count(generations))
+    if(!is_count(generations)) stop2("`generations` must be a positive integer")
     x = nuclearPed(2, 1:2)
     for (i in seq_len(generations)[-1])
       x = addChildren(x, father = 2*i - 1, mother = 2*i, nch = 2, sex = 1:2, verbose = F)
@@ -131,7 +134,7 @@ halfSibStack = function(generations) {
     # Creates pedigree resulting from a breeding scheme where each generation adds two half
     # brothers and a female founder.  These become the parents of the half brothers in the next
     # layer.
-    assert_that(is.count(generations))
+    if(!is_count(generations)) stop2("`generations` must be a positive integer")
     x = ped(id = 1:5, fid = c(0, 0, 0, 1, 2), mid = c(0, 0, 0, 3, 3),
             sex = c(1, 1, 2, 1, 1), verbose = FALSE)
     for (g in seq_len(generations)[-1]) {
