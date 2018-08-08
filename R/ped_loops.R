@@ -146,9 +146,9 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
 
   ### Modify labels
   attrs = attributes(oldpedm)  #all attributes except 'dim'
-  newlabs = attrs$labels[all_rows]
+  newlabs = attrs$LABELS[all_rows]
   newlabs[new_rows] = paste0("=", newlabs[new_rows])
-  attrs$labels = newlabs
+  attrs$LABELS = newlabs
 
   ### Loop breaker matrix.
   # Previous loop_breakers must be fixed!
@@ -186,7 +186,7 @@ tieLoops = function(x, verbose=TRUE) {
   attrs = attributes(oldpedm)
 
   # Remove copy labels
-  attrs$labels = attrs$labels[-copies]
+  attrs$LABELS = attrs$LABELS[-copies]
   attrs$LOOP_BREAKERS = NULL
 
   # Discard the duplicated rows

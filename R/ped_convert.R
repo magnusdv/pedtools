@@ -20,8 +20,8 @@
 #'   If `include.attrs = TRUE` the following attributes are added to the matrix,
 #'   allowing `x` to be exactly reproduced by `restore_ped`:
 #'
-#' * `famid` the family identifier (a string)
-#' * `labels` the ID labels (a character vector)
+#' * `FAMID` the family identifier (a string)
+#' * `LABELS` the ID labels (a character vector)
 #' * `UNBROKEN_LOOPS` a logical indicating whether `x` has unboken loops
 #' * `LOOP_BREAKERS` a numerical matrix, or NULL
 #' * `markerattr` a list of length `nMarkers(x)`, containing the attributes of each marker
@@ -41,7 +41,7 @@
 #'
 #' # Must reverse the labels also:
 #' attrs = attributes(m)
-#' attrs$labels = rev(attrs$labels)
+#' attrs$LABELS = rev(attrs$LABELS)
 #'
 #' # Restore ped:
 #' y = restore_ped(m, attrs=attrs)
@@ -58,10 +58,13 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
     m = cbind(m, markermatr)
   }
   if (include.attrs) {
-    attr(m, "famid") = famid(x)
-    attr(m, "labels") = x$LABELS
+    attr(m, "FAMID") = famid(x)
+    attr(m, "LABELS") = x$LABELS
     attr(m, "UNBROKEN_LOOPS") = has_unbroken_loops(x)
     attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
+    attr(m, "FOUNDER_INBREEDING") =
+      if(is.null(x$FOUNDER_INBREEDING)) NULL
+      else founder_inbreeding(x, named = TRUE)
     if(hasMarkers(x)) {
       attr(m, "markerattr") = lapply(x$markerdata, attributes)
     }
@@ -75,9 +78,23 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
 restore_ped = function(x, attrs = NULL, check = TRUE) {
   if (is.null(attrs))
     attrs = attributes(x)
-  p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$famid, check = check, reorder=F)
-  p = setLabels(p, attrs$labels)
+  p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$FAMID,
+          check = check, reorder=F)
+  p = setLabels(p, attrs$LABELS)
   p['LOOP_BREAKERS'] = list(attrs$LOOP_BREAKERS) # Trick to keep explicit NULLs
+
+  # Founder inbreeding
+  finb = attrs$FOUNDER_INBREEDING
+  if(is.null(finb))
+    p['FOUNDER_INBREEDING'] = list(NULL)
+  else {
+    new_fou = founders(p)
+    no_longer_fou = .mysetdiff(names(finb), new_fou)
+    if(any(finb[no_longer_fou] > 0))
+      stop2("Individual with nonzero founder inbreeding is no longer a founder: ", no_longer_fou)
+    finb = finb[intersect(names(finb), new_fou)]
+    founder_inbreeding(p) = finb
+  }
 
   ### Markers
   if((nc <- ncol(x)) > 4) {

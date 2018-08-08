@@ -28,7 +28,7 @@
 #'
 #' @importFrom utils write.table
 #' @export
-writePed = function(x, prefix = x$famid, what = c("ped", "map", "dat", "freq"), merlin = FALSE, verbose=TRUE) {
+writePed = function(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"), merlin = FALSE, verbose=TRUE) {
   generated.files = character(0)
 
   if (merlin) {

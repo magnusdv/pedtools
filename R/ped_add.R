@@ -136,7 +136,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
   children_markers = matrix(0, nrow=nch, ncol = nmark*2)
   p = rbind(p, cbind(children_pedcols, children_markers))
 
-  attrs$labels = as.character(labs)
+  attrs$LABELS = as.character(labs)
   restore_ped(p, attrs = attrs)
 }
 
@@ -201,7 +201,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
 
   p = as.matrix(x)
   attrs = attributes(p)
-  labels = attrs$labels
+  labels = attrs$LABELS
   nmark = nMarkers(x)
 
   new.father = !father %in% x$LABELS
@@ -224,7 +224,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
   else moth_int = internalID(x, mother)
 
   p[id_int, 2:3] = c(fath_int, moth_int)
-  attrs$labels = labels
+  attrs$LABELS = labels
 
   restore_ped(p, attrs = attrs)
 }
@@ -275,10 +275,20 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   xmatr = as.matrix(x)
   new = xmatr[-remov, , drop=F]
 
-  if(nrow(new) == 0) {if(verbose) message("Remaining pedigree is empty!"); return(NULL)}
+  if(nrow(new) == 0) {
+    if(verbose) message("Remaining pedigree is empty!")
+    return(NULL)
+  }
 
   attrs = attributes(xmatr)
-  attrs$labels = attrs$labels[-remov]
+
+  # Remove labels
+  attrs$LABELS = attrs$LABELS[-remov]
+
+  # Remove founder inbreeding
+  finb = attrs$FOUNDER_INBREEDING
+  if (!is.null(finb) && length(intersect(remov, FOU)))
+    attrs$FOUNDER_INBREEDING = finb[!names(finb) %in% x$LABELS[remov]]
 
   restore_ped(new, attrs = attrs)
 }

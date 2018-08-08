@@ -51,7 +51,7 @@ reorderPed = function(x, neworder = order(x$LABELS)) {
     return(x)
   xmatr = as.matrix(x)
   attr = attributes(xmatr)
-  attr$labels = attr$labels[neworder]
+  attr$LABELS = attr$LABELS[neworder]
   if(!is.null(lp <- attr$LOOP_BREAKERS))
     attr$LOOP_BREAKERS = matrix(match(lp, neworder), ncol=2)
   restore_ped(xmatr[neworder, ], attrs = attr)

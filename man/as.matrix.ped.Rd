@@ -29,8 +29,8 @@ For \code{as.matrix}: A numerical matrix with \code{pedsize(x)} rows.
 If \code{include.attrs = TRUE} the following attributes are added to the matrix,
 allowing \code{x} to be exactly reproduced by \code{restore_ped}:
 \itemize{
-\item \code{famid} the family identifier (a string)
-\item \code{labels} the ID labels (a character vector)
+\item \code{FAMID} the family identifier (a string)
+\item \code{LABELS} the ID labels (a character vector)
 \item \code{UNBROKEN_LOOPS} a logical indicating whether \code{x} has unboken loops
 \item \code{LOOP_BREAKERS} a numerical matrix, or NULL
 \item \code{markerattr} a list of length \code{nMarkers(x)}, containing the attributes of each marker
@@ -57,7 +57,7 @@ m[] = m[3:1, ]
 
 # Must reverse the labels also:
 attrs = attributes(m)
-attrs$labels = rev(attrs$labels)
+attrs$LABELS = rev(attrs$LABELS)
 
 # Restore ped:
 y = restore_ped(m, attrs=attrs)
