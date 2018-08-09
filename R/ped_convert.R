@@ -208,8 +208,8 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
 
 #' Conversions to ped objects
 #'
-#' @param x Any object
-#' @param ... Further arguments, passed on to [ped()]
+#' @param x Any object.
+#' @param ... Not used.
 #'
 #' @return A `ped` object or a list of such.
 #'
@@ -247,11 +247,13 @@ as.ped = function(x, ...) {
 #' @param locus_annotations Passed on to [setMarkers()] (see explanation there).
 #' @param missing Passed on to [setMarkers()] (see explanation there).
 #' @param allele_sep Passed on to [setMarkers()] (see explanation there).
+#' @param validate A logical indicating if the pedigree structure should be validated.
 #'
 #' @rdname as.ped
 #' @export
 as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA, sex_col=NA,
-                             marker_col=NA, locus_annotations=NULL, missing=0, allele_sep=NULL, ...) {
+                             marker_col=NA, locus_annotations=NULL, missing=0, allele_sep=NULL,
+                             validate = TRUE, ...) {
 
   colnames = tolower(names(x))
   if(is.na(famid_col))
@@ -266,12 +268,17 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
     multiple_fams = length(unique_fams) > 1
   }
 
-  # If famid column present, recurse for each family
+  # If disconected, treat each component separatly by recursion
   if(multiple_fams) {
     pedlist = lapply(unique_fams, function(fam) {
-      as.ped.data.frame(x[famid == fam, , drop=FALSE], famid_col, id_col, fid_col, mid_col, sex_col,
-                        marker_col=NA, locus_annotations=NULL, missing=0, allele_sep=NULL, ...)
+      comp = x[famid == fam, , drop=FALSE]
+
+      as.ped.data.frame(comp, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
+                        mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
+                        locus_annotations = locus_annotations, missing = missing,
+                        allele_sep=allele_sep, validate = validate, ...)
     })
+
     names(pedlist) = unique_fams
     return(pedlist)
   }
@@ -326,7 +333,7 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   fid = x[[fid_col]]
   mid = x[[mid_col]]
 
-  p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, ...)
+  p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, check = validate, reorder = FALSE)
 
   ### Marker columns
   last_pedcol = max(col_idx, na.rm = TRUE)

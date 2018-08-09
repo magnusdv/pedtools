@@ -9,12 +9,13 @@ as.ped(x, ...)
 
 \method{as.ped}{data.frame}(x, famid_col = NA, id_col = NA,
   fid_col = NA, mid_col = NA, sex_col = NA, marker_col = NA,
-  locus_annotations = NULL, missing = 0, allele_sep = NULL, ...)
+  locus_annotations = NULL, missing = 0, allele_sep = NULL,
+  validate = TRUE, ...)
 }
 \arguments{
-\item{x}{Any object}
+\item{x}{Any object.}
 
-\item{...}{Further arguments, passed on to \code{\link[=ped]{ped()}}}
+\item{...}{Not used.}
 
 \item{famid_col}{Index of family ID column. If NA, the program looks for a
 column named "famid" (ignoring case).}
@@ -43,6 +44,8 @@ and split into separate alleles with \code{strsplit(..., split=allele_sep)}.}
 \item{missing}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
 \item{allele_sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+
+\item{validate}{A logical indicating if the pedigree structure should be validated.}
 }
 \value{
 A \code{ped} object or a list of such.

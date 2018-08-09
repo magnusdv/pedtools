@@ -88,26 +88,25 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
     stop2("Argument `allele_matrix` must be either a matrix or a data.frame")
 
   m = as.matrix(allele_matrix)
-
   if(nrow(m) != pedsize(x))
     stop2("Incompatible input.\n  Pedigree size = ", pedsize(x),
          "\n  Allele matrix rows = ", nrow(m))
 
-  # If row names are given, use them to re-order matrix
-  if (!is.null(row_nms <- rownames(m))) {
-
-    # Check compatibility
-    missing_labs = setdiff(x$LABELS, row_nms)
-    if (length(missing_labs))
-      stop2("Pedigree member missing in allele matrix row names: ", missing_labs)
-    unknown_labs = setdiff(row_nms, x$LABELS)
-    if (length(unknown_labs))
-      stop2("Unknown row name in allele matrix: ", unknown_labs)
-
-    # Reorder
-    if(!identical(x$LABELS, row_nms))
-      allele_matrix = allele_matrix[x$LABELS, ]
-  }
+  # # If row names are given, use them to re-order matrix
+  # if (!is.null(row_nms <- rownames(m))) {
+  #
+  #   # Check compatibility
+  #   missing_labs = setdiff(x$LABELS, row_nms)
+  #   if (length(missing_labs))
+  #     stop2("Pedigree member missing in allele matrix row names: ", missing_labs)
+  #   unknown_labs = setdiff(row_nms, x$LABELS)
+  #   if (length(unknown_labs))
+  #     stop2("Unknown row name in allele matrix: ", unknown_labs)
+  #
+  #   # Reorder
+  #   if(!identical(x$LABELS, row_nms))
+  #     m = m[x$LABELS, ]
+  # }
 
   # If allele_sep is given, interpret each column as a marker
   if(!is.null(allele_sep))
