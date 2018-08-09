@@ -37,3 +37,24 @@ test_that("data.frame with multiple peds is converted to pedlist", {
   res = as.ped(df_shuffled)
   expect_identical(lapply(res, reorderPed), ans)
 })
+
+test_that("as.ped() converts data.frame with marker columns", {
+  df = data.frame(id=c('fa','mo','boy'), fid=c(0,0,'fa'), mid=c(0,0,'mo'), sex=c(1,2,1),
+              c(0,0,1), c(0,0,2), c(0,0,2), c(0,0,2), stringsAsFactors = F)
+  trio = nuclearPed(fa="fa", mo="mo", child="boy")
+  x1 = as.ped(df)
+  expect_equal(nMarkers(x1), 2)
+  expect_identical(x1$markerdata[[1]], marker(trio, boy=1:2))
+  expect_identical(x1$markerdata[[2]], marker(trio, boy=2))
+
+  # force two alleles
+  x2 = as.ped(df, locus_annotation = list(alleles=1:2))
+  expect_identical(x2$markerdata[[1]], marker(trio, boy=1:2))
+  expect_identical(x2$markerdata[[2]], marker(trio, boy=2, alleles=1:2))
+
+  # Same, with markers in single columns:
+  dfS = data.frame(id=c('fa','mo','boy'), fid=c(0,0,'fa'), mid=c(0,0,'mo'), sex=c(1,2,1),
+                  m1 = c(NA,NA,"1/2"), m2 = c(NA,NA,"2/2"), stringsAsFactors = F)
+  expect_identical(x1, as.ped(dfS, allele_sep="/"))
+  expect_identical(x2, as.ped(dfS, allele_sep="/", locus_annotations = list(alleles=1:2)))
+})

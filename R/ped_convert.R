@@ -240,10 +240,18 @@ as.ped = function(x, ...) {
 #'   female). If NA, the program looks for a column named "sex" (ignoring case).
 #'   If this is not found, genders of parents are deduced from the data, leaving
 #'   the remaining as unknown.
+#' @param marker_col Index vector indicating columns with marker alleles. If NA,
+#'   all columns to the right of all pedigree columns are used. If `allele_sep`
+#'   (see below) is non-NULL, each column is interpreted as a genotype column
+#'   and split into separate alleles with `strsplit(..., split=allele_sep)`.
+#' @param locus_annotations Passed on to [setMarkers()] (see explanation there).
+#' @param missing Passed on to [setMarkers()] (see explanation there).
+#' @param allele_sep Passed on to [setMarkers()] (see explanation there).
 #'
 #' @rdname as.ped
 #' @export
-as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA, sex_col=NA, ...) {
+as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA, sex_col=NA,
+                             marker_col=NA, locus_annotations=NULL, missing=0, allele_sep=NULL, ...) {
 
   colnames = tolower(names(x))
   if(is.na(famid_col))
@@ -261,7 +269,8 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   # If famid column present, recurse for each family
   if(multiple_fams) {
     pedlist = lapply(unique_fams, function(fam) {
-      as.ped.data.frame(x[famid == fam, , drop=FALSE], famid_col, id_col, fid_col, mid_col, sex_col, ...)
+      as.ped.data.frame(x[famid == fam, , drop=FALSE], famid_col, id_col, fid_col, mid_col, sex_col,
+                        marker_col=NA, locus_annotations=NULL, missing=0, allele_sep=NULL, ...)
     })
     names(pedlist) = unique_fams
     return(pedlist)
@@ -279,6 +288,7 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   # famid_col has already been dealt with
 
   ### Various checks
+  NC = ncol(x)
   col_idx = c(famid=famid_col, id=id_col, fid=fid_col, mid=mid_col, sex=sex_col)
 
   # id, fid, mid cannot be missing
@@ -292,7 +302,7 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
     stop2("Column ", dup_idx, " has mulitple assignments: ", names(col_idx)[col_idx == dup_idx])
 
   # Chech that columns exist
-  nonexist = !is.na(col_idx) & (col_idx < 1 | col_idx > ncol(x))
+  nonexist = !is.na(col_idx) & (col_idx < 1 | col_idx > NC)
   if(any(nonexist))
     stop2("Column index out of range: ", col_idx[nonexist])
 
@@ -307,13 +317,30 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
     bisex = intersect(fid, mid)
     sex[match(bisex, id)] = 0
   }
-  else sex = x[[sex_col]]
+  else
+    sex = x[[sex_col]]
+
 
   ### Create ped
   id = x[[id_col]]
   fid = x[[fid_col]]
   mid = x[[mid_col]]
 
-  ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, ...)
+  p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, ...)
+
+  ### Marker columns
+  last_pedcol = max(col_idx, na.rm = TRUE)
+  if(is.na(marker_col) && NC > last_pedcol)
+    marker_col = seq.int(last_pedcol + 1, NC)
+  else
+    marker_col = NULL
+
+  if(length(marker_col) > 0) {
+    p = setMarkers(p, allele_matrix = x[marker_col],
+                   locus_annotations = locus_annotations,
+                   missing = missing, allele_sep = allele_sep)
+  }
+
+  p
 }
 

@@ -28,10 +28,9 @@ See \code{\link[=marker]{marker()}} for possible entries.}
 \item{missing}{A single character (or coercible to one) indicating the symbol
 for missing alleles.}
 
-\item{allele_sep}{If this is a single character (instead of NULL), each entry
-of \code{allele_matrix} is interpreted as a genotype, and will be split by
-calling \code{str_split(..., split = allele_sep, fixed = T)}. For example, if
-the entries are formatted as "A/B", put \code{allele_sep="/"}.}
+\item{allele_sep}{If this is a single string, each entry of \code{allele_matrix}
+is interpreted as a genotype, and will be split by calling \code{str_split(..., split = allele_sep, fixed = T)}. For example, if the entries are formatted
+as "A/B", put \code{allele_sep="/"}. Default: NULL.}
 }
 \value{
 A \code{ped} object.
@@ -41,7 +40,7 @@ In many applications it is useful to \emph{attach} markers to their associated
 \code{ped} object. In particular for bigger projects with many markers, this makes
 it easier to manipulate the dataset as a unit. The function \code{setMarkers()}
 replaces all existing markers with the supplied ones, while \code{addMarkers()}
-appends them to any existing ones.
+appends the supplied markers to any existing ones.
 }
 \examples{
 x = singleton(1)

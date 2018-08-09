@@ -4,7 +4,7 @@
 #' `ped` object. In particular for bigger projects with many markers, this makes
 #' it easier to manipulate the dataset as a unit. The function `setMarkers()`
 #' replaces all existing markers with the supplied ones, while `addMarkers()`
-#' appends them to any existing ones.
+#' appends the supplied markers to any existing ones.
 #'
 #' @param x A `ped` object
 #' @param m Either a single `marker` object or a list of `marker` objects
@@ -16,10 +16,10 @@
 #'   See [marker()] for possible entries.
 #' @param missing A single character (or coercible to one) indicating the symbol
 #'   for missing alleles.
-#' @param allele_sep If this is a single character (instead of NULL), each entry
-#'   of `allele_matrix` is interpreted as a genotype, and will be split by
-#'   calling `str_split(..., split = allele_sep, fixed = T)`. For example, if
-#'   the entries are formatted as "A/B", put `allele_sep="/"`.
+#' @param allele_sep If this is a single string, each entry of `allele_matrix`
+#'   is interpreted as a genotype, and will be split by calling `str_split(...,
+#'   split = allele_sep, fixed = T)`. For example, if the entries are formatted
+#'   as "A/B", put `allele_sep="/"`. Default: NULL.
 #'
 #' @return A `ped` object.
 #' @examples
@@ -82,9 +82,6 @@ addMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NUL
 
 
 
-
-
-
 allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=0, allele_sep=NULL) {
 
   if(!is.matrix(allele_matrix) && !is.data.frame(allele_matrix))
@@ -113,19 +110,8 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
   }
 
   # If allele_sep is given, interpret each column as a marker
-  if(!is.null(allele_sep)) {
-
-    if(!grepl(allele_sep, m[1]))
-      stop2("Allele separator not found in first entry of allele matrix: ", m[1])
-
-    nc = ncol(m)
-    nr = nrow(m)
-    splitvec = unlist(strsplit(m, allele_sep, fixed = T))
-    msplit = matrix(0, ncol = 2 * nc, nrow = nr)
-    msplit[, 2 * seq_len(nc) - 1] = splitvec[2 * seq_len(nc * nr) - 1]
-    msplit[, 2 * seq_len(nc)] = splitvec[2 * seq_len(nc * nr)]
-    m = msplit
-  }
+  if(!is.null(allele_sep))
+    m = split_genotype_cols(m, allele_sep, missing)
 
   if (ncol(m) %% 2 != 0)
     stop2("Uneven number of marker allele columns")
@@ -169,8 +155,29 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
     do.call(.createMarkerObject, attribs)
   })
 
-  mlist[sapply(mlist, is.null)] = NULL
+  mlist[unlist(lapply(mlist, is.null))] = NULL
 
+  class(mlist) = "markerList"
   mlist
 }
 
+split_genotype_cols = function(m, allele_sep, missing) {
+  nas = is.na(m)
+  if(all(nas))
+    return(matrix(0, nrow = nrow(m), ncol = 2*ncol(m)))
+
+  nonNA = m[!nas][1]
+  if(!grepl(allele_sep, nonNA))
+    stop2("Allele separator not found in first non-NA entry of allele matrix: ", nonNA)
+
+  # Replace NA's by <miss>/<miss>. (Suboptimal strategy, but simple)
+  m[nas] = sprintf("%s%s%s", missing, allele_sep, missing)
+
+  nc = ncol(m)
+  nr = nrow(m)
+  splitvec = unlist(strsplit(m, allele_sep, fixed = T))
+  msplit = matrix(0, ncol = 2 * nc, nrow = nr)
+  msplit[, 2 * seq_len(nc) - 1] = splitvec[2 * seq_len(nc * nr) - 1]
+  msplit[, 2 * seq_len(nc)] = splitvec[2 * seq_len(nc * nr)]
+  msplit
+}

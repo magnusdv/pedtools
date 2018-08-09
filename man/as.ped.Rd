@@ -8,7 +8,8 @@
 as.ped(x, ...)
 
 \method{as.ped}{data.frame}(x, famid_col = NA, id_col = NA,
-  fid_col = NA, mid_col = NA, sex_col = NA, ...)
+  fid_col = NA, mid_col = NA, sex_col = NA, marker_col = NA,
+  locus_annotations = NULL, missing = 0, allele_sep = NULL, ...)
 }
 \arguments{
 \item{x}{Any object}
@@ -31,6 +32,17 @@ column named "mid" (ignoring case).}
 female). If NA, the program looks for a column named "sex" (ignoring case).
 If this is not found, genders of parents are deduced from the data, leaving
 the remaining as unknown.}
+
+\item{marker_col}{Index vector indicating columns with marker alleles. If NA,
+all columns to the right of all pedigree columns are used. If \code{allele_sep}
+(see below) is non-NULL, each column is interpreted as a genotype column
+and split into separate alleles with \code{strsplit(..., split=allele_sep)}.}
+
+\item{locus_annotations}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+
+\item{missing}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+
+\item{allele_sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 }
 \value{
 A \code{ped} object or a list of such.
