@@ -67,12 +67,7 @@ marker = function(x, ...,  alleles = NULL, afreq = NULL, chrom = NA,
 }
 
 
-as.marker.matrix = function(allelematrix, x, alleles = NULL, afreq = NULL, chrom = NA,
-                            posMb = NA, posCm = NA, name = NA, mutmat = NULL)
-NULL
-
-
-
+# TODO: rename to new_marker() and move checks to validate_marker()
 .createMarkerObject = function(matr, alleles = NULL, afreq = NULL, chrom = NA,
                                posMb = NA, posCm = NA, name = NA, mutmat = NULL,
                                pedmembers = NULL, sex = NULL, check_input = TRUE) {
@@ -213,8 +208,7 @@ NULL
   m
 }
 
-
-.setSNPfreqs = function(x, newfreqs) {
+.setSNPfreqs = function(x, newfreqs) { # TODO: review function
     stopifnot(all(vapply(x$markerdata, function(m) attr(m, "nalleles"), numeric(1)) == 2))
     newfreqs = rep(newfreqs, length = x$nMark)
     for (i in seq_len(x$nMark)) attr(x$markerdata[[i]], "afreq") = c(newfreqs[i], 1 - newfreqs[i])

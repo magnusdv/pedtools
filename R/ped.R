@@ -163,10 +163,6 @@ checkped = function(x) {
   stop2("Pedigree errors detected")
 }
 
-#TODO
-as_ped.matrix = function(m) ped(id=m[,1], fid=m[,2], mid=m[,3], sex=m[,4])
-
-
 # TODO
 any_self_ancest = function(id, fid, mid) {
   is_self_anc = numeric(length(id))

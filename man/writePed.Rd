@@ -4,7 +4,7 @@
 \alias{writePed}
 \title{Write a pedigree to file}
 \usage{
-writePed(x, prefix = x$famid, what = c("ped", "map", "dat", "freq"),
+writePed(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"),
   merlin = FALSE, verbose = TRUE)
 }
 \arguments{

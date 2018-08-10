@@ -1,6 +1,6 @@
 stop2 = function(...) {
   a = lapply(list(...), toString)
-  a = append(a, list(call.=FALSE))
+  a = append(a, list(call. = FALSE))
   do.call(stop, a)
 }
 
