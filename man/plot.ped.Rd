@@ -8,15 +8,15 @@
 \usage{
 \method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
-  col = 1, deceased = numeric(0), starred = numeric(0),
+  col = 1, shaded = NULL, deceased = NULL, starred = NULL,
   margins = c(0.6, 1, 4.1, 1), ...)
 
 \method{plot}{singleton}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
-  col = 1, deceased = numeric(0), starred = numeric(0),
+  col = 1, shaded = NULL, deceased = NULL, starred = NULL,
   margins = c(8, 0, 0, 0), ...)
 
-as_kinship2_pedigree(x, deceased = numeric(0))
+as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 }
 \arguments{
 \item{x}{a \code{\link[=ped]{ped()}} object.}
@@ -32,22 +32,24 @@ pedigree, in the format determined by \code{sep} and \code{missing}. See also
 
 \item{missing}{the symbol (integer or character) for missing alleles.}
 
-\item{skip.empty.genotypes}{a logical. If TRUE, and \code{marker} is
-non-NULL, empty genotypes (which by default looks like '-/-') are not
-printed.}
+\item{skip.empty.genotypes}{a logical. If TRUE, and \code{marker} is non-NULL,
+empty genotypes (which by default looks like '-/-') are not printed.}
 
 \item{id.labels}{a vector with labels for each pedigree member. This defaults
 to \code{x$LABELS} (see \code{\link[=setLabels]{setLabels()}}).}
 
 \item{title}{the plot title. If NULL or '', no title is added to the plot.}
 
-\item{col}{a vector with color indicators for the pedigree members. Recycled
-if necessary. By default everyone is drawn black.}
+\item{col}{a vector of colors for the pedigree members. Recycled if
+necessary. By default everyone is drawn black.}
 
-\item{deceased}{a numeric containing ID's of deceased pedigree members.}
+\item{shaded}{a vector of ID labels indicating pedigree members whose plot
+symbols should appear shaded.}
 
-\item{starred}{a numeric containing ID's of pedigree members that should be
-marked with a star in the pedigree plot.}
+\item{deceased}{a vector of ID labels indicating deceased pedigree members.}
+
+\item{starred}{a vector of ID labels indicating pedigree members that should
+be marked with a star in the pedigree plot.}
 
 \item{margins}{a numeric of length 4 indicating the plot margins. For
 singletons only the first element (the 'bottom' margin) is used.}
@@ -61,13 +63,22 @@ controlling the appearance of pedigree symbols and accompanying labels. Most
 of the work is done by the plotting functionality in the 'kinship2' package.
 }
 \details{
-\code{plot.ped} is in essence a wrapper for \code{plot.pedigree} in the \code{kinship2}
-package.
+\code{plot.ped} is in essence a wrapper for \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
 }
 \examples{
 
-x = cousinsPed(1)
-plot(x)
+x = nuclearPed(father = "fa", mother = "mo", child = "boy")
+m = marker(x, fa = 1, boy = 1:2, name="SNP")
+
+plot(x, marker = m)
+
+# Alternative syntax if the marker is attached to x
+x = setMarkers(x, m)
+plot(x, marker = "SNP")
+
+# Other options
+plot(x, marker = "SNP", shaded = typedMembers(x),
+     starred = "fa", deceased = "mo")
 
 }
 \seealso{

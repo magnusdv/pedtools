@@ -4,8 +4,7 @@
 #' controlling the appearance of pedigree symbols and accompanying labels. Most
 #' of the work is done by the plotting functionality in the 'kinship2' package.
 #'
-#' `plot.ped` is in essence a wrapper for `plot.pedigree` in the `kinship2`
-#' package.
+#' `plot.ped` is in essence a wrapper for [kinship2::plot.pedigree()].
 #'
 #' @param x a [ped()] object.
 #' @param marker either NULL, a vector of positive integers, a [`marker`]
@@ -16,17 +15,18 @@
 #'   `skip.empty.genotypes` below.
 #' @param sep a character of length 1 separating alleles for diploid markers.
 #' @param missing the symbol (integer or character) for missing alleles.
-#' @param skip.empty.genotypes a logical. If TRUE, and `marker` is
-#'   non-NULL, empty genotypes (which by default looks like '-/-') are not
-#'   printed.
+#' @param skip.empty.genotypes a logical. If TRUE, and `marker` is non-NULL,
+#'   empty genotypes (which by default looks like '-/-') are not printed.
 #' @param id.labels a vector with labels for each pedigree member. This defaults
 #'   to `x$LABELS` (see [setLabels()]).
 #' @param title the plot title. If NULL or '', no title is added to the plot.
-#' @param col a vector with color indicators for the pedigree members. Recycled
-#'   if necessary. By default everyone is drawn black.
-#' @param deceased a numeric containing ID's of deceased pedigree members.
-#' @param starred a numeric containing ID's of pedigree members that should be
-#'   marked with a star in the pedigree plot.
+#' @param col a vector of colors for the pedigree members. Recycled if
+#'   necessary. By default everyone is drawn black.
+#' @param shaded a vector of ID labels indicating pedigree members whose plot
+#'   symbols should appear shaded.
+#' @param deceased a vector of ID labels indicating deceased pedigree members.
+#' @param starred a vector of ID labels indicating pedigree members that should
+#'   be marked with a star in the pedigree plot.
 #' @param margins a numeric of length 4 indicating the plot margins. For
 #'   singletons only the first element (the 'bottom' margin) is used.
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
@@ -36,13 +36,23 @@
 #'
 #' @examples
 #'
-#' x = cousinsPed(1)
-#' plot(x)
+#' x = nuclearPed(father = "fa", mother = "mo", child = "boy")
+#' m = marker(x, fa = 1, boy = 1:2, name="SNP")
+#'
+#' plot(x, marker = m)
+#'
+#' # Alternative syntax if the marker is attached to x
+#' x = setMarkers(x, m)
+#' plot(x, marker = "SNP")
+#'
+#' # Other options
+#' plot(x, marker = "SNP", shaded = typedMembers(x),
+#'      starred = "fa", deceased = "mo")
 #'
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                    id.labels = x$LABELS, title = NULL, col = 1, deceased = numeric(0),
-                    starred = numeric(0), margins = c(0.6, 1, 4.1, 1), ...) {
+                    id.labels = x$LABELS, title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                    starred = NULL, margins = c(0.6, 1, 4.1, 1), ...) {
 
   # Labels
   if (is.null(id.labels)) id.labels=rep("", pedsize(x))
@@ -88,15 +98,18 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   # Colors
   cols = rep(col, length = pedsize(x))
 
-  # Special treatment for option 'available=shaded'
-  #if (identical(available, "shaded")) {
-  #    if (any(c("angle", "density") %in% names(list(...))))
-  #        stop("Plot parameters 'angle' and 'density' cannot be used in combination with 'available=shaded'")
-  #    pedigree = as.kinship2_pedigree(x, deceased = deceased, aff2 = aff2)
-  #    pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins, density = 25, angle = 45, ...)
+  # Shading
+  if (!is.null(shaded)) {
+    density = 25
+    angle = 45
+  } else {
+    density = NULL
+    angle = NULL
+  }
 
-  pedigree = as_kinship2_pedigree(x, deceased = deceased)
-  pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins, ...)
+  pedigree = as_kinship2_pedigree(x, deceased = deceased, shaded = shaded)
+  pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
+                                 density = density, angle = angle, ...)
 
   # Add title
   if (!is.null(title)) title(title)
@@ -108,8 +121,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 #' @rdname plot.ped
 #' @export
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                          id.labels = x$LABELS, title = NULL, col = 1, deceased = numeric(0),
-                          starred = numeric(0), margins = c(8, 0, 0, 0), ...) {
+                          id.labels = x$LABELS, title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                          starred = NULL, margins = c(8, 0, 0, 0), ...) {
   if(length(id.labels) > 1) stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
   y = addParents(x, x$LABELS[1], verbose = FALSE) # reorder necessary??
@@ -140,7 +153,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
 
   p = plot.ped(y, marker = marker, sep =sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
-               title = title, col = col, deceased = numeric(0), starred = starred,
+               title = title, col = col, shaded = shaded, deceased = deceased, starred = starred,
                margins = c(margins[1], 0, 0, 0), ...)
 
   usr = par("usr")
@@ -151,14 +164,20 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
 
 #' @rdname plot.ped
 #' @export
-as_kinship2_pedigree = function(x, deceased = numeric(0)) {
-    ped = as.data.frame(x) # not as.matrix
-    sex = ifelse(ped$sex == 0, 3, ped$sex)
+as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
+    ped = as.data.frame(x)  # not as.matrix()
+    ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
 
-    status = ifelse(ped$id %in% deceased, 1, 0)
+    affected = status = NULL
 
-    kinship2::pedigree(id = ped$id, dadid = ped$fid, momid = ped$mid, sex = sex,
-        status = status, missid=0)
+    if(!is.null(shaded))
+      affected = ifelse(ped$id %in% shaded, 1, 0)
+
+    if(!is.null(deceased))
+      status = ifelse(ped$id %in% deceased, 1, 0)
+
+    kinship2::pedigree(id = ped$id, dadid = ped$fid, momid = ped$mid, sex = ped$sex,
+                       affected = affected, status = status, missid=0)
 }
 
 
@@ -302,8 +321,8 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
   maxGen = max(vapply(plot.arg.list, function(arglist) .generations(arglist[[1]]), 1))
 
   if (hasframetitles <- !is.null(frametitles))
-    if(length(frametitles) != length(frames)) 
-      stop2(sprintf("Length of `frametitles` (%d) does not equal number of frames (%d)", 
+    if(length(frametitles) != length(frames))
+      stop2(sprintf("Length of `frametitles` (%d) does not equal number of frames (%d)",
             length(frametitles), length(frames)))
 
   extra.args = list(...)
