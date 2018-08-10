@@ -42,6 +42,10 @@ NULL
 #' @export
 setMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NULL, missing=0, allele_sep=NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(is.null(m) && is.null(allele_matrix)) {
+    x['markerdata'] = list(NULL)
+    return(x)
+  }
 
   if (is.marker(m))
     mlist = list(m)
