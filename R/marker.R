@@ -50,6 +50,8 @@ marker = function(x, ...,  alleles = NULL, afreq = NULL, chrom = NA,
 
   # Capture genotypes given in dots
   dots = eval(substitute(alist(...)))
+  if(length(dots) > 0 && is.null(names(dots)))
+    stop2("Genotype assignments in `...` must be named. See ?marker")
 
   ids_int = internalID(x, names(dots))
   genos = lapply(dots, eval.parent)

@@ -1,17 +1,20 @@
 context("marker creation")
 
-test_that("X markers warns about heterozygous males", {
-  skip("not implemented")
-  })
+test_that("paramlink syntax raises error", {
+  x = nuclearPed(1)
+  ERR = "Genotype assignments in `...` must be named."
+  expect_error(marker(x, 0), ERR)
+  expect_error(marker(x, 1, 'A'), ERR)
+  expect_error(marker(x, '1', 1, '2', 1:2, alleles=1:2), ERR)
+})
 
 
 test_that("empty markers are created correctly", {
   x = nuclearPed(2)
 
   # Adding an empty SNP (all genotypes are missing):
-  expect_is(marker(x, 0), "marker")
+  expect_is(marker(x), "marker")
   expect_is(marker(x, '1'=0), "marker")
-  expect_is(marker(x, '1'=1:2), "marker")
 })
 
 test_that("alleles and freqs are sorted together", {
