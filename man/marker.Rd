@@ -12,7 +12,7 @@ marker(x, ..., alleles = NULL, afreq = NULL, chrom = NA,
 
 \item{...}{one or more expressions of the form \code{id = genotype}, where \code{id} is
 the ID label of a member of \code{x}, and genotype is a numeric or character
-vector of length 2 (see Examples).}
+vector of length 1 or 2 (see Examples).}
 
 \item{alleles}{a character (or coercible to character) containing allele
 names. If not given, the default is to take the sorted vector of distinct
@@ -25,13 +25,13 @@ all alleles are given equal frequencies.}
 
 \item{chrom}{a single integer: the chromosome number. Default: NA.}
 
-\item{posMb}{a single numeric: the phsyical position of the marker, in
-megabases. Default: NA.}
+\item{posMb}{a nonnegative real number: the phsyical position of the marker,
+in megabases. Default: NA.}
 
-\item{posCm}{a single numeric: the centiMorgan position of the marker.
-Default: NA.}
+\item{posCm}{a nonnegative real number: the centiMorgan position of the
+marker. Default: NA.}
 
-\item{name}{a single character: the name of the marker. Default: NA.}
+\item{name}{a character string: the name of the marker. Default: NA.}
 
 \item{mutmat}{a mutation matrix, or a list of two such matrices named
 'female' and 'male'. If given, the mutation matrices must be square, with
@@ -39,12 +39,12 @@ the allele labels as dimnames, and each row must sum to 1 (after rounding
 to 3 decimals). Default: NULL.}
 }
 \value{
-An object of class \code{marker}: This is a numerical 2-column matrix with
-one row per individual, and attributes 'alleles' (a character vector with
-allele labels), 'afreq` (allele frequencies), 'chrom' (chromosome number),
-'posMb' (physical location in megabases),'posCm' (position in centiMorgan),
-'name' (marker identifier) and 'mutmat' (a list of two (male and female)
-mutation matrices).
+An object of class \code{marker}: This is an integer matrix with 2 columns
+and one row per individual, and attributes 'alleles' (a character vector
+with allele labels), 'afreq` (allele frequencies), 'chrom' (chromosome
+number), 'posMb' (physical location in megabases),'posCm' (position in
+centiMorgan), 'name' (marker identifier) and 'mutmat' (a list of two (male
+and female) mutation matrices).
 }
 \description{
 Creating a marker object associated with a pedigree
@@ -52,11 +52,13 @@ Creating a marker object associated with a pedigree
 \examples{
 x = nuclearPed(father="fa", mother="mo", children="child")
 
-# Create a SNP marker with alleles 1 and 2.
-# Father is homozygous 1/1; mother is 2/2; child is heterozygous.
-marker(x, fa=1, mo=2, child=1:2)
+# A rare SNP marker for which the child is heterozygous
+m = marker(x, child = 1:2, alleles = 1:2, afreq = c(0.01, 0.99))
+
+# Sometimes it is useful to attach the marker to the pedigree
+x = setMarkers(x, m)
 
 }
-\author{
-Magnus Dehli Vigeland
+\seealso{
+\link{marker_attach}
 }
