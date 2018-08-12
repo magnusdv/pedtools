@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-pedtools
-========
+pedtools <img src="man/figures/logo.png" align="right" height=140/>
+===================================================================
 
 Introduction
 ------------
@@ -12,7 +12,7 @@ pedtools is a rewritten and improved version of one part of the many-faceted pac
 Installation
 ------------
 
-pedtools is under development and not on CRAN yet. However, you can install the latest version from GitHub as follows:
+To get `pedtools`, install from GitHub as follows:
 
 ``` r
  # First install devtools if needed
