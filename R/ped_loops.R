@@ -114,12 +114,13 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
   loop_breakers = sort.int(internalID(x, loop_breakers))
 
   FOU = founders(x, internal=T)
+  LABS = labels(x)
   if (any(loop_breakers %in% FOU))
     stop2("Pedigree founders cannot be loop breakers: ", 
-          x$LABELS[intersect(loop_breakers, FOU)])
+          LABS[intersect(loop_breakers, FOU)])
 
   if (verbose)
-    cat("Loop breakers:", toString(x$LABELS[loop_breakers]), "\n")
+    cat("Loop breakers:", toString(LABS[loop_breakers]), "\n")
 
   ### Old ped data
   oldpedm = as.matrix(x)  #data.frame(x, famid=T, missing=0)
@@ -212,7 +213,8 @@ findLoopBreakers = function(x) {
     bestbreakers = c(bestbreakers, best)
     loops = loops[sapply(loops, function(vec) !best %in% vec)]
   }
-  x$LABELS[bestbreakers]
+  labs = labels(x)
+  labs[bestbreakers]
 }
 
 #' @export
@@ -257,6 +259,7 @@ Please contact magnusdv at medisin.uio.no if this is important to you.", call.=F
     fid[fid == b] = N
     mid[mid == b] = N
   }
-  x$LABELS[breakers]
+  labs = labels(x)
+  labs[breakers]
 }
 

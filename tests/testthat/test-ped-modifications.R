@@ -2,10 +2,10 @@ context("ped modifications")
 
 test_that("labels are correct after reordering", {
   x = setLabels(nuclearPed(1), letters[1:3])
-  expect_identical(x$LABELS, letters[1:3])
+  expect_identical(labels(x), letters[1:3])
 
   x = reorderPed(x, 3:1)
-  expect_identical(x$LABELS, letters[3:1])
+  expect_identical(labels(x), letters[3:1])
 })
 
 test_that("trivial reorder has no effect", {
@@ -183,7 +183,7 @@ test_that("addParents() creates new parents", {
   x = addSon(nuclearPed(1), 3, verbose=F)
   y1 = addParents(x, 4, verbose=F)
   y2 = addParents(x, 4, father=6, mother=7, verbose=F)
-  expect_equal(y1$LABELS, as.character(1:7))
+  expect_equal(labels(y1), as.character(1:7))
   expect_identical(y1, y2)
 })
 

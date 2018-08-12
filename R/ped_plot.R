@@ -18,7 +18,7 @@
 #' @param skip.empty.genotypes a logical. If TRUE, and `marker` is non-NULL,
 #'   empty genotypes (which by default looks like '-/-') are not printed.
 #' @param id.labels a vector with labels for each pedigree member. This defaults
-#'   to `x$LABELS` (see [setLabels()]).
+#'   to `labels(x)`.
 #' @param title the plot title. If NULL or '', no title is added to the plot.
 #' @param col a vector of colors for the pedigree members. Recycled if
 #'   necessary. By default everyone is drawn black.
@@ -51,7 +51,7 @@
 #'
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                    id.labels = x$LABELS, title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                    id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, margins = c(0.6, 1, 4.1, 1), ...) {
 
   # Labels
@@ -121,11 +121,11 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 #' @rdname plot.ped
 #' @export
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                          id.labels = x$LABELS, title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                          id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                           starred = NULL, margins = c(8, 0, 0, 0), ...) {
   if(length(id.labels) > 1) stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
-  y = addParents(x, x$LABELS[1], verbose = FALSE) # reorder necessary??
+  y = addParents(x, labels(x)[1], verbose = FALSE)
 
   # Marker genotypes
   if (!is.null(marker)) {
@@ -147,7 +147,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     y = transferMarkers(setMarkers(x, mlist), y)
   }
 
-  # If input id.labels is "num" or "" or something else than x$LABELS, pass it directly on.
+  # If input id.labels is "num" or "" or something else than labels(x), pass it directly on.
   if(is.null(id.labels) || id.labels == "num") id = id.labels
   else id = c(id.labels, "", "")
 

@@ -30,7 +30,7 @@ transferMarkers = function(from, to) {
     return(lapply(to, .transferMarkersSimple, from = from))
   if (is.pedList(from) && is.ped(to)) {
 
-    targetLabs = to$LABELS
+    targetLabs = labels(to)
 
     # start by transferring markers from the first in 'from'
     res = .transferMarkersSimple(from[[1]], to)
@@ -38,7 +38,7 @@ transferMarkers = function(from, to) {
 
     # loop over the remaining and transfer
     for (from in from[-1]) {
-      sourceLabs = from$LABELS
+      sourceLabs = labels(from)
       shared.ids = intersect(sourceLabs, targetLabs)
       if (length(shared.ids) == 0)
         next
@@ -61,8 +61,8 @@ transferMarkers = function(from, to) {
   }
 
   # Identify shared individuals
-  sourceLabs = from$LABELS
-  targetLabs = to$LABELS
+  sourceLabs = labels(from)
+  targetLabs = labels(to)
   shared.ids = intersect(sourceLabs, targetLabs)
 
   # remove prior markers in `to`

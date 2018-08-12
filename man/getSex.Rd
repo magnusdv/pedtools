@@ -4,15 +4,15 @@
 \alias{getSex}
 \title{Return the sex of specified pedigree members.}
 \usage{
-getSex(x, labels)
+getSex(x, ids = labels(x))
 }
 \arguments{
 \item{x}{A \code{ped} object.}
 
-\item{labels}{A character vector (or coercible to one) containing ID labels.}
+\item{ids}{A character vector (or coercible to one) containing ID labels.}
 }
 \value{
-An integer vector of the same length as \code{labels}, with entries 0
+An integer vector of the same length as \code{ids}, with entries 0
 (unknown), 1 (male) or 2 (female).
 }
 \description{
@@ -20,6 +20,6 @@ Return the sex of specified pedigree members.
 }
 \examples{
 x = nuclearPed(1)
-stopifnot(getSex(x, 1) == 1)
+stopifnot(all(getSex(x) == c(1,2,1)))
 
 }

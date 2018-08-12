@@ -5,8 +5,8 @@
 #' In `addChildren()` and `addParents()`, labels of added individuals are
 #' created automatically if they are not specified by the user. In the automatic
 #' case, the labelling depends on whether the existing labels are integer-like
-#' or not. (To be precise, the program checks if `x$LABELS` equals
-#' `as.character(as.integer(x$LABELS))`.) If so, the new labels are integers
+#' or not (i.e. if `labels(x)` equals
+#' `as.character(as.integer(labels(x)))`.) If so, the new labels are integers
 #' subsequent to the largest of the existing labels. If not, the new labels are
 #' "NN_1", "NN_2", ... If any such label already exists, the numbers are
 #' adjusted accordingly.
@@ -64,16 +64,20 @@ NULL
 addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!is_count(nch)) stop2("Argument `nch` must be a positive integer: ", nch)
-  #if(!all(sex %in% 0:2))
-
-  father_exists = isTRUE(father %in% x$LABELS)
-  mother_exists = isTRUE(mother %in% x$LABELS)
+  
+  # These variables will change as new members are created
+  n = pedsize(x)
+  labs = labels(x)
+  
+  # Check input
+  father_exists = isTRUE(father %in% labs)
+  mother_exists = isTRUE(mother %in% labs)
   if (!father_exists && !mother_exists)
     stop2("At least one parent must be an existing pedigree member")
   if (!is.null(ids) && length(ids) != nch)
     stop2("Length of 'ids' must equal the number of children")
-  if (any(ids %in% x$LABELS))
-    stop2("Individuals already exist: ", intersect(ids, x$LABELS))
+  if (any(ids %in% labs))
+    stop2("Individuals already exist: ", intersect(ids, labs))
 
   # Recycle `sex` if needed
   sex = rep_len(sex, nch)
@@ -95,10 +99,6 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
       res
     }
   }
-
-  # These variables will change as new members are created
-  n = pedsize(x)
-  labs = x$LABELS
 
   if(!father_exists) {
     if(is.null(father))
@@ -172,46 +172,47 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
     stop2("Individual ", id, " already has parents in the pedigree")
 
   id_int = internalID(x, id)
-
+  labs = labels(x)
+  
   # Check that assigned parents are OK
   desc = descendants(x, id)
   if (!is.null(father)) {
     if (father == id) stop2("Father and child are equal")
     if (father %in% desc) stop2("Assigned father is a descendant of ", id)
-    if (father %in% x$LABELS && getSex(x, father) == 2) stop2("Assigned father is female")
+    if (father %in% labs && getSex(x, father) == 2) stop2("Assigned father is female")
   }
   if (!is.null(mother)) {
     if (mother == id) stop2("Mother and child are equal")
     if (mother %in% desc) stop2("Assigned mother is a descendant of ", id)
-    if (mother %in% x$LABELS && getSex(x, mother) == 1) stop2("Assigned mother is male")
+    if (mother %in% labs && getSex(x, mother) == 1) stop2("Assigned mother is male")
   }
 
   # If no labels are given, create them
   if (is.null(father) || is.null(mother)) {
     if(has_numlabs(x)) {
-      mx = max(as.numeric(x$LABELS))
+      mx = max(as.numeric(labs))
       if (is.null(father)) {father = mx + 1; mx = mx + 1}
       if (is.null(mother)) {mother = mx + 1}
     }
     else {
-      if (is.null(father)) {father = nextNN(x$LABELS)}
-      if (is.null(mother)) {mother = nextNN(c(x$LABELS, father))}
+      if (is.null(father)) {father = nextNN(labs)}
+      if (is.null(mother)) {mother = nextNN(c(labs, father))}
     }
   }
 
   p = as.matrix(x)
   attrs = attributes(p)
-  labels = attrs$LABELS
+  newlabs = attrs$LABELS
   nmark = nMarkers(x)
 
-  new.father = !father %in% x$LABELS
-  new.mother = !mother %in% x$LABELS
+  new.father = !father %in% labs
+  new.mother = !mother %in% labs
 
   if (new.father) {
     if(verbose) message("Father: Creating new individual with ID = ", father)
     fath_int = nrow(p) + 1
     p = rbind(p, c(fath_int, 0, 0, 1, rep(0, 2*nmark)))
-    labels = c(labels, father)
+    newlabs = c(newlabs, father)
   }
   else fath_int = internalID(x, father)
 
@@ -219,12 +220,12 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
     if(verbose) message("Mother: Creating new individual with ID = ", mother)
     moth_int = nrow(p) + 1
     p = rbind(p, c(moth_int, 0, 0, 2, rep(0, 2*nmark)))
-    labels = c(labels, mother)
+    newlabs = c(newlabs, mother)
   }
   else moth_int = internalID(x, mother)
 
   p[id_int, 2:3] = c(fath_int, moth_int)
-  attrs$LABELS = labels
+  attrs$LABELS = newlabs
 
   restore_ped(p, attrs = attrs)
 }
@@ -241,7 +242,8 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
     return(x)
 
   ids_int = internalID(x, ids)
-
+  labs = labels(x)
+  
   # Founders without children after 'id' and 'desc' indivs are removed.
   # The redundancy in 'desc' does not matter.
   desc = numeric(0)
@@ -252,9 +254,9 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
     if (verbose) {
       if(length(dd)) {
         hisher = switch(x$SEX[id] + 1, "its", "his", "her")
-        message("Removing ", x$LABELS[id], " and ", hisher, " descendants: ", toString(x$LABELS[dd]))
+        message("Removing ", labs[id], " and ", hisher, " descendants: ", toString(labs[dd]))
       }
-      else message("Removing ", x$LABELS[id], " (no descendants)")
+      else message("Removing ", labs[id], " (no descendants)")
     }
   }
 
@@ -266,7 +268,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   leftover_spouses = setdiff(FOU, c(ids_int, parents_of_remain))
 
   if (verbose && length(leftover_spouses))
-    message("Removing leftover spouses: ", toString(x$LABELS[leftover_spouses]))
+    message("Removing leftover spouses: ", toString(labs[leftover_spouses]))
 
   # These are the ones to be removed (redundancy harmless)
   remov = c(ids_int, desc, leftover_spouses)
@@ -288,7 +290,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   # Remove founder inbreeding
   finb = attrs$FOUNDER_INBREEDING
   if (!is.null(finb) && length(intersect(remov, FOU)))
-    attrs$FOUNDER_INBREEDING = finb[!names(finb) %in% x$LABELS[remov]]
+    attrs$FOUNDER_INBREEDING = finb[!names(finb) %in% labs[remov]]
 
   restore_ped(new, attrs = attrs)
 }

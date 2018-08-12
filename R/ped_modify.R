@@ -31,6 +31,7 @@ swapSex = function(x, ids, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!length(ids)) return(x)
   ids = internalID(x, ids)
+  labs = labels(x)
   FID = x$FID
   MID = x$MID
   spouses = c(MID[FID %in% ids], FID[MID %in% ids])
@@ -38,9 +39,9 @@ swapSex = function(x, ids, verbose = TRUE) {
   if (!all(spouses %in% ids)) {
     if (verbose) {
       extra = setdiff(spouses, ids)
-      message("Changing sex of spouses as well: ", toString(x$LABELS[extra]))
+      message("Changing sex of spouses as well: ", toString(labs[extra]))
     }
-    return(swapSex(x, x$LABELS[union(ids, spouses)]))
+    return(swapSex(x, labs[union(ids, spouses)]))
   }
 
   # Swap sex
@@ -58,12 +59,12 @@ swapSex = function(x, ids, verbose = TRUE) {
 
 #' @rdname ped_modify
 #' @export
-relabel = function(x, new, old=x$LABELS) {
+relabel = function(x, new, old=labels(x)) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(length(new) != length(old))
     stop2("Arguments `new` and `old` must have the same length")
-
-  old_idx = match(old, x$LABELS)
+  xlabs = labels(x)
+  old_idx = match(old, xlabs)
   if(anyNA(old_idx))
     stop2("Unknown ID label: ", old[is.na(old_idx)])
 

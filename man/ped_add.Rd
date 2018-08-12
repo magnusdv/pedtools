@@ -58,8 +58,8 @@ Functions for adding or removing individuals in a 'ped' object.
 In \code{addChildren()} and \code{addParents()}, labels of added individuals are
 created automatically if they are not specified by the user. In the automatic
 case, the labelling depends on whether the existing labels are integer-like
-or not. (To be precise, the program checks if \code{x$LABELS} equals
-\code{as.character(as.integer(x$LABELS))}.) If so, the new labels are integers
+or not (i.e. if \code{labels(x)} equals
+\code{as.character(as.integer(labels(x)))}.) If so, the new labels are integers
 subsequent to the largest of the existing labels. If not, the new labels are
 "NN_1", "NN_2", ... If any such label already exists, the numbers are
 adjusted accordingly.

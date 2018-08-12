@@ -90,8 +90,8 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
   x2 = swapSex(x2, parents2)
 
   # Merging and adding children
-  pat = setdiff(x1$LABELS, c(parents1, offs1)) # paternal line above parents
-  mat = setdiff(x2$LABELS, c(parents2, offs2)) # maternal line above parents
+  pat = setdiff(labels(x1), c(parents1, offs1)) # paternal line above parents
+  mat = setdiff(labels(x2), c(parents2, offs2)) # maternal line above parents
   n = length(pat) + length(mat)
 
   x1 = relabel(x1, old=c(pat, parents1, offs1), new = c(1:length(pat), (1:6) + n))

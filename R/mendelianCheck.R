@@ -36,7 +36,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
   chromAUT = .mysetdiff(seq_len(nMarkers(x)), chromX)
 
   errorlist = vector(length=pedsize(x), mode="list")
-  names(errorlist) = x$LABELS
+  names(errorlist) = labels(x)
   nuc_errors = numeric()  # container for allele count errors...belongs to the whole subnuc.
 
   ### AUTOSOMAL
@@ -98,7 +98,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
         new_errs = chromX[error_markers[error_males_int == i]]
         errorlist[[i]] = c(errorlist[[i]], new_errs)
         if (verbose)
-          message(sprintf("Male `%s` heterozygous at markers: ", x$LABELS[i], toString(new_errs)))
+          message(sprintf("Male `%s` heterozygous at markers: ", labels(x)[i], toString(new_errs)))
       }
     }
 

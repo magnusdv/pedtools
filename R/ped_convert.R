@@ -59,7 +59,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
   }
   if (include.attrs) {
     attr(m, "FAMID") = famid(x)
-    attr(m, "LABELS") = x$LABELS
+    attr(m, "LABELS") = labels(x)
     attr(m, "UNBROKEN_LOOPS") = has_unbroken_loops(x)
     attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
     attr(m, "FOUNDER_INBREEDING") =
@@ -80,7 +80,7 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
     attrs = attributes(x)
   p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$FAMID,
           check = check, reorder=F)
-  p = setLabels(p, attrs$LABELS)
+  p = relabel(p, new = attrs$LABELS)
   p['LOOP_BREAKERS'] = list(attrs$LOOP_BREAKERS) # Trick to keep explicit NULLs
 
   # Founder inbreeding
@@ -100,12 +100,13 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
   if((nc <- ncol(x)) > 4) {
     if(nc %% 2 != 0) stop2("Something is wrong: Odd number of allele columns!")
     markerattr = attrs$markerattr
-
+    pedlabs = labels(p)
+    
     mlist = lapply(seq_len((nc-4)/2), function(k) {
       m = x[, c(3 + 2*k, 4 + 2*k), drop = F]
       attr = markerattr[[k]]
       attr$dim = dim(m)
-      attr$pedmembers = p$LABELS
+      attr$pedmembers = pedlabs
       attr$sex = p$SEX
       attributes(m) = attr
       m
@@ -145,7 +146,7 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
 #'
 #' @export
 as.data.frame.ped = function(x, ..., markers) {
-  lab = x$LABELS
+  lab = labels(x)
   fid = mid = rep("0", pedsize(x))
   fid[x$FID > 0] = lab[x$FID]
   mid[x$MID > 0] = lab[x$MID]

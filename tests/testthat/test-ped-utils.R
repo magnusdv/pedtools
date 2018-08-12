@@ -7,7 +7,7 @@ test_that("getSex() works with and without labels", {
 
   y = relabel(x, c('fa', 'mo', 'ch'))
   expect_equal(getSex(y, 'mo'), 2)
-  expect_equal(getSex(y, y$LABELS), c(1,2,1))
+  expect_equal(getSex(y, labels(y)), c(1,2,1))
 
 })
 

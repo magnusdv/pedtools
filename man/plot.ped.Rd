@@ -7,12 +7,12 @@
 \title{Plot pedigrees with genotypes}
 \usage{
 \method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
-  skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
+  skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
   col = 1, shaded = NULL, deceased = NULL, starred = NULL,
   margins = c(0.6, 1, 4.1, 1), ...)
 
 \method{plot}{singleton}(x, marker = NULL, sep = "/", missing = "-",
-  skip.empty.genotypes = FALSE, id.labels = x$LABELS, title = NULL,
+  skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
   col = 1, shaded = NULL, deceased = NULL, starred = NULL,
   margins = c(8, 0, 0, 0), ...)
 
@@ -36,7 +36,7 @@ pedigree, in the format determined by \code{sep} and \code{missing}. See also
 empty genotypes (which by default looks like '-/-') are not printed.}
 
 \item{id.labels}{a vector with labels for each pedigree member. This defaults
-to \code{x$LABELS} (see \code{\link[=setLabels]{setLabels()}}).}
+to \code{labels(x)}.}
 
 \item{title}{the plot title. If NULL or '', no title is added to the plot.}
 

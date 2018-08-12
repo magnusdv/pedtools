@@ -9,7 +9,7 @@
 \usage{
 swapSex(x, ids, verbose = TRUE)
 
-relabel(x, new, old = x$LABELS)
+relabel(x, new, old = labels(x))
 
 setLabels(x, labels)
 }

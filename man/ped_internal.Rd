@@ -8,13 +8,13 @@
 \alias{internalID}
 \title{Internal ordering of pedigree members}
 \usage{
-reorderPed(x, neworder = order(x$LABELS))
+reorderPed(x, neworder = order(labels(x)))
 
 parents_before_children(x)
 
 has_parents_before_children(x)
 
-internalID(x, labels)
+internalID(x, ids)
 }
 \arguments{
 \item{x}{a \code{ped} object}
@@ -22,7 +22,7 @@ internalID(x, labels)
 \item{neworder}{a permutation of the vector \code{1:pedsize(x)}. By default, the
 order of the ID labels is used.}
 
-\item{labels}{A character vector (or coercible to one) of original ID labels.}
+\item{ids}{A character vector (or coercible to one) of original ID labels.}
 }
 \description{
 These functions give access to - and enable modifications of - the order in
@@ -47,14 +47,15 @@ The utility \code{internalID()} converts ID labels to indices in the internal
 ordering.
 }
 \examples{
-x = ped(3:1, fid=c(1,0,0), mid=c(2,0,0), sex=c(1,2,1), reorder=FALSE)
+x = ped(id = 3:1, fid = c(1,0,0), mid = c(2,0,0), sex = c(1,2,1), reorder = FALSE)
 x
 
-# Note that 'label' is converted to character
-internalID(x, label=3)
+# The 'ids' argument is converted to character
+internalID(x, ids = 3)
+internalID(x, ids = "3")
 
 y = parents_before_children(x)
-internalID(y, label=3)
+internalID(y, ids = 3)
 
 # A different ordering
 reorderPed(x, c(2,1,3))

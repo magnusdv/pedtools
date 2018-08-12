@@ -52,7 +52,7 @@ test_that("setting/getting founder inbreeding catches errors", {
   expect_error(founder_inbreeding(x, "boy"), "Pedigree member is not a founder")
 
   expect_error({founder_inbreeding(x, 5) = 0}, "Unknown ID label")
-  expect_error({founder_inbreeding(x, x$LABELS) = 0}, "Pedigree member is not a founder: 3, boy")
+  expect_error({founder_inbreeding(x, labels(x)) = 0}, "Pedigree member is not a founder: 3, boy")
   expect_error({founder_inbreeding(x, 1) = c(0,1)}, "Replacement vector must have length")
   expect_error({founder_inbreeding(x, c(1,1,2)) = c(0,0,0)}, "Duplicated ID label")
   expect_error({founder_inbreeding(x, 1) = "a"}, "Inbreeding coefficients must be numeric")

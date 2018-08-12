@@ -100,16 +100,16 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
   # if (!is.null(row_nms <- rownames(m))) {
   #
   #   # Check compatibility
-  #   missing_labs = setdiff(x$LABELS, row_nms)
+  #   missing_labs = setdiff(labels(x), row_nms)
   #   if (length(missing_labs))
   #     stop2("Pedigree member missing in allele matrix row names: ", missing_labs)
-  #   unknown_labs = setdiff(row_nms, x$LABELS)
+  #   unknown_labs = setdiff(row_nms, labels(x))
   #   if (length(unknown_labs))
   #     stop2("Unknown row name in allele matrix: ", unknown_labs)
   #
   #   # Reorder
-  #   if(!identical(x$LABELS, row_nms))
-  #     m = m[x$LABELS, ]
+  #   if(!identical(labels(x), row_nms))
+  #     m = m[labels(x), ]
   # }
 
   # If allele_sep is given, interpret each column as a marker
@@ -124,7 +124,7 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
   }
 
   nMark = ncol(m)/2
-  LABELS = x$LABELS
+  LABELS = labels(x)
   SEX = x$SEX
 
   ann = locus_annotations

@@ -36,7 +36,9 @@
 mergePed = function(x, y, ...) {
   if (!is.null(x$markerdata) || !is.null(y$markerdata))
     stop2("Merging is only supported for pedigrees without marker data")
-  ids = intersect(x$LABELS, y$LABELS)
+  xlabs = labels(x)
+  ylabs = labels(y)
+  ids = intersect(xlabs, ylabs)
   if (length(ids) == 0)
     stop2("Merging impossible: No common IDs")
 
@@ -57,7 +59,7 @@ mergePed = function(x, y, ...) {
   }
   xm = as.data.frame(x)
   ym = as.data.frame(y)
-  z = rbind(xm[!x$LABELS %in% del$x, ], ym[!y$LABELS %in% del$y, ])
+  z = rbind(xm[!xlabs %in% del$x, ], ym[!ylabs %in% del$y, ])
 
   ped(id=z$id, fid=z$fid, mid=z$mid, sex=z$sex, ...)
 }

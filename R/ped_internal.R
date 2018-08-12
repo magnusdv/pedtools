@@ -23,19 +23,20 @@
 #' @param x a `ped` object
 #' @param neworder a permutation of the vector `1:pedsize(x)`. By default, the
 #'   order of the ID labels is used.
-#' @param labels A character vector (or coercible to one) of original ID labels.
+#' @param ids A character vector (or coercible to one) of original ID labels.
 #'
 #'
 #' @seealso [ped()]
 #' @examples
-#' x = ped(3:1, fid=c(1,0,0), mid=c(2,0,0), sex=c(1,2,1), reorder=FALSE)
+#' x = ped(id = 3:1, fid = c(1,0,0), mid = c(2,0,0), sex = c(1,2,1), reorder = FALSE)
 #' x
 #'
-#' # Note that 'label' is converted to character
-#' internalID(x, label=3)
+#' # The 'ids' argument is converted to character
+#' internalID(x, ids = 3)
+#' internalID(x, ids = "3")
 #'
 #' y = parents_before_children(x)
-#' internalID(y, label=3)
+#' internalID(y, ids = 3)
 #'
 #' # A different ordering
 #' reorderPed(x, c(2,1,3))
@@ -45,7 +46,7 @@ NULL
 
 #' @rdname ped_internal
 #' @export
-reorderPed = function(x, neworder = order(x$LABELS)) {
+reorderPed = function(x, neworder = order(labels(x))) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x))
     return(x)
@@ -89,10 +90,10 @@ has_parents_before_children = function(x) {
 
 #' @rdname ped_internal
 #' @export
-internalID = function(x, labels) {
+internalID = function(x, ids) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
-  int_ids = match(labels, x$LABELS)
+  int_ids = match(ids, labels(x))
   if (anyNA(int_ids))
-    stop2("Unknown ID label: ", labels[is.na(int_ids)])
+    stop2("Unknown ID label: ", ids[is.na(int_ids)])
   int_ids
 }

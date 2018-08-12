@@ -68,7 +68,7 @@ marker = function(x, ...,  alleles = NULL, afreq = NULL, chrom = NA,
 
   .createMarkerObject(m, alleles = alleles, afreq = afreq, chrom = chrom,
       posMb = posMb, posCm=posCm, name = name, mutmat = mutmat,
-      pedmembers = x$LABELS, sex = x$SEX)
+      pedmembers = labels(x), sex = x$SEX)
 }
 
 

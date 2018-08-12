@@ -43,8 +43,9 @@ hasCA = function(x) {
 
 # Checks whether the labels of a ped oject are coercible to integers
 has_numlabs = function(x) {
-  numlabs = suppressWarnings(as.character(as.integer(x$LABELS)))
-  isTRUE(all(x$LABELS == numlabs))
+  labs = labels(x)
+  numlabs = suppressWarnings(as.character(as.integer(labs)))
+  isTRUE(all(labs == numlabs))
 }
 
 
@@ -52,19 +53,19 @@ has_numlabs = function(x) {
 #'
 #' Return the sex of specified pedigree members.
 #' @param x A `ped` object.
-#' @param labels A character vector (or coercible to one) containing ID labels.
+#' @param ids A character vector (or coercible to one) containing ID labels.
 #'
-#' @return An integer vector of the same length as `labels`, with entries 0
+#' @return An integer vector of the same length as `ids`, with entries 0
 #'   (unknown), 1 (male) or 2 (female).
 #'
 #' @examples
 #' x = nuclearPed(1)
-#' stopifnot(getSex(x, 1) == 1)
+#' stopifnot(all(getSex(x) == c(1,2,1)))
 #'
 #' @export
-getSex = function(x, labels) {
+getSex = function(x, ids = labels(x)) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
-  x$SEX[internalID(x, labels)]
+  x$SEX[internalID(x, ids)]
 }
 
 #' Pedigree size
@@ -119,7 +120,10 @@ nextNN = function(labs) { # labs a character vector
         else lapply(newoffs[[r]], function(kid) c(res[[r]], kid)))
       res = unlist(nextstep, recursive = FALSE)
     }
-    if (!internal) res = lapply(res, function(int_ids) x$LABELS[int_ids])
+    if (!internal) {
+      labs = labels(x)
+      res = lapply(res, function(int_ids) labs[int_ids])
+    }
     res
   })
 }
@@ -151,7 +155,7 @@ subnucs = function(x) {
   lapply(rev(p_pairs_idx), function(j) {
     nuc = list(father=FID[j], mother=MID[j], children=which(FID == FID[j] & MID == MID[j]))
     class(nuc) = "nucleus"
-    attr(nuc, 'labels') = x$LABELS
+    attr(nuc, 'labels') = labels(x)
     nuc
   })
 }

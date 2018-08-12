@@ -5,7 +5,7 @@ test_that("typedMembers() and untypedMembers() works", {
 
   # labels
   expect_equal(typedMembers(x), character(0))
-  expect_equal(untypedMembers(x), x$LABELS)
+  expect_equal(untypedMembers(x), labels(x))
 
   # internal
   expect_equal(typedMembers(x, internal=T), numeric(0))
