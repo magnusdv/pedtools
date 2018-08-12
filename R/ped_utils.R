@@ -4,6 +4,11 @@ has_unbroken_loops = function(x) {
   isTRUE(x$UNBROKEN_LOOPS)
 }
 
+#' @export
+has_inbred_founders = function(x) {
+  finb = x$FOUNDER_INBREEDING
+  !is.null(finb) && any(finb > 0)
+}
 #' Pairwise common ancestors
 #'
 #' Computes a matrix A whose entry `A[i,j]` is TRUE if pedigree members i and j have a common ancestor, and FALSE otherwise.
