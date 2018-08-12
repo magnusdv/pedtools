@@ -1,7 +1,7 @@
 context("ped modifications")
 
 test_that("labels are correct after reordering", {
-  x = setLabels(nuclearPed(1), letters[1:3])
+  x = relabel(nuclearPed(1), letters[1:3])
   expect_identical(labels(x), letters[1:3])
 
   x = reorderPed(x, 3:1)
@@ -9,7 +9,7 @@ test_that("labels are correct after reordering", {
 })
 
 test_that("trivial reorder has no effect", {
-  x = setLabels(nuclearPed(1), letters[1:3])
+  x = relabel(nuclearPed(1), letters[1:3])
   y = reorderPed(x, 1:pedsize(x))
   expect_identical(x, y)
 })
@@ -121,7 +121,7 @@ test_that("adding and removing child restores original", {
   z1 = removeIndividuals(y1, "99", verbose=F)
   expect_identical(x1, z1)
 
-  x2 = setLabels(nuclearPed(1), c("F", "M", "C"))
+  x2 = relabel(nuclearPed(1), c("F", "M", "C"))
   y2 = addChildren(x2, father="C", ids="baby", verbose=F)
   z2 = removeIndividuals(y2, "baby", verbose=F)
   expect_identical(x2, z2)

@@ -69,14 +69,11 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
 
   # Initialise ped object
   x = list(ID = ID, FID = FID, MID = MID, SEX = as.integer(sex),
-           LABELS = NULL, FAMID = NULL,
+           LABELS = as.character(id), FAMID = if(is.null(famid)) "" else as.character(famid),
            UNBROKEN_LOOPS = FALSE, LOOP_BREAKERS = NULL, FOUNDER_INBREEDING = NULL,
            markerdata = NULL)
 
   class(x) = "ped"
-
-  famid(x) = if(is.null(famid)) "" else famid
-  x = setLabels(x, id)
 
   if(n == 1) {
     class(x) = c("singleton", class(x))

@@ -80,6 +80,7 @@ relabel = function(x, new, old=labels(x)) {
 #' @rdname ped_modify
 #' @export
 setLabels = function(x, labels) {
+  message("`setLabels()` is deprecated. Use `relabel()` instead")
   labels = as.character(labels)
   #assert_that(is.ped(x), length(labels) == pedsize(x), !anyDuplicated(labels))
   x$LABELS = labels

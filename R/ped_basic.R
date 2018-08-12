@@ -72,7 +72,7 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
       mid = c(0, 0, rep(2, nch)),
       sex = c(1, 2, sex))
 
-  setLabels(x, c(father, mother, children))
+  relabel(x, c(father, mother, children))
 }
 
 #' @rdname ped_basic

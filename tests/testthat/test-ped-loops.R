@@ -86,7 +86,7 @@ test_that("loop breaking commutes with relabeling", {
   x_b = break_silent(x)
   x_b_r = relabel(x_b, old=1:8, new=letters[1:8])
 
-  skip("TODO: fix loop_breakers when relabeling. In setLabels?")
+  skip("TODO: fix loop_breakers when relabeling...in relabel()")
   expect_identical(x_r_b, x_b_r)
 })
 

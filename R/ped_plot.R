@@ -31,8 +31,8 @@
 #'   singletons only the first element (the 'bottom' margin) is used.
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
-#' @author Magnus Dehli Vigeland, Guro Doerum
-#' @seealso [plot.pedigree()], [setLabels()]
+#' @author Magnus Dehli Vigeland
+#' @seealso [kinship2::plot.pedigree()]
 #'
 #' @examples
 #'

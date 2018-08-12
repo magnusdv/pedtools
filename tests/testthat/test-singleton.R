@@ -6,7 +6,7 @@ test_that("singletons are constructed", {
 })
 
 test_that("singleton modifications commute", {
-  x = setLabels(swapSex(singleton(1), 1), 10)
+  x = relabel(swapSex(singleton(1), 1), 10)
   y = swapSex(relabel(singleton(1), 10), 10)
   expect_identical(x,y)
 

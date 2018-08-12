@@ -48,7 +48,7 @@ attributes.
 }
 \examples{
 
-x = setLabels(nuclearPed(1), letters[1:3])
+x = relabel(nuclearPed(1), letters[1:3])
 
 # To examplify the ped -> matrix -> ped trick, we show how to
 # reverse the internal ordering of the pedigree.

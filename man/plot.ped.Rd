@@ -82,8 +82,8 @@ plot(x, marker = "SNP", shaded = typedMembers(x),
 
 }
 \seealso{
-\code{\link[=plot.pedigree]{plot.pedigree()}}, \code{\link[=setLabels]{setLabels()}}
+\code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}
 }
 \author{
-Magnus Dehli Vigeland, Guro Doerum
+Magnus Dehli Vigeland
 }
