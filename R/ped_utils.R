@@ -28,7 +28,7 @@ has_inbred_founders = function(x) {
 #' @rdname ped_utils
 #' @export
 labels.ped = function(object, ...) {
-  object$LABELS
+  object$ID
 }
 
 #' @rdname ped_utils
@@ -153,15 +153,15 @@ subnucs = function(x) {
   n = pedsize(x)
   if (n == 1)
     return(list())
-  FID = x$FID; MID = x$MID
+  FIDX = x$FIDX; MIDX = x$MIDX
 
   # Indices of unique parent couples
-  p_pairs = paste(FID, MID)
+  p_pairs = paste(FIDX, MIDX)
   p_pairs_idx = which(!duplicated(p_pairs) & p_pairs != "0 0")
 
   # List all nucs: Format = c(father, mother, children)
   lapply(rev(p_pairs_idx), function(j) {
-    nuc = list(father=FID[j], mother=MID[j], children=which(FID == FID[j] & MID == MID[j]))
+    nuc = list(father=FIDX[j], mother=MIDX[j], children=which(FIDX == FIDX[j] & MIDX == MIDX[j]))
     class(nuc) = "nucleus"
     attr(nuc, 'labels') = labels(x)
     nuc

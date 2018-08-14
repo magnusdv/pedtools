@@ -73,7 +73,7 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
 
   if(degree2 == 0 && removal2 == 0) {
     stop2("This particular case is not implemented yet!")
-    x1$MID[x1$MID == moth2] = moth1
+    x1$MIDX[x1$MIDX == moth2] = moth1
     ped = ped[ -moth2, ] #?
     if (child)
       x = addChildren(x, father = offs1[1], mother = offs1[2], nch = 1)

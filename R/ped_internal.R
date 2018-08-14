@@ -64,12 +64,12 @@ parents_before_children = function(x) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x) || has_parents_before_children(x))
     return(x)
-
-  neworder = x$ID
+  
+  neworder = 1:pedsize(x)
   i=1
   while (i < pedsize(x)) {
     current = neworder[i]
-    maxpar = max(match(c(x$FID[current], x$MID[current]), neworder, nomatch = 0))
+    maxpar = max(match(c(x$FIDX[current], x$MIDX[current]), neworder, nomatch = 0))
     if (maxpar > i) { # push current indiv below below parents
       neworder[i:maxpar] = neworder[c((i+1):maxpar, i)]
     }
@@ -82,8 +82,9 @@ parents_before_children = function(x) {
 #' @export
 has_parents_before_children = function(x) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
-  father_before_child = x$FID < x$ID
-  mother_before_child = x$MID < x$ID
+  idx = 1:pedsize(x)
+  father_before_child = x$FIDX < idx
+  mother_before_child = x$MIDX < idx
   all(father_before_child & mother_before_child)
 }
 

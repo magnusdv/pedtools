@@ -141,7 +141,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
   pedm[new_rows, 1] = dups
   pedm[new_rows, 2:3] = 0
 
-  # Change original loop breakers occuring in FID and MID
+  # Change original loop breakers occuring in FIDX and MIDX
   wrong = match(pedm[,2:3], loop_breakers, nomatch=0)
   pedm[,2:3][wrong > 0] = dups[wrong]
 
@@ -177,8 +177,9 @@ tieLoops = function(x, verbose=TRUE) {
     if(verbose) cat("No loops to tie\n")
     return(x)
   }
-  if (!all(dups %in% x$ID))
-    stop2("Something's wrong - duplicated individual is out of range: ", setdiff(dups, x$ID))
+  if (any(dups > pedsize(x)))
+    stop2("Something's wrong - duplicated individual is out of range: ", 
+          dups[dups > pedsize(x)])
 
   origs = dups[, 1]
   copies = dups[, 2]
@@ -238,9 +239,9 @@ findLoopBreakers2 = function(x) {
   }
 
   NONFOU = nonfounders(x, internal=T)
-  id = x$ID[NONFOU]
-  fid = x$FID[NONFOU]
-  mid = x$MID[NONFOU]
+  id = NONFOU
+  fid = x$FIDX[NONFOU]
+  mid = x$MIDX[NONFOU]
   nonf = as.character(NONFOU)
   
   while (T) {

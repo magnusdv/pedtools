@@ -71,7 +71,7 @@ descendants(x, id, internal = FALSE)
 \item{internal}{A logical indicating whether 'id' refers to the internal
 order.}
 
-\item{id}{A single ID label (numeric or character).}
+\item{id}{A single ID label (coercible to character).}
 
 \item{degree, removal}{Non-negative integers.}
 

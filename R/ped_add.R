@@ -261,7 +261,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   }
 
   # Keep: parents of remaining indivs (includes harmless zeroes)
-  parents_of_remain = c(x$FID[-c(ids_int, desc)], x$MID[-c(ids_int, desc)])
+  parents_of_remain = c(x$FIDX[-c(ids_int, desc)], x$MIDX[-c(ids_int, desc)])
 
   # But remove founders that are NOT among the above
   FOU = founders(x, internal=T)

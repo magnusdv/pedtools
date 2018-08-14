@@ -32,9 +32,9 @@ swapSex = function(x, ids, verbose = TRUE) {
   if(!length(ids)) return(x)
   ids = internalID(x, ids)
   labs = labels(x)
-  FID = x$FID
-  MID = x$MID
-  spouses = c(MID[FID %in% ids], FID[MID %in% ids])
+  FIDX = x$FIDX
+  MIDX = x$MIDX
+  spouses = c(MIDX[FIDX %in% ids], FIDX[MIDX %in% ids])
 
   if (!all(spouses %in% ids)) {
     if (verbose) {
@@ -48,11 +48,11 @@ swapSex = function(x, ids, verbose = TRUE) {
   x$SEX[ids] = 3 - x$SEX[ids]
 
   # # Swap parents wherever any of the 'ids' occur as parents
-  ids_as_parents = FID %in% ids # same with MID!
-  FID[ids_as_parents] = x$MID[ids_as_parents]
-  MID[ids_as_parents] = x$FID[ids_as_parents]
-  x$FID = FID
-  x$MID = MID
+  ids_as_parents = FIDX %in% ids # same with MIDX!
+  FIDX[ids_as_parents] = x$MIDX[ids_as_parents]
+  MIDX[ids_as_parents] = x$FIDX[ids_as_parents]
+  x$FIDX = FIDX
+  x$MIDX = MIDX
 
   x
 }
@@ -68,10 +68,10 @@ relabel = function(x, new, old=labels(x)) {
   if(anyNA(old_idx))
     stop2("Unknown ID label: ", old[is.na(old_idx)])
 
-  x$LABELS[old_idx] = new
+  x$ID[old_idx] = new
 
   if(hasMarkers(x)) {
-    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', x$LABELS)
+    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', x$ID)
   }
   x
 }
@@ -83,7 +83,7 @@ setLabels = function(x, labels) {
   message("`setLabels()` is deprecated. Use `relabel()` instead")
   labels = as.character(labels)
   #assert_that(is.ped(x), length(labels) == pedsize(x), !anyDuplicated(labels))
-  x$LABELS = labels
+  x$ID = labels
   x
 }
 

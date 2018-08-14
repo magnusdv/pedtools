@@ -54,10 +54,11 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
                     id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, margins = c(0.6, 1, 4.1, 1), ...) {
 
+  nInd = pedsize(x)
   # Labels
-  if (is.null(id.labels)) id.labels=rep("", pedsize(x))
-  else if(identical(id.labels, "")) id.labels=rep("", pedsize(x))
-  else if(identical(id.labels, "num")) id.labels = as.character(x$ID)
+  if (is.null(id.labels)) id.labels = rep("", nInd)
+  else if(identical(id.labels, "")) id.labels = rep("", nInd)
+  else if(identical(id.labels, "num")) id.labels = as.character(1:nInd)
 
   id.labels[is.na(id.labels)] = ""
 
@@ -84,7 +85,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
            call.=FALSE)
     checkConsistency(x, mlist)
 
-    gg = do.call(cbind, lapply(mlist, format, sep=sep, missing = missing))
+    gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
     if (skip.empty.genotypes)
       geno[rowSums(do.call(cbind, mlist)) == 0] = ""
@@ -96,7 +97,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   oldmar = par(mar = margins)
 
   # Colors
-  cols = rep(col, length = pedsize(x))
+  cols = rep(col, length = nInd)
 
   # Shading
   if (!is.null(shaded)) {
@@ -134,7 +135,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     else if (is.markerList(marker))
       mlist = marker
     else if (is.numeric(marker) || is.character(marker))
-      mlist = getMarkers(x, markers=marker)
+      mlist = getMarkers(x, markers = marker)
     else
       stop("Argument `marker` must be either:\n",
            "  * a `marker` object\n",

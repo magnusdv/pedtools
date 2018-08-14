@@ -27,14 +27,14 @@
 randomPed = function(g, founders=rpois(1,3)+1, selfing=FALSE, seed=NULL) {
   if(!is.null(seed)) set.seed(seed)
   if(!selfing) founders = max(2, founders)
-  ID = seq_len(founders + g)
-  FID = MID = numeric(founders + g)
+  id = seq_len(founders + g)
+  fid = mid = numeric(founders + g)
 
   foundersM = ceiling(founders/2)
   foundersF = founders - foundersM
-  SEX = c(rep(1:2, c(foundersM, foundersF)), sample.int(2, size=g, replace = T))
-  males = (SEX == 1)
-  females = (SEX == 2)
+  sex = c(rep(1:2, c(foundersM, foundersF)), sample.int(2, size=g, replace = T))
+  males = (sex == 1)
+  females = (sex == 2)
 
   for(k in seq(founders+1, length=g)) {
 
@@ -43,24 +43,24 @@ randomPed = function(g, founders=rpois(1,3)+1, selfing=FALSE, seed=NULL) {
       par1 = sample.int(k-1, 1)
 
       # Second parent: Either par1 or any of opposite sex. Note: k > 1.
-      par2_candidates = c(par1, which(SEX[1:(k-1)] != SEX[par1]))
+      par2_candidates = c(par1, which(sex[1:(k-1)] != sex[par1]))
       par2 = safe_sample(par2_candidates, 1)
 
       # Swap if par1 female & par2 male
-      if(SEX[par1] > SEX[par2]) {
-        FID[k] = par2
-        MID[k] = par1
+      if(sex[par1] > sex[par2]) {
+        fid[k] = par2
+        mid[k] = par1
       } else {
-      FID[k] = par1
-      MID[k] = par2
+      fid[k] = par1
+      mid[k] = par2
       }
-      if(par1==par2) SEX[k] = 0
+      if(par1==par2) sex[k] = 0
     } else {
       potential_fathers = which(males[1:(k-1)])
       potential_mothers = which(females[1:(k-1)])
-      FID[k] = safe_sample(potential_fathers, 1)
-      MID[k] = safe_sample(potential_mothers, 1)
+      fid[k] = safe_sample(potential_fathers, 1)
+      mid[k] = safe_sample(potential_mothers, 1)
     }
   }
-  ped(ID, FID, MID, SEX, check=FALSE, reorder=FALSE)
+  ped(id, fid, mid, sex, check=FALSE, reorder=FALSE)
 }

@@ -26,20 +26,18 @@
 #'
 #' @return A `ped` object, which is essentially a list with the following
 #'   entries:
-#'   \describe{
-#'   \item{ID}{A numerical vector with the internal IDs, which are always 1,2,3,...,N.}
-#'   \item{FID}{A numerical vector indicating the internal IDs of the fathers.}
-#'   \item{MID}{A numerical vector indicating the internal IDs of the mothers.}
-#'   \item{SEX}{A numerical vector with gender codes. Unless the pedigree is reordered,
-#'     this equals the input argument `sex`.}
-#'   \item{FAMID}{The family ID.}
-#'   \item{LABELS}{A character vector containing the original id labels.
-#'     Unless the pedigree has been reordered, this equals the input argument `id`.}
-#'   \item{UNBROKEN_LOOPS}{A logical: TRUE if the pedigree is inbred.}
-#'   \item{LOOP_BREAKERS}{A matrix with loop breaker ID's in the first
+#'
+#'   * `ID` : A character vector of ID labels. Unless the pedigree is reordered during creation, this equals `as.character(id)`
+#'   * `FIDX` : An integer vector with paternal indices: For each $j=1,2,...$, `ID[FIDX[j]]` is the father of `ID[j]`, or 0 if `ID[j]` has no father within the pedigree.
+#'   * `MIDX` : An integer vector with maternal indices: For each $j=1,2,...$, `ID[MIDX[j]]` is the mother of `ID[j]`, or 0 if `ID[j]` has no mother within the pedigree.
+#'   * `SEX` : An integer vector with gender codes. Unless the pedigree is reordered, this equals `as.integer(sex)`.
+#'   * `FAMID` : The family ID.
+#'   * `UNBROKEN_LOOPS` : A logical: TRUE if the pedigree is inbred.
+#'   * `LOOP_BREAKERS` : A matrix with loop breaker ID's in the first
 #'   column and their duplicates in the second column. All entries refer to the internal IDs.
-#'   This is usually set by [breakLoops()].}
-#'   }
+#'   This is usually set by [breakLoops()].
+#'   * `FOUNDER_INBREEDING` : A numeric vector with the same length as `founders(x)`, or NULL. This is always NULL when a new `ped` is created. See [founder_inbreeding()].
+#'   * `MARKERS` : A list of `marker` objects.
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped_basic], [ped_add], [ped_modify], [ped_subsets]
 #'
@@ -62,14 +60,13 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
   if(n == 1 && (fid!=0 || mid!=0))
     stop2("Singleton error: Parent IDs must be 0")
 
-  # Internal order 1,2,...
-  ID = 1:n
-  FID = match(fid, id, nomatch=0)
-  MID = match(mid, id, nomatch=0)
+  # Parental index vectors (integer).
+  FIDX = match(fid, id, nomatch=0L)
+  MIDX = match(mid, id, nomatch=0L)
 
   # Initialise ped object
-  x = list(ID = ID, FID = FID, MID = MID, SEX = as.integer(sex),
-           LABELS = as.character(id), FAMID = if(is.null(famid)) "" else as.character(famid),
+  x = list(ID = as.character(id), FIDX = FIDX, MIDX = MIDX, SEX = as.integer(sex),
+           FAMID = if(is.null(famid)) "" else as.character(famid),
            UNBROKEN_LOOPS = FALSE, LOOP_BREAKERS = NULL, FOUNDER_INBREEDING = NULL,
            markerdata = NULL)
 
@@ -114,45 +111,46 @@ singleton = function(id, sex = 1, famid = NULL) {
 #'   error is raised.
 #'
 #' @export
-checkped = function(x) {
-  ID=x$ID; FID=x$FID; MID=x$MID; SEX=x$SEX
-  if (length(ID) < 2) return()
+checkped = function(x) { #TODO: Some of this code doesn't make sense now - move to ped()
+  ID = x$ID; FIDX = x$FIDX; MIDX = x$MIDX; SEX = x$SEX
+  idx = seq_along(ID)
+  if (length(idx) < 2) return()
 
-  if (all(c(FID, MID) == 0))
+  if (all(c(FIDX, MIDX) == 0))
       message("Pedigree is not connected.")
 
-  fatherErr = !FID %in% c(0, ID)
-  motherErr = !MID %in% c(0, ID)
-  self_ancest = rep(F, length(ID)) # TODO: fix! sapply(seq_along(ID), function(i) ID[i] %in% ancestors(p, ID[i]))
+  fatherErr = !FIDX %in% c(0, idx)
+  motherErr = !MIDX %in% c(0, idx)
+  self_ancest = rep(F, length(idx)) # TODO: fix! sapply(seq_along(idx), function(i) idx[i] %in% ancestors(p, idx[i]))
   quick.check <- all(SEX %in% 0:2) &&
-    all((FID > 0) == (MID > 0)) &&
-    !any(duplicated(ID)) &&
+    all((FIDX > 0) == (MIDX > 0)) &&
+    !any(duplicated(idx)) &&
     !any(fatherErr) &&
     !any(motherErr) &&
-    all(SEX[match(FID[FID != 0], ID)] %in% c(0,1)) &&
-    all(SEX[match(MID[MID != 0], ID)] %in% c(0,2)) &&
+    all(SEX[match(FIDX[FIDX != 0], idx)] %in% c(0,1)) &&
+    all(SEX[match(MIDX[MIDX != 0], idx)] %in% c(0,2)) &&
     !any(self_ancest)
 
   if (quick.check)
       return(invisible())  #if all tests are passed
 
-  for (i in seq_along(ID)) {
-    intro = sprintf("Individual %d: ", ID[i])
+  for (i in seq_along(idx)) {
+    intro = sprintf("Individual %d: ", idx[i])
     if (!SEX[i] %in% 0:2)
       message(intro, "SEX must be either 0 (unknown), 1 (male) or 2 (female).")
-    if ((FID[i] > 0) != (MID[i] > 0))
+    if ((FIDX[i] > 0) != (MIDX[i] > 0))
       message(intro, "Either both parents or none of them must be included.")
-    if (duplicated(ID)[i]) {
+    if (duplicated(idx)[i]) {
       message(intro, "ID not unique.")
       next
     }
     if (fatherErr[i])
-      message(intro, "Father's ID (", FID[i], ") does not appear in ID column.")
-    else if (isTRUE(SEX[FID[i]] == 2))
+      message(intro, "Father's ID (", FIDX[i], ") does not appear in ID column.")
+    else if (isTRUE(SEX[FIDX[i]] == 2))
       message(intro, "Father is female.")
     if (motherErr[i])
-      message(intro, "Mother's ID (", MID[i], ") does not appear in ID column.")
-    else if (isTRUE(SEX[MID[i]] == 1))
+      message(intro, "Mother's ID (", MIDX[i], ") does not appear in ID column.")
+    else if (isTRUE(SEX[MIDX[i]] == 1))
       message(intro, "Mother is male.")
     if (self_ancest[i])
       message(intro, "Is", switch(SEX[i]+1, "its", "his", "her"), "own ancestor.")

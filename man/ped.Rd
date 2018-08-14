@@ -37,19 +37,18 @@ pedigree before it is returned.}
 \value{
 A \code{ped} object, which is essentially a list with the following
 entries:
-\describe{
-\item{ID}{A numerical vector with the internal IDs, which are always 1,2,3,...,N.}
-\item{FID}{A numerical vector indicating the internal IDs of the fathers.}
-\item{MID}{A numerical vector indicating the internal IDs of the mothers.}
-\item{SEX}{A numerical vector with gender codes. Unless the pedigree is reordered,
-this equals the input argument \code{sex}.}
-\item{FAMID}{The family ID.}
-\item{LABELS}{A character vector containing the original id labels.
-Unless the pedigree has been reordered, this equals the input argument \code{id}.}
-\item{UNBROKEN_LOOPS}{A logical: TRUE if the pedigree is inbred.}
-\item{LOOP_BREAKERS}{A matrix with loop breaker ID's in the first
+\itemize{
+\item \code{ID} : A character vector of ID labels. Unless the pedigree is reordered during creation, this equals \code{as.character(id)}
+\item \code{FIDX} : An integer vector with paternal indices: For each $j=1,2,...$, \code{ID[FIDX[j]]} is the father of \code{ID[j]}, or 0 if \code{ID[j]} has no father within the pedigree.
+\item \code{MIDX} : An integer vector with maternal indices: For each $j=1,2,...$, \code{ID[MIDX[j]]} is the mother of \code{ID[j]}, or 0 if \code{ID[j]} has no mother within the pedigree.
+\item \code{SEX} : An integer vector with gender codes. Unless the pedigree is reordered, this equals \code{as.integer(sex)}.
+\item \code{FAMID} : The family ID.
+\item \code{UNBROKEN_LOOPS} : A logical: TRUE if the pedigree is inbred.
+\item \code{LOOP_BREAKERS} : A matrix with loop breaker ID's in the first
 column and their duplicates in the second column. All entries refer to the internal IDs.
-This is usually set by \code{\link[=breakLoops]{breakLoops()}}.}
+This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
+\item \code{FOUNDER_INBREEDING} : A numeric vector with the same length as \code{founders(x)}, or NULL. This is always NULL when a new \code{ped} is created. See \code{\link[=founder_inbreeding]{founder_inbreeding()}}.
+\item \code{MARKERS} : A list of \code{marker} objects.
 }
 }
 \description{

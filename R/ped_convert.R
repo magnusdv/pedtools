@@ -52,7 +52,7 @@
 #'
 #' @export
 as.matrix.ped = function(x, include.attrs = TRUE, ...) {
-  m = cbind(x$ID, x$FID, x$MID, x$SEX)
+  m = cbind(1:pedsize(x), x$FIDX, x$MIDX, x$SEX)
   if(hasMarkers(x)) {
     markermatr = do.call(cbind, x$markerdata)
     m = cbind(m, markermatr)
@@ -148,8 +148,8 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
 as.data.frame.ped = function(x, ..., markers) {
   lab = labels(x)
   fid = mid = rep("0", pedsize(x))
-  fid[x$FID > 0] = lab[x$FID]
-  mid[x$MID > 0] = lab[x$MID]
+  fid[x$FIDX > 0] = lab[x$FIDX]
+  mid[x$MIDX > 0] = lab[x$MIDX]
   df = data.frame(id = lab, fid=fid, mid=mid, sex=x$SEX, stringsAsFactors=FALSE)
 
   if(hasMarkers(x)) {

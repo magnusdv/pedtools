@@ -4,7 +4,7 @@
 #' information.
 #'
 #' @param x A [ped()] object.
-#' @param id A single ID label (numeric or character).
+#' @param id A single ID label (coercible to character).
 #' @param internal A logical indicating whether 'id' refers to the internal
 #'   order.
 #' @param degree,removal Non-negative integers.
@@ -45,21 +45,21 @@ NULL
 #' @rdname ped_subsets
 #' @export
 founders = function(x, internal = FALSE) {
-  is_fou = x$FID == 0
+  is_fou = x$FIDX == 0
   if (internal) which(is_fou) else labels(x)[is_fou]
 }
 
 #' @rdname ped_subsets
 #' @export
 nonfounders = function(x, internal = FALSE) {
-  is_nonfou = x$FID > 0
+  is_nonfou = x$FIDX > 0
   if (internal) which(is_nonfou) else labels(x)[is_nonfou]
 }
 
 #' @rdname ped_subsets
 #' @export
 leaves = function(x, internal = FALSE) {
-  leaves_int = setdiff(x$ID, c(x$FID, x$MID))
+  leaves_int = (1:pedsize(x))[-c(x$FIDX, x$MIDX)]
   if (internal) leaves_int else labels(x)[leaves_int]
 }
 
@@ -101,7 +101,7 @@ untypedMembers = function(x, internal = FALSE) {
 #' @export
 father = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
-  fa = x$FID[id]
+  fa = x$FIDX[id]
   if (internal) fa else labels(x)[fa]
 }
 
@@ -109,7 +109,7 @@ father = function(x, id, internal = FALSE) {
 #' @export
 mother = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
-  mo = x$MID[id]
+  mo = x$MIDX[id]
   if (internal) mo else labels(x)[mo]
 }
 
@@ -117,7 +117,7 @@ mother = function(x, id, internal = FALSE) {
 #' @export
 children = function(x, id, internal = FALSE) {
     if (!internal) id = internalID(x, id)
-    offs_int = (x$FID == id | x$MID == id)
+    offs_int = (x$FIDX == id | x$MIDX == id)
 
     if (internal) which(offs_int) else labels(x)[offs_int]
 }
@@ -132,9 +132,9 @@ spouses = function(x, id, internal = FALSE) {
   # Returns a vector containing all individuals sharing offspring with <id>.
   if (!internal)  id = internalID(x, id)
   spous = switch(x$SEX[id] + 1,
-                c(x$MID[x$FID == id], x$FID[x$MID == id]), # sex = 0
-                x$MID[x$FID == id],                        # sex = 1
-                x$FID[x$MID == id])                        # sex = 2
+                c(x$MIDX[x$FIDX == id], x$FIDX[x$MIDX == id]), # sex = 0
+                x$MIDX[x$FIDX == id],                        # sex = 1
+                x$FIDX[x$MIDX == id])                        # sex = 2
   spous_uniq = unique.default(spous)
   if (internal) spous_uniq else labels(x)[spous_uniq]
 }
@@ -155,7 +155,7 @@ unrelated = function(x, id, internal = FALSE) {
 #' @export
 parents = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
-  parents_int = c(x$FID[id], x$MID[id])
+  parents_int = c(x$FIDX[id], x$MIDX[id])
   if (internal) parents_int else labels(x)[parents_int]
 }
 
@@ -165,7 +165,7 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
 
   nextgen = id
-  for (i in seq_len(degree)) nextgen = c(x$FID[nextgen], x$MID[nextgen])
+  for (i in seq_len(degree)) nextgen = c(x$FIDX[nextgen], x$MIDX[nextgen])
   if (internal) nextgen else labels(x)[nextgen]
 }
 
@@ -173,12 +173,12 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
 #' @export
 siblings = function(x, id, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
-  fa = x$FID[id]
-  mo = x$MID[id]
+  fa = x$FIDX[id]
+  mo = x$MIDX[id]
   if (fa==0 && mo==0) return(numeric(0))
 
-  samefather = x$FID == fa
-  samemother = x$MID == mo
+  samefather = x$FIDX == fa
+  samemother = x$MIDX == mo
   sib_int =
     if (isTRUE(half)) samefather | samemother
     else if (isFALSE(half)) xor(samefather, samemother)
@@ -211,14 +211,14 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 ancestors = function(x, id, internal = FALSE) {
   # climbs upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
   if (!internal)  id = internalID(x, id)
-  FID = x$FID
-  MID = x$MID
+  FIDX = x$FIDX
+  MIDX = x$MIDX
   ancest = numeric(0)
-  up1 = c(FID[id], MID[id])
+  up1 = c(FIDX[id], MIDX[id])
   up1 = up1[up1 > 0]
   while (length(up1)) {
     ancest = c(ancest, up1)
-    up1 = c(FID[up1], MID[up1])
+    up1 = c(FIDX[up1], MIDX[up1])
     up1 = up1[up1>0]
   }
   ancest = sort.int(unique.default(ancest))
@@ -231,13 +231,13 @@ ancestors = function(x, id, internal = FALSE) {
 descendants = function(x, id, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
 
-  FID = x$FID
-  MID = x$MID
+  FIDX = x$FIDX
+  MIDX = x$MIDX
 
   desc = numeric()
   nextoffs = id
   while(length(nextoffs)) {
-      nextoffs = which(FID %in% nextoffs | MID %in% nextoffs)
+      nextoffs = which(FIDX %in% nextoffs | MIDX %in% nextoffs)
       desc = c(desc, nextoffs)
   }
   desc = sort.int(unique.default(desc))
