@@ -1,18 +1,43 @@
+#' Pedigree utilities
+#'
+#' Various utility functions for `ped` objects
+#'
+#' @param x,object A `ped` object
+#'
+#' @examples
+#' x = nuclearPed(1)
+#' stopifnot(pedsize(x)==3)
+#'
+#' @name ped_utils
+NULL
 
+#' @rdname ped_utils
 #' @export
 has_unbroken_loops = function(x) {
   isTRUE(x$UNBROKEN_LOOPS)
 }
 
+#' @rdname ped_utils
 #' @export
 has_inbred_founders = function(x) {
   finb = x$FOUNDER_INBREEDING
   !is.null(finb) && any(finb > 0)
 }
 
+
+#' @rdname ped_utils
 #' @export
 labels.ped = function(object, ...) {
   object$LABELS
+}
+
+#' @rdname ped_utils
+#' @export
+has_numlabs = function(x) {
+  # Returns TRUE if the labels of x are coercible to integers
+  labs = labels(x)
+  numlabs = suppressWarnings(as.character(as.integer(labs)))
+  isTRUE(all(labs == numlabs))
 }
 
 #' Pairwise common ancestors
@@ -41,13 +66,6 @@ hasCA = function(x) {
 }
 
 
-# Checks whether the labels of a ped oject are coercible to integers
-has_numlabs = function(x) {
-  labs = labels(x)
-  numlabs = suppressWarnings(as.character(as.integer(labs)))
-  isTRUE(all(labs == numlabs))
-}
-
 
 #'
 #'
@@ -68,19 +86,9 @@ getSex = function(x, ids = labels(x)) {
   x$SEX[internalID(x, ids)]
 }
 
-#' Pedigree size
-#'
-#' Return the number of pedigree members.
-#'
-#' @param x a [`ped`] object.
-#'
-#' @return A positive integer.
+
+#' @rdname ped_utils
 #' @export
-#'
-#' @examples
-#' x = nuclearPed(1)
-#' stopifnot(pedsize(x)==3)
-#'
 pedsize = function(x) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   length(x$ID)
