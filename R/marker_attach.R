@@ -124,7 +124,7 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
   }
 
   nMark = ncol(m)/2
-  LABELS = labels(x)
+  pedlabels = labels(x)
   SEX = x$SEX
 
   ann = locus_annotations
@@ -133,7 +133,7 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
   if(is.null(ann)) {
     mlist = lapply(seq_len(nMark), function(i) {
       mi = m[, c(2*i - 1, 2*i), drop = FALSE]
-      .createMarkerObject(mi, pedmembers=LABELS, sex=SEX)
+      .createMarkerObject(mi, pedmembers=pedlabels, sex=SEX)
     })
 
     return(mlist)
@@ -153,7 +153,7 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
       return(NULL)
 
     attribs$matr = m[, c(2*i - 1, 2*i), drop = FALSE]
-    attribs$pedmembers = LABELS
+    attribs$pedmembers = pedlabels
     attribs$sex = SEX
     do.call(.createMarkerObject, attribs)
   })
