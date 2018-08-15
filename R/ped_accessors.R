@@ -26,18 +26,27 @@
 #' @export
 relabel = function(x, new, old=labels(x)) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
+
   if(length(new) != length(old))
     stop2("Arguments `new` and `old` must have the same length")
-  xlabs = labels(x)
-  old_idx = match(old, xlabs)
-  if(anyNA(old_idx))
-    stop2("Unknown ID label: ", old[is.na(old_idx)])
 
-  x$ID[old_idx] = new
+  if(anyDuplicated(old) > 0)
+    stop2("Duplicated entry in argument `old`: ", unique(old[duplicated(old)]))
 
-  if(hasMarkers(x)) {
-    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', x$ID)
-  }
+  # Relabel
+  id = labels(x)
+  old_int = internalID(x, old)
+  id[old_int] = new
+  x$ID = id
+
+  # Duplicated IDs after relabeling?
+  if(anyDuplicated(id) > 0)
+    stop2("Duplicated ID label: ", unique(id[duplicated(id)]))
+
+  # Replace `pedmembers` attribute of each marker
+  if(hasMarkers(x))
+    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', id)
+
   x
 }
 

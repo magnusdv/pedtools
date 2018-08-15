@@ -194,6 +194,13 @@ test_that("addParents() works with existing parents", {
   expect_identical(y, z)
 })
 
+test_that("relabel() is strict", {
+  x = nuclearPed(1)
+  expect_error(relabel(x, old=c(3,3), new=4:5), "Duplicated entry in argument `old`: 3")
+  expect_error(relabel(x, old=3, new=4:5), "Arguments `new` and `old` must have the same length")
+  expect_error(relabel(x, old=3, new=2), "Duplicated ID label: 2")
+})
+
 test_that("relabeling is passed on to markers", {
   x = nuclearPed(1)
   x = setMarkers(x, marker(x))
