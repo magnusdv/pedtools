@@ -5,23 +5,32 @@
 \title{Mutation matrices}
 \usage{
 mutationMatrix(alleles, model = c("equal", "proportional", "random"),
-  rate)
+  afreq = NULL, rate = NULL, seed = NULL)
 }
 \arguments{
 \item{alleles}{A character vector (or coercible to character) with allele labels}
 
 \item{model}{A string: either "equal", "proportional" or "random"}
 
-\item{rate}{A number between 0 and 1}
+\item{afreq}{A numeric vector of allele frequencies. Required in model "proportional"}
+
+\item{rate}{A number between 0 and 1. Required in models "equal" and "proportional"}
+
+\item{seed}{A single number. Optional parameter in the "random" model, passed on to \code{set.seed()}}
 }
 \value{
-A square matrix whose \code{dimnames} are given by the \code{alleles}.
+A square matrix with entries in \code{[0, 1]}, with dimnames taken from \code{alleles}.
 }
 \description{
-Construct mutation matrices
+Construct mutation matrices.
 }
 \details{
-At the moment only \code{model = equal} is implemented
+Descriptions of the models:
+\itemize{
+\item "equal" :  All mutations equally likely; probability \code{1-rate} of no mutation.
+\item "proportional" : Mutation probabilities are proportional to the target allele frequencies
+\item "random" : This produces a matrix of random numbers, where each row is normalised so that it sums to 1
+}
 }
 \examples{
 mutationMatrix(alleles = 1:3, model = "equal", rate = 0.05)

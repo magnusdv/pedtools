@@ -1,31 +1,50 @@
 #' Mutation matrices
 #'
-#' Construct mutation matrices
+#' Construct mutation matrices.
 #'
-#' At the moment only `model = equal` is implemented
+#' Descriptions of the models:
+#'
+#' * "equal" :  All mutations equally likely; probability `1-rate` of no mutation.
+#' * "proportional" : Mutation probabilities are proportional to the target allele frequencies
+#' * "random" : This produces a matrix of random numbers, where each row is normalised so that it sums to 1
+#'
 #' @param alleles A character vector (or coercible to character) with allele labels
 #' @param model A string: either "equal", "proportional" or "random"
-#' @param rate A number between 0 and 1
+#' @param afreq A numeric vector of allele frequencies. Required in model "proportional"
+#' @param rate A number between 0 and 1. Required in models "equal" and "proportional"
+#' @param seed A single number. Optional parameter in the "random" model, passed on to `set.seed()`
 #'
-#' @return A square matrix whose `dimnames` are given by the `alleles`.
+#' @return A square matrix with entries in `[0, 1]`, with dimnames taken from `alleles`.
 #'
 #' @examples
 #' mutationMatrix(alleles = 1:3, model = "equal", rate = 0.05)
 #'
+#' @importFrom stats runif
 #' @export
-mutationMatrix = function(alleles, model = c("equal", "proportional", "random"), rate) {
+mutationMatrix = function(alleles, model = c("equal", "proportional", "random"),
+                          afreq = NULL, rate = NULL, seed = NULL) {
   nall = length(alleles)
   if(nall < 2)
     return(NULL)
   mutmat = matrix(ncol = nall, nrow = nall, dimnames = list(alleles, alleles))
 
-  model = match.arg(model)
-  if(model == "equal") {
-    mutmat[] = rate/(nall - 1)
-    diag(mutmat) = 1 - rate
-  }
-  else
-    stop("Only `model=equal` is implemented")
+  switch(match.arg(model),
+    equal = {
+      mutmat[] = rate/(nall - 1)
+      diag(mutmat) = 1 - rate
+    },
+    proportional = {
+      alpha = rate / sum(afreq * (1 - afreq))
+      mutmat[] = (1 - alpha) * diag(nall) + alpha * rep(afreq, each = nall)
+      if(max(mutmat) > 1 || min(mutmat) < 0)
+        stop("Impossible mutation matrix. Reduce rate")
+    },
+    random = {
+      if(!is.null(seed))
+        set.seed(seed)
+      mutmat[] = runif(nall^2, min = 0, max = 1)
+      mutmat = mutmat / rowSums(mutmat)
+    })
   mutmat
 }
 
@@ -64,4 +83,5 @@ mutationMatrix = function(alleles, model = c("equal", "proportional", "random"),
       attr(m, "lumpability") = "always"  # If each column has 0 range
   }
   m
-  }
+}
+
