@@ -5,10 +5,10 @@
 \alias{singleton}
 \title{Pedigree construction}
 \usage{
-ped(id, fid, mid, sex, famid = NULL, reorder = TRUE, check = TRUE,
+ped(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
   verbose = FALSE)
 
-singleton(id, sex = 1, famid = NULL)
+singleton(id, sex = 1, famid = "")
 }
 \arguments{
 \item{id}{a vector (numeric or character) of individual ID labels.}
@@ -27,8 +27,7 @@ In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]}
 \item{reorder}{a logical. If TRUE, the pedigree is reordered so that all
 parents precede their children.}
 
-\item{check}{a logical. If TRUE, \code{\link[=checkped]{checkped()}} is run on the
-pedigree before it is returned.}
+\item{validate}{a logical. If TRUE, \code{\link[=validate_ped]{validate_ped()}} is run before returning the pedigree.}
 
 \item{verbose}{a logical.}
 

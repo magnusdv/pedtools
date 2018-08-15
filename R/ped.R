@@ -19,8 +19,8 @@
 #' @param famid a character string. Default: An empty string.
 #' @param reorder a logical. If TRUE, the pedigree is reordered so that all
 #'   parents precede their children.
-#' @param check a logical. If TRUE, [checkped()] is run on the
-#'   pedigree before it is returned.
+#' @param validate a logical. If TRUE, [validate_ped()] is run before returning the pedigree.
+#'
 #' @param verbose a logical.
 #' @param ... further arguments
 #'
@@ -46,38 +46,68 @@
 #' y = singleton('NN', sex=2, famid="SINGLETON GIRL")
 #'
 #' @export
-ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verbose = FALSE) {
+ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, verbose = FALSE) {
+
+  # Check input
   n = length(id)
-  if(n ==0) stop2("`id` vector has length 0")
+  if(n ==0)
+    stop2("`id` vector has length 0")
   if(length(fid) != n)
-    stop2(sprintf("Incompatible input: length(id) = %d and length(fid) = %d", n, length(fid)))
+    stop2(sprintf("Incompatible input: length(id) = %d, but length(fid) = %d", n, length(fid)))
   if(length(mid) != n)
-    stop2(sprintf("Incompatible input: length(id) = %d and length(mid) = %d", n, length(mid)))
-  if(length(fid) != n)
-    stop2(sprintf("Incompatible input: length(id) = %d and length(sex) = %d", n, length(sex)))
-  if (!all(sex %in% 0:2))
-    stop2("Illegal gender code: ", setdiff(sex, 0:2))
-  if(n == 1 && (fid!=0 || mid!=0))
-    stop2("Singleton error: Parent IDs must be 0")
+    stop2(sprintf("Incompatible input: length(id) = %d, but length(mid) = %d", n, length(mid)))
+  if(length(sex) != n)
+    stop2(sprintf("Incompatible input: length(id) = %d, but length(sex) = %d", n, length(sex)))
+
+  # Coerce
+  id = as.character(id)
+  fid = as.character(fid)
+  mid = as.character(mid)
+  sex = as.integer(sex)
+  famid = as.character(famid)
+
+  # Duplicated IDs
+  if(anyDuplicated(id) > 0)
+    stop2("Duplicated entry in `id` vector: ", id[duplicated(id)])
 
   # Parental index vectors (integer).
-  FIDX = match(fid, id, nomatch=0L)
-  MIDX = match(mid, id, nomatch=0L)
+  missing = c("", "0", NA)
+  FIDX = match(fid, id)
+  FIDX[fid %in% missing] = 0L
+
+  MIDX = match(mid, id)
+  MIDX[mid %in% missing] = 0L
+
+  if(any(is.na(FIDX)))
+    stop2("`fid` entry does not appear in `id` vector: ", fid[is.na(FIDX)])
+  if(any(is.na(MIDX)))
+    stop2("`mid` entry does not appear in `id` vector: ", mid[is.na(MIDX)])
+
+  if(length(famid) != 1)
+    stop2("`famid` must have length 1: ", famid)
 
   # Initialise ped object
-  x = list(ID = as.character(id), FIDX = FIDX, MIDX = MIDX, SEX = as.integer(sex),
-           FAMID = if(is.null(famid)) "" else as.character(famid),
-           UNBROKEN_LOOPS = FALSE, LOOP_BREAKERS = NULL, FOUNDER_INBREEDING = NULL,
+  x = list(ID = id,
+           FIDX = FIDX,
+           MIDX = MIDX,
+           SEX = sex,
+           FAMID = famid,
+           UNBROKEN_LOOPS = FALSE,
+           LOOP_BREAKERS = NULL,
+           FOUNDER_INBREEDING = NULL,
            markerdata = NULL)
 
-  class(x) = "ped"
+  # Set class attribute
+  if(n == 1)
+    class(x) = c("singleton", "ped")
+  else
+    class(x) = "ped"
 
-  if(n == 1) {
-    class(x) = c("singleton", class(x))
+  if (validate)
+    validate_ped(x)
+
+  if(is.singleton(x))
     return(x)
-  }
-
-  if (check) checkped(x)
 
   # Detect loops (by trying to find a peeling order)
   nucs = peelingOrder(x)
@@ -92,7 +122,7 @@ ped = function(id, fid, mid, sex, famid=NULL, reorder = TRUE, check = TRUE, verb
 
 #' @export
 #' @rdname ped
-singleton = function(id, sex = 1, famid = NULL) {
+singleton = function(id, sex = 1, famid = "") {
   if (length(id) != 1)
     stop2("Parameter `id` must have length 1")
   if (length(sex) != 1 || !sex %in% 0:2)
@@ -100,9 +130,10 @@ singleton = function(id, sex = 1, famid = NULL) {
   ped(id=id, fid=0, mid=0, sex=sex, famid=famid)
 }
 
+
 #' Pedigree errors
 #'
-#' Check a `ped` object for pedigree errors.
+#' Validate the internal structure of a `ped` object.
 #'
 #' @param x object of class `ped`.
 #'
@@ -111,58 +142,102 @@ singleton = function(id, sex = 1, famid = NULL) {
 #'   error is raised.
 #'
 #' @export
-checkped = function(x) { #TODO: Some of this code doesn't make sense now - move to ped()
-  ID = x$ID; FIDX = x$FIDX; MIDX = x$MIDX; SEX = x$SEX
-  idx = seq_along(ID)
-  if (length(idx) < 2) return()
+validate_ped = function(x) {
+  ID = x$ID; FIDX = x$FIDX; MIDX = x$MIDX; SEX = x$SEX; FAMID = x$FAMID
+  n = length(ID)
 
-  if (all(c(FIDX, MIDX) == 0))
-      message("Pedigree is not connected.")
+  # Type verification (mainly for developer)
+  stopifnot(is.character(ID), is.integer(FIDX), is.integer(MIDX), is.integer(SEX),
+            is.character(FAMID), is.singleton(x) == (n == 1))
 
-  fatherErr = !FIDX %in% c(0, idx)
-  motherErr = !MIDX %in% c(0, idx)
-  self_ancest = rep(F, length(idx)) # TODO: fix! sapply(seq_along(idx), function(i) idx[i] %in% ancestors(p, idx[i]))
-  quick.check <- all(SEX %in% 0:2) &&
-    all((FIDX > 0) == (MIDX > 0)) &&
-    !any(duplicated(idx)) &&
-    !any(fatherErr) &&
-    !any(motherErr) &&
-    all(SEX[match(FIDX[FIDX != 0], idx)] %in% c(0,1)) &&
-    all(SEX[match(MIDX[MIDX != 0], idx)] %in% c(0,2)) &&
-    !any(self_ancest)
+  # Other verifications that don't need friendly messages at this point
+  # (since they should be caught earlier during construction)
+  stopifnot(n > 0, length(FIDX) == n, length(MIDX) == n, length(SEX) == n,
+            all(FIDX >= 0), all(MIDX >= 0), all(FIDX <= n), all(MIDX <= n),
+            length(FAMID) == 1)
 
-  if (quick.check)
-      return(invisible())  #if all tests are passed
+  errs = character(0)
 
-  for (i in seq_along(idx)) {
-    intro = sprintf("Individual %d: ", idx[i])
-    if (!SEX[i] %in% 0:2)
-      message(intro, "SEX must be either 0 (unknown), 1 (male) or 2 (female).")
-    if ((FIDX[i] > 0) != (MIDX[i] > 0))
-      message(intro, "Either both parents or none of them must be included.")
-    if (duplicated(idx)[i]) {
-      message(intro, "ID not unique.")
-      next
-    }
-    if (fatherErr[i])
-      message(intro, "Father's ID (", FIDX[i], ") does not appear in ID column.")
-    else if (isTRUE(SEX[FIDX[i]] == 2))
-      message(intro, "Father is female.")
-    if (motherErr[i])
-      message(intro, "Mother's ID (", MIDX[i], ") does not appear in ID column.")
-    else if (isTRUE(SEX[MIDX[i]] == 1))
-      message(intro, "Mother is male.")
-    if (self_ancest[i])
-      message(intro, "Is", switch(SEX[i]+1, "its", "his", "her"), "own ancestor.")
+  # Either 0 or 2 parents
+  has1parent = (FIDX > 0) != (MIDX > 0)
+  if (any(has1parent))
+    errs = c(errs, paste("Individual", ID[has1parent], "has exactly 1 parent; this is not allowed"))
+
+  # Sex
+  if (!all(SEX %in% 0:2))
+    errs = c(errs, paste("Illegal gender code:", setdiff(SEX, 0:2)))
+
+  # Self ancestry
+  self_anc = any_self_ancestry(x)
+  if(length(self_anc) > 0)
+    errs = c(errs, paste("Individual", self_anc, "is their own ancestor"))
+
+  # If singleton: return here
+  # if(n==1) return()
+
+  # Duplicated IDs
+  if(anyDuplicated(ID) > 0)
+    errs = c(errs, paste("Duplicated ID label:", ID[duplicated(ID)]))
+
+  # Female fathers
+  if(any(SEX[FIDX] == 2)) {
+    female_fathers_int = intersect(which(SEX == 2), FIDX) # note: zeroes in FIDX disappear
+    first_child = ID[match(female_fathers_int, FIDX)]
+    errs = c(errs, paste("Individual", ID[female_fathers_int],
+                         "is female, but appear as the father of", first_child))
   }
-  stop2("Pedigree errors detected")
+
+  # Male mothers
+  if(any(SEX[MIDX] == 1)) {
+    male_mothers_int = intersect(which(SEX == 1), MIDX) # note: zeroes in MIDX disappear
+    first_child = ID[match(male_mothers_int, MIDX)]
+    errs = c(errs, paste("Individual", ID[male_mothers_int],
+                         "is male, but appear as the mother of", first_child))
+  }
+
+  # Connected?
+  #if (all(c(FIDX, MIDX) == 0))
+  #    message("Pedigree is not connected.")
+
+  if(length(errs) > 0) {
+    errs = c("Malformed pedigree.", errs)
+    stop2(paste0(errs, collapse="\n "))
+  }
+
+  invisible()
 }
 
-# TODO
-any_self_ancest = function(id, fid, mid) {
-  is_self_anc = numeric(length(id))
-  for(i in seq_along(id)) {
-    anci = numeric()
 
+any_self_ancestry = function(x) {
+  n = pedsize(x)
+  nseq = 1:n
+  FIDX = x$FIDX
+  MIDX = x$MIDX
+
+
+  # Quick check if anyone is their own parent
+  self_parent = (nseq == FIDX) | (nseq == MIDX)
+  if(any(self_parent))
+    return(labels(x)[self_parent])
+
+  fou_int = founders(x, internal = TRUE)
+  OK = rep(FALSE, n)
+  OK[fou_int] = TRUE
+
+  # TODO: works, but not optimised for speed
+  for(i in 1:n) {
+    parents = which(OK)
+    children = which(FIDX %in% parents | MIDX %in% parents)
+
+    fatherOK = OK[FIDX[children]]
+    motherOK = OK[MIDX[children]]
+    childrenOK = children[fatherOK & motherOK]
+
+    # If these were already ok, there is nothing more to do
+    if(all(OK[childrenOK]))
+      break
+
+    OK[childrenOK] = TRUE
   }
+  labels(x)[!OK]
 }

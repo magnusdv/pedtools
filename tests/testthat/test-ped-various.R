@@ -1,7 +1,7 @@
 context("ped various")
 
 test_that("example ped from identity package", {
-  ex = read.table (system.file ("example", "ex.pedigree", package = "identity"))
+  ex = read.table(system.file ("example", "ex.pedigree", package = "identity"))
   x = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), reorder=F)
   expect_identical(restore_ped(as.matrix(x)), x)
 
