@@ -20,7 +20,7 @@
 #' is recognised by father and mother begin equal for some child. (Note that for
 #' this to be allowed, the gender code of the parent must be 0.)
 #'
-#' * `has_common_ancestors(x)` computes a logical matrix `A` whose entry
+#' * `has_common_ancestor(x)` computes a logical matrix `A` whose entry
 #' `A[i,j]` is TRUE if pedigree members i and j have a common ancestor in `x`,
 #' and FALSE otherwise. By convention, `A[i,i]` is TRUE for all i.
 #'
@@ -43,7 +43,7 @@
 #' stopifnot(has_unbroken_loops(x))
 #'
 #' # All members have common ancestors except the grandparents
-#' CA = has_common_ancestors(x)
+#' CA = has_common_ancestor(x)
 #' stopifnot(!CA[1,2], !CA[2,1], sum(CA) == length(CA) - 2)
 #'
 #' # Effect of breaking the loop
@@ -96,7 +96,7 @@ has_selfing = function(x) {
 
 #' @rdname ped_utils
 #' @export
-has_common_ancestors = function(x) {
+has_common_ancestor = function(x) {
   n = pedsize(x)
   labs = labels(x)
 

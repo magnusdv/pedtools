@@ -39,7 +39,7 @@ test_that("common ancestors are detected", {
   ans = matrix(TRUE, ncol=3, nrow=3, dimnames=list(labs,labs))
   ans['fa','mo'] = ans['mo','fa'] = FALSE
 
-  expect_identical(has_common_ancestors(x), ans)
+  expect_identical(has_common_ancestor(x), ans)
 })
 
 test_that("internalID gives empty output on empty intput", {

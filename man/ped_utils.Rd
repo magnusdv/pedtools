@@ -6,7 +6,7 @@
 \alias{has_unbroken_loops}
 \alias{has_inbred_founders}
 \alias{has_selfing}
-\alias{has_common_ancestors}
+\alias{has_common_ancestor}
 \alias{subnucs}
 \alias{peelingOrder}
 \title{Pedigree utilities}
@@ -19,7 +19,7 @@ has_inbred_founders(x)
 
 has_selfing(x)
 
-has_common_ancestors(x)
+has_common_ancestor(x)
 
 subnucs(x)
 
@@ -40,7 +40,7 @@ for \code{x} AND at least one founder has positive inbreeding coefficient. See
 \item \code{has_selfing(x)} returns TRUE if the pedigree contains selfing events. This
 is recognised by father and mother begin equal for some child. (Note that for
 this to be allowed, the gender code of the parent must be 0.)
-\item \code{has_common_ancestors(x)} computes a logical matrix \code{A} whose entry
+\item \code{has_common_ancestor(x)} computes a logical matrix \code{A} whose entry
 \code{A[i,j]} is TRUE if pedigree members i and j have a common ancestor in \code{x},
 and FALSE otherwise. By convention, \code{A[i,i]} is TRUE for all i.
 \item \code{subnucs(x)} returns a list of all nuclear sub-pedigrees of \code{x}, wrapped as
@@ -65,7 +65,7 @@ stopifnot(pedsize(x) == 6)
 stopifnot(has_unbroken_loops(x))
 
 # All members have common ancestors except the grandparents
-CA = has_common_ancestors(x)
+CA = has_common_ancestor(x)
 stopifnot(!CA[1,2], !CA[2,1], sum(CA) == length(CA) - 2)
 
 # Effect of breaking the loop
