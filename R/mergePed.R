@@ -7,7 +7,7 @@
 #'
 #' @param x,y [ped()] objects
 #' @param ... further arguments passed along to [ped()], e.g.
-#'   `famid`, `check` and `reorder`.
+#'   `famid`, `validate` and `reorder`.
 #'
 #' @return A `ped` object.
 #' @author Magnus Dehli Vigeland

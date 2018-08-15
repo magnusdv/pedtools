@@ -7,7 +7,7 @@
 \usage{
 \method{as.matrix}{ped}(x, include.attrs = TRUE, ...)
 
-restore_ped(x, attrs = NULL, check = TRUE)
+restore_ped(x, attrs = NULL, validate = TRUE)
 }
 \arguments{
 \item{x}{a \code{ped} object. In \code{restore_ped}: A numerical matrix.}
@@ -21,7 +21,7 @@ info should be attached as attributes. See value.}
 \code{x}, in the format produced by \code{as.matrix}. If NULL, the attributes of \code{x}
 itself are used.}
 
-\item{check}{a logical, forwarded to \code{\link[=ped]{ped()}}. If FALSE, no checks for
+\item{validate}{a logical, forwarded to \code{\link[=ped]{ped()}}. If FALSE, no checks for
 pedigree errors are performed.}
 }
 \value{

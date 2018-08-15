@@ -62,5 +62,5 @@ randomPed = function(g, founders=rpois(1,3)+1, selfing=FALSE, seed=NULL) {
       mid[k] = safe_sample(potential_mothers, 1)
     }
   }
-  ped(id, fid, mid, sex, check=FALSE, reorder=FALSE)
+  ped(id, fid, mid, sex, validate = FALSE, reorder = FALSE)
 }

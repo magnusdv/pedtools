@@ -12,7 +12,7 @@
 #' @param attrs a list containing labels and other `ped` info compatible with
 #'   `x`, in the format produced by `as.matrix`. If NULL, the attributes of `x`
 #'   itself are used.
-#' @param check a logical, forwarded to [ped()]. If FALSE, no checks for
+#' @param validate a logical, forwarded to [ped()]. If FALSE, no checks for
 #'   pedigree errors are performed.
 #' @param \dots not used.
 #'
@@ -75,11 +75,11 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
 
 #' @rdname as.matrix.ped
 #' @export
-restore_ped = function(x, attrs = NULL, check = TRUE) {
+restore_ped = function(x, attrs = NULL, validate = TRUE) {
   if (is.null(attrs))
     attrs = attributes(x)
   p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$FAMID,
-          check = check, reorder=F)
+          validate = validate, reorder=F)
   p = relabel(p, new = attrs$LABELS)
   p['LOOP_BREAKERS'] = list(attrs$LOOP_BREAKERS) # Trick to keep explicit NULLs
 
@@ -101,7 +101,7 @@ restore_ped = function(x, attrs = NULL, check = TRUE) {
     if(nc %% 2 != 0) stop2("Something is wrong: Odd number of allele columns!")
     markerattr = attrs$markerattr
     pedlabs = labels(p)
-    
+
     mlist = lapply(seq_len((nc-4)/2), function(k) {
       m = x[, c(3 + 2*k, 4 + 2*k), drop = F]
       attr = markerattr[[k]]
@@ -317,7 +317,12 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   ### Get famid string
   famid = if(is.na(famid_col)) "" else x[[famid_col]][1]
 
-  ### If sex is missing, deduce partially from parental status
+  ### Ped columns
+  id = x[[id_col]]
+  fid = x[[fid_col]]
+  mid = x[[mid_col]]
+
+  # If sex is missing, deduce partially from parental status
   if(is.na(sex_col)) {
     sex = integer(nrow(x))
     sex[match(fid, id)] = 1
@@ -328,13 +333,7 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   else
     sex = x[[sex_col]]
 
-
-  ### Create ped
-  id = x[[id_col]]
-  fid = x[[fid_col]]
-  mid = x[[mid_col]]
-
-  p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, check = validate, reorder = FALSE)
+  p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, validate = validate, reorder = FALSE)
 
   ### Marker columns
   last_pedcol = max(col_idx, na.rm = TRUE)

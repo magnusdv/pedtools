@@ -10,7 +10,7 @@ mergePed(x, y, ...)
 \item{x, y}{\code{\link[=ped]{ped()}} objects}
 
 \item{...}{further arguments passed along to \code{\link[=ped]{ped()}}, e.g.
-\code{famid}, \code{check} and \code{reorder}.}
+\code{famid}, \code{validate} and \code{reorder}.}
 }
 \value{
 A \code{ped} object.
