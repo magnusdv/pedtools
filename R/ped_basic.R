@@ -60,11 +60,26 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
                       children = as.character(seq.int(3, length.out=nch))) {
   if(missing(nch))
     nch = length(children)
-  if(!is_count(nch)) stop2("`nch` must be a positive integer: ", nch)
-  if(length(children) != nch) stop2("`children` must have length equal to `nch`")
-  if(length(father) != 1) stop2("`father` must be (coercible to) a character of length 1")
-  if(length(mother) != 1) stop2("`mother` must be (coercible to) a character of length 1")
-  if(!is.numeric(sex) || length(sex) > nch) stop2("`sex` must be a numeric of length at most `nch`")
+  if(!is_count(nch))
+    stop2("`nch` must be a positive integer: ", nch)
+  if(length(children) != nch)
+    stop2("`children` must have length `nch`")
+  if(length(father) != 1)
+    stop2("`father` must have length 1")
+  if(length(mother) != 1)
+    stop2("`mother` must have length 1")
+  if(!is.numeric(sex))
+     stop2("`sex` must be numeric: ", sex)
+  if(length(sex) == 0)
+    stop2("`sex` cannot be empty")
+  if(length(sex) > nch)
+    stop2("`sex` must have length at most the number of children")
+  if(father == "1" && "1" %in% c(mother, children))
+    stop2("By default the father is named '1'. ",
+          "If you want to use this for someone else, please specify a different label for the father.")
+  if(mother == "2" && "2" %in% c(father, children))
+    stop2("By default the mother is named '2'. ",
+          "If you want to use this for someone else, please specify a different label for the mother.")
 
   if(length(sex) == 1) sex = rep(sex, nch)
   x = ped(id = 1:(2 + nch),
