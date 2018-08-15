@@ -31,8 +31,7 @@ labels.ped = function(object, ...) {
   object$ID
 }
 
-#' @rdname ped_utils
-#' @export
+
 has_numlabs = function(x) {
   # Returns TRUE if the labels of x are coercible to integers
   labs = labels(x)
@@ -151,7 +150,7 @@ nextNN = function(labs) { # labs a character vector
 #' @export
 subnucs = function(x) {
   n = pedsize(x)
-  if (n == 1)
+  if (is.singleton(x))
     return(list())
   FIDX = x$FIDX; MIDX = x$MIDX
 

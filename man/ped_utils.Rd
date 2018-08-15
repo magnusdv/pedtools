@@ -5,7 +5,6 @@
 \alias{has_unbroken_loops}
 \alias{has_inbred_founders}
 \alias{labels.ped}
-\alias{has_numlabs}
 \alias{pedsize}
 \title{Pedigree utilities}
 \usage{
@@ -14,8 +13,6 @@ has_unbroken_loops(x)
 has_inbred_founders(x)
 
 \method{labels}{ped}(object, ...)
-
-has_numlabs(x)
 
 pedsize(x)
 }
