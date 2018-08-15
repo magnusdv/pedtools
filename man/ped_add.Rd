@@ -86,7 +86,7 @@ x = removeIndividuals(x, 4)
 
 }
 \seealso{
-\code{\link[=ped]{ped()}}, \link{ped_modify}
+\code{\link[=ped]{ped()}}, \code{\link[=relabel]{relabel()}}, \code{\link[=swapSex]{swapSex()}}
 }
 \author{
 Magnus Dehli Vigeland

@@ -27,9 +27,9 @@
 #'   relationships. See Details and Examples.
 #' @param child A logical: Should an inbred child be added to the two cousins?
 #'
-#' @return A [ped()] object.
+#' @return A `ped` object.
 #'
-#' @seealso [ped_modify], [ped_subsets]
+#' @seealso [ped()], [ped_subsets]
 #'
 #' @examples
 #'

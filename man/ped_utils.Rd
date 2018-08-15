@@ -2,28 +2,84 @@
 % Please edit documentation in R/ped_utils.R
 \name{ped_utils}
 \alias{ped_utils}
+\alias{pedsize}
 \alias{has_unbroken_loops}
 \alias{has_inbred_founders}
-\alias{labels.ped}
-\alias{pedsize}
+\alias{has_selfing}
+\alias{has_common_ancestors}
+\alias{subnucs}
+\alias{peelingOrder}
 \title{Pedigree utilities}
 \usage{
+pedsize(x)
+
 has_unbroken_loops(x)
 
 has_inbred_founders(x)
 
-\method{labels}{ped}(object, ...)
+has_selfing(x)
 
-pedsize(x)
+has_common_ancestors(x)
+
+subnucs(x)
+
+peelingOrder(x)
 }
 \arguments{
-\item{x, object}{A \code{ped} object}
+\item{x}{A \code{ped} object}
+}
+\value{
+\itemize{
+\item \code{pedsize(x)} returns the number of pedigree members in \code{x}
+\item \code{has_unbroken_loops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
+computation is done here; the function simply returns the value of
+\code{x$UNBROKEN_LOOPS})
+\item \code{has_inbred_founders(x)} returns TRUE is founder inbreeding is specified
+for \code{x} AND at least one founder has positive inbreeding coefficient. See
+\code{\link[=founder_inbreeding]{founder_inbreeding()}} for details.
+\item \code{has_selfing(x)} returns TRUE if the pedigree contains selfing events. This
+is recognised by father and mother begin equal for some child. (Note that for
+this to be allowed, the gender code of the parent must be 0.)
+\item \code{has_common_ancestors(x)} computes a logical matrix \code{A} whose entry
+\code{A[i,j]} is TRUE if pedigree members i and j have a common ancestor in \code{x},
+and FALSE otherwise. By convention, \code{A[i,i]} is TRUE for all i.
+\item \code{subnucs(x)} returns a list of all nuclear sub-pedigrees of \code{x}, wrapped as
+\code{nucleus} objects. Each nucleus is a list with entries \code{father}, \code{mother} and
+\code{children}.
+\item \code{peelingOrder(x)} calls \code{subnucs(x)} and extends each entry with a \code{link}
+individual, indicating a member linking the nucleus to the remaining
+pedigree. One application of this function is the fact that if \emph{fails} to
+find a complete peeling order if and only if the pedigree has loops. (In fact
+it is called each time a new \code{ped} object is created by \code{\link[=ped]{ped()}} in order to
+detect loops.) The main purpose of the function, however, is to prepare for
+probability calculations in other packages, as e.g. in
+\code{\link[pedprobr:likelihood]{pedprobr::likelihood()}}.
+}
 }
 \description{
 Various utility functions for \code{ped} objects
 }
 \examples{
-x = nuclearPed(1)
-stopifnot(pedsize(x)==3)
+x = fullSibMating(2)
+stopifnot(pedsize(x) == 6)
+stopifnot(has_unbroken_loops(x))
+
+# All members have common ancestors except the grandparents
+CA = has_common_ancestors(x)
+stopifnot(!CA[1,2], !CA[2,1], sum(CA) == length(CA) - 2)
+
+# Effect of breaking the loop
+y = breakLoops(x)
+stopifnot(!has_unbroken_loops(y))
+stopifnot(pedsize(y) == 7)
+
+# A pedigree with selfing (note the neccessary `sex = 0`)
+z1 = singleton(1, sex = 0)
+z2 = addChildren(z1, father = 1, mother = 1, nch = 1)
+stopifnot(!has_selfing(z1), has_selfing(z2))
+
+# Nucleus sub-pedigrees
+stopifnot(length(subnucs(z1)) == 0)
+peelingOrder(cousinsPed(1))
 
 }

@@ -45,7 +45,7 @@
 #'
 #' @return The modified `ped` object.
 #' @author Magnus Dehli Vigeland
-#' @seealso [ped()], [ped_modify]
+#' @seealso [ped()], [relabel()], [swapSex()]
 #'
 #' @examples
 #'
@@ -64,11 +64,11 @@ NULL
 addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!is_count(nch)) stop2("Argument `nch` must be a positive integer: ", nch)
-  
+
   # These variables will change as new members are created
   n = pedsize(x)
   labs = labels(x)
-  
+
   # Check input
   father_exists = isTRUE(father %in% labs)
   mother_exists = isTRUE(mother %in% labs)
@@ -173,7 +173,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
 
   id_int = internalID(x, id)
   labs = labels(x)
-  
+
   # Check that assigned parents are OK
   desc = descendants(x, id)
   if (!is.null(father)) {
@@ -243,7 +243,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
 
   ids_int = internalID(x, ids)
   labs = labels(x)
-  
+
   # Founders without children after 'id' and 'desc' indivs are removed.
   # The redundancy in 'desc' does not matter.
   desc = numeric(0)

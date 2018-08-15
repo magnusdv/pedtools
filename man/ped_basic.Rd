@@ -38,7 +38,7 @@ relationships. See Details and Examples.}
 \item{child}{A logical: Should an inbred child be added to the two cousins?}
 }
 \value{
-A \code{\link[=ped]{ped()}} object.
+A \code{ped} object.
 }
 \description{
 These are utility functions for creating some common pedigree structures as
@@ -75,5 +75,5 @@ cousinsPed(degree=1, child=TRUE)
 
 }
 \seealso{
-\link{ped_modify}, \link{ped_subsets}
+\code{\link[=ped]{ped()}}, \link{ped_subsets}
 }

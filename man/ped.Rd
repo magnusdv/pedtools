@@ -66,7 +66,7 @@ y = singleton('NN', sex=2, famid="SINGLETON GIRL")
 
 }
 \seealso{
-\link{ped_basic}, \link{ped_add}, \link{ped_modify}, \link{ped_subsets}
+\link{ped_basic}, \link{ped_add}, \link{ped_subsets}, \code{\link[=relabel]{relabel()}}
 }
 \author{
 Magnus Dehli Vigeland

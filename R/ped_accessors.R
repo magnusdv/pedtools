@@ -1,31 +1,88 @@
-#' Pedigree modifications
+#' Get or modify pedigree labels
 #'
-#' Functions for modifying various attributes of a 'ped' object.
+#' Functions for getting or changing the ID labels of pedigree members.
 #'
 #' @param x A `ped` object.
-#' @param ids A character (or coercible to character) with ID labels of one or
-#'   more pedigree members.
-#' @param labels A character (or coercible to character) of length `pedsize(x)`
 #' @param new,old Character vectors (or coercible to character) of the same
 #'   length. ID labels in `old` are replaced by those in `new`.
-#' @param verbose A logical: Verbose output or not.
 #'
-#' @return The modified `ped` object.
+#' @return
+#'
+#' * `labels()` returns a character vector containing the ID labels of all pedigree members.
+#'
+#' * `relabel()` returns `ped` object similar to the input except for the labels.
+#'
 #' @author Magnus Dehli Vigeland
-#' @seealso [ped()], [ped_add]
+#' @seealso [ped()]
 #'
 #' @examples
 #'
 #' x = nuclearPed(1)
+#' x
+#' labels(x)
 #'
-#' # To see the effect of each command below, use plot(x) in between.
-#' x = swapSex(x, 3)
-#' x = relabel(x, new="girl", old=3)
+#' relabel(x, new="girl", old=3)
 #'
-#' @name ped_modify
-NULL
+#' @export
+relabel = function(x, new, old=labels(x)) {
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(length(new) != length(old))
+    stop2("Arguments `new` and `old` must have the same length")
+  xlabs = labels(x)
+  old_idx = match(old, xlabs)
+  if(anyNA(old_idx))
+    stop2("Unknown ID label: ", old[is.na(old_idx)])
 
-#' @rdname ped_modify
+  x$ID[old_idx] = new
+
+  if(hasMarkers(x)) {
+    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', x$ID)
+  }
+  x
+}
+
+#' @param object A `ped` object
+#' @param ... Not used
+#'
+#' @rdname relabel
+#' @export
+labels.ped = function(object, ...) {
+  object$ID
+}
+
+#' Get or modify pedigree genders
+#'
+#' Functions for retrieving or changing the gender codes of specified pedigree
+#' members.
+#'
+#' @param x A `ped` object.
+#' @param ids A character vector (or coercible to one) containing ID labels.
+#' @param verbose A logical: Verbose output or not.
+#'
+#' @seealso [ped()]
+#'
+#' @return
+#'
+#' * `getSex()` returns an integer vector of the same length as `ids`, with
+#' entries 0 (unknown), 1 (male) or 2 (female).
+#'
+#' * `swapSex()` returns a `ped` object similar to the input, but where the
+#' gender codes of `ids` (and their spouses) are swapped (1 <->
+#' 2).
+#'
+#' @examples
+#' x = nuclearPed(1)
+#' stopifnot(all(getSex(x) == c(1,2,1)))
+#'
+#' swapSex(x, 3)
+#'
+#' @export
+getSex = function(x, ids = labels(x)) {
+  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  x$SEX[internalID(x, ids)]
+}
+
+#' @rdname getSex
 #' @export
 swapSex = function(x, ids, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
@@ -57,27 +114,17 @@ swapSex = function(x, ids, verbose = TRUE) {
   x
 }
 
-#' @rdname ped_modify
-#' @export
-relabel = function(x, new, old=labels(x)) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
-  if(length(new) != length(old))
-    stop2("Arguments `new` and `old` must have the same length")
-  xlabs = labels(x)
-  old_idx = match(old, xlabs)
-  if(anyNA(old_idx))
-    stop2("Unknown ID label: ", old[is.na(old_idx)])
 
-  x$ID[old_idx] = new
+#' Deprecated functions
+#'
+#' These will soon be removed.
+#' @param x NA
+#' @param labels NA
+#'
+#' @name ped_deprecated
+NULL
 
-  if(hasMarkers(x)) {
-    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', x$ID)
-  }
-  x
-}
-
-
-#' @rdname ped_modify
+#' @rdname ped_deprecated
 #' @export
 setLabels = function(x, labels) {
   message("`setLabels()` is deprecated. Use `relabel()` instead")

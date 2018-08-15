@@ -15,13 +15,31 @@ test_that("is.pedList() is FALSE for empty list", {
   expect_false(is.pedList(list()))
 })
 
-test_that("pedsize of singleton is 1", {
+test_that("pedsize works", {
   expect_equal(pedsize(singleton(1)), 1)
+  expect_equal(pedsize(nuclearPed(1)), 3)
+
+  x = fullSibMating(2)
+  expect_equal(pedsize(x), 6)
+  expect_equal(pedsize(breakLoops(x, verbose=F)), 7)
 })
 
-test_that("pedsize works", {
-  expect_equal(pedsize(nuclearPed(1)), 3)
-  expect_equal(pedsize(fullSibMating(2)), 6)
+test_that("selfing is detected", {
+  expect_false(has_selfing(singleton(1)))
+  expect_false(has_selfing(nuclearPed(1)))
+
+  x = addChildren(singleton(1, sex=0), 1,1,1)
+  expect_true(has_selfing(x))
+})
+
+test_that("common ancestors are detected", {
+  labs = c("fa", "mo", "boy")
+  x = relabel(nuclearPed(1), labs)
+
+  ans = matrix(TRUE, ncol=3, nrow=3, dimnames=list(labs,labs))
+  ans['fa','mo'] = ans['mo','fa'] = FALSE
+
+  expect_identical(has_common_ancestors(x), ans)
 })
 
 test_that("internalID gives empty output on empty intput", {
