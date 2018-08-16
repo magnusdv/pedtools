@@ -1,7 +1,6 @@
-#' Pedigree subsets
+#' Pedigree subgroups
 #'
-#' Utility functions for 'ped' objects, mainly for extracting various pedigree
-#' information.
+#' A collection of utility functions for identifying pedigree members with certain properties.
 #'
 #' @param x A [ped()] object.
 #' @param id A single ID label (coercible to character).
@@ -38,46 +37,46 @@
 #'           setequal(descendants(x, 2), c(4,6,7,9)),
 #'           setequal(leaves(x), c(6,7,9)))
 #'
-#' @name ped_subsets
+#' @name ped_subgroups
 NULL
 
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 founders = function(x, internal = FALSE) {
   is_fou = x$FIDX == 0
   if (internal) which(is_fou) else labels(x)[is_fou]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 nonfounders = function(x, internal = FALSE) {
   is_nonfou = x$FIDX > 0
   if (internal) which(is_nonfou) else labels(x)[is_nonfou]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 leaves = function(x, internal = FALSE) {
   leaves_int = (1:pedsize(x))[-c(x$FIDX, x$MIDX)]
   if (internal) leaves_int else labels(x)[leaves_int]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 males = function(x, internal = FALSE) {
   m = x$SEX == 1
   if (internal) which(m) else labels(x)[m]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 females = function(x, internal = FALSE) {
   f = x$SEX == 2
   if (internal) which(f) else labels(x)[f]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 typedMembers = function(x, internal = FALSE) {
   if (nMarkers(x) == 0)
@@ -87,7 +86,7 @@ typedMembers = function(x, internal = FALSE) {
   if(internal) which(!emptyrows) else labels(x)[!emptyrows]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 untypedMembers = function(x, internal = FALSE) {
   if (nMarkers(x) == 0)
@@ -97,7 +96,7 @@ untypedMembers = function(x, internal = FALSE) {
   if(internal) which(emptyrows) else labels(x)[emptyrows]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 father = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
@@ -105,7 +104,7 @@ father = function(x, id, internal = FALSE) {
   if (internal) fa else labels(x)[fa]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 mother = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
@@ -113,7 +112,7 @@ mother = function(x, id, internal = FALSE) {
   if (internal) mo else labels(x)[mo]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 children = function(x, id, internal = FALSE) {
     if (!internal) id = internalID(x, id)
@@ -122,11 +121,11 @@ children = function(x, id, internal = FALSE) {
     if (internal) which(offs_int) else labels(x)[offs_int]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 offspring = children
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 spouses = function(x, id, internal = FALSE) {
   # Returns a vector containing all individuals sharing offspring with <id>.
@@ -140,7 +139,7 @@ spouses = function(x, id, internal = FALSE) {
 }
 
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 unrelated = function(x, id, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
@@ -151,7 +150,7 @@ unrelated = function(x, id, internal = FALSE) {
 }
 
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 parents = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
@@ -159,7 +158,7 @@ parents = function(x, id, internal = FALSE) {
   if (internal) parents_int else labels(x)[parents_int]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 grandparents = function(x, id, degree = 2, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
@@ -169,7 +168,7 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
   if (internal) nextgen else labels(x)[nextgen]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 siblings = function(x, id, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
@@ -187,7 +186,7 @@ siblings = function(x, id, half = NA, internal = FALSE) {
   if (internal) which(sib_int) else labels(x)[sib_int]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 cousins = function(x, id, degree = 1, removal = 0, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
@@ -200,13 +199,13 @@ cousins = function(x, id, degree = 1, removal = 0, half = NA, internal = FALSE) 
   if (internal) cous else labels(x)[cous]
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
     cousins(x, id, degree = 0, removal = removal, half = half, internal = internal)
 }
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 ancestors = function(x, id, internal = FALSE) {
   # climbs upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
@@ -226,7 +225,7 @@ ancestors = function(x, id, internal = FALSE) {
 }
 
 
-#' @rdname ped_subsets
+#' @rdname ped_subgroups
 #' @export
 descendants = function(x, id, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
