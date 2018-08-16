@@ -68,11 +68,10 @@ Functions for adding or removing individuals in a 'ped' object.
 In \code{addChildren()} and \code{addParents()}, labels of added individuals are
 created automatically if they are not specified by the user. In the automatic
 case, the labelling depends on whether the existing labels are integer-like
-or not (i.e. if \code{labels(x)} equals
-\code{as.character(as.integer(labels(x)))}.) If so, the new labels are integers
-subsequent to the largest of the existing labels. If not, the new labels are
-"NN_1", "NN_2", ... If any such label already exists, the numbers are
-adjusted accordingly.
+or not (i.e. if \code{labels(x)} equals \code{as.character(as.integer(labels(x)))}.) If
+so, the new labels are integers subsequent to the largest of the existing
+labels. If not, the new labels are "NN_1", "NN_2", ... If any such label
+already exists, the numbers are adjusted accordingly.
 
 \code{addSon()} and \code{addDaughter()} are wrappers for a common use of
 \code{addChildren()}, namely adding a single child to a pedigree member. Note that
@@ -84,6 +83,14 @@ same parent will create half sisters.
 In \code{removeIndividuals()} all descendants of \code{ids} are also removed. Any
 individuals (spouses) left unconnected to the remaining pedigree are also
 removed.
+
+The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
+his/her spouses and descendants.
+
+Finally, \code{subset()} can be used to extract any connected sub-pedigree. (Note
+that in the current implementation, the function does not actually check that
+the indicated subset forms a connected pedigree; failing to comply with this
+may lead to obscure errors.)
 }
 \examples{
 

@@ -5,11 +5,10 @@
 #' In `addChildren()` and `addParents()`, labels of added individuals are
 #' created automatically if they are not specified by the user. In the automatic
 #' case, the labelling depends on whether the existing labels are integer-like
-#' or not (i.e. if `labels(x)` equals
-#' `as.character(as.integer(labels(x)))`.) If so, the new labels are integers
-#' subsequent to the largest of the existing labels. If not, the new labels are
-#' "NN_1", "NN_2", ... If any such label already exists, the numbers are
-#' adjusted accordingly.
+#' or not (i.e. if `labels(x)` equals `as.character(as.integer(labels(x)))`.) If
+#' so, the new labels are integers subsequent to the largest of the existing
+#' labels. If not, the new labels are "NN_1", "NN_2", ... If any such label
+#' already exists, the numbers are adjusted accordingly.
 #'
 #' `addSon()` and `addDaughter()` are wrappers for a common use of
 #' `addChildren()`, namely adding a single child to a pedigree member. Note that
@@ -22,6 +21,13 @@
 #' individuals (spouses) left unconnected to the remaining pedigree are also
 #' removed.
 #'
+#' The `branch()` function extracts the sub-pedigree formed by `id` and all
+#' his/her spouses and descendants.
+#'
+#' Finally, `subset()` can be used to extract any connected sub-pedigree. (Note
+#' that in the current implementation, the function does not actually check that
+#' the indicated subset forms a connected pedigree; failing to comply with this
+#' may lead to obscure errors.)
 #'
 #' @param x A `ped` object.
 #' @param ids A character vector (or coercible to such) with ID labels. In
