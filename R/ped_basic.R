@@ -1,24 +1,21 @@
 #' Create simple pedigrees
 #'
 #' These are utility functions for creating some common pedigree structures as
-#' `ped` objects. Use [swapSex()] to change the gender of
-#' pedigree members.
+#' `ped` objects. Use [swapSex()] to change the gender of pedigree members.
 #'
-#' The call `cousinsPed(degree=n, removal=k)` creates a pedigree with two
-#' n'th cousins, k times removed. By default, removals are added on the right
-#' side. To override this, the parameter `degree2` can be used to indicate
-#' explicitly the number of generations on the right side of the pedigree. When
-#' `degree2` is given `removal` is ignored. (Similarly for
-#' `halfCousinsPed`.)
+#' The call `cousinsPed(degree=n, removal=k)` creates a pedigree with two n'th
+#' cousins, k times removed. By default, removals are added on the right side.
+#' To override this, the parameter `degree2` can be used to indicate explicitly
+#' the number of generations on the right side of the pedigree. When `degree2`
+#' is given `removal` is ignored. (Similarly for `halfCousinsPed`.)
 #'
 #' @param nch A positive integer indicating the number of offspring. If NULL, it
 #'   is taken to be the `length(children)`
-#' @param sex A numeric vector of length `nch` (recycled if shorter)
-#'   encoding the genders of the children (0=unknown, 1=male, 2=female).
+#' @param sex A numeric vector of length `nch` (recycled if shorter) encoding
+#'   the genders of the children (0=unknown, 1=male, 2=female).
 #' @param father The label of the father.
 #' @param mother The label of the father.
-#' @param children A character of length `nch`, with labels of the
-#'   children.
+#' @param children A character of length `nch`, with labels of the children.
 #'
 #' @param degree,degree2 Non-negative integers, indicating the degree of
 #'   cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
@@ -29,7 +26,7 @@
 #'
 #' @return A `ped` object.
 #'
-#' @seealso [ped()], [ped_subsets]
+#' @seealso [ped()], [ped_complex], [ped_subgroups]
 #'
 #' @examples
 #'

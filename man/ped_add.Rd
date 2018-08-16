@@ -7,6 +7,8 @@
 \alias{addDaughter}
 \alias{addParents}
 \alias{removeIndividuals}
+\alias{branch}
+\alias{subset.ped}
 \title{Add/remove pedigree members}
 \usage{
 addChildren(x, father = NULL, mother = NULL, nch = 1, sex = 1,
@@ -19,6 +21,10 @@ addDaughter(x, parent, id = NULL, verbose = TRUE)
 addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
 
 removeIndividuals(x, ids, verbose = TRUE)
+
+branch(x, id)
+
+\method{subset}{ped}(x, subset, ...)
 }
 \arguments{
 \item{x}{A \code{ped} object.}
@@ -47,6 +53,10 @@ member, which will be the father or mother (depending on its gender) of the
 new child.}
 
 \item{id}{The ID label of some existing pedigree member.}
+
+\item{subset}{A character vector (or coercible to such) with ID labels}
+
+\item{...}{Not used}
 }
 \value{
 The modified \code{ped} object.

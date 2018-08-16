@@ -295,12 +295,52 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   restore_ped(new, attrs = attrs)
 }
 
-# #' @rdname ped_add
-# #' @export
+#' @rdname ped_add
+#' @export
 branch = function(x, id) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(length(id) == 0)
+    stop2("`id` cannot be empty")
+  if(length(id) > 1)
+    stop2("`id` must contain a single ID label: ", id)
   desc = descendants(x, id)
   spous = unlist(lapply(c(id, desc), spouses, x = x))
-  subset(x, subset = c(id, desc, spous))
+  ids = unique.default(c(id, desc, spous))
+
+  # sort (since subset() does not sort)
+  ids = ids[order(internalID(x, ids))]
+
+  subset(x, subset = ids)
+}
+
+
+#' @param subset A character vector (or coercible to such) with ID labels
+#' @param ... Not used
+#'
+#' @rdname ped_add
+#' @export
+subset.ped = function(x, subset, ...) {
+  if(!is.null(x$LOOP_BREAKERS))
+    stop2("`subset()` is not yet implemented for pedigrees with broken loops")
+
+  sub_idx = internalID(x, subset)
+
+  if(anyDuplicated(subset))
+    stop2("Duplicated ID label: ", unique(subset[duplicated(subset)]))
+
+  pedm = as.matrix(x)
+  subped = pedm[sub_idx, , drop = F]
+
+  # set FID = 0 if father is not in subset
+  subped[!(subped[, 2] %in% sub_idx), 2] = 0L
+
+  # set MID=0 if mother is not in subset
+  subped[!(subped[, 3] %in% sub_idx), 3] = 0L
+
+  # Fix labels
+  attrs = attributes(pedm)
+  attrs$LABELS = attrs$LABELS[sub_idx]
+
+  restore_ped(subped, attrs, ...)
 }
 
