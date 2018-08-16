@@ -62,10 +62,10 @@
 #' x = addParents(x, id=4, father=6, mother=7)
 #' x = removeIndividuals(x, 4)
 #'
-#' @name ped_add
+#' @name ped_modify
 NULL
 
-#' @rdname ped_add
+#' @rdname ped_modify
 #' @export
 addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
@@ -147,7 +147,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
 }
 
 
-#' @rdname ped_add
+#' @rdname ped_modify
 #' @export
 addSon = function(x, parent, id = NULL, verbose = TRUE) {
   parent_sex = getSex(x, parent)
@@ -158,7 +158,7 @@ addSon = function(x, parent, id = NULL, verbose = TRUE) {
   else stop2("Not implemented for parents of unknown sex: ", parent)
 }
 
-#' @rdname ped_add
+#' @rdname ped_modify
 #' @export
 addDaughter = function(x, parent, id = NULL, verbose = TRUE) {
   parent_sex = getSex(x, parent)
@@ -169,7 +169,7 @@ addDaughter = function(x, parent, id = NULL, verbose = TRUE) {
   else stop2("Not implemented for parents of unknown sex: ", parent)
 }
 
-#' @rdname ped_add
+#' @rdname ped_modify
 #' @export
 addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
   if (length(id) > 1)
@@ -238,7 +238,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
 
 
 
-#' @rdname ped_add
+#' @rdname ped_modify
 #' @export
 removeIndividuals = function(x, ids, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
@@ -301,7 +301,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   restore_ped(new, attrs = attrs)
 }
 
-#' @rdname ped_add
+#' @rdname ped_modify
 #' @export
 branch = function(x, id) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
@@ -323,7 +323,7 @@ branch = function(x, id) {
 #' @param subset A character vector (or coercible to such) with ID labels
 #' @param ... Not used
 #'
-#' @rdname ped_add
+#' @rdname ped_modify
 #' @export
 subset.ped = function(x, subset, ...) {
   if(!is.null(x$LOOP_BREAKERS))

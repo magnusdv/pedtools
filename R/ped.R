@@ -39,7 +39,7 @@
 #'   * `FOUNDER_INBREEDING` : A numeric vector with the same length as `founders(x)`, or NULL. This is always NULL when a new `ped` is created. See [founder_inbreeding()].
 #'   * `MARKERS` : A list of `marker` objects.
 #' @author Magnus Dehli Vigeland
-#' @seealso [ped_basic], [ped_add], [ped_subgroups], [relabel()]
+#' @seealso [ped_basic], [ped_modify], [ped_subgroups], [relabel()]
 #'
 #' @examples
 #' x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))
