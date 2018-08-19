@@ -1,13 +1,18 @@
 #' Complex pedigree structures
 #'
 #' These functions create certain classes of pedigrees that are not
-#' straightforward to construct starting from the simple structures described in [ped_basic].
+#' straightforward to construct starting from the simple structures described in
+#' [ped_basic].
 #'
-#' The function `doubleCousins` returns a pedigree linking two individuals whose
-#' fathers are cousins of type (`degree1`, `removal1`), while the mothers are
-#' cousins of type (`degree2`, `removal2`). For convenience, a wrapper
-#' `doubleFirstCousins` is provided for the most common case, double first
-#' cousins.
+#' The function `doubleCousins` returns a pedigree linking two individuals who
+#' are simultaneous paternal and maternal cousins. More precisely, they are:
+#'
+#' * paternal (full or half) cousins of type (`degree1`, `removal1`)
+#'
+#' * maternal (full or half) cousins of type (`degree2`, `removal2`).
+#'
+#' For convenience, a wrapper `doubleFirstCousins` is provided for the most
+#' common case, double first cousins.
 #'
 #' `quadHalfFirstCousins` produces a pedigree with quadruple half first cousins.
 #'
@@ -42,9 +47,21 @@
 #' plot(x)
 #'
 #' # Quadruple half first cousins
-#' x = quadHalfFirstCousins()
-#' # plot(x) # Weird plotting behaviour for this pedigree.
+#' QHFC = quadHalfFirstCousins()
+#' # plot(QHFC) # Weird plotting behaviour for this pedigree.
 #'
+#' # A double half cousins pedigree with inbred founders,
+#' # with the same identity coefficients as QHFC above.
+#' # (Requires the `ribd` package.)
+#' \dontrun{
+#' x = doubleCousins(degree1 = 1, removal1 = 1, half1 = TRUE,
+#'                   degree2 = 0, removal2 = 1, half2 = TRUE)
+#' founder_inbreeding(x, 1) = 3-2*sqrt(2)
+#' founder_inbreeding(x, 4) = .5 * sqrt(2)
+#' j1 = ribd::ibd_identity(x, leaves(x))
+#' j2 = ribd::ibd_identity(QHFC, leaves(QHFC))
+#' stopifnot(identical(j1, j2))
+#' }
 #' @name ped_complex
 NULL
 
@@ -56,6 +73,14 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
   if(!is_count(removal1, minimum=0)) stop2("`removal1` must be a nonnegative integer: ", removal1)
   if(!is_count(removal2, minimum=0)) stop2("`removal2` must be a nonnegative integer: ", removal2)
 
+  # edge case: "paternal and maternal full 0th cousins". Interpreting this as full sibs for now. Review!
+  if(degree1 + removal1 + half1 + degree2 + removal2 + half2 == 0) {
+    x = nuclearPed(2, sex=1:2)
+    if (child)
+      x = addChildren(x, father = 3, mother = 4, nch = 1)
+    return(x)
+  }
+
   if(degree2*2+removal2 > degree1*2+removal1) {
     tmp = degree2; degree2 = degree1; degree1 = tmp
     tmp = removal2; removal2 = removal1; removal1 = tmp
@@ -66,40 +91,35 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
     x1 = halfCousinsPed(degree1, removal = removal1)
   else
     x1 = cousinsPed(degree1, removal = removal1)
-  offs1 = leaves(x1)
-  parents1 = parents(x1, offs1)
-  moth1 = parents1[3]
-  moth2 = parents1[4]
 
-  if(degree2 == 0 && removal2 == 0) {
-    stop2("This particular case is not implemented yet!")
-    x1$MIDX[x1$MIDX == moth2] = moth1
-    ped = ped[ -moth2, ] #?
-    if (child)
-      x = addChildren(x, father = offs1[1], mother = offs1[2], nch = 1)
-    return(x)
-  }
+  offs = leaves(x1)
 
   # Maternal part
-  if(half2)
-    x2 = halfCousinsPed(degree2, removal = removal2)
-  else
-    x2 = cousinsPed(degree2, removal = removal2)
-  offs2 = leaves(x2)
-  parents2 = parents(x2, offs2)[c(3,4,1,2)]
-  x2 = swapSex(x2, parents2)
+  if(degree2 + removal2 == 0) {
+    if(half2) stop2("Full 0th cousins = full sibs, but this is incosistent with the other line")
+    fath2 = father(x1, offs[2])
+    moth1 = mother(x1, offs[1])
+    x1 = removeIndividuals(x1, offs[2])
 
-  # Merging and adding children
-  pat = setdiff(labels(x1), c(parents1, offs1)) # paternal line above parents
-  mat = setdiff(labels(x2), c(parents2, offs2)) # maternal line above parents
-  n = length(pat) + length(mat)
+    x = addChildren(x1, father=fath2, mother=moth1, nch=1, sex=2, ids=offs[2])
+  }
+  else{
+    if(half2)
+      x2 = halfCousinsPed(degree2, removal = removal2)
+    else
+      x2 = cousinsPed(degree2, removal = removal2)
+    x2 = swapSex(x2, labels(x2))
+    x2 = swapSex(x2, leaves(x2))
+    x2 = relabel(x2, seq(from = pedsize(x1)+1, length.out = pedsize(x2)))
+    x2 = relabel(x2, old=leaves(x2), new=offs)
 
-  x1 = relabel(x1, old=c(pat, parents1, offs1), new = c(1:length(pat), (1:6) + n))
-  x2 = relabel(x2, old=c(mat, parents2, offs2), new = c(1:length(mat) + length(pat), (1:6) + n))
+    x2 = relabel(x2, old=parents(x2, offs[1]), new=parents(x1, offs[1]))
+    x2 = relabel(x2, old=parents(x2, offs[2]), new=parents(x1, offs[2]))
+    x = mergePed(x1, x2)
+  }
 
-  x = mergePed(x1, x2)
   if (child)
-    x = addChildren(x, father = offs1[1], mother = offs1[2], nch = 1)
+    x = addChildren(x, father = offs[1], mother = offs[2], nch = 1)
   x
 }
 

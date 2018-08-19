@@ -35,14 +35,19 @@ A \code{\link{ped}} object.
 }
 \description{
 These functions create certain classes of pedigrees that are not
-straightforward to construct starting from the simple structures described in \link{ped_basic}.
+straightforward to construct starting from the simple structures described in
+\link{ped_basic}.
 }
 \details{
-The function \code{doubleCousins} returns a pedigree linking two individuals whose
-fathers are cousins of type (\code{degree1}, \code{removal1}), while the mothers are
-cousins of type (\code{degree2}, \code{removal2}). For convenience, a wrapper
-\code{doubleFirstCousins} is provided for the most common case, double first
-cousins.
+The function \code{doubleCousins} returns a pedigree linking two individuals who
+are simultaneous paternal and maternal cousins. More precisely, they are:
+\itemize{
+\item paternal (full or half) cousins of type (\code{degree1}, \code{removal1})
+\item maternal (full or half) cousins of type (\code{degree2}, \code{removal2}).
+}
+
+For convenience, a wrapper \code{doubleFirstCousins} is provided for the most
+common case, double first cousins.
 
 \code{quadHalfFirstCousins} produces a pedigree with quadruple half first cousins.
 
@@ -66,9 +71,21 @@ x = doubleFirstCousins()
 plot(x)
 
 # Quadruple half first cousins
-x = quadHalfFirstCousins()
-# plot(x) # Weird plotting behaviour for this pedigree.
+QHFC = quadHalfFirstCousins()
+# plot(QHFC) # Weird plotting behaviour for this pedigree.
 
+# A double half cousins pedigree with inbred founders,
+# with the same identity coefficients as QHFC above.
+# (Requires the `ribd` package.)
+\dontrun{
+x = doubleCousins(degree1 = 1, removal1 = 1, half1 = TRUE,
+                  degree2 = 0, removal2 = 1, half2 = TRUE)
+founder_inbreeding(x, 1) = 3-2*sqrt(2)
+founder_inbreeding(x, 4) = .5 * sqrt(2)
+j1 = ribd::ibd_identity(x, leaves(x))
+j2 = ribd::ibd_identity(QHFC, leaves(QHFC))
+stopifnot(identical(j1, j2))
+}
 }
 \seealso{
 \link{ped_basic}
