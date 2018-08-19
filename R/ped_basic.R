@@ -1,7 +1,7 @@
 #' Create simple pedigrees
 #'
 #' These are utility functions for creating some common pedigree structures as
-#' `ped` objects. Use [swapSex()] to change the gender of pedigree members.
+#' `ped` objects.
 #'
 #' The call `cousinsPed(degree=n, removal=k)` creates a pedigree with two n'th
 #' cousins, k times removed. By default, removals are added on the right side.
@@ -9,14 +9,17 @@
 #' the number of generations on the right side of the pedigree. When `degree2`
 #' is given `removal` is ignored. (Similarly for `halfCousinsPed`.)
 #'
-#' @param nch A positive integer indicating the number of offspring. If NULL, it
-#'   is taken to be the `length(children)`
-#' @param sex A numeric vector of length `nch` (recycled if shorter) encoding
-#'   the genders of the children (0=unknown, 1=male, 2=female).
+#' @param nch The number of children. If NULL, it is taken to be the
+#'   `length(children)`
+#' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).
+#'   In `nuclearPed()`, it contains the genders of the children and should have
+#'   length at most `nch` (recycled if shorter). In `linearPed()` it also
+#'   contains the genders of the children (1 in each generation) and should have
+#'   length at most `n` (recycled if shorter).
 #' @param father The label of the father.
 #' @param mother The label of the father.
 #' @param children A character of length `nch`, with labels of the children.
-#'
+#' @param n The number of generations, not including the initial founders.
 #' @param degree,degree2 Non-negative integers, indicating the degree of
 #'   cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
 #'   a.s.o. See Details and Examples.
@@ -30,8 +33,11 @@
 #'
 #' @examples
 #'
-#' # A nuclear family with 2 boys and 3 girls,
-#' x = nuclearPed(5, sex=c(1,1,2,2,2))
+#' # A nuclear family with 2 boys and 3 girls
+#' nuclearPed(5, sex=c(1,1,2,2,2))
+#'
+#' # A straight line of females
+#' linearPed(3, sex = 2)
 #'
 #' # Half sibs:
 #' halfCousinsPed(degree=0)
@@ -85,6 +91,44 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
       sex = c(1, 2, sex))
 
   relabel(x, c(father, mother, children))
+}
+
+#' @rdname ped_basic
+#' @export
+linearPed = function(n, sex = 1) {
+  if(!is_count(n, minimum = 1))
+    stop2("`n` must be a positive integer: ", n)
+  if(!is.numeric(sex))
+    stop2("`sex` must be numeric: ", sex)
+  if(length(sex) == 0)
+    stop2("`sex` cannot be empty")
+  if(length(sex) > n)
+    stop2("`sex` must have length at most `n`")
+  if(!all(sex %in% 1:2))
+    stop2("Illegal gender code:", setdiff(sex, 1:2))
+
+  if(length(sex) < n)
+    sex = rep(sex, length.out = n)
+
+  nInd = 1 + 2*n
+  child_idx = seq(3, nInd, by=2)
+
+  # Create ped
+  id = 1:nInd
+  fid = mid = rep_len(0, nInd)
+  fid[child_idx] = 2*(1:n) - 1
+  mid[child_idx] = 2*(1:n)
+  sex0 = rep_len(1:2, nInd)
+
+  x = ped(id, fid, mid, sex0, validate = F,verbose = F, reorder = F)
+
+  # swap genders if needed
+  if(any(sex == 2)) {
+    swaps = child_idx[sex == 2]
+    x = swapSex(x, swaps, verbose = FALSE)
+  }
+
+  x
 }
 
 #' @rdname ped_basic

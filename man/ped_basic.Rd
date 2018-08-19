@@ -3,6 +3,7 @@
 \name{ped_basic}
 \alias{ped_basic}
 \alias{nuclearPed}
+\alias{linearPed}
 \alias{cousinsPed}
 \alias{halfCousinsPed}
 \title{Create simple pedigrees}
@@ -10,22 +11,29 @@
 nuclearPed(nch, sex = 1, father = "1", mother = "2",
   children = as.character(seq.int(3, length.out = nch)))
 
+linearPed(n, sex = 1)
+
 cousinsPed(degree, removal = 0, degree2 = NULL, child = FALSE)
 
 halfCousinsPed(degree, removal = 0, degree2 = NULL, child = FALSE)
 }
 \arguments{
-\item{nch}{A positive integer indicating the number of offspring. If NULL, it
-is taken to be the \code{length(children)}}
+\item{nch}{The number of children. If NULL, it is taken to be the
+\code{length(children)}}
 
-\item{sex}{A numeric vector of length \code{nch} (recycled if shorter) encoding
-the genders of the children (0=unknown, 1=male, 2=female).}
+\item{sex}{A vector with integer gender codes (0=unknown, 1=male, 2=female).
+In \code{nuclearPed()}, it contains the genders of the children and should have
+length at most \code{nch} (recycled if shorter). In \code{linearPed()} it also
+contains the genders of the children (1 in each generation) and should have
+length at most \code{n} (recycled if shorter).}
 
 \item{father}{The label of the father.}
 
 \item{mother}{The label of the father.}
 
 \item{children}{A character of length \code{nch}, with labels of the children.}
+
+\item{n}{The number of generations, not including the initial founders.}
 
 \item{degree, degree2}{Non-negative integers, indicating the degree of
 cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
@@ -41,7 +49,7 @@ A \code{ped} object.
 }
 \description{
 These are utility functions for creating some common pedigree structures as
-\code{ped} objects. Use \code{\link[=swapSex]{swapSex()}} to change the gender of pedigree members.
+\code{ped} objects.
 }
 \details{
 The call \code{cousinsPed(degree=n, removal=k)} creates a pedigree with two n'th
@@ -52,8 +60,11 @@ is given \code{removal} is ignored. (Similarly for \code{halfCousinsPed}.)
 }
 \examples{
 
-# A nuclear family with 2 boys and 3 girls,
-x = nuclearPed(5, sex=c(1,1,2,2,2))
+# A nuclear family with 2 boys and 3 girls
+nuclearPed(5, sex=c(1,1,2,2,2))
+
+# A straight line of females
+linearPed(3, sex = 2)
 
 # Half sibs:
 halfCousinsPed(degree=0)
