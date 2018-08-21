@@ -321,7 +321,8 @@ branch = function(x, id) {
 
 
 #' @param subset A character vector (or coercible to such) with ID labels
-#' @param ... Not used
+#'   forming a connected sub-pedigree.
+#' @param ... Not used.
 #'
 #' @rdname ped_modify
 #' @export

@@ -54,9 +54,10 @@ new child.}
 
 \item{id}{The ID label of some existing pedigree member.}
 
-\item{subset}{A character vector (or coercible to such) with ID labels}
+\item{subset}{A character vector (or coercible to such) with ID labels
+forming a connected sub-pedigree.}
 
-\item{...}{Not used}
+\item{...}{Not used.}
 }
 \value{
 The modified \code{ped} object.
