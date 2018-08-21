@@ -93,8 +93,12 @@ getSex = function(x, ids = labels(x)) {
 
 #' @rdname getSex
 #' @export
-swapSex = function(x, ids, verbose = TRUE) {
+swapSex = function(x, ids, verbose = TRUE) { #TODO add tests with sex=0
   if(!is.ped(x)) stop2("Input is not a `ped` object")
+
+  # Ignore individuals with unknown gender
+  ids = ids[getSex(x, ids) != 0]
+
   if(!length(ids)) return(x)
   ids = internalID(x, ids)
   labs = labels(x)
@@ -111,7 +115,7 @@ swapSex = function(x, ids, verbose = TRUE) {
   }
 
   # Swap sex
-  x$SEX[ids] = 3 - x$SEX[ids]
+  x$SEX[ids] = 3L - x$SEX[ids]
 
   # # Swap parents wherever any of the 'ids' occur as parents
   ids_as_parents = FIDX %in% ids # same with MIDX!
