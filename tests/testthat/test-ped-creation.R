@@ -65,8 +65,8 @@ test_that("nuclearPed() gives sensible error messages", {
   expect_error(nuclearPed(fa = 1:2, nch = 1), "`father` must have length 1")
   expect_error(nuclearPed(mo = 1:2, nch = 1), "`mother` must have length 1")
 
-  expect_error(nuclearPed(nch = 1, sex='a'), "`sex` must be numeric")
-  expect_error(nuclearPed(nch = 1, sex=1:2), "`sex` must have length at most the number of children")
+  expect_error(nuclearPed(nch = 1, sex='a'), "Illegal gender code: a")
+  expect_error(nuclearPed(nch = 1, sex=1:2), "`sex` is longer than the number of individuals")
   expect_error(nuclearPed(nch = 1, sex=integer(0)), "`sex` cannot be empty")
 
   expect_error(nuclearPed(fa = 'a', child = 'a'), "Duplicated ID label: a")

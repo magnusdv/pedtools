@@ -111,6 +111,21 @@ has_common_ancestor = function(x) {
   A
 }
 
+validate_sex = function(sex, nInd, zero_allowed = TRUE) {
+  if(length(sex) == 0)
+    stop2(sprintf("`%s` cannot be empty", deparse(substitute(sex))))
+  if(length(sex) > nInd)
+    stop2(sprintf("`%s` is longer than the number of individuals",
+                  deparse(substitute(sex))))
+
+  codes = if(zero_allowed) 0:2 else 1:2
+  sex_int = suppressWarnings(as.integer(sex))
+  ok = (sex == sex_int) & sex_int %in% codes
+  if(!all(ok))
+    stop2("Illegal gender code: ", unique(sex[!ok]),
+          ".   [0 = NA; 1 = male; 2 = female]")
+  invisible(rep_len(sex_int, nInd))
+}
 
 #' @rdname ped_utils
 #' @export

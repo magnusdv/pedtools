@@ -12,10 +12,10 @@
 #' @param nch The number of children. If NULL, it is taken to be the
 #'   `length(children)`
 #' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).
-#'   In `nuclearPed()`, it contains the genders of the children and should have
-#'   length at most `nch` (recycled if shorter). In `linearPed()` it also
-#'   contains the genders of the children (1 in each generation) and should have
-#'   length at most `n` (recycled if shorter).
+#'   In `nuclearPed()`, it contains the genders of the children and is recycled
+#'   (if neccessary) to length `nch`. In `linearPed()` it also contains the
+#'   genders of the children (1 in each generation) and should have length at
+#'   most `n` (recycled if shorter than this).
 #' @param father The label of the father.
 #' @param mother The label of the father.
 #' @param children A character of length `nch`, with labels of the children.
@@ -71,12 +71,6 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
     stop2("`father` must have length 1")
   if(length(mother) != 1)
     stop2("`mother` must have length 1")
-  if(!is.numeric(sex))
-     stop2("`sex` must be numeric: ", sex)
-  if(length(sex) == 0)
-    stop2("`sex` cannot be empty")
-  if(length(sex) > nch)
-    stop2("`sex` must have length at most the number of children")
   if(father == "1" && "1" %in% c(mother, children))
     stop2("By default the father is named '1'. ",
           "If you want to use this for someone else, please specify a different label for the father.")
@@ -84,7 +78,8 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
     stop2("By default the mother is named '2'. ",
           "If you want to use this for someone else, please specify a different label for the mother.")
 
-  if(length(sex) == 1) sex = rep(sex, nch)
+  sex = validate_sex(sex, nInd = nch)
+
   x = ped(id = 1:(2 + nch),
       fid = c(0, 0, rep(1, nch)),
       mid = c(0, 0, rep(2, nch)),
@@ -93,22 +88,14 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
   relabel(x, c(father, mother, children))
 }
 
+
 #' @rdname ped_basic
 #' @export
 linearPed = function(n, sex = 1) {
-  if(!is_count(n, minimum = 1))
+  if(!is_count(n))
     stop2("`n` must be a positive integer: ", n)
-  if(!is.numeric(sex))
-    stop2("`sex` must be numeric: ", sex)
-  if(length(sex) == 0)
-    stop2("`sex` cannot be empty")
-  if(length(sex) > n)
-    stop2("`sex` must have length at most `n`")
-  if(!all(sex %in% 1:2))
-    stop2("Illegal gender code:", setdiff(sex, 1:2))
 
-  if(length(sex) < n)
-    sex = rep(sex, length.out = n)
+  sex = validate_sex(sex, nInd = n)
 
   nInd = 1 + 2*n
   child_idx = seq(3, nInd, by=2)

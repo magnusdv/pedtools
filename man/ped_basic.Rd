@@ -22,10 +22,10 @@ halfCousinsPed(degree, removal = 0, degree2 = NULL, child = FALSE)
 \code{length(children)}}
 
 \item{sex}{A vector with integer gender codes (0=unknown, 1=male, 2=female).
-In \code{nuclearPed()}, it contains the genders of the children and should have
-length at most \code{nch} (recycled if shorter). In \code{linearPed()} it also
-contains the genders of the children (1 in each generation) and should have
-length at most \code{n} (recycled if shorter).}
+In \code{nuclearPed()}, it contains the genders of the children and is recycled
+(if neccessary) to length \code{nch}. In \code{linearPed()} it also contains the
+genders of the children (1 in each generation) and should have length at
+most \code{n} (recycled if shorter than this).}
 
 \item{father}{The label of the father.}
 
