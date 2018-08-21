@@ -3,6 +3,11 @@
 #' These are utility functions for creating some common pedigree structures as
 #' `ped` objects.
 #'
+#' `halfSibPed(nch1, nch2)` produces a pedigree containing two sibships (of
+#' sizes `nch1` and `nch2`) with the same father, but different mothers. If
+#' maternal halfsibs are wanted instead, use [swapSex()] afterwards. (See
+#' examples below.)
+#'
 #' The call `cousinsPed(degree=n, removal=k)` creates a pedigree with two n'th
 #' cousins, k times removed. By default, removals are added on the right side.
 #' To override this, the parameter `degree2` can be used to indicate explicitly
@@ -19,6 +24,9 @@
 #' @param father The label of the father.
 #' @param mother The label of the father.
 #' @param children A character of length `nch`, with labels of the children.
+#' @param nch1,nch2 The number of children in each sibship.
+#' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
+#'   Recycled (if neccessary) to lengths `nch1` and `nch2` respectively.
 #' @param n The number of generations, not including the initial founders.
 #' @param degree,degree2 Non-negative integers, indicating the degree of
 #'   cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
@@ -29,7 +37,7 @@
 #'
 #' @return A `ped` object.
 #'
-#' @seealso [ped()], [ped_complex], [ped_subgroups]
+#' @seealso [ped()], [singleton()], [ped_complex], [ped_subgroups]
 #'
 #' @examples
 #'
@@ -39,8 +47,14 @@
 #' # A straight line of females
 #' linearPed(3, sex = 2)
 #'
-#' # Half sibs:
-#' halfCousinsPed(degree=0)
+#' # Paternal half brothers
+#' x = halfSibPed()
+#'
+#' # Change into maternal half brothers
+#' x = swapSex(x, 1)
+#'
+#' # Larger half sibships: boy and girl on one side; 3 girls on the other
+#' halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)
 #'
 #' # Grand aunt:
 #' cousinsPed(degree=0, removal=2)
@@ -88,6 +102,22 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
   relabel(x, c(father, mother, children))
 }
 
+#' @rdname ped_basic
+#' @export
+halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
+  if(!is_count(nch1))
+    stop2("`nch1` must be a positive integer: ", nch1)
+  if(!is_count(nch2))
+    stop2("`nch2` must be a positive integer: ", nch2)
+  sex1 = validate_sex(sex1, nInd = nch1)
+  sex2 = validate_sex(sex2, nInd = nch2)
+
+  x = nuclearPed(nch1, sex = sex1)
+  x = relabel(x, c(1,2, 4:(1 + pedsize(x))))
+  x = addChildren(x, father = 1, mother = 3, nch = nch2, sex = sex2,
+                  verbose = F)
+  x
+}
 
 #' @rdname ped_basic
 #' @export

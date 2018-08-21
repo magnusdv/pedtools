@@ -3,6 +3,7 @@
 \name{ped_basic}
 \alias{ped_basic}
 \alias{nuclearPed}
+\alias{halfSibPed}
 \alias{linearPed}
 \alias{cousinsPed}
 \alias{halfCousinsPed}
@@ -10,6 +11,8 @@
 \usage{
 nuclearPed(nch, sex = 1, father = "1", mother = "2",
   children = as.character(seq.int(3, length.out = nch)))
+
+halfSibPed(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1)
 
 linearPed(n, sex = 1)
 
@@ -33,6 +36,11 @@ most \code{n} (recycled if shorter than this).}
 
 \item{children}{A character of length \code{nch}, with labels of the children.}
 
+\item{nch1, nch2}{The number of children in each sibship.}
+
+\item{sex1, sex2}{Vectors of gender codes for the children in each sibship.
+Recycled (if neccessary) to lengths \code{nch1} and \code{nch2} respectively.}
+
 \item{n}{The number of generations, not including the initial founders.}
 
 \item{degree, degree2}{Non-negative integers, indicating the degree of
@@ -52,6 +60,11 @@ These are utility functions for creating some common pedigree structures as
 \code{ped} objects.
 }
 \details{
+\code{halfSibPed(nch1, nch2)} produces a pedigree containing two sibships (of
+sizes \code{nch1} and \code{nch2}) with the same father, but different mothers. If
+maternal halfsibs are wanted instead, use \code{\link[=swapSex]{swapSex()}} afterwards. (See
+examples below.)
+
 The call \code{cousinsPed(degree=n, removal=k)} creates a pedigree with two n'th
 cousins, k times removed. By default, removals are added on the right side.
 To override this, the parameter \code{degree2} can be used to indicate explicitly
@@ -66,8 +79,14 @@ nuclearPed(5, sex=c(1,1,2,2,2))
 # A straight line of females
 linearPed(3, sex = 2)
 
-# Half sibs:
-halfCousinsPed(degree=0)
+# Paternal half brothers
+x = halfSibPed()
+
+# Change into maternal half brothers
+x = swapSex(x, 1)
+
+# Larger half sibships: boy and girl on one side; 3 girls on the other
+halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)
 
 # Grand aunt:
 cousinsPed(degree=0, removal=2)
@@ -83,5 +102,5 @@ cousinsPed(degree=1, child=TRUE)
 
 }
 \seealso{
-\code{\link[=ped]{ped()}}, \link{ped_complex}, \link{ped_subgroups}
+\code{\link[=ped]{ped()}}, \code{\link[=singleton]{singleton()}}, \link{ped_complex}, \link{ped_subgroups}
 }
