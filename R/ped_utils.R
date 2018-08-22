@@ -123,7 +123,7 @@ validate_sex = function(sex, nInd, zero_allowed = TRUE) {
   ok = (sex == sex_int) & sex_int %in% codes
   if(!all(ok))
     stop2("Illegal gender code: ", unique(sex[!ok]),
-          ".   [0 = NA; 1 = male; 2 = female]")
+          ".  [0 = NA; 1 = male; 2 = female]")
   invisible(rep_len(sex_int, nInd))
 }
 
