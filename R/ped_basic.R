@@ -112,10 +112,11 @@ halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
   sex1 = validate_sex(sex1, nInd = nch1)
   sex2 = validate_sex(sex2, nInd = nch2)
 
-  x = nuclearPed(nch1, sex = sex1)
-  x = relabel(x, c(1,2, 4:(1 + pedsize(x))))
-  x = addChildren(x, father = 1, mother = 3, nch = nch2, sex = sex2,
-                  verbose = F)
+  x = ped(id = seq_len(3 + nch1 + nch2),
+          fid = c(0, 0, 0, rep.int(1, nch1 + nch2)),
+          mid = c(0, 0, 0, rep.int(2, nch1), rep.int(3, nch2)),
+          sex = c(1, 2, 2, sex1, sex2),
+          verbose = F)
   x
 }
 
