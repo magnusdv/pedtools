@@ -23,6 +23,18 @@ if(!require(devtools)) install.packages("devtools")
 devtools::install_github("magnusdv/pedtools")
 ```
 
+If you want to include the detailed user manual, you should add the option `build_vignettes = TRUE` when you install:
+
+``` r
+devtools::install_github("magnusdv/pedtools", build_vignettes = TRUE)
+```
+
+Then after installation you can view the vignette by running
+
+``` r
+vignette("pedtools")
+```
+
 Example
 -------
 
@@ -31,7 +43,9 @@ We create a pedigree with a consanguineous mating between half siblings. The chi
 ``` r
 library(pedtools)
 
-x = halfCousinsPed(0, child = TRUE)
+x = halfSibPed(sex1 = 1, sex2 = 2)
+x = addChildren(x, father = 4, mother = 5, nch = 1)
+
 m = marker(x, "6" = c("A", "B"))
 plot(x, m, skip.empty.genotypes = TRUE)
 ```
