@@ -19,7 +19,7 @@ test_that("pedsize works", {
   expect_equal(pedsize(singleton(1)), 1)
   expect_equal(pedsize(nuclearPed(1)), 3)
 
-  x = fullSibMating(2)
+  x = fullSibMating(1)
   expect_equal(pedsize(x), 6)
   expect_equal(pedsize(breakLoops(x, verbose=F)), 7)
 })

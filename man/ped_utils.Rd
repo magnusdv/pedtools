@@ -60,7 +60,7 @@ probability calculations in other packages, as e.g. in
 Various utility functions for \code{ped} objects
 }
 \examples{
-x = fullSibMating(2)
+x = fullSibMating(1)
 stopifnot(pedsize(x) == 6)
 stopifnot(has_unbroken_loops(x))
 

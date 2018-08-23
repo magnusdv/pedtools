@@ -53,7 +53,7 @@
 #'
 #' @examples
 #'
-#' x = cousinsPed(1, child=TRUE)
+#' x = cousinPed(1, child=TRUE)
 #' plot(x)
 #'
 #' # Pedigree with marriage loop: Double first cousins

@@ -99,10 +99,6 @@ test_that("addChildren works with char labels", {
   expect_equal(getSex(y, c("g1", "g2")), c(2,2))
 })
 
-test_that("addSon + addDaughter gives half sibs", {
-  expect_equal(addDaughter(addSon(singleton(1), 1), 1),
-               halfCousinsPed(0))
-})
 
 test_that("addChildren with nch=2 gives same result as twice with nch=1", {
   x = singleton(1)
@@ -116,7 +112,7 @@ test_that("adding and removing child restores original", {
   z = removeIndividuals(y, 5, verbose=F)
   expect_identical(x, z)
 
-  x1 = fullSibMating(2)
+  x1 = fullSibMating(1)
   y1 = addChildren(x1, father=3, ids="99", verbose=F)
   z1 = removeIndividuals(y1, "99", verbose=F)
   expect_identical(x1, z1)

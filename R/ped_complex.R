@@ -16,19 +16,17 @@
 #'
 #' `quadHalfFirstCousins` produces a pedigree with quadruple half first cousins.
 #'
-#' `fullSibMating` crosses full sibs continuously for the indicated number of
-#' generations.
+#' `fullSibMating` crosses full sibs consecutively `n` times.
 #'
 #' `halfSibStack` produces a breeding scheme where the two individuals in the
-#' final generation are simultaneously half siblings and half n'th cousins,
-#' where `n=1,...,generations`.
+#' final generation are simultaneous half k'th cousins, for each `k=0,...,n-1`.
 #'
 #'
 #' @param degree1,degree2,removal1,removal2 Nonnegative integers.
 #' @param half1,half2 Logicals, indicating if the fathers (resp mothers) should
 #'   be full or half cousins.
 #' @param child A logical: Should a child be added to the double cousins?
-#' @param generations A positive integer indicating the number of crossings.
+#' @param n A positive integer indicating the number of crossings.
 #'
 #' @return A [`ped`] object.
 #'
@@ -37,7 +35,7 @@
 #' @examples
 #'
 #' # Consecutive brother-sister matings.
-#' fullSibMating(3)
+#' fullSibMating(2)
 #'
 #' # Simultaneous half siblings and half first cousins
 #' halfSibStack(2)
@@ -81,6 +79,7 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
     return(x)
   }
 
+  # Ensure paternal path is longest (otherwise swap)
   if(degree2*2+removal2 > degree1*2+removal1) {
     tmp = degree2; degree2 = degree1; degree1 = tmp
     tmp = removal2; removal2 = removal1; removal1 = tmp
@@ -88,9 +87,9 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
 
   # Paternal part
   if(half1)
-    x1 = halfCousinsPed(degree1, removal = removal1)
+    x1 = halfCousinPed(degree1, removal = removal1)
   else
-    x1 = cousinsPed(degree1, removal = removal1)
+    x1 = cousinPed(degree1, removal = removal1)
 
   offs = leaves(x1)
 
@@ -105,9 +104,9 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
   }
   else{
     if(half2)
-      x2 = halfCousinsPed(degree2, removal = removal2)
+      x2 = halfCousinPed(degree2, removal = removal2)
     else
-      x2 = cousinsPed(degree2, removal = removal2)
+      x2 = cousinPed(degree2, removal = removal2)
     x2 = swapSex(x2, labels(x2))
     x2 = swapSex(x2, leaves(x2))
     x2 = relabel(x2, seq(from = pedsize(x1)+1, length.out = pedsize(x2)))
@@ -139,25 +138,31 @@ quadHalfFirstCousins = function() {
 
 #' @rdname ped_complex
 #' @export
-fullSibMating = function(generations) {
-    # Creates a pedigree resulting from repeated brother-sister matings.
-    if(!is_count(generations)) stop2("`generations` must be a positive integer")
-    x = nuclearPed(2, 1:2)
-    for (i in seq_len(generations)[-1])
-      x = addChildren(x, father = 2*i - 1, mother = 2*i, nch = 2, sex = 1:2, verbose = F)
-    x
+fullSibMating = function(n) {
+  if(!is_count(n, minimum = 0))
+    stop2("`n` must be a nonnegative integer")
+
+  id = seq_len(2*(n + 2))
+  mothers = 2 * seq_len(n + 1)
+  fathers = mothers - 1
+
+  ped(id = id,
+      fid = c(0, 0, rep(fathers, each=2)),
+      mid = c(0, 0, rep(mothers, each=2)),
+      sex = rep(1:2, times = n+2),
+      validate = FALSE, reorder = FALSE, verbose = FALSE)
 }
 
 #' @rdname ped_complex
 #' @export
-halfSibStack = function(generations) {
+halfSibStack = function(n) {
     # Creates pedigree resulting from a breeding scheme where each generation adds two half
     # brothers and a female founder.  These become the parents of the half brothers in the next
     # layer.
-    if(!is_count(generations)) stop2("`generations` must be a positive integer")
+    if(!is_count(n)) stop2("`generations` must be a positive integer")
     x = ped(id = 1:5, fid = c(0, 0, 0, 1, 2), mid = c(0, 0, 0, 3, 3),
             sex = c(1, 1, 2, 1, 1), verbose = FALSE)
-    for (g in seq_len(generations)[-1]) {
+    for (g in seq_len(n)[-1]) {
         m = 3 * g
         x = addChildren(x, father = m - 2, mother = m, nch = 1, verbose = F)
         x = addChildren(x, father = m - 1, mother = m, nch = 1, verbose = F)

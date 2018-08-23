@@ -16,9 +16,9 @@ doubleFirstCousins()
 
 quadHalfFirstCousins()
 
-fullSibMating(generations)
+fullSibMating(n)
 
-halfSibStack(generations)
+halfSibStack(n)
 }
 \arguments{
 \item{degree1, degree2, removal1, removal2}{Nonnegative integers.}
@@ -28,7 +28,7 @@ be full or half cousins.}
 
 \item{child}{A logical: Should a child be added to the double cousins?}
 
-\item{generations}{A positive integer indicating the number of crossings.}
+\item{n}{A positive integer indicating the number of crossings.}
 }
 \value{
 A \code{\link{ped}} object.
@@ -51,17 +51,15 @@ common case, double first cousins.
 
 \code{quadHalfFirstCousins} produces a pedigree with quadruple half first cousins.
 
-\code{fullSibMating} crosses full sibs continuously for the indicated number of
-generations.
+\code{fullSibMating} crosses full sibs consecutively \code{n} times.
 
 \code{halfSibStack} produces a breeding scheme where the two individuals in the
-final generation are simultaneously half siblings and half n'th cousins,
-where \code{n=1,...,generations}.
+final generation are simultaneous half k'th cousins, for each \code{k=0,...,n-1}.
 }
 \examples{
 
 # Consecutive brother-sister matings.
-fullSibMating(3)
+fullSibMating(2)
 
 # Simultaneous half siblings and half first cousins
 halfSibStack(2)

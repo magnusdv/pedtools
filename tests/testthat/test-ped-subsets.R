@@ -4,7 +4,7 @@ test_that("full subset is identical to starting point", {
   s = singleton(1)
   expect_identical(s, subset(s, 1))
 
-  x = reorderPed(fullSibMating(2), 6:1)
+  x = reorderPed(fullSibMating(1), 6:1)
   expect_identical(x, subset(x, labels(x)))
 })
 

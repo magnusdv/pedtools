@@ -38,7 +38,7 @@
 #' [pedprobr::likelihood()].
 #'
 #' @examples
-#' x = fullSibMating(2)
+#' x = fullSibMating(1)
 #' stopifnot(pedsize(x) == 6)
 #' stopifnot(has_unbroken_loops(x))
 #'
