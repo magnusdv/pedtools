@@ -58,7 +58,7 @@
 #'
 #' # Nucleus sub-pedigrees
 #' stopifnot(length(subnucs(z1)) == 0)
-#' peelingOrder(cousinsPed(1))
+#' peelingOrder(cousinPed(1))
 #'
 #' @name ped_utils
 NULL

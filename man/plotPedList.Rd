@@ -56,14 +56,14 @@ Note that for tweaking dev.height and dev.width the function
 
 # Simplest use: Just give a list of ped objects.
 # To guess suitable plot window dimensions, use 'newdev=T'
-peds = list(nuclearPed(3), cousinsPed(2), singleton(12), halfCousinsPed(0))
+peds = list(nuclearPed(3), cousinPed(2), singleton(12), halfSibPed())
 plotPedList(peds, newdev=TRUE)
 
 # Modify the relative widths (which are not guessed)
 widths = c(2, 3, 1, 2)
 plotPedList(peds, widths=widths)
 
-# In most cases the guessed dimensions are not perfect.
+# In most cases the guessed dimensions are ok but not perfect.
 # Resize plot window manually, and then plot again with newdev=F (default)
 # plotPedList(peds, widths=widths)
 
@@ -91,7 +91,7 @@ m1 = marker(x1, '3'=1:2)
 marg1 = c(5,4,5,4)
 plot1 = list(x1, marker=m1, margins=marg1, title='Plot 1', deceased=1:2)
 
-x2 = cousinsPed(2)
+x2 = cousinPed(2)
 m2 = marker(x2, alleles='A')
 genotype(m2, leaves(x2)) = 'A'
 marg2 = c(3,4,2,4)
@@ -102,16 +102,15 @@ x3 = singleton(12)
 marg3 = c(10,0,0,0)
 plot3 = list(x3, margins=marg3, title='Plot 3', symbolsize=2)
 
-x4 = halfCousinsPed(0)
-names4 = c(Father=1, Brother=3, Sister=5)
+x4 = halfSibPed()
 marg4 = marg1
-plot4 = list(x4, margins=marg4, title='Plot 4', id.labels=names4)
+plot4 = list(x4, margins=marg4, title='Plot 4')
 
 plotPedList(list(plot1, plot2, plot3, plot4), widths=c(2,3,1,2),
             frames=list(1,2:3,4), available=T, newdev=T)
 
 # Different example:
-plotPedList(list(halfCousinPed(4), cousinsPed(7)), title='Many generations',
+plotPedList(list(halfCousinPed(4), cousinPed(7)), title='Many generations',
     new=T, dev.height=9, dev.width=9)
 }
 

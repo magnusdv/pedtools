@@ -17,15 +17,16 @@
 #' # Creating a trio where each parent have first cousin parents.
 #' # (Alternatively, this could be built using many calls to addParents().)
 #'
-#' x = cousinsPed(1)
-#' x = addChildren(x, father=5, mother=8, nch=1, ids=9)
-#' x = addChildren(x, father=9, mother=10, nch=1, ids=11)
+#' # Paternal family
+#' x = cousinPed(1, child = TRUE)
+#' x = addSon(x, 9)
 #'
-#' y = relabel(cousinsPed(1), 101:108)
-#' y = addChildren(y, father=105, mother=108, nch=1, sex=2, id=10)
-#' y = addChildren(y, father=9, mother=10, nch=1, id=11)
+#' # Maternal family
+#' y = cousinPed(1, child = TRUE)
+#' y = relabel(y, c(101:108, 10))
+#' y = swapSex(y, 10)
 #'
-#' # Joining x and y at the common individuals 9,10,11:
+#' # Joining x and y at the common individuals (in this case: id = 10)
 #' z = mergePed(x,y)
 #'
 #' # plot all three pedigrees
@@ -48,13 +49,13 @@ mergePed = function(x, y, ...) {
       stop2("Gender mismatch for individual ", i)
     parx = parents(x, i)
     pary = parents(y, i)
-    
+
     if (length(pary) == 0)
-      del$y = c(del$y, i) 
+      del$y = c(del$y, i)
     else if (length(parx) == 0)
-      del$x = c(del$x, i) 
+      del$x = c(del$x, i)
     else if (all(parx == pary))
-      del$y = c(del$y, i) 
+      del$y = c(del$y, i)
     else stop2("Parent mismatch for individual ", i)
   }
   xm = as.data.frame(x)

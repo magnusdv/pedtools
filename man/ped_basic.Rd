@@ -5,8 +5,8 @@
 \alias{nuclearPed}
 \alias{halfSibPed}
 \alias{linearPed}
-\alias{cousinsPed}
-\alias{halfCousinsPed}
+\alias{cousinPed}
+\alias{halfCousinPed}
 \title{Create simple pedigrees}
 \usage{
 nuclearPed(nch, sex = 1, father = "1", mother = "2",
@@ -16,9 +16,11 @@ halfSibPed(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1)
 
 linearPed(n, sex = 1)
 
-cousinsPed(degree, removal = 0, degree2 = NULL, child = FALSE)
+cousinPed(degree, removal = 0, side = c("right", "left"),
+  child = FALSE)
 
-halfCousinsPed(degree, removal = 0, degree2 = NULL, child = FALSE)
+halfCousinPed(degree, removal = 0, side = c("right", "left"),
+  child = FALSE)
 }
 \arguments{
 \item{nch}{The number of children. If NULL, it is taken to be the
@@ -43,12 +45,12 @@ Recycled (if neccessary) to lengths \code{nch1} and \code{nch2} respectively.}
 
 \item{n}{The number of generations, not including the initial founders.}
 
-\item{degree, degree2}{Non-negative integers, indicating the degree of
-cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
-a.s.o. See Details and Examples.}
+\item{degree}{A non-negative integer: 0=siblings, 1=first cousins; 2=second cousins,
+a.s.o.}
 
-\item{removal}{Non-negative integers, indicating the removals of cousin-like
-relationships. See Details and Examples.}
+\item{removal}{A non-negative integer. See Details and Examples.}
+
+\item{side}{Either "right" or "left"; the side on which removals should be added.}
 
 \item{child}{A logical: Should an inbred child be added to the two cousins?}
 }
@@ -65,11 +67,9 @@ sizes \code{nch1} and \code{nch2}) with the same father, but different mothers. 
 maternal halfsibs are wanted instead, use \code{\link[=swapSex]{swapSex()}} afterwards. (See
 examples below.)
 
-The call \code{cousinsPed(degree=n, removal=k)} creates a pedigree with two n'th
-cousins, k times removed. By default, removals are added on the right side.
-To override this, the parameter \code{degree2} can be used to indicate explicitly
-the number of generations on the right side of the pedigree. When \code{degree2}
-is given \code{removal} is ignored. (Similarly for \code{halfCousinsPed}.)
+The call \code{cousinPed(degree=n, removal=k)} creates a pedigree with two n'th
+cousins, k times removed. By default, removals are added on the right side, but .
+(Similarly for \code{halfCousinPed}.)
 }
 \examples{
 
@@ -89,16 +89,16 @@ x = swapSex(x, 1)
 halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)
 
 # Grand aunt:
-cousinsPed(degree=0, removal=2)
+cousinPed(degree = 0, removal = 2)
 
 # Second cousins once removed.
-cousinsPed(degree=2, removal=1)
+cousinPed(degree = 2, removal = 1)
 
 # Same, but with the 'removal' on the left side.
-cousinsPed(degree=3, degree2=2)
+cousinPed(2, 1, side="left")
 
-# A child of first cousin parents.
-cousinsPed(degree=1, child=TRUE)
+# A child of half first cousin parents.
+halfCousinPed(degree = 1, child = TRUE)
 
 }
 \seealso{

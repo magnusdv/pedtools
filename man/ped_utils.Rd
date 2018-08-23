@@ -80,6 +80,6 @@ stopifnot(!has_selfing(z1), has_selfing(z2))
 
 # Nucleus sub-pedigrees
 stopifnot(length(subnucs(z1)) == 0)
-peelingOrder(cousinsPed(1))
+peelingOrder(cousinPed(1))
 
 }

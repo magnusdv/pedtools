@@ -8,11 +8,9 @@
 #' maternal halfsibs are wanted instead, use [swapSex()] afterwards. (See
 #' examples below.)
 #'
-#' The call `cousinsPed(degree=n, removal=k)` creates a pedigree with two n'th
-#' cousins, k times removed. By default, removals are added on the right side.
-#' To override this, the parameter `degree2` can be used to indicate explicitly
-#' the number of generations on the right side of the pedigree. When `degree2`
-#' is given `removal` is ignored. (Similarly for `halfCousinsPed`.)
+#' The call `cousinPed(degree=n, removal=k)` creates a pedigree with two n'th
+#' cousins, k times removed. By default, removals are added on the right side, but .
+#' (Similarly for `halfCousinPed`.)
 #'
 #' @param nch The number of children. If NULL, it is taken to be the
 #'   `length(children)`
@@ -28,11 +26,10 @@
 #' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
 #'   Recycled (if neccessary) to lengths `nch1` and `nch2` respectively.
 #' @param n The number of generations, not including the initial founders.
-#' @param degree,degree2 Non-negative integers, indicating the degree of
-#'   cousin-like relationships: 0=siblings, 1=first cousins; 2=second cousins,
-#'   a.s.o. See Details and Examples.
-#' @param removal Non-negative integers, indicating the removals of cousin-like
-#'   relationships. See Details and Examples.
+#' @param degree A non-negative integer: 0=siblings, 1=first cousins; 2=second cousins,
+#'   a.s.o.
+#' @param removal A non-negative integer. See Details and Examples.
+#' @param side Either "right" or "left"; the side on which removals should be added.
 #' @param child A logical: Should an inbred child be added to the two cousins?
 #'
 #' @return A `ped` object.
@@ -57,16 +54,16 @@
 #' halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)
 #'
 #' # Grand aunt:
-#' cousinsPed(degree=0, removal=2)
+#' cousinPed(degree = 0, removal = 2)
 #'
 #' # Second cousins once removed.
-#' cousinsPed(degree=2, removal=1)
+#' cousinPed(degree = 2, removal = 1)
 #'
 #' # Same, but with the 'removal' on the left side.
-#' cousinsPed(degree=3, degree2=2)
+#' cousinPed(2, 1, side="left")
 #'
-#' # A child of first cousin parents.
-#' cousinsPed(degree=1, child=TRUE)
+#' # A child of half first cousin parents.
+#' halfCousinPed(degree = 1, child = TRUE)
 #'
 #' @name ped_basic
 NULL
@@ -123,8 +120,8 @@ halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
 #' @rdname ped_basic
 #' @export
 linearPed = function(n, sex = 1) {
-  if(!is_count(n))
-    stop2("`n` must be a positive integer: ", n)
+  if(!is_count(n, minimum = 0))
+    stop2("`n` must be a nonnegative integer: ", n)
 
   sex = validate_sex(sex, nInd = n)
 
@@ -151,63 +148,65 @@ linearPed = function(n, sex = 1) {
 
 #' @rdname ped_basic
 #' @export
-cousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
-  # Creates a pedigree linking two n'th cousins k times removed, where
-  # n=degree, k=removal. By default, removals are added on the right side,
-  # i.e. degree2 = degree + removal.  If degree2 is non-NULL, the removal
-  # parameter is ignored.
-  if(!is_count(degree, minimum=0)) stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum=0)) stop2("`removal` must be a nonnegative integer: ", removal)
-  if(!is.null(degree2) && !is_count(degree2, minimum=0))
-    stop2("`degree` must be a positive integer (or NULL): ", degree2)
+cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
+  if(!is_count(degree, minimum=0))
+    stop2("`degree` must be a nonnegative integer: ", degree)
+  if(!is_count(removal, minimum=0))
+    stop2("`removal` must be a nonnegative integer: ", removal)
 
-  if (is.null(degree2))
-      degree2 = degree + removal
+  deg_right = deg_left = degree
+  switch(match.arg(side),
+         right = {deg_right <- deg_right + removal},
+         left  = {deg_left <- deg_left + removal})
 
   # Chain on the left side
-  x = nuclearPed(1)
-  for (i in seq_len(degree)) x = addSon(x, pedsize(x), verbose = F)
+  x = linearPed(deg_left + 1)
 
   # Chain on the right side
-  x = addChildren(x, father = 1, mother = 2, nch = 1, verbose = F)
-  for (i in seq_len(degree2)) x = addSon(x, pedsize(x), verbose = F)
-  x = swapSex(x, pedsize(x), verbose = F)
+  y = linearPed(deg_right + 1)
+  y = relabel(y, old = 3:pedsize(y),
+              new = pedsize(x) + 1:(pedsize(y) - 2))
+
+  # Merge
+  z = mergePed(x, y)
 
   if (child) {
-      cous = leaves(x)
-      x = addChildren(x, father = cous[1], mother = cous[2], nch = 1, verbose = F)
+    parents = leaves(z)
+    z = swapSex(z, parents[2], verbose = F)
+    z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = F)
   }
-  x
+  z
 }
+
 
 #' @rdname ped_basic
 #' @export
-halfCousinsPed = function(degree, removal = 0, degree2 = NULL, child = FALSE) {
-  # Creates a pedigree linking two n'th half cousins k times removed, where
-  # n=degree, k=removal.  By default, removals are added on the right side,
-  # i.e. degree2 = degree + removal.  If degree2 is non-NULL, the removal
-  # parameter is ignored.
-  if(!is_count(degree, minimum=0)) stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum=0)) stop2("`removal` must be a nonnegative integer: ", removal)
-  if(!is.null(degree2) && !is_count(degree2, minimum=0))
-    stop2("`degree` must be a positive integer (or NULL): ", degree2)
+halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
+  if(!is_count(degree, minimum=0))
+    stop2("`degree` must be a nonnegative integer: ", degree)
+  if(!is_count(removal, minimum=0))
+    stop2("`removal` must be a nonnegative integer: ", removal)
 
-  if (is.null(degree2))
-    degree2 = degree + removal
+  deg_right = deg_left = degree
+  switch(match.arg(side),
+         right = {deg_right <- deg_right + removal},
+         left  = {deg_left <- deg_left + removal})
 
   # Chain on the left side
-  x = nuclearPed(1)
-  for (i in seq_len(degree)) x = addSon(x, pedsize(x), verbose = F)
+  x = linearPed(deg_left + 1)
 
   # Chain on the right side
-  x = addSon(x, 1, verbose = F)
-  for (i in seq_len(degree2)) x = addSon(x, pedsize(x), verbose = F)
-  x = swapSex(x, pedsize(x), verbose = F)
+  y = linearPed(deg_right + 1)
+  y = relabel(y, old = 2:pedsize(y), new = pedsize(x) + 1:(pedsize(y)-1))
+
+  # Merge
+  z = mergePed(x, y)
 
   if (child) {
-    cous = leaves(x)
-    x = addChildren(x, father = cous[1], mother = cous[2], nch = 1, verbose = F)
+    parents = leaves(z)
+    z = swapSex(z, parents[2], verbose = F)
+    z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = F)
   }
-  x
+  z
 }
 

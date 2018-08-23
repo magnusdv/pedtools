@@ -112,8 +112,8 @@ The following pedigree structures serve as starting points for pedigree construc
 * `nuclearPed()`, a nuclear pedigree (parents+children)
 * `halfSibPed()`, two sibships with one parent in common
 * `linearPed()`, a straight line of successors
-* `cousinsPed()`, cousins of specified degree/removal
-* `halfCousinsPed()`, half cousins of specified degree/removal
+* `cousinPed()`, cousins of specified degree/removal
+* `halfCousinPed()`, half cousins of specified degree/removal
 
 There are also more specialized structures, including double cousins and breeding schemes like consecutive matings between full siblings. Look them up in `?ped_complex` if you are interested.
 
@@ -179,10 +179,10 @@ x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
 ```
 
 **Alternative B**  
-We could also view the half siblings 4 and 5 as half cousins of degree 0. The `halfCousinsPed()` function accepts an option `child = TRUE` adding an inbred child. The labels will be different with this approach, so you should plot the pedigree after each command to see who-is-who. Also, we must relabel in the end.
+We could also view the half siblings 4 and 5 as half cousins of degree 0. The `halfCousinPed()` function accepts an option `child = TRUE` adding an inbred child. The labels will be different with this approach, so you should plot the pedigree after each command to see who-is-who. Also, we must relabel in the end.
 
 ```{r}
-x2 = halfCousinsPed(0, child = T)
+x2 = halfCousinPed(0, child = T)
 x2 = addChildren(x2, father = 1, mother = 4, nch = 1)
 x2 = relabel(x2, old = c(4,3,7,6), new = c(3,4,6,7))
 ```
