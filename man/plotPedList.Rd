@@ -2,21 +2,21 @@
 % Please edit documentation in R/ped_plot.R
 \name{plotPedList}
 \alias{plotPedList}
-\title{Plot a list of pedigrees.}
+\title{Plot a collection of pedigrees.}
 \usage{
 plotPedList(plot.arg.list, widths = NA, frames = T,
   frametitles = NULL, fmar = NA, newdev = F, dev.height = NA,
   dev.width = NA, ...)
 }
 \arguments{
-\item{plot.arg.list}{A list of lists. Each element of \code{plot.arg.list}
-is a list, where the first element is the \code{\link[=ped]{ped()}} object to be
-plotted, and the remaining elements are passed on to \code{plot.ped}.
-These elements must be correctly named. See examples below.}
+\item{plot.arg.list}{A list of lists. Each element of \code{plot.arg.list} is a
+list, where the first element is the \code{\link[=ped]{ped()}} object to be plotted, and the
+remaining elements are passed on to \code{plot.ped}. These elements must be
+correctly named. See examples below.}
 
 \item{widths}{A numeric vector of relative widths of the subplots. Recycled
-to \code{length(plot.arg.list)} if necessary, before passed on to
-\code{\link[=layout]{layout()}}. Note that the vector does not need to sum to 1.}
+to \code{length(plot.arg.list)} if necessary, before passed on to \code{\link[=layout]{layout()}}.
+Note that the vector does not need to sum to 1.}
 
 \item{frames}{Either a single logical (FALSE = no frames; TRUE = automatic
 framing) or a list of numeric vectors: Each vector must consist of
@@ -26,8 +26,8 @@ the framing follows the list structure of \code{plot.arg.list}.}
 \item{frametitles}{A character vector of titles for each frame. If this is
 non-NULL, titles for individuals subplots are ignored.}
 
-\item{fmar}{A single number in the interval [0,0.5) controlling the position
-of the frames.}
+\item{fmar}{A single number in the interval \eqn{[0,0.5)} controlling the
+position of the frames.}
 
 \item{newdev}{A logical, indicating if a new plot window should be opened.}
 
@@ -35,25 +35,21 @@ of the frames.}
 if newdev is TRUE). If these are NA suitable values are guessed from the
 pedigree sizes.}
 
-\item{\dots}{Further arguments passed on to each call to
-\code{\link[=plot.ped]{plot.ped()}}.}
+\item{\dots}{Further arguments passed on to each call to \code{\link[=plot.ped]{plot.ped()}}.}
 }
 \description{
-This function creates a row of pedigree plots, each created by
-\code{\link[=plot.ped]{plot.ped()}}.  Each parameter accepted by
-\code{\link[=plot.ped]{plot.ped()}} can be applied here.  Some effort is made to
-guess a reasonable window size and margins, but in general the user must be
-prepared to do manual resizing of the plot window.
+This function creates a row of pedigree plots, each created by \code{\link[=plot.ped]{plot.ped()}}.
+Any parameter accepted by \code{\link[=plot.ped]{plot.ped()}} can be applied, either to all plots
+simultaneously, or to individual plots.  Some effort is made to guess a
+reasonable window size and margins, but in general the user must be prepared
+to do manual resizing of the plot window. See various examples in the
+Examples section below.
 }
 \details{
-See various examples in the Examples section below.
-
-Note that for tweaking dev.height and dev.width the function
-\code{\link[=dev.size]{dev.size()}} is useful to determine the size of the active device.
+Note that for tweaking dev.height and dev.width the function \code{\link[=dev.size]{dev.size()}} is
+useful to determine the size of the active device.
 }
 \examples{
-
-
 # Simplest use: Just give a list of ped objects.
 # To guess suitable plot window dimensions, use 'newdev=T'
 peds = list(nuclearPed(3), cousinPed(2), singleton(12), halfSibPed())
@@ -78,36 +74,38 @@ plotPedList(peds, widths=widths, frames=frames, frametitles=c('First', 'Second')
 margins=c(2,4,2,4)
 title='Same title'
 id.labels=''
-symbolsize=1.5 # note: doesn't work as expected for singletons
+symbolsize=1.5
 plotPedList(peds, widths=widths, frames=frames, margins=margins, title=title,
             id.labels=id.labels, symbolsize=symbolsize, newdev=TRUE)
 
 \dontrun{
-### EXAMPLE WITH MARKER DATA
+# COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS
 # For more control of individual plots, each plot and all its parameters
 # can be specified in its own list:
-x1 = nuclearPed(3)
-m1 = marker(x1, '3'=1:2)
-marg1 = c(5,4,5,4)
-plot1 = list(x1, marker=m1, margins=marg1, title='Plot 1', deceased=1:2)
+x1 = nuclearPed(nch = 3)
+m1 = marker(x1, '3' = 1:2)
+marg1 = c(7, 4, 7, 4)
+plot1 = list(x1, marker=m1, margins=marg1, title='Plot 1', deceased=1:2, cex=1.3)
 
 x2 = cousinPed(2)
 m2 = marker(x2, alleles='A')
 genotype(m2, leaves(x2)) = 'A'
-marg2 = c(3,4,2,4)
+marg2 = c(3, 4, 2, 4)
 plot2 = list(x2, marker=m2, margins=marg2, title='Plot 2', symbolsize=1.2,
-             skip.empty.genotypes=T)
+             skip.empty.genotypes=T, id=NULL)
 
-x3 = singleton(12)
-marg3 = c(10,0,0,0)
-plot3 = list(x3, margins=marg3, title='Plot 3', symbolsize=2)
+x3 = singleton("Mr. X")
+marg3 = c(10, 0, 0, 0)
+plot3 = list(x3, margins=marg3, title='Plot 3', symbolsize=1, cex=2)
 
 x4 = halfSibPed()
+shaded = 4:5
+col = c("black", "black", "black", "blue", "blue")
 marg4 = marg1
-plot4 = list(x4, margins=marg4, title='Plot 4')
+plot4 = list(x4, margins=marg4, title='Plot 4', shaded=shaded, col=col)
 
 plotPedList(list(plot1, plot2, plot3, plot4), widths=c(2,3,1,2),
-            frames=list(1,2:3,4), available=T, newdev=T)
+            frames=list(1,2:3,4), newdev=T)
 
 # Different example:
 plotPedList(list(halfCousinPed(4), cousinPed(7)), title='Many generations',

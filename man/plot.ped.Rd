@@ -63,7 +63,7 @@ controlling the appearance of pedigree symbols and accompanying labels. Most
 of the work is done by the plotting functionality in the 'kinship2' package.
 }
 \details{
-\code{plot.ped} is in essence a wrapper for \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
+\code{plot.ped} is in essence an elaborate wrapper for \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
 }
 \examples{
 

@@ -4,7 +4,7 @@
 #' controlling the appearance of pedigree symbols and accompanying labels. Most
 #' of the work is done by the plotting functionality in the 'kinship2' package.
 #'
-#' `plot.ped` is in essence a wrapper for [kinship2::plot.pedigree()].
+#' `plot.ped` is in essence an elaborate wrapper for [kinship2::plot.pedigree()].
 #'
 #' @param x a [ped()] object.
 #' @param marker either NULL, a vector of positive integers, a [`marker`]
@@ -184,45 +184,41 @@ as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
 
 
 
-#' Plot a list of pedigrees.
+#' Plot a collection of pedigrees.
 #'
-#' This function creates a row of pedigree plots, each created by
-#' [plot.ped()].  Each parameter accepted by
-#' [plot.ped()] can be applied here.  Some effort is made to
-#' guess a reasonable window size and margins, but in general the user must be
-#' prepared to do manual resizing of the plot window.
+#' This function creates a row of pedigree plots, each created by [plot.ped()].
+#' Any parameter accepted by [plot.ped()] can be applied, either to all plots
+#' simultaneously, or to individual plots.  Some effort is made to guess a
+#' reasonable window size and margins, but in general the user must be prepared
+#' to do manual resizing of the plot window. See various examples in the
+#' Examples section below.
 #'
-#' See various examples in the Examples section below.
+#' Note that for tweaking dev.height and dev.width the function [dev.size()] is
+#' useful to determine the size of the active device.
 #'
-#' Note that for tweaking dev.height and dev.width the function
-#' [dev.size()] is useful to determine the size of the active device.
-#'
-#' @param plot.arg.list A list of lists. Each element of `plot.arg.list`
-#' is a list, where the first element is the [ped()] object to be
-#' plotted, and the remaining elements are passed on to `plot.ped`.
-#' These elements must be correctly named. See examples below.
+#' @param plot.arg.list A list of lists. Each element of `plot.arg.list` is a
+#'   list, where the first element is the [ped()] object to be plotted, and the
+#'   remaining elements are passed on to `plot.ped`. These elements must be
+#'   correctly named. See examples below.
 #' @param widths A numeric vector of relative widths of the subplots. Recycled
-#' to `length(plot.arg.list)` if necessary, before passed on to
-#' [layout()]. Note that the vector does not need to sum to 1.
+#'   to `length(plot.arg.list)` if necessary, before passed on to [layout()].
+#'   Note that the vector does not need to sum to 1.
 #' @param frames Either a single logical (FALSE = no frames; TRUE = automatic
-#' framing) or a list of numeric vectors: Each vector must consist of
-#' consecutive integers, indicating subplots to be framed together. By default
-#' the framing follows the list structure of `plot.arg.list`.
+#'   framing) or a list of numeric vectors: Each vector must consist of
+#'   consecutive integers, indicating subplots to be framed together. By default
+#'   the framing follows the list structure of `plot.arg.list`.
 #' @param frametitles A character vector of titles for each frame. If this is
-#' non-NULL, titles for individuals subplots are ignored.
-#' @param fmar A single number in the interval [0,0.5) controlling the position
-#' of the frames.
+#'   non-NULL, titles for individuals subplots are ignored.
+#' @param fmar A single number in the interval \eqn{[0,0.5)} controlling the
+#'   position of the frames.
 #' @param newdev A logical, indicating if a new plot window should be opened.
 #' @param dev.height,dev.width The dimensions of the new device (only relevant
-#' if newdev is TRUE). If these are NA suitable values are guessed from the
-#' pedigree sizes.
-#' @param \dots Further arguments passed on to each call to
-#' [plot.ped()].
+#'   if newdev is TRUE). If these are NA suitable values are guessed from the
+#'   pedigree sizes.
+#' @param \dots Further arguments passed on to each call to [plot.ped()].
 #' @author Magnus Dehli Vigeland
 #' @seealso [plot.ped()]
 #' @examples
-#'
-#'
 #' # Simplest use: Just give a list of ped objects.
 #' # To guess suitable plot window dimensions, use 'newdev=T'
 #' peds = list(nuclearPed(3), cousinPed(2), singleton(12), halfSibPed())
@@ -247,36 +243,38 @@ as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
 #' margins=c(2,4,2,4)
 #' title='Same title'
 #' id.labels=''
-#' symbolsize=1.5 # note: doesn't work as expected for singletons
+#' symbolsize=1.5
 #' plotPedList(peds, widths=widths, frames=frames, margins=margins, title=title,
 #'             id.labels=id.labels, symbolsize=symbolsize, newdev=TRUE)
 #'
 #' \dontrun{
-#' ### EXAMPLE WITH MARKER DATA
+#' # COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS
 #' # For more control of individual plots, each plot and all its parameters
 #' # can be specified in its own list:
-#' x1 = nuclearPed(3)
-#' m1 = marker(x1, '3'=1:2)
-#' marg1 = c(5,4,5,4)
-#' plot1 = list(x1, marker=m1, margins=marg1, title='Plot 1', deceased=1:2)
+#' x1 = nuclearPed(nch = 3)
+#' m1 = marker(x1, '3' = 1:2)
+#' marg1 = c(7, 4, 7, 4)
+#' plot1 = list(x1, marker=m1, margins=marg1, title='Plot 1', deceased=1:2, cex=1.3)
 #'
 #' x2 = cousinPed(2)
 #' m2 = marker(x2, alleles='A')
 #' genotype(m2, leaves(x2)) = 'A'
-#' marg2 = c(3,4,2,4)
+#' marg2 = c(3, 4, 2, 4)
 #' plot2 = list(x2, marker=m2, margins=marg2, title='Plot 2', symbolsize=1.2,
-#'              skip.empty.genotypes=T)
+#'              skip.empty.genotypes=T, id=NULL)
 #'
-#' x3 = singleton(12)
-#' marg3 = c(10,0,0,0)
-#' plot3 = list(x3, margins=marg3, title='Plot 3', symbolsize=2)
+#' x3 = singleton("Mr. X")
+#' marg3 = c(10, 0, 0, 0)
+#' plot3 = list(x3, margins=marg3, title='Plot 3', symbolsize=1, cex=2)
 #'
 #' x4 = halfSibPed()
+#' shaded = 4:5
+#' col = c("black", "black", "black", "blue", "blue")
 #' marg4 = marg1
-#' plot4 = list(x4, margins=marg4, title='Plot 4')
+#' plot4 = list(x4, margins=marg4, title='Plot 4', shaded=shaded, col=col)
 #'
 #' plotPedList(list(plot1, plot2, plot3, plot4), widths=c(2,3,1,2),
-#'             frames=list(1,2:3,4), available=T, newdev=T)
+#'             frames=list(1,2:3,4), newdev=T)
 #'
 #' # Different example:
 #' plotPedList(list(halfCousinPed(4), cousinPed(7)), title='Many generations',
