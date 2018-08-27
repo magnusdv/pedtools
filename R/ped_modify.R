@@ -41,7 +41,7 @@
 #'   (i.e. not included in the function call). In cases 2 and 3 a new founder is
 #'   added to the pedigree. In case 2 its label is the one given, while in case
 #'   3 a suitable label is created by the program (see Details).
-#' @param nch A single integer indicating the number of children to be created.
+#' @param nch A positive integer indicating the number of children to be created.
 #'   Default: 1.
 #' @param sex Gender codes of the created children (recycled if needed).
 #' @param verbose A logical: Verbose output or not.
@@ -233,7 +233,12 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
   p[id_int, 2:3] = c(fath_int, moth_int)
   attrs$LABELS = newlabs
 
-  restore_ped(p, attrs = attrs)
+  y = restore_ped(p, attrs = attrs)
+  neworder = c(seq_len(id_int - 1),
+               if(new.father) fath_int,
+               if(new.mother) moth_int,
+               id_int:pedsize(x))
+  reorderPed(y, neworder)
 }
 
 

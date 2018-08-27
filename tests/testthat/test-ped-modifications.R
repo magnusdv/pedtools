@@ -175,19 +175,36 @@ test_that("addParents() gives message about new parents", {
   expect_message(addParents(x, 4, father="123", mother="2"), "Father: Creating new individual with ID = 123")
 })
 
-test_that("addParents() creates new parents", {
-  x = addSon(nuclearPed(1), 3, verbose=F)
-  y1 = addParents(x, 4, verbose=F)
-  y2 = addParents(x, 4, father=6, mother=7, verbose=F)
-  expect_equal(labels(y1), as.character(1:7))
+test_that("addParents() creates parents with correct labels", {
+  x = nuclearPed(1)
+  x1 = addParents(x, 1, verbose=F)
+  x2 = addParents(x, 1, father=4, mother=5, verbose=F)
+  expect_identical(x1, x2)
+
+  y = nuclearPed(fa="fa", mo="mo", nch=1)
+  y1 = addParents(y, "fa", verbose=F)
+  y2 = addParents(y, "fa", father="NN_1", mother="NN_2", verbose=F)
   expect_identical(y1, y2)
+
+  z = nuclearPed(fa="NN1", mo="NN2", nch=1)
+  z1 = addParents(z, "NN1", verbose=F)
+  z2 = addParents(z, "NN1", father="NN_3", mother="NN_4", verbose=F)
+  expect_identical(z1, z2)
 })
+
 
 test_that("addParents() works with existing parents", {
   x = addSon(nuclearPed(1), 3, verbose=F)
   y = addParents(x, 4, father=1, mother=2, verbose=F)
   z = addChildren(nuclearPed(2, 1:2), 3, 4)
   expect_identical(y, z)
+})
+
+test_that("addParents() adds parents before children", {
+  x = addSon(nuclearPed(1), 3, verbose=F)
+  x = addParents(x, 1, verbose=F)
+  x = addParents(x, 4, father=1, verbose=F)
+  expect_true(has_parents_before_children(x))
 })
 
 test_that("relabel() is strict", {
