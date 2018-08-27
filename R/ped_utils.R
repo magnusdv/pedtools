@@ -209,7 +209,7 @@ print.nucleus = function(x, ...) {
   if (is.null(link))
     linktext = "NO LINK ASSIGNED"
   else if (link == 0)
-    linktext = "0  (end of chain)"
+    linktext = "0 (end of chain)"
   else {
     who = if (link == fa) "father"
     else if (link == mo) "mother"
@@ -217,8 +217,8 @@ print.nucleus = function(x, ...) {
     else stop2("Erroneous link individual (not a member of nucleus): ", link)
     linktext = sprintf("%s (%s)", labs[link], who)
   }
-  cat(sprintf("Pedigree nucleus.\nFather: %s\nMother: %s\nChildren: %s\nLink individual: %s\n",
-              labs[fa], labs[mo], toString(labs[ch]), linktext))
+  cat(sprintf("Nucleus: Fa/mo/ch = %s/%s/%s\nLink individual: %s\n",
+              labs[fa], labs[mo], paste(labs[ch], collapse=","), linktext))
 }
 
 
