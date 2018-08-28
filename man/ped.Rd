@@ -13,21 +13,25 @@ singleton(id, sex = 1, famid = "")
 \arguments{
 \item{id}{a vector (numeric or character) of individual ID labels.}
 
-\item{fid}{a vector of the same length as \code{id}, containing the labels of the fathers.
-In other words \code{fid[i]} is the father of \code{id[i]}, or 0 if \code{id[i]} is a founder.}
+\item{fid}{a vector of the same length as \code{id}, containing the labels of the
+fathers. In other words \code{fid[i]} is the father of \code{id[i]}, or 0 if \code{id[i]}
+is a founder.}
 
-\item{mid}{a vector of the same length as \code{id}, containing the labels of the mothers.
-In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]} is a founder.}
+\item{mid}{a vector of the same length as \code{id}, containing the labels of the
+mothers. In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]}
+is a founder.}
 
-\item{sex}{a numeric of the same length as \code{id}, describing the genders of the individuals
-(in the same order as \code{id}.) Each entry must be either 1 (=male), 2 (=female) or 0 (=unknown).}
+\item{sex}{a numeric of the same length as \code{id}, describing the genders of
+the individuals (in the same order as \code{id}.) Each entry must be either 1
+(=male), 2 (=female) or 0 (=unknown).}
 
 \item{famid}{a character string. Default: An empty string.}
 
 \item{reorder}{a logical. If TRUE, the pedigree is reordered so that all
 parents precede their children.}
 
-\item{validate}{a logical. If TRUE, \code{\link[=validate_ped]{validate_ped()}} is run before returning the pedigree.}
+\item{validate}{a logical. If TRUE, \code{\link[=validate_ped]{validate_ped()}} is run before returning
+the pedigree.}
 
 \item{verbose}{a logical.}
 
@@ -37,32 +41,49 @@ parents precede their children.}
 A \code{ped} object, which is essentially a list with the following
 entries:
 \itemize{
-\item \code{ID} : A character vector of ID labels. Unless the pedigree is reordered during creation, this equals \code{as.character(id)}
-\item \code{FIDX} : An integer vector with paternal indices: For each $j=1,2,...$, \code{ID[FIDX[j]]} is the father of \code{ID[j]}, or 0 if \code{ID[j]} has no father within the pedigree.
-\item \code{MIDX} : An integer vector with maternal indices: For each $j=1,2,...$, \code{ID[MIDX[j]]} is the mother of \code{ID[j]}, or 0 if \code{ID[j]} has no mother within the pedigree.
-\item \code{SEX} : An integer vector with gender codes. Unless the pedigree is reordered, this equals \code{as.integer(sex)}.
+\item \code{ID} : A character vector of ID labels. Unless the pedigree is reordered
+during creation, this equals \code{as.character(id)}
+\item \code{FIDX} : An integer vector with paternal indices: For each \eqn{j =
+  1,2,...}, the entry \code{FIDX[j]} is 0 if \code{ID[j]} has no father within the
+pedigree; otherwise \code{ID[FIDX[j]]} is the father of \code{ID[j]}.
+\item \code{MIDX} : An integer vector with maternal indices: For each \eqn{j =
+  1,2,...}, the entry \code{MIDX[j]} is 0 if \code{ID[j]} has no mother within the
+pedigree; otherwise \code{ID[MIDX[j]]} is the mother of \code{ID[j]}.
+\item \code{SEX} : An integer vector with gender codes. Unless the pedigree is
+reordered, this equals \code{as.integer(sex)}.
 \item \code{FAMID} : The family ID.
 \item \code{UNBROKEN_LOOPS} : A logical: TRUE if the pedigree is inbred.
-\item \code{LOOP_BREAKERS} : A matrix with loop breaker ID's in the first
-column and their duplicates in the second column. All entries refer to the internal IDs.
-This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
-\item \code{FOUNDER_INBREEDING} : A numeric vector with the same length as \code{founders(x)}, or NULL. This is always NULL when a new \code{ped} is created. See \code{\link[=founder_inbreeding]{founder_inbreeding()}}.
-\item \code{MARKERS} : A list of \code{marker} objects.
+\item \code{LOOP_BREAKERS} : A matrix with loop breaker ID's in the first column and
+their duplicates in the second column. All entries refer to the internal
+IDs. This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
+\item \code{FOUNDER_INBREEDING} : A numeric vector with the same length as
+\code{founders(x)}, or NULL. This is always NULL when a new \code{ped} is created.
+See \code{\link[=founder_inbreeding]{founder_inbreeding()}}.
+\item \code{MARKERS} : A list of \code{marker} objects, or NULL.
 }
 }
 \description{
-Basic construction of \code{ped} objects. Utility functions for creating many
-common pedigree structures are described in \link{ped_basic}.
+This is the basic constructor of \code{ped} objects. Utility functions for
+creating many common pedigree structures are described in \link{ped_basic}.
 }
 \details{
-Internally, this happens: ... #TODO
+A singleton is a special \code{ped} object whose pedigree contains 1 individual.
+The class attribute of a singleton is \code{c('singleton', 'ped')}
 
-A singleton is a special \code{ped} object whose pedigree contains 1
-individual. The class attribute of a singleton is \code{c('singleton', 'ped')}
+Selfing, i.e. the presence of pedigree members whose father and mother are
+the same individual, is allowed in \code{ped} objects. Any such "self-fertilizing"
+parent must have undecided gender (\code{sex=0}).
 }
 \examples{
-x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))
+# Trio
+x = ped(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
+
+# Female singleton
 y = singleton('NN', sex=2, famid="SINGLETON GIRL")
+
+# Selfing
+z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
+stopifnot(has_selfing(z))
 
 }
 \seealso{
