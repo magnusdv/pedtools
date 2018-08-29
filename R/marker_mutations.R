@@ -36,8 +36,8 @@ mutationMatrix = function(alleles, model = c("equal", "proportional", "random"),
     proportional = {
       alpha = rate / sum(afreq * (1 - afreq))
       mutmat[] = (1 - alpha) * diag(nall) + alpha * rep(afreq, each = nall)
-      if(max(mutmat) > 1 || min(mutmat) < 0)
-        stop("Impossible mutation matrix. Reduce rate")
+      if(any(mutmat) > 1)
+        stop2("Impossible mutation matrix; try reducing `rate`.")
     },
     random = {
       if(!is.null(seed))

@@ -77,12 +77,11 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
     else if (is.numeric(marker) || is.character(marker))
       mlist = getMarkers(x, markers=marker)
     else
-      stop("Argument `marker` must be either:\n",
-           "  * a `marker` object\n",
+      stop2("Argument `marker` must be either:\n",
+           "  * a n object of class `marker`\n",
            "  * a list of `marker` objects\n",
            "  * a character vector (names of attached markers)\n",
-           "  * an integer vector (indices of attached markers)",
-           call.=FALSE)
+           "  * an integer vector (indices of attached markers)")
     checkConsistency(x, mlist)
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
@@ -137,12 +136,11 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     else if (is.numeric(marker) || is.character(marker))
       mlist = getMarkers(x, markers = marker)
     else
-      stop("Argument `marker` must be either:\n",
-           "  * a `marker` object\n",
+      stop2("Argument `marker` must be either:\n",
+           "  * an object of class `marker`\n",
            "  * a list of `marker` objects\n",
            "  * a character vector (names of attached markers)\n",
-           "  * an integer vector (indices of attached markers)",
-           call.=FALSE)
+           "  * an integer vector (indices of attached markers)")
     checkConsistency(x, mlist)
 
     y = transferMarkers(setMarkers(x, mlist), y)
@@ -358,7 +356,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
         stop2("Each element of `frames` must consist of consecutive integers: ", v)
     dup = anyDuplicated(unlist(frames))
     if (dup > 0)
-      stop("Plot occurring twice in `frames` list: ", dup)
+      stop2("Plot occurring twice in `frames` list: ", dup)
   }
 
 
