@@ -128,25 +128,6 @@ swapSex = function(x, ids, verbose = TRUE) { #TODO add tests with sex=0
 }
 
 
-#' Deprecated functions
-#'
-#' These will soon be removed.
-#' @param x NA
-#' @param labels NA
-#'
-#' @name ped_deprecated
-NULL
-
-#' @rdname ped_deprecated
-#' @export
-setLabels = function(x, labels) {
-  message("`setLabels()` is deprecated. Use `relabel()` instead")
-  labels = as.character(labels)
-  #assert_that(is.ped(x), length(labels) == pedsize(x), !anyDuplicated(labels))
-  x$ID = labels
-  x
-}
-
 
 #' Family identifier
 #'
