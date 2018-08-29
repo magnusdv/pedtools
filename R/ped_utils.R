@@ -2,7 +2,12 @@
 #'
 #' Various utility functions for `ped` objects
 #'
-#' @param x A `ped` object
+#' The functions `has_unbroken_loops()`, `has_inbred_founders()` and
+#' `has_selfing()` allow as input either a single `ped` object or a list of
+#' such. In the latter case each function returns TRUE if it is TRUE for any of
+#' the components.
+#'
+#' @param x A `ped` object, or (in some functions - see Details) a list of such.
 #'
 #' @return
 #'
@@ -10,19 +15,19 @@
 #'
 #' * `has_unbroken_loops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of
-#' `x$UNBROKEN_LOOPS`)
+#' `x$UNBROKEN_LOOPS`).
 #'
 #' * `has_inbred_founders(x)` returns TRUE is founder inbreeding is specified
-#' for `x` AND at least one founder has positive inbreeding coefficient. See
+#' for `x` and at least one founder has positive inbreeding coefficient. See
 #' [founder_inbreeding()] for details.
 #'
 #' * `has_selfing(x)` returns TRUE if the pedigree contains selfing events. This
 #' is recognised by father and mother begin equal for some child. (Note that for
 #' this to be allowed, the gender code of the parent must be 0.)
 #'
-#' * `has_common_ancestor(x)` computes a logical matrix `A` whose entry
-#' `A[i,j]` is TRUE if pedigree members i and j have a common ancestor in `x`,
-#' and FALSE otherwise. By convention, `A[i,i]` is TRUE for all i.
+#' * `has_common_ancestor(x)` computes a logical matrix `A` whose entry `A[i,j]`
+#' is TRUE if pedigree members i and j have a common ancestor in `x`, and FALSE
+#' otherwise. By convention, `A[i,i]` is TRUE for all i.
 #'
 #' * `subnucs(x)` returns a list of all nuclear sub-pedigrees of `x`, wrapped as
 #' `nucleus` objects. Each nucleus is a list with entries `father`, `mother` and
@@ -75,6 +80,9 @@ pedsize = function(x) {
 #' @rdname ped_utils
 #' @export
 has_unbroken_loops = function(x) {
+  if(is.pedList(x))
+    return(any(vapply(x, has_unbroken_loops, logical(1))))
+
   isTRUE(x$UNBROKEN_LOOPS)
 }
 
@@ -82,6 +90,9 @@ has_unbroken_loops = function(x) {
 #' @rdname ped_utils
 #' @export
 has_inbred_founders = function(x) {
+  if(is.pedList(x))
+    return(any(vapply(x, has_inbred_founders, logical(1))))
+
   finb = x$FOUNDER_INBREEDING
   !is.null(finb) && any(finb > 0)
 }
@@ -90,6 +101,9 @@ has_inbred_founders = function(x) {
 #' @rdname ped_utils
 #' @export
 has_selfing = function(x) {
+  if(is.pedList(x))
+    return(any(vapply(x, has_selfing, logical(1))))
+
   any(x$FIDX != 0 & x$FIDX == x$MIDX)
 }
 
@@ -97,6 +111,9 @@ has_selfing = function(x) {
 #' @rdname ped_utils
 #' @export
 has_common_ancestor = function(x) {
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object: ", x)
+
   n = pedsize(x)
   labs = labels(x)
 
