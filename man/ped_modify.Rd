@@ -36,7 +36,7 @@ existing member, 2) not belong to any existing member, or 3) be missing
 added to the pedigree. In case 2 its label is the one given, while in case
 3 a suitable label is created by the program (see Details).}
 
-\item{nch}{A single integer indicating the number of children to be created.
+\item{nch}{A positive integer indicating the number of children to be created.
 Default: 1.}
 
 \item{sex}{Gender codes of the created children (recycled if needed).}
