@@ -5,26 +5,19 @@ stop2 = function(...) {
   do.call(stop, a)
 }
 
-stopifnotSimpleVector = function(x, argname="x") {
-  if(is.null(x))
-    return()
-
-  if(!is.vector(x)) {
-    errmess = sprintf("argument `%s` must be a vector", argname)
-
-    cl = class(x)[1]
-    if(!cl %in% c("numeric", "integer", "character", "logical", "double"))
-      errmess = sprintf("%s; received an object of class '%s'", errmess, cl)
-
-    stop2(errmess)
-  }
-}
-
 # Test that input is a single positive (or similar) integer.
 is_count = function(x, minimum = 1) {
   isTRUE(length(x) == 1 &&
          (is.integer(x) || (is.numeric(x) && x == as.integer(x))) &&
          x >= minimum)
+}
+
+# Test that input is a single number, with optional range constraints
+is_number = function(x, minimum = NA, maximum = NA) {
+  isTRUE(length(x) == 1 && 
+         is.numeric(x) &&
+         (is.na(minimum) || x >= minimum) &&
+         (is.na(maximum) || x <= maximum))
 }
 
 # A safer version of base::sample
@@ -48,6 +41,21 @@ safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 }
 
 .rand01 = function(n) sample.int(2, size = n, replace = T) - 1  #random 0/1 vector of length n.
+
+stopifnotSimpleVector = function(x, argname="x") {
+  if(is.null(x))
+    return()
+
+  if(!is.vector(x)) {
+    errmess = sprintf("argument `%s` must be a vector", argname)
+
+    cl = class(x)[1]
+    if(!cl %in% c("numeric", "integer", "character", "logical", "double"))
+      errmess = sprintf("%s; received an object of class '%s'", errmess, cl)
+
+    stop2(errmess)
+  }
+}
 
 # Stripped version of expand.grid
 fast.grid = function(argslist, as.list = FALSE) {
