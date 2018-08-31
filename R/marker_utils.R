@@ -9,12 +9,7 @@ allowsMutations = function(marker) {
   mutmat = attr(marker, 'mutmat')
   if(is.null(mutmat))
     return(FALSE)
-  n = nAlleles(marker)
-  male = mutmat$male
-  female = mutmat$female
-  if(all(diag(male) == 1) && all(diag(female) == 1))
-    return(FALSE)
-  return(TRUE)
+  all(diag(mutmat$male) == 1) && all(diag(mutmat$female) == 1)
 }
 
 #' Number of marker alleles
