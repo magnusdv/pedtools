@@ -10,7 +10,7 @@ allowsMutations(marker)
 \item{marker}{A \code{marker} object}
 }
 \value{
-Returns TRUE if the \code{mutmat} attribute of the input is non-NULL and differs from the identity matrix.
+Returns TRUE if the \code{mutmod} attribute of the input is non-NULL and differs from the identity matrix.
 }
 \description{
 Check if a marker allows mutations

@@ -35,9 +35,11 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   cat(sprintf("Chrom %s: %s (Mb), %s (cM)\n", chr, mb, cm))
 
   # Mutations
-  mut = attr(x, "mutmat")
-  possible = if(is.null(mut)) "No" else "Yes"
-  cat("Mutations possible:", possible, "\n")
+  mut = attr(x, "mutmod")
+  if(!is.null(mut))
+    muttxt = if(trivialMut(mut)) "Yes (trivial)" else "Yes"
+  else muttxt = "No"
+  cat("Mutation model:", muttxt, "\n")
 
   # Allele freqs - use hack to get one space indentation
   cat("Allele frequencies:\n")

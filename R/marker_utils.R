@@ -3,13 +3,17 @@
 #'
 #' @param marker A `marker` object
 #'
-#' @return Returns TRUE if the `mutmat` attribute of the input is non-NULL and differs from the identity matrix.
+#' @return Returns TRUE if the `mutmod` attribute of the input is non-NULL and differs from the identity matrix.
 #' @export
 allowsMutations = function(marker) {
-  mutmat = attr(marker, 'mutmat')
-  if(is.null(mutmat))
-    return(FALSE)
-  all(diag(mutmat$male) == 1) && all(diag(mutmat$female) == 1)
+  mutmod = attr(marker, 'mutmod')
+  is.null(mutmod) || trivialMut(mutmod)
+}
+
+trivialMut = function(mutmod) {
+  if(is.list(mutmod))
+    return(all(vapply(mutmod, trivialMut, logical(1))))
+  all(diag(mutmod) == 1)
 }
 
 #' Number of marker alleles
