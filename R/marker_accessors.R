@@ -79,6 +79,64 @@ genotype.ped = function(x, markers=NULL, id, ...) {
   x
 }
 
+### mutmod ###
+#' @export
+mutmod = function(x, ...) {
+  UseMethod("mutmod")
+}
+
+#' @export
+mutmod.marker = function(x, ...) {
+  attr(x, 'mutmod')
+}
+
+#' @export
+mutmod.ped = function(x, marker, ...) {
+  if(missing(marker) || length(marker) == 0)
+    stop2("Argument `marker` cannot be empty")
+  if(length(marker) > 1)
+    stop2("Mutation model can only be accessed for one marker at a time")
+
+  mlist = getMarkers(x, markers=marker)
+  m = mlist[[1]]
+  mutmod(m)
+}
+
+#' @export
+`mutmod<-` = function(x, ..., value) {
+  UseMethod("mutmod<-")
+}
+
+#' @export
+`mutmod<-.marker` = function(x, ..., value) {
+  als = alleles(x)
+
+  if(is.matrix(value)) {
+    validateMutationMatrix(value, alleles = als)
+    value = list(male = value, female = value)
+  }
+  else {
+    if(!is.list(value) || !setequal(names(value), c("female", "male")))
+      stop2('Replacement value must be either a single mutation matrix, or a list of two, named "male" and "female"')
+
+    validateMutationMatrix(value$male, alleles = als)
+    validateMutationMatrix(value$female, alleles = als)
+  }
+  attr(x, 'mutmod') = value
+  x
+}
+
+#' @export
+`mutmod<-.ped` = function(x, marker, ..., value) {
+  if(missing(marker) || length(marker) == 0)
+    stop2("Argument `marker` cannot be empty")
+  if(length(marker) > 1)
+    stop2("Mutation model replacement can only be done for a single marker")
+
+  idx = whichMarkers(x, markers=marker)
+  mutmod(x$markerdata[[idx]]) = value
+  x
+}
 
 ### alleles ###
 
