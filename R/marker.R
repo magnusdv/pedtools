@@ -7,23 +7,35 @@
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
 #'   the ID label of a member of `x`, and genotype is a numeric or character
 #'   vector of length 1 or 2 (see Examples).
+#' @param allelematrix a matrix with 2 columns and `pedsize(x)` rows. If this is
+#'   non-NULL, then `...` must be empty.
 #' @param alleles a character (or coercible to character) containing allele
-#'   names. If not given, the default is to take the sorted vector of distinct
-#'   alleles occuring in `...`.
+#'   names. If not given, and `afreq` is named, `names(afreq)` is used. The
+#'   default action is to take the sorted vector of distinct alleles occuring in
+#'   `allelematrix` or `...`.
 #' @param afreq a numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
-#'   don't sum to 1 after rounding to 3 decimals. If `afreq` is not specified,
-#'   all alleles are given equal frequencies.
+#'   don't sum to 1 after rounding to 3 decimals. If the vector is named, and
+#'   `alleles` is not NULL, an error is raised if `setequal(names(afreq),
+#'   alleles)` is not TRUE. If `afreq` is not specified, all alleles are given
+#'   equal frequencies.
 #' @param chrom a single integer: the chromosome number. Default: NA.
 #' @param posMb a nonnegative real number: the phsyical position of the marker,
 #'   in megabases. Default: NA.
 #' @param posCm a nonnegative real number: the centiMorgan position of the
 #'   marker. Default: NA.
 #' @param name a character string: the name of the marker. Default: NA.
-#' @param mutmat a mutation matrix, or a list of two such matrices named
-#'   'female' and 'male'. If given, the mutation matrices must be square, with
-#'   the allele labels as dimnames, and each row must sum to 1 (after rounding
-#'   to 3 decimals). Default: NULL.
+#' @param mutmod a mutation matrix, or a list of two such matrices named
+#'   'female' and 'male'. Each mutation matrices must be square, with the allele
+#'   labels as dimnames, and each row must sum to 1 (after rounding to 3
+#'   decimals). If the `pedmut` package is installed, an alternative syntax is
+#'   available, by supplying the name of a model accepted by
+#'   [pedmut::mutationModel()], e.g. "equal" or "proportional". The model name
+#'   can be abbreviated. Default: NULL.
+#' @param rate a number in the interval \eqn{[0,1]}, passed on to
+#'   [pedmut::mutationModel()] when appropriate.
+#' @param validate if TRUE, the validity of the created `marker` object is
+#'   checked.
 #'
 #' @return An object of class `marker`: This is an integer matrix with 2 columns
 #'   and one row per individual, and attributes 'alleles' (a character vector
@@ -44,138 +56,188 @@
 #' x = setMarkers(x, m)
 #'
 #' @export
-marker = function(x, ...,  alleles = NULL, afreq = NULL, chrom = NA,
-                  posMb = NA, posCm = NA, name = NA, mutmat = NULL) {
+marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
+                  chrom = NA, posMb = NA, posCm = NA, name = NA, mutmod = NULL,
+                  rate = NULL, validate = TRUE) {
 
-  # Initalize empty allele matrix
-  m = matrix(0, ncol = 2, nrow = pedsize(x))
-
-  # Capture genotypes given in dots
-  dots = eval(substitute(alist(...)))
-  if(length(dots) > 0 && is.null(names(dots)))
-    stop2("Genotype assignments in `...` must be named. See ?marker")
-
-  ids_int = internalID(x, names(dots))
-
-  genos = lapply(dots, eval.parent)
-
-  for(i in seq_along(dots)) {
-    g = genos[[i]]
-    if(!is.vector(g) || !length(g) %in% 1:2) # TODO: deal with NA and '' inputs
-      stop2("Genotype must be a vector of length 1 or 2: ", deparse(g))
-    m[ids_int[i], ] = g
-  }
-
-  .createMarkerObject(m, alleles = alleles, afreq = afreq, chrom = chrom,
-      posMb = posMb, posCm=posCm, name = name, mutmat = mutmat,
-      pedmembers = labels(x), sex = x$SEX)
-}
-
-
-# TODO: rename to new_marker() and move checks to validate_marker()
-.createMarkerObject = function(matr, alleles = NULL, afreq = NULL, chrom = NA,
-                               posMb = NA, posCm = NA, name = NA, mutmat = NULL,
-                               pedmembers = NULL, sex = NULL, check_input = TRUE) {
+  # Symbols treated as NA
   NA_allele_ = c(0, "", NA, "-")
 
-  ### Checks
-  if(check_input) {
+  if (is.null(allelematrix)) {
+    # Initalize empty allele matrix
+    m = matrix(0, ncol = 2, nrow = pedsize(x))
 
-    # Check that the observed alleles are OK
-    if(!is.null(alleles)) {
-      if(any(alleles %in% NA_allele_))
-        stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
-      if(!all(matr %in% c(NA_allele_, alleles))) {
-        notfound = setdiff(matr, c(NA_allele_, alleles))
-        stop2("Allele used in genotype but not included in `alleles` argument: ",
-              notfound)
-      }
-    }
+    # Capture genotypes given in dots
+    dots = eval(substitute(alist(...)))
+    if(length(dots) > 0 && is.null(names(dots)))
+      stop2("Genotype assignments in `...` must be named. See ?marker")
 
-    # Check frequencies
-    if(!is.null(afreq)) {
-      if(is.null(alleles))
-         stop2("Argument `alleles` cannot be NULL if `afreq` is non-NULL")
-      if (length(afreq) != length(alleles))
-        stop2("Number of alleles doesn't match length of frequency vector")
-      if (round(sum(afreq), 3) != 1)
-        stop2("Allele frequencies do not sum to 1: ", afreq)
-    }
+    ids_int = internalID(x, names(dots))
 
-    # Check name
-    if(length(name) != 1)
-      stop2("Length of `name` must be 1: ", name)
-    if (isTRUE(suppressWarnings(name == as.integer(name))))
-      stop2("Attribute `name` cannot consist entirely of digits: ", name)
+    genos = lapply(dots, eval.parent)
 
-    # Check chrom
-    if(length(chrom) != 1)
-      stop2("Length of `chrom` must be 1: ", chrom)
-
-    # Check pedmembers and sex
-    if(length(pedmembers) != nrow(matr))
-      stop2("Number of rows in the allele matrix must equal the length of `pedmembers`")
-    if(length(sex) != nrow(matr))
-      stop2("Number of rows in the allele matrix must equal the length of `sex`")
-
-    # Check mutation matrices
-    if (!is.null(mutmat)) {
-      if (is.matrix(mutmat))
-        mutmat = .checkMutationMatrix(mutmat, alleles)
-      else if(is.list(mutmat)) {
-        nms = names(mutmat)
-        if(!setequal(nms, c("female", "male")))
-          stop2("List of mutation matrices must have names 'male' and 'female': ", nms)
-        mutmat$female = .checkMutationMatrix(mutmat$female, alleles)
-        mutmat$male = .checkMutationMatrix(mutmat$male, alleles)
-      }
-      else
-        stop2("Argument `mutmat` must be either a matrix or a list of two matrices
-              (named `male` and `female`)")
+    for(i in seq_along(dots)) {
+      g = genos[[i]]
+      if(!is.vector(g) || !length(g) %in% 1:2)
+        stop2("Genotype must be a vector of length 1 or 2: ", deparse(g))
+      m[ids_int[i], ] = g
     }
   }
+  else {
+    m = allelematrix
+  }
 
-  ### Alleles
+  # If alleles are NULL, take from afreq names, otherwise from supplied genos
   if (is.null(alleles)) {
-    alleles = .mysetdiff(matr, NA_allele_)
-    if (!length(alleles)) alleles = 1
+    if(!is.null(afreq) && !is.null(names(afreq)))
+       alleles = names(afreq)
+    else {
+      alleles = .mysetdiff(m, NA_allele_)
+      if (length(alleles) == 0)
+        alleles = 1:2 # NEW
+    }
   }
-  else if (!is.numeric(alleles) && !anyNA(suppressWarnings(as.numeric(alleles))))
-    alleles = as.numeric(alleles) # ensure numerical sorting if appropriate
-
-  # Sort (same order used below for frequencies)
-  allele_order = order(alleles)
-  alleles = as.character(alleles[allele_order])
+  else {
+    if(!all(m %in% c(NA_allele_, alleles)))
+      stop2("Allele used in genotype but not found in `alleles` argument: ",
+            setdiff(m, c(NA_allele_, alleles)))
+  }
 
   ### Frequencies
   if (is.null(afreq)) {
     nall = length(alleles)
     afreq = rep.int(1/nall, nall)
   }
+  if (is.null(names(afreq)))
+    names(afreq) = alleles
+
+  # Sort alleles and frequencies (numerical sorting if appropriate)
+  if (!is.numeric(alleles) && !anyNA(suppressWarnings(as.numeric(alleles))))
+    ord = order(as.numeric(alleles))
   else
-    afreq = afreq[allele_order]
+    ord = order(alleles)
 
-  ### Name
-  name = as.character(name)
-
-  ### Chromomsome
-  chrom = as.character(chrom)
+  afreq = afreq[ord]
+  alleles = names(afreq)
 
   ### Mutation matrices
-  if (is.matrix(mutmat)) {
-    mutmat = list(male = mutmat, female = mutmat)
+  if(is.character(mutmod)) {
+    if (!requireNamespace("pedmut", quietly = TRUE))
+      stop2("Package `pedmut` must be installed for this to work.\n")
+    mutmod = pedmut::mutationModel(mutmod, alleles = alleles, afreq = afreq, rate = rate)
   }
+  else if(is.matrix(mutmod))
+    mutmod = list(male = mutmod, female = mutmod)
 
   ### Create the internal allele matrix
-  m = match(matr, alleles, nomatch = 0)
+  m_int = match(m, alleles, nomatch = 0)
+  dim(m_int) = dim(m)
 
-  ### Add everything else as attributes, including class = "marker".
-  attributes(m) = list(dim = dim(matr), alleles = alleles, afreq = afreq,
-                       chrom = chrom, posMb = posMb, posCm = posCm, name = name,
-                       mutmat = mutmat, pedmembers = pedmembers, sex = sex,
-                       class = "marker")
-  m
+  ma = newMarker(m_int, alleles = alleles, afreq = unname(afreq),
+            name = as.character(name), chrom = as.character(chrom),
+            posMb = as.numeric(posMb), posCm = as.numeric(posCm),
+            mutmod = mutmod, pedmembers = labels(x), sex = x$SEX)
+
+  if(validate) validateMarker(ma)
+
+  ma
 }
+
+
+newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
+                     chrom = NA_character_, posMb = NA_real_, posCm = NA_real_,
+                     mutmod = NULL, pedmembers, sex) {
+  stopifnot(is.matrix(allelematrix_int),
+            ncol(allelematrix_int) == 2,
+            is.integer(allelematrix_int),
+            is.character(alleles),
+            is.numeric(afreq),
+            is.character(name),
+            is.character(chrom),
+            is.numeric(posMb),
+            is.numeric(posCm),
+            is.null(mutmod) || is.list(mutmod),
+            is.character(pedmembers),
+            is.integer(sex))
+
+  structure(allelematrix_int, alleles = alleles, afreq = afreq, name = name,
+            chrom = chrom, posMb = posMb, posCm = posCm, mutmod = mutmod,
+            pedmembers = pedmembers, sex = sex, class = "marker")
+}
+
+
+validateMarker = function(x) {
+  attrs = attributes(x)
+
+  ## alleles
+  alleles = attrs$alleles
+  NA_allele_ = c(0, "", NA, "-")
+  if(any(alleles %in% NA_allele_))
+    stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
+
+  ## afreq
+  afreq = attrs$afreq
+  if (length(afreq) != length(alleles))
+    stop2("Frequency vector doesn't match the number of alleles")
+  if (round(sum(afreq), 3) != 1)
+    stop2("Allele frequencies do not sum to 1 (after rounding to 3 decimal places): ", afreq)
+
+  # name
+  name = attrs$name
+  if(length(name) != 1)
+    stop2("Length of `name` must be 1: ", name)
+  if (isTRUE(suppressWarnings(name == as.integer(name))))
+    stop2("Attribute `name` cannot consist entirely of digits: ", name)
+
+  # chrom
+  chrom = attrs$chrom
+  if(length(chrom) != 1)
+    stop2("Length of `chrom` must be 1: ", chrom)
+
+  # pedmembers and sex
+  pedmembers = attrs$pedmembers
+  if(length(pedmembers) != nrow(x))
+    stop2("`pedmembers` attribute must have same length as nrows of the allele matrix")
+  sex = attrs$sex
+  if(length(sex) != nrow(x))
+    stop2("`sex` attribute must have same length as nrows of the allele matrix")
+
+  # mutation model
+  mutmod = attrs$mutmod
+  if(!is.null(mutmod)) {
+    if(!is.list(mutmod) || length(mutmod) != 2 || !setequal(names(mutmod), c("female", "male")))
+      stop2('`mutmod` attribute must be a list of two matrices, named "male" and "female"')
+    checkMutationMatrix(mutmod$male, alleles, identifier = "Male")
+    checkMutationMatrix(mutmod$female, alleles, identifier = "Female")
+
+  }
+}
+
+checkMutationMatrix = function(mutmat, alleles, identifier = NULL) {
+  prefix = if(is.null(identifier)) sprintf("%s mutation matrix: ") else ""
+  N = length(alleles)
+
+  if(!is.numeric(mutmat))
+    stop2(prefix, "Type must be numeric, not ", typeof(mutmat))
+
+  if (!identical(dm <- dim(mutmat), c(N,N)))
+    stop2(prefix,
+          sprintf("Dimensions (%d x %d) incompatible with number of alleles (%d)",
+                  dm[1], dm[2], N))
+
+  if(!identical(alleles, rownames(mutmat)) ||
+     !identical(alleles, colnames(mutmat)))
+    stop2(prefix, "Dimnames differ from allele names")
+
+  if (any(round(rowSums(mutmat), 3) != 1))
+    stop2(prefix, "Row sums are not 1")
+}
+
+
+
+
+
+
 
 
 .setSNPfreqs = function(x, newfreqs) { # TODO: review function

@@ -2,9 +2,9 @@ context("marker utils")
 
 x = nuclearPed(1)
 
-test_that("nAlleles of empty marker is 1", {
+test_that("nAlleles of empty marker is 2", {
   m = marker(x)
-  expect_equal(nAlleles(m), 1)
+  expect_equal(nAlleles(m), 2)
 })
 
 test_that("is_Xmarker() works", {

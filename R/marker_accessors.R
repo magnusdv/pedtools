@@ -112,15 +112,15 @@ mutmod.ped = function(x, marker, ...) {
   als = alleles(x)
 
   if(is.matrix(value)) {
-    validateMutationMatrix(value, alleles = als)
+    checkMutationMatrix(value, alleles = als)
     value = list(male = value, female = value)
   }
   else {
     if(!is.list(value) || !setequal(names(value), c("female", "male")))
       stop2('Replacement value must be either a single mutation matrix, or a list of two, named "male" and "female"')
 
-    validateMutationMatrix(value$male, alleles = als)
-    validateMutationMatrix(value$female, alleles = als)
+    checkMutationMatrix(value$male, alleles = als)
+    checkMutationMatrix(value$female, alleles = als)
   }
   attr(x, 'mutmod') = value
   x

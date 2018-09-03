@@ -47,7 +47,7 @@ test_that("afreq() accessor works", {
   m3 = marker(x, alleles=3:1, afreq=afr, name="m3")
   x = setMarkers(x, list(m1,m2,m3))
 
-  ans1 = c('1'=1)
+  ans1 = c('1'=0.5, '2'=0.5)
   expect_equal(afreq(m1), ans1)
   expect_equal(afreq(x, marker=1), ans1)
   expect_equal(afreq(x, marker="m1"), ans1)

@@ -4,8 +4,9 @@
 \alias{marker}
 \title{Marker objects}
 \usage{
-marker(x, ..., alleles = NULL, afreq = NULL, chrom = NA,
-  posMb = NA, posCm = NA, name = NA, mutmat = NULL)
+marker(x, ..., allelematrix = NULL, alleles = NULL, afreq = NULL,
+  chrom = NA, posMb = NA, posCm = NA, name = NA, mutmod = NULL,
+  rate = NULL, validate = TRUE)
 }
 \arguments{
 \item{x}{a \code{\link{ped}} object}
@@ -14,14 +15,19 @@ marker(x, ..., alleles = NULL, afreq = NULL, chrom = NA,
 the ID label of a member of \code{x}, and genotype is a numeric or character
 vector of length 1 or 2 (see Examples).}
 
+\item{allelematrix}{a matrix with 2 columns and \code{pedsize(x)} rows. If this is
+non-NULL, then \code{...} must be empty.}
+
 \item{alleles}{a character (or coercible to character) containing allele
-names. If not given, the default is to take the sorted vector of distinct
-alleles occuring in \code{...}.}
+names. If not given, and \code{afreq} is named, \code{names(afreq)} is used. The
+default action is to take the sorted vector of distinct alleles occuring in
+\code{allelematrix} or \code{...}.}
 
 \item{afreq}{a numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
-don't sum to 1 after rounding to 3 decimals. If \code{afreq} is not specified,
-all alleles are given equal frequencies.}
+don't sum to 1 after rounding to 3 decimals. If the vector is named, and
+\code{alleles} is not NULL, an error is raised if \code{setequal(names(afreq), alleles)} is not TRUE. If \code{afreq} is not specified, all alleles are given
+equal frequencies.}
 
 \item{chrom}{a single integer: the chromosome number. Default: NA.}
 
@@ -33,10 +39,19 @@ marker. Default: NA.}
 
 \item{name}{a character string: the name of the marker. Default: NA.}
 
-\item{mutmat}{a mutation matrix, or a list of two such matrices named
-'female' and 'male'. If given, the mutation matrices must be square, with
-the allele labels as dimnames, and each row must sum to 1 (after rounding
-to 3 decimals). Default: NULL.}
+\item{mutmod}{a mutation matrix, or a list of two such matrices named
+'female' and 'male'. Each mutation matrices must be square, with the allele
+labels as dimnames, and each row must sum to 1 (after rounding to 3
+decimals). If the \code{pedmut} package is installed, an alternative syntax is
+available, by supplying the name of a model accepted by
+\code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}, e.g. "equal" or "proportional". The model name
+can be abbreviated. Default: NULL.}
+
+\item{rate}{a number in the interval \eqn{[0,1]}, passed on to
+\code{\link[pedmut:mutationModel]{pedmut::mutationModel()}} when appropriate.}
+
+\item{validate}{if TRUE, the validity of the created \code{marker} object is
+checked.}
 }
 \value{
 An object of class \code{marker}: This is an integer matrix with 2 columns
