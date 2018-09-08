@@ -6,14 +6,15 @@
 #' @return Returns TRUE if the `mutmod` attribute of the input is non-NULL and differs from the identity matrix.
 #' @export
 allowsMutations = function(marker) {
-  mutmod = attr(marker, 'mutmod')
-  is.null(mutmod) || trivialMut(mutmod)
+  mut = mutmod(marker)
+  !is.null(mut) && !trivialMut(mut)
 }
 
-trivialMut = function(mutmod) {
-  if(is.list(mutmod))
-    return(all(vapply(mutmod, trivialMut, logical(1))))
-  all(diag(mutmod) == 1)
+# Check if a mutation matrix - or a list of such - is diagonal (= trivial)
+trivialMut = function(mut) {
+  if(is.list(mut))
+    return(all(vapply(mut, trivialMut, logical(1))))
+  all(diag(mut) == 1)
 }
 
 #' Number of marker alleles
