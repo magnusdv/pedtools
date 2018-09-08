@@ -214,7 +214,7 @@ validateMarker = function(x) {
 }
 
 checkMutationMatrix = function(mutmat, alleles, identifier = NULL) {
-  prefix = if(is.null(identifier)) sprintf("%s mutation matrix: ") else ""
+  prefix = if(!is.null(identifier)) sprintf("%s mutation matrix: ", identifier) else ""
   N = length(alleles)
 
   if(!is.numeric(mutmat))
