@@ -120,14 +120,18 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
   afreq = afreq[ord]
   alleles = names(afreq)
 
-  ### Mutation matrices
-  if(is.character(mutmod)) {
+  ### Mutation model
+  if(!is.null(mutmod)) {
     if (!requireNamespace("pedmut", quietly = TRUE))
-      stop2("Package `pedmut` must be installed for this to work.\n")
-    mutmod = pedmut::mutationModel(mutmod, alleles = alleles, afreq = afreq, rate = rate)
+      stop2("Package `pedmut` must be installed in order to include mutation models")
+
+    if(is.character(mutmod))
+      mutmod = pedmut::mutationModel(mutmod, alleles = alleles, afreq = afreq, rate = rate)
+    else if(is.matrix(mutmod))
+      mutmod = pedmut::mutationModel(male = mutmod, female = mutmod)
+    else if(!inherits(mutmod, "mutationModel"))
+      stop2("`mutmod` must be either a character string, a matrix, or a pedmut::mutationModel")
   }
-  else if(is.matrix(mutmod))
-    mutmod = list(male = mutmod, female = mutmod)
 
   ### Create the internal allele matrix
   m_int = match(m, alleles, nomatch = 0)
@@ -204,13 +208,10 @@ validateMarker = function(x) {
 
   # mutation model
   mutmod = attrs$mutmod
-  if(!is.null(mutmod)) {
-    if(!is.list(mutmod) || length(mutmod) != 2 || !setequal(names(mutmod), c("female", "male")))
-      stop2('`mutmod` attribute must be a list of two matrices, named "male" and "female"')
-    checkMutationMatrix(mutmod$male, alleles, identifier = "Male")
-    checkMutationMatrix(mutmod$female, alleles, identifier = "Female")
+  if(!is.null(mutmod))
+    pedmut::validateMutationModel(mutmod)
 
-  }
+  x
 }
 
 checkMutationMatrix = function(mutmat, alleles, identifier = NULL) {
