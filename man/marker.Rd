@@ -39,16 +39,9 @@ marker. Default: NA.}
 
 \item{name}{a character string: the name of the marker. Default: NA.}
 
-\item{mutmod}{a mutation matrix, or a list of two such matrices named
-'female' and 'male'. Each mutation matrices must be square, with the allele
-labels as dimnames, and each row must sum to 1 (after rounding to 3
-decimals). If the \code{pedmut} package is installed, an alternative syntax is
-available, by supplying the name of a model accepted by
-\code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}, e.g. "equal" or "proportional". The model name
-can be abbreviated. Default: NULL.}
-
-\item{rate}{a number in the interval \eqn{[0,1]}, passed on to
-\code{\link[pedmut:mutationModel]{pedmut::mutationModel()}} when appropriate.}
+\item{mutmod, rate}{mutation model parameters. These are passed directly to
+\code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}; see there for details. Note: \code{mutmod}
+corresponds to the \code{model} parameter. Default: NULL (no mutation model).}
 
 \item{validate}{if TRUE, the validity of the created \code{marker} object is
 checked.}
@@ -72,6 +65,11 @@ m = marker(x, child = 1:2, alleles = 1:2, afreq = c(0.01, 0.99))
 
 # Sometimes it is useful to attach the marker to the pedigree
 x = setMarkers(x, m)
+
+# A marker with a "proportional" mutation model,
+# with different rates for males and females
+mutrates = list(female = 0.1, male = 0.2)
+marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
 
 }
 \seealso{

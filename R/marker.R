@@ -25,15 +25,9 @@
 #' @param posCm a nonnegative real number: the centiMorgan position of the
 #'   marker. Default: NA.
 #' @param name a character string: the name of the marker. Default: NA.
-#' @param mutmod a mutation matrix, or a list of two such matrices named
-#'   'female' and 'male'. Each mutation matrices must be square, with the allele
-#'   labels as dimnames, and each row must sum to 1 (after rounding to 3
-#'   decimals). If the `pedmut` package is installed, an alternative syntax is
-#'   available, by supplying the name of a model accepted by
-#'   [pedmut::mutationModel()], e.g. "equal" or "proportional". The model name
-#'   can be abbreviated. Default: NULL.
-#' @param rate a number in the interval \eqn{[0,1]}, passed on to
-#'   [pedmut::mutationModel()] when appropriate.
+#' @param mutmod,rate mutation model parameters. These are passed directly to
+#'   [pedmut::mutationModel()]; see there for details. Note: `mutmod`
+#'   corresponds to the `model` parameter. Default: NULL (no mutation model).
 #' @param validate if TRUE, the validity of the created `marker` object is
 #'   checked.
 #'
@@ -54,6 +48,11 @@
 #'
 #' # Sometimes it is useful to attach the marker to the pedigree
 #' x = setMarkers(x, m)
+#'
+#' # A marker with a "proportional" mutation model,
+#' # with different rates for males and females
+#' mutrates = list(female = 0.1, male = 0.2)
+#' marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
 #'
 #' @export
 marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
@@ -124,13 +123,7 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
   if(!is.null(mutmod)) {
     if (!requireNamespace("pedmut", quietly = TRUE))
       stop2("Package `pedmut` must be installed in order to include mutation models")
-
-    if(is.character(mutmod))
-      mutmod = pedmut::mutationModel(mutmod, alleles = alleles, afreq = afreq, rate = rate)
-    else if(is.matrix(mutmod))
-      mutmod = pedmut::mutationModel(male = mutmod, female = mutmod)
-    else if(!inherits(mutmod, "mutationModel"))
-      stop2("`mutmod` must be either a character string, a matrix, or a pedmut::mutationModel")
+    mutmod = pedmut::mutationModel(mutmod, alleles = alleles, afreq = afreq, rate = rate)
   }
 
   ### Create the internal allele matrix
