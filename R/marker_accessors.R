@@ -109,20 +109,10 @@ mutmod.ped = function(x, marker, ...) {
 
 #' @export
 `mutmod<-.marker` = function(x, ..., value) {
-  als = alleles(x)
+  if (!requireNamespace("pedmut", quietly = TRUE))
+    stop2("Package `pedmut` must be installed in order to include mutation models")
 
-  if(is.matrix(value)) {
-    checkMutationMatrix(value, alleles = als)
-    value = list(male = value, female = value)
-  }
-  else {
-    if(!is.list(value) || !setequal(names(value), c("female", "male")))
-      stop2('Replacement value must be either a single mutation matrix, or a list of two, named "male" and "female"')
-
-    checkMutationMatrix(value$male, alleles = als)
-    checkMutationMatrix(value$female, alleles = als)
-  }
-  attr(x, 'mutmod') = value
+  attr(x, 'mutmod') = pedmut::mutationModel(model = value)
   x
 }
 
