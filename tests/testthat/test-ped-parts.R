@@ -35,3 +35,14 @@ test_that("leaves() works with labels", {
   expect_equal(leaves(reorderPed(x, 3:1)), 'c1')
 })
 
+test_that("internal = TRUE results in integer output", {
+  x = singleton(1)
+  expect_type(leaves(x, internal = T), "integer")
+  expect_type(founders(x, internal = T), "integer")
+  expect_type(nonfounders(x, internal = T), "integer")
+  expect_type(males(x, internal = T), "integer")
+  expect_type(females(x, internal = T), "integer")
+  expect_type(typedMembers(x, internal = T), "integer")
+  expect_type(untypedMembers(x, internal = T), "integer")
+})
+

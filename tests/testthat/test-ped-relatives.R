@@ -48,3 +48,16 @@ test_that("spouses are correct after reorder", {
   expect_equal(spouses(x,3), character(0))
   expect_equal(spouses(x,3, internal=T), numeric(0))
 })
+
+test_that("internal = TRUE results in integer output", {
+  x = singleton(1)
+  expect_type(father(x, 1, internal = T), "integer")
+  expect_type(mother(x, 1, internal = T), "integer")
+  expect_type(parents(x, 1, internal = T), "integer")
+  expect_type(children(x, 1, internal = T), "integer")
+  expect_type(cousins(x, 1, internal = T), "integer")
+  expect_type(ancestors(x, 1, internal = T), "integer")
+  expect_type(descendants(x, 1, internal = T), "integer")
+  expect_type(unrelated(x, 1, internal = T), "integer")
+})
+

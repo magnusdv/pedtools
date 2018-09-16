@@ -59,7 +59,7 @@ nonfounders = function(x, internal = FALSE) {
 #' @export
 leaves = function(x, internal = FALSE) {
   if(is.singleton(x))
-    leaves_int = 1
+    leaves_int = 1L
   else
     leaves_int = (1:pedsize(x))[-c(x$FIDX, x$MIDX)]
   if (internal) leaves_int else labels(x)[leaves_int]
@@ -83,7 +83,8 @@ females = function(x, internal = FALSE) {
 #' @export
 typedMembers = function(x, internal = FALSE) {
   if (nMarkers(x) == 0)
-    return(if(internal) numeric(0) else character(0))
+    return(if(internal) integer(0) else character(0))
+
   allelematrix = do.call(cbind, x$markerdata)
   emptyrows = rowSums(allelematrix != 0) == 0
   if(internal) which(!emptyrows) else labels(x)[!emptyrows]
@@ -177,7 +178,8 @@ siblings = function(x, id, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
   fa = x$FIDX[id]
   mo = x$MIDX[id]
-  if (fa==0 && mo==0) return(numeric(0))
+  if (fa==0 && mo==0)
+    return(if(internal) integer(0) else character(0))
 
   samefather = x$FIDX == fa
   samemother = x$MIDX == mo
@@ -195,7 +197,12 @@ cousins = function(x, id, degree = 1, removal = 0, half = NA, internal = FALSE) 
   if (!internal)  id = internalID(x, id)
   gp = grandparents(x, id, degree = degree, internal = TRUE)
   gp = gp[gp > 0]
-  uncles = unique.default(unlist(lapply(gp, siblings, x = x, half = half, internal = TRUE)))
+  if(length(gp) == 0)
+    return(if(internal) integer(0) else character(0))
+
+  uncles = unique.default(unlist(lapply(gp, function(a)
+    siblings(x, a, half = half, internal = TRUE))))
+
   cous = uncles
   for (i in seq_len(degree + removal))
     cous = unique.default(unlist(lapply(cous, children, x = x, internal = TRUE)))
@@ -214,9 +221,11 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 ancestors = function(x, id, internal = FALSE) {
   # climbs upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
   if (!internal)  id = internalID(x, id)
+
   FIDX = x$FIDX
   MIDX = x$MIDX
-  ancest = numeric(0)
+  ancest = integer(0)
+
   up1 = c(FIDX[id], MIDX[id])
   up1 = up1[up1 > 0]
   while (length(up1)) {
@@ -236,8 +245,8 @@ descendants = function(x, id, internal = FALSE) {
 
   FIDX = x$FIDX
   MIDX = x$MIDX
+  desc = integer()
 
-  desc = numeric()
   nextoffs = id
   while(length(nextoffs)) {
       nextoffs = which(FIDX %in% nextoffs | MIDX %in% nextoffs)
