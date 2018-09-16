@@ -58,7 +58,10 @@ nonfounders = function(x, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 leaves = function(x, internal = FALSE) {
-  leaves_int = (1:pedsize(x))[-c(x$FIDX, x$MIDX)]
+  if(is.singleton(x))
+    leaves_int = 1
+  else
+    leaves_int = (1:pedsize(x))[-c(x$FIDX, x$MIDX)]
   if (internal) leaves_int else labels(x)[leaves_int]
 }
 
@@ -191,6 +194,7 @@ siblings = function(x, id, half = NA, internal = FALSE) {
 cousins = function(x, id, degree = 1, removal = 0, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
   gp = grandparents(x, id, degree = degree, internal = TRUE)
+  gp = gp[gp > 0]
   uncles = unique.default(unlist(lapply(gp, siblings, x = x, half = half, internal = TRUE)))
   cous = uncles
   for (i in seq_len(degree + removal))
