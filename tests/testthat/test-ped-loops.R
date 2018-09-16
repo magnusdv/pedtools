@@ -73,6 +73,7 @@ test_that("tieLoops restores broken loops (fullSib)", {
 })
 
 test_that("tieLoops restores broken IDENTITY ped", {
+  skip("Identity examples - takes long time")
   ex = read.table (system.file ("example", "ex.pedigree", package = "identity"))
   x = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), reorder=F)
   expect_identical(x, tie_silent(break_silent(x)))
@@ -92,3 +93,4 @@ test_that("loop breaking commutes with relabeling", {
 
 
 # TODO: other looped peds
+
