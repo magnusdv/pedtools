@@ -73,6 +73,9 @@ The class attribute of a singleton is \code{c('singleton', 'ped')}
 Selfing, i.e. the presence of pedigree members whose father and mother are
 the same individual, is allowed in \code{ped} objects. Any such "self-fertilizing"
 parent must have undecided gender (\code{sex=0}).
+
+If the pedigree is disconnected, it is split into its connected components
+and returned as a list of \code{ped} objects.
 }
 \examples{
 # Trio
@@ -84,6 +87,10 @@ y = singleton('NN', sex=2, famid="SINGLETON GIRL")
 # Selfing
 z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
 stopifnot(has_selfing(z))
+
+# Disconnected pedigree: Trio + singleton
+w = ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))
+stopifnot(is.pedList(w), length(w) == 2)
 
 }
 \seealso{

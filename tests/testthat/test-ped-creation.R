@@ -17,8 +17,8 @@ test_that("ped() catches various input errors", {
   expect_error(ped(id, fid, 0, sex, val = F), "Incompatible input")
   expect_error(ped(id, fid, mid, 0, val = F), "Incompatible input")
 
-  expect_error(ped(id, fid, mid, sex, famid=1:2, val = F), "`famid` must have length 1")
-  expect_error(ped(id, fid, mid, sex, famid=NULL, val = F), "`famid` must have length 1")
+  expect_error(ped(id, fid, mid, sex, famid=1:2, val = F), "`famid` must be a character string")
+  expect_error(ped(id, fid, mid, sex, famid=NULL, val = F), "`famid` must be a character string")
 
   expect_error(ped(c(1,2,1), fid, mid, sex, val = F), "Duplicated entry in `id` vector: 1")
 
@@ -60,9 +60,13 @@ test_that("simple ped", {
 
 
 test_that("random ped", {
-  x = randomPed(3, 3)
+  x = randomPed(3, 3, seed = 3)
   expect_is(x, "ped")
   expect_equal(pedsize(x), 6)
+
+  y = randomPed(3, 3, seed = 4)
+  expect_true(is.pedList(y))
+  expect_equal(length(y), 2)
 })
 
 test_that("singleton creation works as expected", {

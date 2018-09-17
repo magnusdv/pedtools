@@ -10,6 +10,9 @@
 #' the same individual, is allowed in `ped` objects. Any such "self-fertilizing"
 #' parent must have undecided gender (`sex=0`).
 #'
+#' If the pedigree is disconnected, it is split into its connected components
+#' and returned as a list of `ped` objects.
+#'
 #' @param id a vector (numeric or character) of individual ID labels.
 #' @param fid a vector of the same length as `id`, containing the labels of the
 #'   fathers. In other words `fid[i]` is the father of `id[i]`, or 0 if `id[i]`
@@ -73,6 +76,10 @@
 #' z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
 #' stopifnot(has_selfing(z))
 #'
+#' # Disconnected pedigree: Trio + singleton
+#' w = ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))
+#' stopifnot(is.pedList(w), length(w) == 2)
+#'
 #' @export
 ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, verbose = FALSE) {
 
@@ -112,7 +119,19 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
     stop2("`mid` entry does not appear in `id` vector: ", mid[is.na(MIDX)])
 
   if(length(famid) != 1)
-    stop2("`famid` must have length 1: ", famid)
+    stop2("`famid` must be a character string: ", famid)
+
+  # If disconnected components - return as list of peds.
+  comps = connectedComponents(id, fid, mid)
+
+  if(length(comps) > 1) {
+    return(lapply(seq_along(comps), function(i) {
+      idx = match(comps[[i]], id)
+      ped(id = id[idx], fid = fid[idx], mid = mid[idx], sex = sex[idx],
+          famid = paste0(famid,"_comp",i), reorder = reorder,
+          validate = validate, verbose = verbose)
+    }))
+  }
 
   # Initialise ped object
   x = list(ID = id,
