@@ -251,10 +251,18 @@ as.ped = function(x, ...) {
 #' @param validate A logical indicating if the pedigree structure should be validated.
 #'
 #' @examples
-#' # A trio (1-3) and a singleton (4)
-#' df = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
+#' # Trio
+#' df1 = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
+#' as.ped(df1)
+#'
+#' # Disconnected example: Trio (1-3) + singleton (4)
+#' df2 = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
 #'                 M = c("1/2", "1/1", "2/2", "3/4"))
-#' as.ped(df, allele_sep = "/")
+#' as.ped(df2, allele_sep = "/")
+#'
+#' # Two singletons
+#' df3 = data.frame(id = 1:2, fid = 0, mid = 0, sex = 1)
+#' as.ped(df3)
 #'
 #' @rdname as.ped
 #' @export
