@@ -123,7 +123,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                           id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                           starred = NULL, margins = c(8, 0, 0, 0), ...) {
-  if(length(id.labels) > 1) stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
+  if(length(id.labels) > 1)
+    stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
   y = addParents(x, labels(x)[1], verbose = FALSE)
 
@@ -146,9 +147,13 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     y = transferMarkers(setMarkers(x, mlist), y)
   }
 
-  # If input id.labels is "num" or "" or something else than labels(x), pass it directly on.
-  if(is.null(id.labels) || id.labels == "num") id = id.labels
-  else id = c(id.labels, "", "")
+  # Tweak id.labels if necessary. After addParents, internal index is 3!
+  if(length(id.labels) == 0 || id.labels == "")
+    id = NULL
+  else if(id.labels == "num")
+    id = 1
+  else
+    id = c("", "", id.labels)
 
   p = plot.ped(y, marker = marker, sep =sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
@@ -156,7 +161,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
                margins = c(margins[1], 0, 0, 0), ...)
 
   usr = par("usr")
-  rect(usr[1] - 0.1, p$y[1], usr[2] + 0.1, usr[4], border = NA, col = "white")
+  rect(usr[1] - 0.1, p$y[3], usr[2] + 0.1, usr[4], border = NA, col = "white")
 
   if (!is.null(title)) title(title, line = -2.8)
 }
@@ -175,8 +180,10 @@ as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
     if(!is.null(deceased))
       status = ifelse(ped$id %in% deceased, 1, 0)
 
-    kinship2::pedigree(id = ped$id, dadid = ped$fid, momid = ped$mid, sex = ped$sex,
-                       affected = affected, status = status, missid=0)
+    suppressWarnings(kinship2::pedigree(id = ped$id, dadid = ped$fid,
+                                        momid = ped$mid, sex = ped$sex,
+                                        affected = affected, status = status,
+                                        missid=0))
 }
 
 
