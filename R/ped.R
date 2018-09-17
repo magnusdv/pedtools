@@ -125,12 +125,15 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
   comps = connectedComponents(id, fid, mid)
 
   if(length(comps) > 1) {
-    return(lapply(seq_along(comps), function(i) {
+    pedlist = lapply(seq_along(comps), function(i) {
       idx = match(comps[[i]], id)
       ped(id = id[idx], fid = fid[idx], mid = mid[idx], sex = sex[idx],
-          famid = paste0(famid,"_comp",i), reorder = reorder,
+          famid = paste0(famid, "_comp", i), reorder = reorder,
           validate = validate, verbose = verbose)
-    }))
+    })
+
+    names(pedlist) = sapply(pedlist, function(p) famid(p))
+    return(pedlist)
   }
 
   # Initialise ped object
