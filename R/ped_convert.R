@@ -250,6 +250,12 @@ as.ped = function(x, ...) {
 #' @param allele_sep Passed on to [setMarkers()] (see explanation there).
 #' @param validate A logical indicating if the pedigree structure should be validated.
 #'
+#' @examples
+#' # A trio (1-3) and a singleton (4)
+#' df = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
+#'                 M = c("1/2", "1/1", "2/2", "3/4"))
+#' as.ped(df, allele_sep = "/")
+#'
 #' @rdname as.ped
 #' @export
 as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA, sex_col=NA,
@@ -269,7 +275,8 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
     multiple_fams = length(unique_fams) > 1
   }
 
-  # If disconected, treat each component separatly by recursion
+  # If multiple families, treat each component separatly by recursion
+  # NB: a single ped may still be disconnected; this is handled in ped()
   if(multiple_fams) {
     pedlist = lapply(unique_fams, function(fam) {
       comp = x[famid == fam, , drop=FALSE]
@@ -288,6 +295,7 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   ### Body of function (for single ped) starts here ###
   #####################################################
   # By this stage, `famid_col` is NA or points to column with identical entries
+  # NB: May still be disconnected
 
   if(is.na(id_col)) id_col = match("id", colnames)
   if(is.na(fid_col)) fid_col = match("fid", colnames)
@@ -333,7 +341,9 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   else
     sex = x[[sex_col]]
 
-  p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid, validate = validate, reorder = FALSE)
+  # Create ped
+  p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid,
+          validate = validate, reorder = FALSE)
 
   ### Marker columns
   last_pedcol = max(col_idx, na.rm = TRUE)
@@ -343,9 +353,19 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
     marker_col = NULL
 
   if(length(marker_col) > 0) {
-    p = setMarkers(p, allele_matrix = x[marker_col],
+
+    if (is.pedList(p)) { # if multiple components
+      p = lapply(p, function(comp) {
+        rows = match(labels(comp), id)
+        setMarkers(comp, allele_matrix = x[rows, marker_col, drop = F],
                    locus_annotations = locus_annotations,
                    missing = missing, allele_sep = allele_sep)
+      })
+    }
+    else
+      p = setMarkers(p, allele_matrix = x[marker_col],
+                     locus_annotations = locus_annotations,
+                     missing = missing, allele_sep = allele_sep)
   }
 
   p

@@ -63,4 +63,9 @@ df = data.frame(famid = c("S1", "S2"),
 # gives a list of two singletons
 as.ped(df)
 
+# A trio (1-3) and a singleton (4)
+df = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
+                M = c("1/2", "1/1", "2/2", "3/4"))
+as.ped(df, allele_sep = "/")
+
 }
