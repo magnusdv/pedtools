@@ -111,7 +111,7 @@ swapSex = function(x, ids, verbose = TRUE) { #TODO add tests with sex=0
       extra = setdiff(spouses, ids)
       message("Changing sex of spouses as well: ", toString(labs[extra]))
     }
-    return(swapSex(x, labs[union(ids, spouses)]))
+    return(swapSex(x, labs[union(ids, spouses)], verbose = verbose))
   }
 
   # Swap sex
