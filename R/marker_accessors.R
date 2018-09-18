@@ -112,7 +112,8 @@ mutmod.ped = function(x, marker, ...) {
   if (!requireNamespace("pedmut", quietly = TRUE))
     stop2("Package `pedmut` must be installed in order to include mutation models")
 
-  attr(x, 'mutmod') = pedmut::mutationModel(model = value)
+  als = alleles(x)
+  attr(x, 'mutmod') = pedmut::mutationModel(model = value, alleles = als)
   x
 }
 
