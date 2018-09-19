@@ -8,10 +8,13 @@
 #' maternal halfsibs are wanted instead, use [swapSex()] afterwards. (See
 #' examples below.)
 #'
-#' The call `cousinPed(degree=n, removal=k)` creates a pedigree with two n'th
-#' cousins, k times removed. By default, removals are added on the right side, but .
+#' `cousinPed(degree=n, removal=k)` creates a pedigree with two n'th cousins, k
+#' times removed. By default, removals are added on the right side, but .
 #' (Similarly for `halfCousinPed`.)
 #'
+#' `ancestralPed(g)` returns the family tree of a single individual, including
+#' all ancestors `g` generations back.
+
 #' @param nch The number of children. If NULL, it is taken to be the
 #'   `length(children)`
 #' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).
@@ -26,12 +29,15 @@
 #' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
 #'   Recycled (if neccessary) to lengths `nch1` and `nch2` respectively.
 #' @param n The number of generations, not including the initial founders.
-#' @param degree A non-negative integer: 0=siblings, 1=first cousins; 2=second cousins,
-#'   a.s.o.
+#' @param degree A non-negative integer: 0=siblings, 1=first cousins; 2=second
+#'   cousins, a.s.o.
 #' @param removal A non-negative integer. See Details and Examples.
-#' @param side Either "right" or "left"; the side on which removals should be added.
+#' @param side Either "right" or "left"; the side on which removals should be
+#'   added.
 #' @param child A logical: Should an inbred child be added to the two cousins?
-#'
+#' @param g A nonnegative integer indicating the number of ancestral generations
+#'   to include. The resulting pedigree has `2^(g+1)-1` members. The case `g =
+#'   0` results in a singleton.
 #' @return A `ped` object.
 #'
 #' @seealso [ped()], [singleton()], [ped_complex], [ped_subgroups]
@@ -64,6 +70,9 @@
 #'
 #' # A child of half first cousin parents.
 #' halfCousinPed(degree = 1, child = TRUE)
+#'
+#' # Family tree of a single individuals
+#' ancestralPed(2)
 #'
 #' @name ped_basic
 NULL
@@ -210,3 +219,22 @@ halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child =
   z
 }
 
+#' @rdname ped_basic
+#' @export
+ancestralPed = function(g) {
+  if(!is_count(g, minimum=0))
+    stop2("`g` must be a nonnegative integer: ", g)
+
+  if(g == 0)
+    return(singleton(1))
+
+  N = 2^(g+1) - 1
+  fathers = seq(from = 1, to = N-2, by = 2)
+  mothers = fathers + 1
+
+  ped(id = 1:N,
+      fid = c(rep_len(0, 2^g), fathers),
+      mid = c(rep_len(0, 2^g), mothers),
+      sex = rep_len(1:2, N),
+      reorder = FALSE, validate = FALSE, verbose = FALSE)
+}
