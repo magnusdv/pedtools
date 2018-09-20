@@ -50,18 +50,29 @@ reorderPed = function(x, neworder = order(labels(x))) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x))
     return(x)
-  if(length(neworder) != pedsize(x))
-    stop2("`neworder` must have length ", pedsize(x), ", not ", length(neworder))
-  if(!setequal(neworder, labels(x)) && !setequal(neworder, 1:pedsize(x)))
+
+  N = pedsize(x)
+  if(length(neworder) != N)
+    stop2("`neworder` must have length ", N, ", not ", length(neworder))
+  if(!setequal(neworder, labels(x)) && !setequal(neworder, 1:N))
     stop2("`neworder` must be a permutation of either `labels(x)` or `1:pedsize(x)`: ", neworder)
   if(is.character(neworder))
     neworder = internalID(x, neworder)
 
+  # If same order, return unchanged
+  if(all.equal(neworder, 1:N))
+    return(x)
+
+  # Convert to matrix with attributes
   xmatr = as.matrix(x)
   attr = attributes(xmatr)
   attr$LABELS = attr$LABELS[neworder]
+
+  # Fix loop breakers
   if(!is.null(lp <- attr$LOOP_BREAKERS))
     attr$LOOP_BREAKERS = matrix(match(lp, neworder), ncol=2)
+
+  # Restore
   restore_ped(xmatr[neworder, ], attrs = attr)
 }
 
