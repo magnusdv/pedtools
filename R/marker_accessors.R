@@ -360,12 +360,13 @@ posCm.ped = function(x, markers, ...) {
 `chrom<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
-  if(length(value) != length(markers))
-    stop2("Length of replacement vector must equal the number of markers")
-  if(anyDuplicated(value))
-    stop2("Replacement values must be unique")
+  if(length(value) > length(markers))
+    stop2("Replacement vector larger than the number of markers: ", value)
 
-  idx = whichMarkers(x, markers=markers)
+  if(length(value) < length(markers))
+    value = rep_len(value, length(markers))
+
+  idx = whichMarkers(x, markers = markers)
 
   x$markerdata[idx] = lapply(seq_along(idx), function(i) {
     m = x$markerdata[[idx[i]]]
