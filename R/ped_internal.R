@@ -60,7 +60,7 @@ reorderPed = function(x, neworder = order(labels(x))) {
     neworder = internalID(x, neworder)
 
   # If same order, return unchanged
-  if(all.equal(neworder, 1:N))
+  if(isTRUE(all.equal(neworder, 1:N)))
     return(x)
 
   # Convert to matrix with attributes
