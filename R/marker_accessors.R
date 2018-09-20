@@ -112,8 +112,12 @@ mutmod.ped = function(x, marker, ...) {
   if (!requireNamespace("pedmut", quietly = TRUE))
     stop2("Package `pedmut` must be installed in order to include mutation models")
 
-  als = alleles(x)
-  attr(x, 'mutmod') = pedmut::mutationModel(model = value, alleles = als)
+  if(is.null(value))
+    attr(x, 'mutmod') = NULL
+  else {
+    als = alleles(x)
+    attr(x, 'mutmod') = pedmut::mutationModel(model = value, alleles = als)
+  }
   x
 }
 
@@ -124,7 +128,7 @@ mutmod.ped = function(x, marker, ...) {
   if(length(marker) > 1)
     stop2("Mutation model replacement can only be done for a single marker")
 
-  idx = whichMarkers(x, markers=marker)
+  idx = whichMarkers(x, markers = marker)
   mutmod(x$markerdata[[idx]]) = value
   x
 }
