@@ -20,9 +20,9 @@
 #' The utility `internalID()` converts ID labels to indices in the internal
 #' ordering.
 #'
-#' @param x a `ped` object
-#' @param neworder a permutation of the vector `1:pedsize(x)`. By default, the
-#'   order of the ID labels is used.
+#' @param x A `ped` object
+#' @param neworder A permutation of `labels(x)` or of vector `1:pedsize(x)`. By
+#'   default, the sorting order of the ID labels is used.
 #' @param ids A character vector (or coercible to one) of original ID labels.
 #'
 #'
@@ -50,6 +50,13 @@ reorderPed = function(x, neworder = order(labels(x))) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x))
     return(x)
+  if(length(neworder) != pedsize(x))
+    stop2("`neworder` must have length ", pedsize(x), ", not ", length(neworder))
+  if(!setequal(neworder, labels(x)) && !setequal(neworder, 1:pedsize(x)))
+    stop2("`neworder` must be a permutation of either `labels(x)` or `1:pedsize(x)`: ", neworder)
+  if(is.character(neworder))
+    neworder = internalID(x, neworder)
+
   xmatr = as.matrix(x)
   attr = attributes(xmatr)
   attr$LABELS = attr$LABELS[neworder]
@@ -64,7 +71,7 @@ parents_before_children = function(x) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x) || has_parents_before_children(x))
     return(x)
-  
+
   neworder = 1:pedsize(x)
   i=1
   while (i < pedsize(x)) {

@@ -17,10 +17,10 @@ has_parents_before_children(x)
 internalID(x, ids)
 }
 \arguments{
-\item{x}{a \code{ped} object}
+\item{x}{A \code{ped} object}
 
-\item{neworder}{a permutation of the vector \code{1:pedsize(x)}. By default, the
-order of the ID labels is used.}
+\item{neworder}{A permutation of \code{labels(x)} or of vector \code{1:pedsize(x)}. By
+default, the sorting order of the ID labels is used.}
 
 \item{ids}{A character vector (or coercible to one) of original ID labels.}
 }
