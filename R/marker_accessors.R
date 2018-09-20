@@ -375,3 +375,80 @@ posCm.ped = function(x, markers, ...) {
   x
 }
 
+### posCm setter
+
+#' @export
+`posCm<-` = function(x, ..., value) {
+  UseMethod("posCm<-")
+}
+
+#' @export
+`posCm<-.marker` = function(x, ..., value) {
+  pos = suppressWarnings(as.numeric(value))
+
+  if((!is.na(value) && is.na(pos)) || length(pos) != 1)
+    stop2("`posCm` replacement must be a single number: ", value)
+  if(pos < 0)
+    stop2("`posCm` replacement must be nonnegative: ", value)
+
+  attr(x, 'posCm') = pos
+  x
+}
+
+#' @export
+`posCm<-.ped` = function(x, markers, ..., value) {
+  if(missing(markers) || length(markers) == 0)
+    stop2("Argument `markers` cannot be empty")
+  if(length(value) != length(markers))
+    stop2("Length of replacement vector must equal the number of markers")
+  if(anyDuplicated(value))
+    stop2("Replacement values must be unique")
+
+  idx = whichMarkers(x, markers=markers)
+
+  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
+    m = x$markerdata[[idx[i]]]
+    posCm(m) = value[i]
+    m
+  })
+  x
+}
+
+### posMb setter
+
+#' @export
+`posMb<-` = function(x, ..., value) {
+  UseMethod("posMb<-")
+}
+
+#' @export
+`posMb<-.marker` = function(x, ..., value) {
+  pos = suppressWarnings(as.numeric(value))
+
+  if((!is.na(value) && is.na(pos)) || length(pos) != 1)
+    stop2("`posMb` replacement must be a single number: ", value)
+  if(pos < 0)
+    stop2("`posMb` replacement must be nonnegative: ", value)
+
+  attr(x, 'posMb') = pos
+  x
+}
+
+#' @export
+`posMb<-.ped` = function(x, markers, ..., value) {
+  if(missing(markers) || length(markers) == 0)
+    stop2("Argument `markers` cannot be empty")
+  if(length(value) != length(markers))
+    stop2("Length of replacement vector must equal the number of markers")
+  if(anyDuplicated(value))
+    stop2("Replacement values must be unique")
+
+  idx = whichMarkers(x, markers=markers)
+
+  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
+    m = x$markerdata[[idx[i]]]
+    posMb(m) = value[i]
+    m
+  })
+  x
+}
