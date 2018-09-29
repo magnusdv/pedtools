@@ -155,7 +155,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   else
     id = c("", "", id.labels)
 
-  p = plot.ped(y, marker = marker, sep =sep, missing = missing,
+  p = plot.ped(y, marker = y$markerdata, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
                title = title, col = col, shaded = shaded, deceased = deceased, starred = starred,
                margins = c(margins[1], 0, 0, 0), ...)

@@ -51,5 +51,11 @@ test_that("singleton subgroups are as expected", {
   expect_identical(females(s), character(0))
   expect_identical(typedMembers(s), character(0))
   expect_identical(untypedMembers(s), "1")
+})
 
+test_that("singleton with marker plots without error", {
+  x = singleton(1)
+  m = marker(x)
+  pdf(NULL) # avoid Rplots.pdf being created
+  expect_silent(plot(x, m))
 })
