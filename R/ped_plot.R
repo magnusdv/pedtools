@@ -4,7 +4,8 @@
 #' controlling the appearance of pedigree symbols and accompanying labels. Most
 #' of the work is done by the plotting functionality in the 'kinship2' package.
 #'
-#' `plot.ped` is in essence an elaborate wrapper for [kinship2::plot.pedigree()].
+#' `plot.ped` is in essence an elaborate wrapper for
+#' [kinship2::plot.pedigree()].
 #'
 #' @param x a [ped()] object.
 #' @param marker either NULL, a vector of positive integers, a [`marker`]
@@ -18,10 +19,24 @@
 #' @param skip.empty.genotypes a logical. If TRUE, and `marker` is non-NULL,
 #'   empty genotypes (which by default looks like '-/-') are not printed.
 #' @param id.labels a vector with labels for each pedigree member. This defaults
-#'   to `labels(x)`.
+#'   to `labels(x)`. Several syntaxes are possible:
+#'
+#'   * If `id.labels` is the word "num", then all individuals are numerically
+#'   labelled following the internal ordering index.
+#'
+#'   * If `id.labels` is a subset of `labels(x)`, then only this subset will be
+#'   labelled. If the vector is named, then the (non-empty) names are used
+#'   instead of the ID label. Example: If `x` has member with ID label "1", then
+#'   `plot(x, id.labels = c(1, Two=2))` will label these as "1" and "Two", while
+#'   all other members are unlabelled.
+#'
+#'
 #' @param title the plot title. If NULL or '', no title is added to the plot.
-#' @param col a vector of colors for the pedigree members. Recycled if
-#'   necessary. By default everyone is drawn black.
+#' @param col a vector of colors for the pedigree members, recycled if
+#'   necessary. Alternatively, `col` can be a list assigning colors to specific
+#'   members. For example if `col = list(red = "foo", blue = c("bar", "baz"))`
+#'   then "foo" will be red, "bar" and "baz" blue, and everyone else black. By
+#'   default everyone is drawn black.
 #' @param shaded a vector of ID labels indicating pedigree members whose plot
 #'   symbols should appear shaded.
 #' @param deceased a vector of ID labels indicating deceased pedigree members.
@@ -49,17 +64,40 @@
 #' plot(x, marker = "SNP", shaded = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
 #'
+#' # Labelling only some members
+#' plot(x, id.labels = c("fa", "boy"))
+#' plot(x, id.labels = c(FATHER = "fa", "boy"))
+#'
+#' # Colors
+#' plot(x, col = list(red = "fa", green = "boy"))
+#'
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                     id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, margins = c(0.6, 1, 4.1, 1), ...) {
 
   nInd = pedsize(x)
-  # Labels
-  if (is.null(id.labels)) id.labels = rep("", nInd)
-  else if(identical(id.labels, "")) id.labels = rep("", nInd)
-  else if(identical(id.labels, "num")) id.labels = as.character(1:nInd)
 
+  # Labels
+  nms = names(id.labels)
+  if (is.null(id.labels) || identical(id.labels, ""))
+    id.labels = rep("", nInd)
+  else if(identical(id.labels, "num"))
+    id.labels = as.character(1:nInd)
+  else if(length(id.labels) < nInd && is.null(nms)) {
+    labs = rep("", nInd)
+    labs[internalID(x, id.labels)] = id.labels
+    id.labels = labs
+  }
+  else if(!is.null(nms)) {
+    labs = rep("", nInd)
+    int_ids = internalID(x, id.labels)
+    labs[int_ids] = id.labels
+    # Replace with names where non-trivial
+    hasName = nms != ""
+    labs[int_ids[hasName]] = nms[hasName]
+    id.labels = labs
+  }
   id.labels[is.na(id.labels)] = ""
 
   text = id.labels
@@ -96,7 +134,15 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   oldmar = par(mar = margins)
 
   # Colors
-  cols = rep(col, length = nInd)
+  if(is.list(col)) {
+    colnames = names(col)
+    cols = rep(1, nInd)
+    for(cc in colnames)
+      cols[internalID(x, col[[cc]])] = cc
+  }
+  else {
+     cols = rep(col, length = nInd)
+  }
 
   # Shading
   if (!is.null(shaded)) {
@@ -151,9 +197,14 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   if(length(id.labels) == 0 || id.labels == "")
     id = NULL
   else if(id.labels == "num")
-    id = 1
-  else
-    id = c("", "", id.labels)
+    id = c(`1` = labels(x))
+  else if(is.null(names(id.labels))) {
+    id = labels(x)
+    names(id) = id.labels
+  }
+  else if(!is.null(names(id.labels))) {
+    id = id.labels
+  }
 
   p = plot.ped(y, marker = y$markerdata, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,

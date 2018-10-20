@@ -36,12 +36,24 @@ pedigree, in the format determined by \code{sep} and \code{missing}. See also
 empty genotypes (which by default looks like '-/-') are not printed.}
 
 \item{id.labels}{a vector with labels for each pedigree member. This defaults
-to \code{labels(x)}.}
+to \code{labels(x)}. Several syntaxes are possible:
+\itemize{
+\item If \code{id.labels} is the word "num", then all individuals are numerically
+labelled following the internal ordering index.
+\item If \code{id.labels} is a subset of \code{labels(x)}, then only this subset will be
+labelled. If the vector is named, then the (non-empty) names are used
+instead of the ID label. Example: If \code{x} has member with ID label "1", then
+\code{plot(x, id.labels = c(1, Two=2))} will label these as "1" and "Two", while
+all other members are unlabelled.
+}}
 
 \item{title}{the plot title. If NULL or '', no title is added to the plot.}
 
-\item{col}{a vector of colors for the pedigree members. Recycled if
-necessary. By default everyone is drawn black.}
+\item{col}{a vector of colors for the pedigree members, recycled if
+necessary. Alternatively, \code{col} can be a list assigning colors to specific
+members. For example if \code{col = list(red = "foo", blue = c("bar", "baz"))}
+then "foo" will be red, "bar" and "baz" blue, and everyone else black. By
+default everyone is drawn black.}
 
 \item{shaded}{a vector of ID labels indicating pedigree members whose plot
 symbols should appear shaded.}
@@ -63,7 +75,8 @@ controlling the appearance of pedigree symbols and accompanying labels. Most
 of the work is done by the plotting functionality in the 'kinship2' package.
 }
 \details{
-\code{plot.ped} is in essence an elaborate wrapper for \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
+\code{plot.ped} is in essence an elaborate wrapper for
+\code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
 }
 \examples{
 
@@ -79,6 +92,13 @@ plot(x, marker = "SNP")
 # Other options
 plot(x, marker = "SNP", shaded = typedMembers(x),
      starred = "fa", deceased = "mo")
+
+# Labelling only some members
+plot(x, id.labels = c("fa", "boy"))
+plot(x, id.labels = c(FATHER = "fa", "boy"))
+
+# Colors
+plot(x, col = list(red = "fa", green = "boy"))
 
 }
 \seealso{
