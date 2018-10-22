@@ -38,13 +38,13 @@ empty genotypes (which by default looks like '-/-') are not printed.}
 \item{id.labels}{a vector with labels for each pedigree member. This defaults
 to \code{labels(x)}. Several syntaxes are possible:
 \itemize{
+\item If \code{id.labels} is NULL or the empty character "", then no labels are
+drawn.
 \item If \code{id.labels} is the word "num", then all individuals are numerically
-labelled following the internal ordering index.
+labelled following the internal ordering.
 \item If \code{id.labels} is a subset of \code{labels(x)}, then only this subset will be
 labelled. If the vector is named, then the (non-empty) names are used
-instead of the ID label. Example: If \code{x} has member with ID label "1", then
-\code{plot(x, id.labels = c(1, Two=2))} will label these as "1" and "Two", while
-all other members are unlabelled.
+instead of the ID label. See Examples.
 }}
 
 \item{title}{the plot title. If NULL or '', no title is added to the plot.}
@@ -95,6 +95,8 @@ plot(x, marker = "SNP", shaded = typedMembers(x),
 
 # Labelling only some members
 plot(x, id.labels = c("fa", "boy"))
+
+# Labelling only some members, and renaming the father
 plot(x, id.labels = c(FATHER = "fa", "boy"))
 
 # Colors
