@@ -94,7 +94,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
     int_ids = internalID(x, id.labels)
     labs[int_ids] = id.labels
     # Replace with names where non-trivial
-    hasName = nms != ""
+    hasName = (nms != "") & (!is.na(nms))
     labs[int_ids[hasName]] = nms[hasName]
     id.labels = labs
   }
