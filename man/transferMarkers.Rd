@@ -4,33 +4,54 @@
 \alias{transferMarkers}
 \title{Transfer marker data}
 \usage{
-transferMarkers(from, to)
+transferMarkers(from, to, ids = NULL, erase = TRUE)
 }
 \arguments{
-\item{from}{a \code{ped} or \code{singleton} object, or a
-list of such objects.}
+\item{from}{a \code{ped} or \code{singleton} object, or a list of such objects.}
 
-\item{to}{a \code{ped} or \code{singleton} object, or a
-list of such objects.}
+\item{to}{a \code{ped} or \code{singleton} object, or a list of such objects.}
+
+\item{ids}{a vector of ID labels. The indicated individuals must be present
+in both pedigrees. By default, genotypes are transferred between all shared
+individuals.}
+
+\item{erase}{a logical. If \code{TRUE} (default), all markerdata in \code{to} are
+erased prior to transfer, and the markers in \code{from} are transferred
+including all locus annotations (frequencies a.s.o.). If \code{FALSE} it is
+assumed that the pedigree \code{to} already has attached markers with the same
+names as \code{from}. In this case only the genotypes of the \code{ids} individuals
+are modified; genotypes for other pedigree members are untouched, as are
+the marker annotations.}
 }
 \value{
-A \code{ped} object (or a list of such) similar to \code{to}, but
-where all individuals also present in \code{from} have marker genotypes
-copied over.  Any previous marker data is erased.
+A \code{ped} object (or a list of such) similar to \code{to}, but where all
+individuals also present in \code{from} have marker genotypes copied over.  Any
+previous marker data is erased.
 }
 \description{
-Transfer marker data between pedigrees. Any markers attached to the
-target are overwritten.
+Transfer marker data between pedigrees. Any markers attached to the target
+are overwritten.
 }
 \examples{
 
 x = nuclearPed(fa = "father", mo = "mother", children = "boy")
-m = marker(x, father = 1:2, boy = 1:2)
+m = marker(x, father = 1:2, mother = 1, boy = 1:2)
 x = setMarkers(x, m)
 
-y = list(singleton("father"), nuclearPed(children = "boy"))
-y = transferMarkers(x, y)
-y
-stopifnot(genotype(y[[1]], 1, "father") == 1:2, genotype(y[[2]], 1, "boy") == 1:2)
+y = list(singleton("father"), nuclearPed(mo = "mother", children = "boy"))
+
+# By default all common individuals are transferred
+transferMarkers(x, y)
+
+# Transfer data for the boy only
+transferMarkers(x, y, ids = "boy")
+
+### Transfer without erasing annotations and others genotypes
+z = nuclearPed(children = "boy")
+z = setMarkers(z, marker(z, '1' = c(2,2), alleles = 1:2, afreq = c(.1, .9)))
+z2 = transferMarkers(x, z, ids = "boy", erase = FALSE)
+z2
+# Frequencies are not transferred
+afreq(z2, 1)
 
 }
