@@ -40,3 +40,28 @@ test_that("pedlist is unchaged after self-transfer of markers", {
 
   expect_identical(transferMarkers(pedlist,pedlist), pedlist)
 })
+
+test_that("transfer of multiple markers works when erase = F", {
+  x = nuclearPed(father = "FA", children = "CH")
+  m1 = marker(x, FA = 2, alleles = 1:2, name = 'locus1')
+  m2 = marker(x, FA = 'a', alleles = c('a', 'b'), name = 'locus2')
+  x = setMarkers(x, list(m1, m2))
+
+  # Extract child as singleton (including locus annotations)
+  ch = subset(x, "CH")
+
+  # Add some genotypes and transfer back to trio
+  genotype(ch, "locus1", "CH") = 1
+  genotype(ch, "locus2", "CH") = 'b'
+  y = transferMarkers(ch, x, erase = FALSE)
+
+  # Compare with direct alternative
+  xx = x
+  genotype(xx, "locus1", "CH") = 1
+  genotype(xx, "locus2", "CH") = 'b'
+  expect_identical(y, xx)
+
+  # Another test: Marker order in target should not matter
+  y = transferMarkers(ch, selectMarkers(x, 2:1), erase = FALSE)
+  expect_identical(y, xx)
+})

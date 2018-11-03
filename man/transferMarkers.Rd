@@ -4,7 +4,8 @@
 \alias{transferMarkers}
 \title{Transfer marker data}
 \usage{
-transferMarkers(from, to, ids = NULL, erase = TRUE)
+transferMarkers(from, to, ids = NULL, erase = TRUE,
+  matchNames = TRUE)
 }
 \arguments{
 \item{from}{a \code{ped} or \code{singleton} object, or a list of such objects.}
@@ -15,13 +16,16 @@ transferMarkers(from, to, ids = NULL, erase = TRUE)
 in both pedigrees. By default, genotypes are transferred between all shared
 individuals.}
 
-\item{erase}{a logical. If \code{TRUE} (default), all markerdata in \code{to} are
-erased prior to transfer, and the markers in \code{from} are transferred
-including all locus annotations (frequencies a.s.o.). If \code{FALSE} it is
-assumed that the pedigree \code{to} already has attached markers with the same
-names as \code{from}. In this case only the genotypes of the \code{ids} individuals
-are modified; genotypes for other pedigree members are untouched, as are
-the marker annotations.}
+\item{erase}{a logical. If \code{TRUE} (default), all markers attached to \code{to} are
+erased prior to transfer, and new marker objects are created with the same
+annotations as in \code{from}. If \code{FALSE} no new marker objects are attached to
+\code{to}. Only the genotypes of the \code{ids} individuals are modified, while
+genotypes for other pedigree members - and marker annotations - remain
+untouched.}
+
+\item{matchNames}{a logical, only relevant if \code{erase = FALSE}. If \code{matchNames = TRUE} (default) marker names are used to ensure genotypes are transferred
+into the right markers. The output will contain only the markers in \code{from}, in the same order. (An error is raised if the
+markers are not named.) In this case}
 }
 \value{
 A \code{ped} object (or a list of such) similar to \code{to}, but where all
@@ -49,6 +53,9 @@ transferMarkers(x, y, ids = "boy")
 ### Transfer without erasing annotations and others genotypes
 z = nuclearPed(children = "boy")
 z = setMarkers(z, marker(z, '1' = c(2,2), alleles = 1:2, afreq = c(.1, .9)))
+
+# `erase = F` requires markers to be named
+name(x, 1) = name(z, 1) = 'M1'
 z2 = transferMarkers(x, z, ids = "boy", erase = FALSE)
 z2
 # Frequencies are not transferred
