@@ -91,8 +91,13 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
     return(to)
   }
 
-  if (is.pedList(from) && is.pedList(to))
-    return(lapply(to, transferMarkers, from = from, ids = ids, erase = erase, matchNames = matchNames))
+  if (is.pedList(from) && is.pedList(to)) {
+    to = lapply(to, function(comp) {
+      ids_comp = if(is.null(ids)) NULL else intersect(ids, labels(comp))
+      transferMarkers(from, comp, ids = ids_comp, erase = erase, matchNames = matchNames)
+    })
+    return(to)
+  }
 }
 
 
