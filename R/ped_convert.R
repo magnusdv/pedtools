@@ -89,9 +89,9 @@ restore_ped = function(x, attrs = NULL, validate = TRUE) {
     p['FOUNDER_INBREEDING'] = list(NULL)
   else {
     new_fou = founders(p)
-    no_longer_fou = .mysetdiff(names(finb), new_fou)
-    if(any(finb[no_longer_fou] > 0))
-      stop2("Individual with nonzero founder inbreeding is no longer a founder: ", no_longer_fou)
+    finb_lost = .mysetdiff(names(finb)[finb > 0], new_fou)
+    if(length(finb_lost) > 0)
+      message("Warning: Non-zero founder inbreeding lost. (Individuals: ", toString(finb_lost), ")")
     finb = finb[intersect(names(finb), new_fou)]
     founder_inbreeding(p) = finb
   }
