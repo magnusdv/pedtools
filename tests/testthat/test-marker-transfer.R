@@ -65,3 +65,15 @@ test_that("transfer of multiple markers works when erase = F", {
   y = transferMarkers(ch, selectMarkers(x, 2:1), erase = FALSE)
   expect_identical(y, xx)
 })
+
+test_that("transferMarkers checks for duplicated IDs", {
+  x = singleton("a")
+  x = setMarkers(x, marker(x, a = 1:2, name = "M"))
+
+  expect_error(transferMarkers(list(x,x), x), "Non-unique ID label in source pedlist: a")
+  expect_error(transferMarkers(list(x,x), x, ids = "a"), "Non-unique ID label in source pedlist: a")
+
+  expect_error(transferMarkers(x, list(x,x)), "Non-unique ID label in target pedlist: a")
+  expect_error(transferMarkers(x, list(x,x), ids = "a"), "Non-unique ID label in target pedlist: a")
+
+})

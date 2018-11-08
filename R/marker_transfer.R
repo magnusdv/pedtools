@@ -57,10 +57,13 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
 
   if (is.ped(from) && is.pedList(to)) {
 
-    if(is.null(ids)) # slightly cumbersome in order to catch (only relevant) repeats
-      ids = unlist(lapply(to, function(p) intersect(labels(from), labels(p))))
-    if((dup <- anyDuplicated(ids)) > 0)
-      stop2("ID label is not unique: ", ids[dup])
+    tolabels = unlist(lapply(to, labels))
+    if(is.null(ids))
+      ids = intersect(labels(from), tolabels)
+
+    toids = tolabels[tolabels %in% ids]
+    if((dup <- anyDuplicated(toids)) > 0)
+      stop2("Non-unique ID label in target pedlist: ", toids[dup])
 
     to = lapply(to, function(comp) {
       ids_comp = intersect(ids, labels(comp))
@@ -71,11 +74,13 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
 
   if (is.pedList(from) && is.ped(to)) {
 
-    if(is.null(ids)) # slightly cumbersome in order to catch (only relevant) repeats
-      ids = unlist(lapply(from, function(p) intersect(labels(p), labels(to))))
+    fromlabels = unlist(lapply(from, labels))
+    if(is.null(ids))
+      ids = intersect(fromlabels, labels(to))
 
-    if((dup <- anyDuplicated(ids)) > 0)
-      stop2("ID label is not unique: ", ids[dup])
+    fromids = fromlabels[fromlabels %in% ids]
+    if((dup <- anyDuplicated(fromids)) > 0)
+      stop2("Non-unique ID label in source pedlist: ", fromids[dup])
 
     # Transfer from first component
     ids1 = intersect(ids, labels(from[[1]]))
