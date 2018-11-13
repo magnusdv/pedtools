@@ -18,15 +18,28 @@ included.}
 \item{markers}{A vector of indices or names of markers attaches to \code{x}. If
 NULL (default) all markers are included.}
 
-\item{alleles}{A character (or coercible to character) matrix of dimensions
-\code{length(x) * nMarkers(x)}}
+\item{alleles}{A character of the same format and dimensions as the output of
+\code{getAlleles(x, ids, markers)}, or an object which can be converted by
+\code{as.matrix()} into such a matrix. See Details.}
 }
 \value{
-A character matrix of dimensions \code{length(x) * nMarkers(x)}
+\code{getAlleles()} returns a character matrix with \code{length(ids)} rows and
+\code{2 * length(markers)} columns. The ID labels of \code{x} are used as rownames,
+while the columns are named \code{<m1>.1}, \code{<m1>.2}, ... where \code{<m1>} is the
+name of the first marker, a.s.o.
+
+\code{setAlleles()} returns a \code{ped} object identical to \code{x}, except for the
+modified alleles. In particular, all locus annotations are unchanged.
 }
 \description{
 Functions for getting and setting the genotypes of multiple
 individuals/markers simultaneously
+}
+\details{
+If the \code{alleles} argument of \code{setAlleles()} is not a matrix, it is recycled
+(if neccessary), and converted into a matrix of the correct dimensions. For
+example, setting \code{alleles = 0} gives a simple way of removing the genotypes
+of some or all individuals (while keeping the markers attached).
 }
 \examples{
 x = nuclearPed(1)
@@ -57,4 +70,7 @@ getAlleles(peds)
 
 setAlleles(peds, ids="s", marker="m1", alleles=1:2)
 
+}
+\seealso{
+\code{\link[=transferMarkers]{transferMarkers()}}
 }

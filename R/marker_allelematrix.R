@@ -3,15 +3,29 @@
 #' Functions for getting and setting the genotypes of multiple
 #' individuals/markers simultaneously
 #'
+#' If the `alleles` argument of `setAlleles()` is not a matrix, it is recycled
+#' (if neccessary), and converted into a matrix of the correct dimensions. For
+#' example, setting `alleles = 0` gives a simple way of removing the genotypes
+#' of some or all individuals (while keeping the markers attached).
+#'
 #' @param x A `ped` object or a list of such
 #' @param ids A vector of ID labels. If NULL (default) all individuals are
 #'   included.
 #' @param markers A vector of indices or names of markers attaches to `x`. If
 #'   NULL (default) all markers are included.
-#' @param alleles A character (or coercible to character) matrix of dimensions
-#'   `length(x) * nMarkers(x)`
+#' @param alleles A character of the same format and dimensions as the output of
+#'   `getAlleles(x, ids, markers)`, or an object which can be converted by
+#'   `as.matrix()` into such a matrix. See Details.
 #'
-#' @return A character matrix of dimensions `length(x) * nMarkers(x)`
+#' @return `getAlleles()` returns a character matrix with `length(ids)` rows and
+#'   `2 * length(markers)` columns. The ID labels of `x` are used as rownames,
+#'   while the columns are named `<m1>.1`, `<m1>.2`, ... where `<m1>` is the
+#'   name of the first marker, a.s.o.
+#'
+#'   `setAlleles()` returns a `ped` object identical to `x`, except for the
+#'   modified alleles. In particular, all locus annotations are unchanged.
+#'
+#' @seealso [transferMarkers()]
 #'
 #' @examples
 #' x = nuclearPed(1)
