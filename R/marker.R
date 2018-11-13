@@ -96,10 +96,9 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
         alleles = 1:2 # NEW
     }
   }
-  else {
-    if(!all(m %in% c(NA_allele_, alleles)))
-      stop2("Allele used in genotype but not found in `alleles` argument: ",
-            setdiff(m, c(NA_allele_, alleles)))
+  else if(!all(m %in% c(NA_allele_, alleles))) {
+      mtxt = if(is.na(name)) "this marker: " else sprintf("marker `%s`: ", name)
+      stop2("Invalid allele for ", mtxt, setdiff(m, c(NA_allele_, alleles)))
   }
 
   ### Frequencies
