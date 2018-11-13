@@ -14,6 +14,6 @@ Suggests: testthat,
  rmarkdown,
  pedmut
 Imports: kinship2
-RoxygenNote: 6.1.0.9000
+RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
