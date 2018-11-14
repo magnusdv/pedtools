@@ -196,7 +196,7 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
   else {
     if (any(markers > nm)) stop2("Markers out of range: ", markers[markers > nm])
   }
-  datafr = as.data.frame(x, markers=markers, singleCol=TRUE, missing="-")
+  datafr = as.data.frame(x, markers=markers)
   datafr$fid[datafr$fid == "0"] = "*"
   datafr$mid[datafr$mid == "0"] = "*"
   print(datafr, row.names=FALSE, ...)
