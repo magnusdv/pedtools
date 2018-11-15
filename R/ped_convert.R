@@ -202,9 +202,13 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
   else {
     if (any(markers > nm)) stop2("Markers out of range: ", markers[markers > nm])
   }
-  datafr = as.data.frame(x, markers=markers)
+  datafr = as.data.frame(x, markers = markers)
   datafr$fid[datafr$fid == "0"] = "*"
   datafr$mid[datafr$mid == "0"] = "*"
+
+  # Add question marks at any genotypes shoing male X heterozygosity
+  datafr = questionMaleHetX(x, datafr)
+
   print(datafr, row.names=FALSE, ...)
 
   if(showmess && verbose)
@@ -212,6 +216,34 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
 
   invisible(datafr)
 }
+
+
+# Function for adding question mark at genotypes showing male X heterozygosity
+questionMaleHetX = function(x, df) {
+  if(!hasMarkers(x) || ncol(df) < 5)
+    return(df)
+
+  dfnames = names(df)
+  xnames = name(x, 1:nMarkers(x))
+
+  # Loop through all marker columns of the data frame
+  for(i in 5:ncol(df)) {
+    mname = dfnames[i]
+    if(startsWith(mname, "<"))
+      midx = as.integer(substring(mname, 2, nchar(mname)-1))
+    else
+      midx = match(mname, xnames)
+
+    if(!is.na(midx) && is_Xmarker(x$markerdata[[midx]])) {
+      maleHet = df[["sex"]] == 1 & grepl("/", df[[i]])
+      df = commentAndRealign(df, i, maleHet, "?")
+    }
+  }
+
+  # Returned modified data.frame
+  df
+}
+
 
 #' Conversions to ped objects
 #'

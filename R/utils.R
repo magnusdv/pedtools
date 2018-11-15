@@ -14,7 +14,7 @@ is_count = function(x, minimum = 1) {
 
 # Test that input is a single number, with optional range constraints
 is_number = function(x, minimum = NA, maximum = NA) {
-  isTRUE(length(x) == 1 && 
+  isTRUE(length(x) == 1 &&
          is.numeric(x) &&
          (is.na(minimum) || x >= minimum) &&
          (is.na(maximum) || x <= maximum))
@@ -76,4 +76,18 @@ fast.grid = function(argslist, as.list = FALSE) {
   if (as.list)
     res = lapply(seq_len(nr), function(r) res[r, ])
   res
+}
+
+# Add string to certain data.frame entries without disrupting the alignment
+# df = data.frame; i = column; pred = logical(nrow(df)); comment = string
+commentAndRealign = function(df, i, pred, comment) {
+  stopifnot(is.logical(pred), length(pred) == nrow(df))
+  padding = strrep(" ", nchar(comment))
+
+  if(padding == "" || !any(pred))
+    return(df)
+
+  df[[i]] = paste0(df[[i]], ifelse(pred, comment, padding))
+  names(df)[i] = paste0(names(df)[i], padding)
+  df
 }
