@@ -153,17 +153,23 @@ as.data.frame.ped = function(x, ..., markers) {
   df = data.frame(id = lab, fid=fid, mid=mid, sex=x$SEX, stringsAsFactors=FALSE)
 
   if(hasMarkers(x)) {
-    mlist = if(missing(markers)) x$markerdata else getMarkers(x, markers)
+    # Make sure `markers` is an index vector (not missing or character)
+    if(missing(markers)) markers = 1:nMarkers(x)
+    else markers = whichMarkers(x, markers)
+
+    mlist = getMarkers(x, markers)
     geno = do.call(cbind, lapply(mlist, format))
 
-    # headers of genotype columns: name if present, otherwise <idx>
+    # Headers of genotype columns: name if present, otherwise <idx>
     nms = vapply(mlist, name, character(1))
     if(any(na_name <- is.na(nms)))
-      nms[na_name] = sprintf("<%d>", which(na_name))
+      nms[na_name] = sprintf("<%d>", markers[na_name])
     colnames(geno) = nms
 
+    # Bind to pedcols
     df = cbind(df, geno, stringsAsFactors=FALSE)
   }
+
   df
 }
 
