@@ -31,12 +31,24 @@
 #' @param validate if TRUE, the validity of the created `marker` object is
 #'   checked.
 #'
-#' @return An object of class `marker`: This is an integer matrix with 2 columns
-#'   and one row per individual, and attributes 'alleles' (a character vector
-#'   with allele labels), 'afreq` (allele frequencies), 'chrom' (chromosome
-#'   number), 'posMb' (physical location in megabases),'posCm' (position in
-#'   centiMorgan), 'name' (marker identifier) and 'mutmat' (a list of two (male
-#'   and female) mutation matrices).
+#' @return An object of class `marker`. This is an integer matrix with 2 columns
+#'   and one row per individual, and the following attributes:
+#'
+#'   * 'alleles' (a character vector with allele labels)
+#'
+#'   * 'afreq' (allele frequencies; default `rep.int(1/length(alleles),
+#'   length(alleles))`)
+#'
+#'   * 'chrom' (chromosome number; default = NA)
+#'
+#'   * 'posMb' (physical location in megabases; default = NA)
+#'
+#'   * 'posCm' (position in centiMorgan; default = NA)
+#'
+#'   * 'name' (marker identifier; default = NA)
+#'
+#'   * 'mutmat' (a list of two (male and female) mutation matrices; default =
+#'   NULL)
 #'
 #' @seealso [marker_attach]
 #'

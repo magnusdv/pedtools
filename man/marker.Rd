@@ -47,12 +47,18 @@ corresponds to the \code{model} parameter. Default: NULL (no mutation model).}
 checked.}
 }
 \value{
-An object of class \code{marker}: This is an integer matrix with 2 columns
-and one row per individual, and attributes 'alleles' (a character vector
-with allele labels), 'afreq` (allele frequencies), 'chrom' (chromosome
-number), 'posMb' (physical location in megabases),'posCm' (position in
-centiMorgan), 'name' (marker identifier) and 'mutmat' (a list of two (male
-and female) mutation matrices).
+An object of class \code{marker}. This is an integer matrix with 2 columns
+and one row per individual, and the following attributes:
+\itemize{
+\item 'alleles' (a character vector with allele labels)
+\item 'afreq' (allele frequencies; default \code{rep.int(1/length(alleles),   length(alleles))})
+\item 'chrom' (chromosome number; default = NA)
+\item 'posMb' (physical location in megabases; default = NA)
+\item 'posCm' (position in centiMorgan; default = NA)
+\item 'name' (marker identifier; default = NA)
+\item 'mutmat' (a list of two (male and female) mutation matrices; default =
+NULL)
+}
 }
 \description{
 Creating a marker object associated with a pedigree
