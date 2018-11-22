@@ -159,25 +159,33 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
     stop2("Argument `allele_matrix` must be either a matrix or a data.frame")
 
   m = as.matrix(allele_matrix)
-  if(nrow(m) != pedsize(x))
+  row_nms = rownames(m)
+
+  # If no rownames - dimensions must be correct
+  if(is.null(row_nms)) {
+    if(nrow(m) != pedsize(x))
     stop2("Incompatible input.\n  Pedigree size = ", pedsize(x),
           "\n  Allele matrix rows = ", nrow(m))
+  }
+  else {
+    tmp = matrix("0", nrow = pedsize(x), ncol = ncol(m))
 
-  # # If row names are given, use them to re-order matrix
-  # if (!is.null(row_nms <- rownames(m))) {
-  #
-  #   # Check compatibility
-  #   missing_labs = setdiff(labels(x), row_nms)
-  #   if (length(missing_labs))
-  #     stop2("Pedigree member missing in allele matrix row names: ", missing_labs)
-  #   unknown_labs = setdiff(row_nms, labels(x))
-  #   if (length(unknown_labs))
-  #     stop2("Unknown row name in allele matrix: ", unknown_labs)
-  #
-  #   # Reorder
-  #   if(!identical(labels(x), row_nms))
-  #     m = m[labels(x), ]
-  # }
+    idx = match(row_nms, labels(x))
+    tmp[idx[!is.na(idx)], ] = m[row_nms[!is.na(idx)], ]
+
+    m = tmp
+    #   missing_labs = setdiff(labels(x), row_nms)
+    #   if (length(missing_labs))
+    #     stop2("Pedigree member missing in allele matrix row names: ", missing_labs)
+    #   unknown_labs = setdiff(row_nms, labels(x))
+    #   if (length(unknown_labs))
+    #     stop2("Unknown row name in allele matrix: ", unknown_labs)
+    #
+    #   # Reorder
+    #   if(!identical(labels(x), row_nms))
+    #     m = m[labels(x), ]
+    #
+  }
 
   # If allele_sep is given, interpret entries as diploid genotypes
   if(!is.null(allele_sep))
