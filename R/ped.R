@@ -133,6 +133,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
     })
 
     names(pedlist) = sapply(pedlist, function(p) famid(p))
+    class(pedlist) = "pedList"
     return(pedlist)
   }
 

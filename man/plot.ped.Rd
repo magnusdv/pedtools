@@ -4,6 +4,7 @@
 \alias{plot.ped}
 \alias{plot.singleton}
 \alias{as_kinship2_pedigree}
+\alias{plot.pedList}
 \title{Plot pedigrees with genotypes}
 \usage{
 \method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
@@ -17,6 +18,8 @@
   margins = c(8, 0, 0, 0), ...)
 
 as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
+
+\method{plot}{pedList}(x, frames = F, ...)
 }
 \arguments{
 \item{x}{a \code{\link[=ped]{ped()}} object.}

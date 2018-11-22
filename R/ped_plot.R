@@ -240,8 +240,11 @@ as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
                                         missid=0))
 }
 
-
-
+#' @rdname plot.ped
+#' @export
+plot.pedList = function(x, frames = F, ...) {
+  plotPedList(x, frames = frames, ...)
+}
 
 #' Plot a collection of pedigrees.
 #'
