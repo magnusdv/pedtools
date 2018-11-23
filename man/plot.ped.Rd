@@ -19,7 +19,7 @@
 
 as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 
-\method{plot}{pedList}(x, frames = F, ...)
+\method{plot}{pedList}(x, ...)
 }
 \arguments{
 \item{x}{a \code{\link[=ped]{ped()}} object.}

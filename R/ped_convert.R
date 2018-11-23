@@ -398,12 +398,14 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
   else
     marker_col = NULL
 
+  rownames(x) = NULL
   if(length(marker_col) > 0) {
 
     if (is.pedList(p)) { # if multiple components
       p = lapply(p, function(comp) {
         rows = match(labels(comp), id)
-        setMarkers(comp, allele_matrix = x[rows, marker_col, drop = F],
+        AM = x[rows, marker_col, drop = F]
+        setMarkers(comp, allele_matrix = AM,
                    locus_annotations = locus_annotations,
                    missing = missing, allele_sep = allele_sep)
       })

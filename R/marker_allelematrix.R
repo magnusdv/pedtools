@@ -169,8 +169,8 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
   }
   else {
     tmp = matrix("0", nrow = pedsize(x), ncol = ncol(m))
-
     idx = match(row_nms, labels(x))
+
     tmp[idx[!is.na(idx)], ] = m[row_nms[!is.na(idx)], ]
 
     m = tmp
@@ -231,7 +231,7 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
 }
 
 split_genotype_cols = function(m, allele_sep, missing) {
-  nas = is.na(m)
+  nas = is.na(m) | m == missing
   if(all(nas))
     return(matrix(0, nrow = nrow(m), ncol = 2*ncol(m)))
 
@@ -239,7 +239,7 @@ split_genotype_cols = function(m, allele_sep, missing) {
   if(!grepl(allele_sep, nonNA))
     stop2("Allele separator not found in first non-NA entry of allele matrix: ", nonNA)
 
-  # Replace NA's by <miss>/<miss>. (Suboptimal strategy, but simple)
+  # Replace NA's and missing by <miss>/<miss>. (Suboptimal strategy, but simple)
   m[nas] = sprintf("%s%s%s", missing, allele_sep, missing)
 
   nc = ncol(m)
