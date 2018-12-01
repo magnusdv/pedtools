@@ -2,53 +2,55 @@
 #'
 #' Functions for identifying, breaking and restoring loops in pedigrees.
 #'
-#' Pedigree loops are usually handled (by pedtools and related packages) under the hood -
-#' using the functions described here - without need for explicit action from
-#' end users. When a ped object `x` is created, an internal routine
+#' Pedigree loops are usually handled (by pedtools and related packages) under
+#' the hood - using the functions described here - without need for explicit
+#' action from end users. When a ped object `x` is created, an internal routine
 #' detects if the pedigree contains loops, in which case `x$UNBROKEN_LOOPS` is
 #' set to TRUE.
 #'
-#' In cases with complex inbreeding, it can be instructive to plot the
-#' pedigree after breaking the loops. Duplicated individuals are plotted with
-#' appropriate labels (see examples).
+#' In cases with complex inbreeding, it can be instructive to plot the pedigree
+#' after breaking the loops. Duplicated individuals are plotted with appropriate
+#' labels (see examples).
 #'
-#' The function `findLoopBreakers` identifies a set of individuals
-#' breaking all inbreeding loops, but not marriage loops. These require more
-#' machinery for efficient detection, and pedtools does this is a seperate
-#' function, `findLoopBreakers2`, utilizing methods from the `igraph`
-#' package. Since this is rarely needed for most users, `igraph` is not
-#' imported when loading pedtools, only when `findLoopBreakers2` is
-#' called.
+#' The function `findLoopBreakers` identifies a set of individuals breaking all
+#' inbreeding loops, but not marriage loops. These require more machinery for
+#' efficient detection, and pedtools does this is a seperate function,
+#' `findLoopBreakers2`, utilizing methods from the `igraph` package. Since this
+#' is rarely needed for most users, `igraph` is not imported when loading
+#' pedtools, only when `findLoopBreakers2` is called.
 #'
-#' In practice, `breakLoops` first calls `findLoopBreakers` and
-#' breaks at the returned individuals. If the resulting ped object still
-#' has loops, `findLoopBreakers2` is called to break any marriage loops.
+#' In practice, `breakLoops` first calls `findLoopBreakers` and breaks at the
+#' returned individuals. If the resulting ped object still has loops,
+#' `findLoopBreakers2` is called to break any marriage loops.
 #'
 #' @param x a [ped()] object.
 #' @param loop_breakers either NULL (resulting in automatic selection of loop
-#' breakers) or a numeric containing IDs of individuals to be used as loop
-#' breakers.
+#'   breakers) or a numeric containing IDs of individuals to be used as loop
+#'   breakers.
 #' @param verbose a logical: Verbose output or not?
-#' @return For `breakLoops`, a `ped` object in which the
-#' indicated loop breakers are duplicated. The returned object will also have a
-#' non-null `loop_breakers` entry, namely a matrix with the IDs of the
-#' original loop breakers in the first column and the duplicates in the second.
+#' @param errorIfFail a logical: If TRUE an error is raised if the loop breaking
+#'   is unsuccessful. If FALSE, the pedigree is returned unchanged.
+#' @return For `breakLoops`, a `ped` object in which the indicated loop breakers
+#'   are duplicated. The returned object will also have a non-null
+#'   `loop_breakers` entry, namely a matrix with the IDs of the original loop
+#'   breakers in the first column and the duplicates in the second. If loop
+#'   breaking fails, then depending on `errorIfFail` either an error is raised,
+#'   or the input pedigree is returned, still containing unbroken loops.
 #'
-#' For `tieLoops`, a `ped` object in which any duplicated
-#' individuals (as given in the `x$LOOP_BREAKERS` entry) are merged. For
-#' any ped object `x`, the call `tieLoops(breakLoops(x))` should
-#' return `x`.
+#'   For `tieLoops`, a `ped` object in which any duplicated individuals (as
+#'   given in the `x$LOOP_BREAKERS` entry) are merged. For any ped object `x`,
+#'   the call `tieLoops(breakLoops(x))` should return `x`.
 #'
-#' For `inbreedingLoops`, a list containing all inbreeding loops (not
-#' marriage loops) found in the pedigree. Each loop is represented as a list
-#' with elements 'top', a 'bottom' individual, 'pathA' (individuals forming a
-#' path from top to bottom) and 'pathB' (creating a different path from top to
-#' bottom, with no individuals in common with pathA). Note that the number of
-#' loops reported here counts all closed paths in the pedigree and will in
-#' general be larger than the genus of the underlying graph.
+#'   For `inbreedingLoops`, a list containing all inbreeding loops (not marriage
+#'   loops) found in the pedigree. Each loop is represented as a list with
+#'   elements 'top', a 'bottom' individual, 'pathA' (individuals forming a path
+#'   from top to bottom) and 'pathB' (creating a different path from top to
+#'   bottom, with no individuals in common with pathA). Note that the number of
+#'   loops reported here counts all closed paths in the pedigree and will in
+#'   general be larger than the genus of the underlying graph.
 #'
-#' For `findLoopBreakers` and `findLoopBreakers2`, a numeric vector
-#' of individual ID's.
+#'   For `findLoopBreakers` and `findLoopBreakers2`, a numeric vector of
+#'   individual ID's.
 #' @author Magnus Dehli Vigeland
 #'
 #' @examples
@@ -93,31 +95,48 @@ inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedi
 
 #' @export
 #' @rdname inbreedingLoops
-breakLoops = function(x, loop_breakers = NULL, verbose = TRUE) {
-  if (is.singleton(x))
-    stop2("Loop breaking does not make sense for singleton objects")
+breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRUE) {
+  if (is.singleton(x) || isFALSE(x$UNBROKEN_LOOPS)) {
+    if (verbose) {
+      if(is.null(x$LOOP_BREAKERS)) message("No loops to break")
+      else message("No further loops to break")
+    }
+    return(x)
+  }
 
   auto = is.null(loop_breakers)
   if (auto) {
-    if (!x$UNBROKEN_LOOPS) return(x)
     loop_breakers = findLoopBreakers(x)
     if (length(loop_breakers) == 0) {
       if (verbose)
         message("Marriage loops detected, trying different selection method")
-      loop_breakers = findLoopBreakers2(x)
+      loop_breakers = findLoopBreakers2(x, errorIfFail = errorIfFail)
     }
   }
-  if (!length(loop_breakers))
-    stop2("Loop breaking unsuccessful")
+  if (!length(loop_breakers)) {
+    mess = "Loop breaking unsuccessful"
+    if(errorIfFail) stop2(mess)
+    else {
+      if(verbose) message(mess, " - returning unchanged")
+      return(x)
+    }
+  }
+
+  LABS = labels(x)
 
   # Convert to internal IDs and sort (don't skip this)
   loop_breakers = sort.int(internalID(x, loop_breakers))
 
   FOU = founders(x, internal=T)
-  LABS = labels(x)
-  if (any(loop_breakers %in% FOU))
-    stop2("Pedigree founders cannot be loop breakers: ", 
-          LABS[intersect(loop_breakers, FOU)])
+  FOU_LB = intersect(loop_breakers, FOU)
+  if (length(FOU_LB) > 0) {
+    mess = "Breaking loops at founders is not implemented"
+    if(errorIfFail) stop2(mess)
+    else {
+      if(verbose) message(mess, " - returning unchanged")
+      return(x)
+    }
+  }
 
   if (verbose)
     cat("Loop breakers:", toString(LABS[loop_breakers]), "\n")
@@ -178,7 +197,7 @@ tieLoops = function(x, verbose=TRUE) {
     return(x)
   }
   if (any(dups > pedsize(x)))
-    stop2("Something's wrong - duplicated individual is out of range: ", 
+    stop2("Something's wrong - duplicated individual is out of range: ",
           dups[dups > pedsize(x)])
 
   origs = dups[, 1]
@@ -220,7 +239,7 @@ findLoopBreakers = function(x) {
 
 #' @export
 #' @rdname inbreedingLoops
-findLoopBreakers2 = function(x) {
+findLoopBreakers2 = function(x, errorIfFail = TRUE) {
   if (!requireNamespace("igraph", quietly = TRUE)) {
     cat("This pedigree has marriage loops. The package 'igraph' must be installed for automatic selection of loop breakers.\n")
     return(numeric())
@@ -243,17 +262,21 @@ findLoopBreakers2 = function(x) {
   fid = x$FIDX[NONFOU]
   mid = x$MIDX[NONFOU]
   nonf = as.character(NONFOU)
-  
+
   while (T) {
     g = igraph::graph_from_edgelist(ped2edge(id, fid, mid))
     loop = igraph::girth(g)$circle
     if (length(loop) == 0)
       break
     good.breakers = intersect(loop$name, nonf)
-    if (length(good.breakers) == 0)
-      stop("\
+
+    if (length(good.breakers) == 0) {
+      if(errorIfFail) stop("\
 This pedigree requires founders as loop breakers, which is not implemented in pedtools yet.\
 Please contact magnusdv at medisin.uio.no if this is important to you.", call.=FALSE)
+      else return()
+    }
+
     b = as.numeric(good.breakers[1])
     breakers = c(breakers, b)
     N = N+1

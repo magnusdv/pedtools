@@ -10,13 +10,14 @@
 \usage{
 inbreedingLoops(x)
 
-breakLoops(x, loop_breakers = NULL, verbose = TRUE)
+breakLoops(x, loop_breakers = NULL, verbose = TRUE,
+  errorIfFail = TRUE)
 
 tieLoops(x, verbose = TRUE)
 
 findLoopBreakers(x)
 
-findLoopBreakers2(x)
+findLoopBreakers2(x, errorIfFail = TRUE)
 }
 \arguments{
 \item{x}{a \code{\link[=ped]{ped()}} object.}
@@ -26,54 +27,57 @@ breakers) or a numeric containing IDs of individuals to be used as loop
 breakers.}
 
 \item{verbose}{a logical: Verbose output or not?}
+
+\item{errorIfFail}{a logical: If TRUE an error is raised if the loop breaking
+is unsuccessful. If FALSE, the pedigree is returned unchanged.}
 }
 \value{
-For \code{breakLoops}, a \code{ped} object in which the
-indicated loop breakers are duplicated. The returned object will also have a
-non-null \code{loop_breakers} entry, namely a matrix with the IDs of the
-original loop breakers in the first column and the duplicates in the second.
+For \code{breakLoops}, a \code{ped} object in which the indicated loop breakers
+are duplicated. The returned object will also have a non-null
+\code{loop_breakers} entry, namely a matrix with the IDs of the original loop
+breakers in the first column and the duplicates in the second. If loop
+breaking fails, then depending on \code{errorIfFail} either an error is raised,
+or the input pedigree is returned, still containing unbroken loops.
 
-For \code{tieLoops}, a \code{ped} object in which any duplicated
-individuals (as given in the \code{x$LOOP_BREAKERS} entry) are merged. For
-any ped object \code{x}, the call \code{tieLoops(breakLoops(x))} should
-return \code{x}.
+For \code{tieLoops}, a \code{ped} object in which any duplicated individuals (as
+given in the \code{x$LOOP_BREAKERS} entry) are merged. For any ped object \code{x},
+the call \code{tieLoops(breakLoops(x))} should return \code{x}.
 
-For \code{inbreedingLoops}, a list containing all inbreeding loops (not
-marriage loops) found in the pedigree. Each loop is represented as a list
-with elements 'top', a 'bottom' individual, 'pathA' (individuals forming a
-path from top to bottom) and 'pathB' (creating a different path from top to
+For \code{inbreedingLoops}, a list containing all inbreeding loops (not marriage
+loops) found in the pedigree. Each loop is represented as a list with
+elements 'top', a 'bottom' individual, 'pathA' (individuals forming a path
+from top to bottom) and 'pathB' (creating a different path from top to
 bottom, with no individuals in common with pathA). Note that the number of
 loops reported here counts all closed paths in the pedigree and will in
 general be larger than the genus of the underlying graph.
 
-For \code{findLoopBreakers} and \code{findLoopBreakers2}, a numeric vector
-of individual ID's.
+For \code{findLoopBreakers} and \code{findLoopBreakers2}, a numeric vector of
+individual ID's.
 }
 \description{
 Functions for identifying, breaking and restoring loops in pedigrees.
 }
 \details{
-Pedigree loops are usually handled (by pedtools and related packages) under the hood -
-using the functions described here - without need for explicit action from
-end users. When a ped object \code{x} is created, an internal routine
+Pedigree loops are usually handled (by pedtools and related packages) under
+the hood - using the functions described here - without need for explicit
+action from end users. When a ped object \code{x} is created, an internal routine
 detects if the pedigree contains loops, in which case \code{x$UNBROKEN_LOOPS} is
 set to TRUE.
 
-In cases with complex inbreeding, it can be instructive to plot the
-pedigree after breaking the loops. Duplicated individuals are plotted with
-appropriate labels (see examples).
+In cases with complex inbreeding, it can be instructive to plot the pedigree
+after breaking the loops. Duplicated individuals are plotted with appropriate
+labels (see examples).
 
-The function \code{findLoopBreakers} identifies a set of individuals
-breaking all inbreeding loops, but not marriage loops. These require more
-machinery for efficient detection, and pedtools does this is a seperate
-function, \code{findLoopBreakers2}, utilizing methods from the \code{igraph}
-package. Since this is rarely needed for most users, \code{igraph} is not
-imported when loading pedtools, only when \code{findLoopBreakers2} is
-called.
+The function \code{findLoopBreakers} identifies a set of individuals breaking all
+inbreeding loops, but not marriage loops. These require more machinery for
+efficient detection, and pedtools does this is a seperate function,
+\code{findLoopBreakers2}, utilizing methods from the \code{igraph} package. Since this
+is rarely needed for most users, \code{igraph} is not imported when loading
+pedtools, only when \code{findLoopBreakers2} is called.
 
-In practice, \code{breakLoops} first calls \code{findLoopBreakers} and
-breaks at the returned individuals. If the resulting ped object still
-has loops, \code{findLoopBreakers2} is called to break any marriage loops.
+In practice, \code{breakLoops} first calls \code{findLoopBreakers} and breaks at the
+returned individuals. If the resulting ped object still has loops,
+\code{findLoopBreakers2} is called to break any marriage loops.
 }
 \examples{
 
