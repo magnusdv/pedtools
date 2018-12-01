@@ -197,12 +197,12 @@ validate_ped = function(x) {
   n = length(ID)
 
   # Type verification (mainly for developer)
-  stopifnot(is.character(ID), is.integer(FIDX), is.integer(MIDX), is.integer(SEX),
+  stopifnot2(is.character(ID), is.integer(FIDX), is.integer(MIDX), is.integer(SEX),
             is.character(FAMID), is.singleton(x) == (n == 1))
 
   # Other verifications that don't need friendly messages at this point
   # (since they should be caught earlier during construction)
-  stopifnot(n > 0, length(FIDX) == n, length(MIDX) == n, length(SEX) == n,
+  stopifnot2(n > 0, length(FIDX) == n, length(MIDX) == n, length(SEX) == n,
             all(FIDX >= 0), all(MIDX >= 0), all(FIDX <= n), all(MIDX <= n),
             length(FAMID) == 1)
 

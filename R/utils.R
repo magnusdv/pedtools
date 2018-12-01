@@ -81,7 +81,7 @@ fast.grid = function(argslist, as.list = FALSE) {
 # Add string to certain data.frame entries without disrupting the alignment
 # df = data.frame; i = column; pred = logical(nrow(df)); comment = string
 commentAndRealign = function(df, i, pred, comment) {
-  stopifnot(is.logical(pred), length(pred) == nrow(df))
+  stopifnot2(is.logical(pred), length(pred) == nrow(df))
   padding = strrep(" ", nchar(comment))
 
   if(padding == "" || !any(pred))
@@ -91,3 +91,17 @@ commentAndRealign = function(df, i, pred, comment) {
   names(df)[i] = paste0(names(df)[i], padding)
   df
 }
+
+stopifnot2 = function(...) {
+  exprs = list(...)
+
+  for (i in seq_along(exprs)) {
+    expri = .subset2(exprs, i)
+    if (length(expri) != 1L || is.na(expri) || !expri) {
+      full_call = match.call()
+      call = deparse(full_call[[i + 1]])
+      stop(sQuote(call), " is not TRUE", call. = FALSE, domain = NA)
+    }
+  }
+}
+

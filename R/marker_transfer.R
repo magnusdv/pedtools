@@ -107,7 +107,7 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
 
 
 .transferMarkersSimple = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE) {
-  stopifnot(is.ped(from), is.ped(to))
+  stopifnot2(is.ped(from), is.ped(to))
   M = nMarkers(from)
 
   if (M == 0) {

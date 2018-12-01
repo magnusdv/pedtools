@@ -155,7 +155,7 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
 newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
                      chrom = NA_character_, posMb = NA_real_, posCm = NA_real_,
                      mutmod = NULL, pedmembers, sex) {
-  stopifnot(is.matrix(allelematrix_int),
+  stopifnot2(is.matrix(allelematrix_int),
             ncol(allelematrix_int) == 2,
             is.integer(allelematrix_int),
             is.character(alleles),
@@ -246,7 +246,7 @@ checkMutationMatrix = function(mutmat, alleles, identifier = NULL) {
 
 
 .setSNPfreqs = function(x, newfreqs) { # TODO: review function
-    stopifnot(all(vapply(x$markerdata, function(m) attr(m, "nalleles"), numeric(1)) == 2))
+    stopifnot2(all(vapply(x$markerdata, function(m) attr(m, "nalleles"), numeric(1)) == 2))
     newfreqs = rep(newfreqs, length = x$nMark)
     for (i in seq_len(x$nMark)) attr(x$markerdata[[i]], "afreq") = c(newfreqs[i], 1 - newfreqs[i])
     x
