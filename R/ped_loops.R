@@ -96,7 +96,7 @@ inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedi
 #' @export
 #' @rdname inbreedingLoops
 breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRUE) {
-  if (is.singleton(x) || isFALSE(x$UNBROKEN_LOOPS)) {
+  if (isFALSE(x$UNBROKEN_LOOPS) || is.singleton(x)) {
     if (verbose) {
       if(is.null(x$LOOP_BREAKERS)) message("No loops to break")
       else message("No further loops to break")
@@ -184,7 +184,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   ### Create new ped
   newx = restore_ped(pedm, attrs = attrs)
   if (auto)
-    return(breakLoops(newx, verbose = verbose))
+    return(breakLoops(newx, verbose = verbose, errorIfFail = errorIfFail))
   newx
 }
 
