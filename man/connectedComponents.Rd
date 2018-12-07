@@ -4,7 +4,7 @@
 \alias{connectedComponents}
 \title{Connected pedigree components}
 \usage{
-connectedComponents(id, fid, mid)
+connectedComponents(id, fid, mid, fidx = NULL, midx = NULL)
 }
 \arguments{
 \item{id}{A vector of ID labels (character or numeric)}
@@ -12,6 +12,9 @@ connectedComponents(id, fid, mid)
 \item{fid}{The ID labels of the fathers (or "0" if missing)}
 
 \item{mid}{The ID labels of the mothers (or "0" if missing)}
+
+\item{fidx, midx}{(For internal use mostly) Integer vectors with paternal
+(resp maternal) indices. These may be given instead of \code{id}, \code{fid}, \code{mid}.}
 }
 \value{
 A list, where each element is a subset of \code{id} constituting a
