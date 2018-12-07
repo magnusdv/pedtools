@@ -80,6 +80,10 @@ restore_ped = function(x, attrs = NULL, validate = TRUE) {
     attrs = attributes(x)
   p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$FAMID,
           validate = validate, reorder=F)
+
+  if(is.pedList(p))
+    stop2("Cannot restore to `ped` object: Disconnected input")
+
   p = relabel(p, new = attrs$LABELS)
   p['LOOP_BREAKERS'] = list(attrs$LOOP_BREAKERS) # Trick to keep explicit NULLs
 
