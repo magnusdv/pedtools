@@ -5,6 +5,20 @@ stop2 = function(...) {
   do.call(stop, a)
 }
 
+#Preferred version of stopifnot()
+stopifnot2 = function(...) {
+  exprs = list(...)
+
+  for (i in seq_along(exprs)) {
+    expri = .subset2(exprs, i)
+    if (length(expri) != 1L || is.na(expri) || !expri) {
+      full_call = match.call()
+      call = deparse(full_call[[i + 1]])
+      stop(sQuote(call), " is not TRUE", call. = FALSE, domain = NA)
+    }
+  }
+}
+
 # Test that input is a single positive (or similar) integer.
 is_count = function(x, minimum = 1) {
   isTRUE(length(x) == 1 &&
@@ -90,18 +104,5 @@ commentAndRealign = function(df, i, pred, comment) {
   df[[i]] = paste0(df[[i]], ifelse(pred, comment, padding))
   names(df)[i] = paste0(names(df)[i], padding)
   df
-}
-
-stopifnot2 = function(...) {
-  exprs = list(...)
-
-  for (i in seq_along(exprs)) {
-    expri = .subset2(exprs, i)
-    if (length(expri) != 1L || is.na(expri) || !expri) {
-      full_call = match.call()
-      call = deparse(full_call[[i + 1]])
-      stop(sQuote(call), " is not TRUE", call. = FALSE, domain = NA)
-    }
-  }
 }
 
