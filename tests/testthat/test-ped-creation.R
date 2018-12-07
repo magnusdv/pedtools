@@ -43,7 +43,7 @@ test_that("validate_ped() catches malformed pedigrees", {
 
 test_that("self-ancestry is detected", {
   expect_error(ped(id=1, fid=1, mid=1, sex=0),
-               "Individual 1 is their own ancestor")
+               "Pedigree has no founders")
   expect_error(ped(id=1:3, fid=c(0,1,1), mid=c(0,3,2), sex=c(1,2,2)),
                "Individual 3 is their own ancestor")
 })

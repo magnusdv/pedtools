@@ -118,6 +118,9 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
   if(any(is.na(MIDX)))
     stop2("`mid` entry does not appear in `id` vector: ", mid[is.na(MIDX)])
 
+  if(all(FIDX + MIDX > 0))
+    stop2("Pedigree has no founders")
+
   if(length(famid) != 1)
     stop2("`famid` must be a character string: ", famid)
 
