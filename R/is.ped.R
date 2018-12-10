@@ -33,7 +33,11 @@ is.singleton = function(x)
 #' @rdname is.ped
 #' @export
 is.pedList = function(x) {
-    isTRUE(is.list(x) &&
-           length(x) > 0 &&
-           all(vapply(x, function(comp) inherits(comp, what = "ped"), FUN.VALUE = logical(1))))
+  if(!is.list(x) || length(x) == 0)
+    return(FALSE)
+  for(comp in x) {
+    if(!inherits(comp, what = "ped"))
+      return(FALSE)
+  }
+  return(TRUE)
 }
