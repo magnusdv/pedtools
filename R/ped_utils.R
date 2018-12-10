@@ -144,6 +144,8 @@ validate_sex = function(sex, nInd, zero_allowed = TRUE) {
   invisible(rep_len(sex_int, nInd))
 }
 
+
+
 #' @rdname ped_utils
 #' @export
 subnucs = function(x) {
@@ -289,3 +291,51 @@ nextNN = function(labs) { # labs a character vector
   })
 }
 
+
+
+
+#' Pedigree component
+#'
+#' Given a list of `ped` objects (called pedigree components), and a vector of
+#' ID labels, find the index of the component holding each individual.
+#' @param x A list of `ped` objects
+#' @param ids A vector of ID labels (coercible to character)
+#' @param checkUnique If TRUE an error is raised if any element of `ids` occurs
+#'   more than once in `x`.
+#'
+#' @return An integer vector of the same length as `ids`, with NA entries where
+#'   the corresponding label was not found in any of the components.
+#'
+#' @examples
+#' x = list(nuclearPed(1), singleton(id = "A"))
+#' getComponent(x, c(3, "A")) # = c(1, 2)
+#'
+#' @export
+getComponent = function(x, ids, checkUnique = FALSE) {
+  if(is.ped(x))
+    x = list(x)
+  else if(!is.pedList(x))
+    stop2("Input is not a (list of) ped objects")
+
+  # List labels of each component
+  labList = lapply(x, labels)
+
+  # A single vector with all labels
+  labVec = unlist(labList)
+
+  # Check for duplicates if indicated
+  if(checkUnique) {
+    v = labVec[labVec %in% ids]
+    if(dup <- anyDuplicated(v))
+      stop2("ID label is not unique: ", v[dup])
+  }
+
+  # Vector of same length as labVec, with component index for each member
+  compi = rep(seq_along(labList), times = lengths(labList))
+
+  # Match input ids against label vector
+  idx = match(ids, labVec)
+
+  # Return comp idx of the input ids, including NA if not present
+  compi[idx]
+}
