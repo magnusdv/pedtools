@@ -59,12 +59,13 @@ labels.ped = function(object, ...) {
   object$ID
 }
 
+
 #' Get or modify pedigree genders
 #'
 #' Functions for retrieving or changing the gender codes of specified pedigree
 #' members.
 #'
-#' @param x A `ped` object.
+#' @param x A `ped` object or a list of such.
 #' @param ids A character vector (or coercible to one) containing ID labels.
 #' @param verbose A logical: Verbose output or not.
 #'
@@ -76,8 +77,7 @@ labels.ped = function(object, ...) {
 #' entries 0 (unknown), 1 (male) or 2 (female).
 #'
 #' * `swapSex()` returns a `ped` object similar to the input, but where the
-#' gender codes of `ids` (and their spouses) are swapped (1 <->
-#' 2).
+#' gender codes of `ids` (and their spouses) are swapped (1 <-> 2).
 #'
 #' @examples
 #' x = nuclearPed(1)
@@ -87,9 +87,23 @@ labels.ped = function(object, ...) {
 #'
 #' @export
 getSex = function(x, ids = labels(x)) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(is.pedList(x)) {
+    comps = getComponent(x, ids, checkUnique = T)
+    res = vapply(seq_along(ids), function(i) {
+      if(is.na(co <- comps[i]))
+        stop2("Unknown ID label: ", ids[i])
+      getSex(x[[comps[i]]], ids[i])
+    }, FUN.VALUE = 1L)
+
+    return(res)
+  }
+
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
   x$SEX[internalID(x, ids)]
 }
+
 
 #' @rdname getSex
 #' @export

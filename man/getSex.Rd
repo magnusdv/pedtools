@@ -10,7 +10,7 @@ getSex(x, ids = labels(x))
 swapSex(x, ids, verbose = TRUE)
 }
 \arguments{
-\item{x}{A \code{ped} object.}
+\item{x}{A \code{ped} object or a list of such.}
 
 \item{ids}{A character vector (or coercible to one) containing ID labels.}
 
@@ -21,8 +21,7 @@ swapSex(x, ids, verbose = TRUE)
 \item \code{getSex()} returns an integer vector of the same length as \code{ids}, with
 entries 0 (unknown), 1 (male) or 2 (female).
 \item \code{swapSex()} returns a \code{ped} object similar to the input, but where the
-gender codes of \code{ids} (and their spouses) are swapped (1 <->
-2).
+gender codes of \code{ids} (and their spouses) are swapped (1 <-> 2).
 }
 }
 \description{
