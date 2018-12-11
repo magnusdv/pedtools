@@ -418,7 +418,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
     for (v in frames)
       if (!identical(TRUE, all.equal(v, v[1]:v[length(v)])))
         stop2("Each element of `frames` must consist of consecutive integers: ", v)
-    dup = anyDuplicated(unlist(frames))
+    dup = anyDuplicated.default(unlist(frames))
     if (dup > 0)
       stop2("Plot occurring twice in `frames` list: ", dup)
   }

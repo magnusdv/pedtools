@@ -363,7 +363,7 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
     stop2("Cannot find required column: ", names(required)[is.na(required)])
 
   # Catch duplicated column indices
-  dup_idx = anyDuplicated(col_idx, incomparables = NA)
+  dup_idx = anyDuplicated.default(col_idx, incomparables = NA)
   if(dup_idx > 0)
     stop2("Column ", dup_idx, " has mulitple assignments: ", names(col_idx)[col_idx == dup_idx])
 

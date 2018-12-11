@@ -79,8 +79,8 @@ founder_inbreeding = function(x, ids, named = FALSE) {
   else if(length(ids) != length(value))
     stop2("Replacement vector must have length 1 or length(ids)")
 
-  if(anyDuplicated(ids) > 0)
-    stop2("Duplicated ID label: ", anyDuplicated(ids))
+  if(anyDuplicated.default(ids) > 0)
+    stop2("Duplicated ID label: ", ids[duplicated(ids)])
 
   fou = founders(x)
   if(any(!ids %in% fou)) {

@@ -197,7 +197,7 @@ afreq.ped = function(x, marker, ...) {
   if(is.null(freqnames))
     stop2("Frequency vector must be named (with allele labels)")
 
-  if(anyDuplicated(freqnames))
+  if(anyDuplicated.default(freqnames))
     stop2("Duplicated alleles in frequency vector: ", value[duplicated(value)])
 
   if(length(freqnames) != length(als) || anyNA(als_order <- match(freqnames, als))) {
@@ -330,7 +330,7 @@ posCm.ped = function(x, markers, ...) {
     stop2("Length of replacement vector must equal the number of markers")
   if(!is.character(value))
     stop2("Replacement must be a character vector")
-  if(anyDuplicated(value))
+  if(anyDuplicated.default(value))
     stop2("Replacement values must be unique")
 
   idx = whichMarkers(x, markers=markers)
@@ -406,7 +406,7 @@ posCm.ped = function(x, markers, ...) {
     stop2("Argument `markers` cannot be empty")
   if(length(value) != length(markers))
     stop2("Length of replacement vector must equal the number of markers")
-  if(anyDuplicated(value))
+  if(anyDuplicated.default(value))
     stop2("Replacement values must be unique")
 
   idx = whichMarkers(x, markers=markers)
@@ -445,7 +445,7 @@ posCm.ped = function(x, markers, ...) {
     stop2("Argument `markers` cannot be empty")
   if(length(value) != length(markers))
     stop2("Length of replacement vector must equal the number of markers")
-  if(anyDuplicated(value))
+  if(anyDuplicated.default(value))
     stop2("Replacement values must be unique")
 
   idx = whichMarkers(x, markers=markers)

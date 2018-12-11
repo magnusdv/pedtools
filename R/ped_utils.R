@@ -159,7 +159,7 @@ subnucs = function(x) {
   MIDX = x[["MIDX"]]
 
   # Indices of unique parent couples
-  p_pairs_idx = seqn[FIDX + MIDX > 0 & !duplicated((n+1) * FIDX + MIDX)]
+  p_pairs_idx = seqn[FIDX + MIDX > 0 & !duplicated.default(FIDX*(n+1) + MIDX)]
 
   # List all nucs: Format = c(father, mother, children)
   lapply(rev(p_pairs_idx), function(j) {
@@ -330,7 +330,7 @@ getComponent = function(x, ids, checkUnique = FALSE) {
   # Check for duplicates if indicated
   if(checkUnique) {
     v = labVec[labVec %in% ids]
-    if(dup <- anyDuplicated(v))
+    if(dup <- anyDuplicated.default(v))
       stop2("ID label is not unique: ", v[dup])
   }
 

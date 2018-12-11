@@ -136,10 +136,11 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
   if(is.null(ids)) ids = nextlabs(labs, len=nch)
   labs = c(labs, ids)
 
-  if (anyDuplicated(labs)) stop2("Duplicated ID labels")
+  if (anyDuplicated.default(labs))
+    stop2("Duplicated ID label: ", labs[duplicated(labs)])
 
   children_pedcols = cbind(nrow(p) + (1:nch), father_int, mother_int, sex)
-  children_markers = matrix(0, nrow=nch, ncol = nmark*2)
+  children_markers = matrix(0, nrow = nch, ncol = nmark*2)
   p = rbind(p, cbind(children_pedcols, children_markers))
 
   attrs$LABELS = as.character(labs)
@@ -337,7 +338,7 @@ subset.ped = function(x, subset, ...) {
 
   sub_idx = internalID(x, subset)
 
-  if(anyDuplicated(subset))
+  if(anyDuplicated.default(subset))
     stop2("Duplicated ID label: ", unique(subset[duplicated(subset)]))
 
   pedm = as.matrix(x)

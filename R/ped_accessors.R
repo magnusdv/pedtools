@@ -30,7 +30,7 @@ relabel = function(x, new, old=labels(x)) {
   if(length(new) != length(old))
     stop2("Arguments `new` and `old` must have the same length")
 
-  if(anyDuplicated(old) > 0)
+  if(anyDuplicated.default(old) > 0)
     stop2("Duplicated entry in argument `old`: ", unique(old[duplicated(old)]))
 
   # Relabel
@@ -40,7 +40,7 @@ relabel = function(x, new, old=labels(x)) {
   x$ID = id
 
   # Duplicated IDs after relabeling?
-  if(anyDuplicated(id) > 0)
+  if(anyDuplicated.default(id) > 0)
     stop2("Duplicated ID label: ", unique(id[duplicated(id)]))
 
   # Replace `pedmembers` attribute of each marker

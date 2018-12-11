@@ -102,7 +102,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
   famid = as.character(famid)
 
   # Duplicated IDs
-  if(anyDuplicated(id) > 0)
+  if(anyDuplicated.default(id) > 0)
     stop2("Duplicated entry in `id` vector: ", id[duplicated(id)])
 
   # Parental index vectors (integer).
@@ -229,7 +229,7 @@ validate_ped = function(x) {
   # if(n==1) return()
 
   # Duplicated IDs
-  if(anyDuplicated(ID) > 0)
+  if(anyDuplicated.default(ID) > 0)
     errs = c(errs, paste("Duplicated ID label:", ID[duplicated(ID)]))
 
   # Female fathers

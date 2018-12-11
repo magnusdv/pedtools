@@ -148,7 +148,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   ### New ped matrix
   # Setup for creating pedm by replicating lb rows
   all_rows = rep.int(1:n, times = 1 + (1:n %in% loop_breakers))
-  new_rows = duplicated(all_rows)
+  new_rows = duplicated.default(all_rows)
 
   # Dummy numerical IDs of the new duplicated indivs.
   # NB: These are inserted in 'new_rows' positions, hence disrupts 1,2,3,...
@@ -251,9 +251,10 @@ findLoopBreakers2 = function(x, errorIfFail = TRUE) {
   ped2edge = function(id, fid, mid) {
     # input: ped-kolonner UTEN founder-rader
     couples = paste(fid, mid, sep = "+")
+    dups = duplicated.default(couples)
     edge.children = cbind(couples, id)
-    edge.marriage_F = cbind(fid, couples)[!duplicated(couples), ]
-    edge.marriage_M = cbind(mid, couples)[!duplicated(couples), ]
+    edge.marriage_F = cbind(fid, couples)[!dups, ]
+    edge.marriage_M = cbind(mid, couples)[!dups, ]
     rbind(edge.marriage_F, edge.marriage_M, edge.children)
   }
 

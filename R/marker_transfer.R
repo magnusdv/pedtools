@@ -62,7 +62,7 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
       ids = intersect(labels(from), tolabels)
 
     toids = tolabels[tolabels %in% ids]
-    if((dup <- anyDuplicated(toids)) > 0)
+    if((dup <- anyDuplicated.default(toids)) > 0)
       stop2("Non-unique ID label in target pedlist: ", toids[dup])
 
     to = lapply(to, function(comp) {
@@ -79,7 +79,7 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
       ids = intersect(fromlabels, labels(to))
 
     fromids = fromlabels[fromlabels %in% ids]
-    if((dup <- anyDuplicated(fromids)) > 0)
+    if((dup <- anyDuplicated.default(fromids)) > 0)
       stop2("Non-unique ID label in source pedlist: ", fromids[dup])
 
     # Transfer from first component
