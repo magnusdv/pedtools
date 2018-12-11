@@ -56,36 +56,3 @@ connectedComponents = function(id, fid, mid, fidx=NULL, midx=NULL) {
   comps = env$comp
   lapply(1:max(comps), function(i) id[comps == i])
 }
-
-
-# Old version
-connectedComponents_OLD = function(id, fid, mid) {
-  # Placeholder for final components
-  comps = list()
-
-  # Starting point: List of all founders and trios
-  temp = lapply(seq_along(id), function(i) .mysetdiff(c(id[i], fid[i], mid[i]), 0))
-
-  while (length(temp) > 0) {
-    # Check if first vector overlaps with any of the others
-    a = temp[[1]]
-    remov = numeric()
-    for (j in seq_along(temp)[-1]) {
-      if (any(match(a, temp[[j]], nomatch = 0) > 0)) {
-        a = unique.default(c(a, temp[[j]]))
-        remov = c(remov, j)
-      }
-    }
-
-    if (length(remov) > 0) {
-      # Remove any overlapping vectors, and insert the union as first element
-      temp[remov] = NULL
-      temp[[1]] = a
-    } else {
-      # If no overlaps, we have a maximal component. Move to comps and remove from temp.
-      comps = c(comps, list(sort.default(a)))
-      temp[[1]] = NULL
-    }
-  }
-  comps
-}
