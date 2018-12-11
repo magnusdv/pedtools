@@ -149,20 +149,24 @@ validate_sex = function(sex, nInd, zero_allowed = TRUE) {
 #' @rdname ped_utils
 #' @export
 subnucs = function(x) {
-  n = pedsize(x)
   if (is.singleton(x))
     return(list())
-  FIDX = x$FIDX; MIDX = x$MIDX
+
+  n = pedsize(x)
+  seqn = seq_len(n)
+
+  FIDX = x[["FIDX"]]
+  MIDX = x[["MIDX"]]
 
   # Indices of unique parent couples
-  p_pairs = paste(FIDX, MIDX)
-  p_pairs_idx = which(!duplicated(p_pairs) & p_pairs != "0 0")
+  p_pairs_idx = seqn[FIDX + MIDX > 0 & !duplicated((n+1) * FIDX + MIDX)]
 
   # List all nucs: Format = c(father, mother, children)
   lapply(rev(p_pairs_idx), function(j) {
-    nuc = list(father=FIDX[j], mother=MIDX[j], children=which(FIDX == FIDX[j] & MIDX == MIDX[j]))
+    nuc = list(father = FIDX[j], mother = MIDX[j],
+               children = seqn[FIDX == FIDX[j] & MIDX == MIDX[j]])
     class(nuc) = "nucleus"
-    attr(nuc, 'labels') = labels(x)
+    attr(nuc, "labels") = labels(x)
     nuc
   })
 }
