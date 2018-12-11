@@ -37,6 +37,18 @@ is_number = function(x, minimum = NA, maximum = NA) {
 # A safer version of base::sample
 safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 
+# Faster (specially for vectors of size 1 and 2) version of sort.int()
+.mysortInt = function(v) {
+  L = length(v)
+  if(L == 1)
+    return(v)
+  if(L == 2) {
+    if(v[1] > v[2])
+      return(v[c(2, 1)])
+    else return(v)
+  }
+  sort.int(v, method = "shell")
+}
 
 # Fast setdiff
 .mysetdiff = function(x, y) unique.default(x[match(x, y, 0L) == 0L])

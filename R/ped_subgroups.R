@@ -233,7 +233,7 @@ ancestors = function(x, id, internal = FALSE) {
     up1 = c(FIDX[up1], MIDX[up1])
     up1 = up1[up1>0]
   }
-  ancest = sort.int(unique.default(ancest))
+  ancest = .mysortInt(unique.default(ancest))
   if (internal) ancest else labels(x)[ancest]
 }
 
@@ -252,7 +252,7 @@ descendants = function(x, id, internal = FALSE) {
       nextoffs = which(FIDX %in% nextoffs | MIDX %in% nextoffs)
       desc = c(desc, nextoffs)
   }
-  desc = sort.int(unique.default(desc))
+  desc = .mysortInt(unique.default(desc))
   if (internal) desc else labels(x)[desc]
 }
 

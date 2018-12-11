@@ -125,7 +125,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   LABS = labels(x)
 
   # Convert to internal IDs and sort (don't skip this)
-  loop_breakers = sort.int(internalID(x, loop_breakers))
+  loop_breakers = .mysortInt(internalID(x, loop_breakers))
 
   FOU = founders(x, internal=T)
   FOU_LB = intersect(loop_breakers, FOU)
