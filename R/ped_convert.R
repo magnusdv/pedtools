@@ -409,6 +409,7 @@ as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA,
       p = lapply(p, function(comp) {
         rows = match(labels(comp), id)
         AM = x[rows, marker_col, drop = F]
+        rownames(AM) = comp$id
         setMarkers(comp, allele_matrix = AM,
                    locus_annotations = locus_annotations,
                    missing = missing, allele_sep = allele_sep)
