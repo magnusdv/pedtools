@@ -71,6 +71,11 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
     if(!is.null(ids) && !all(ids %in% unlist(lapply(x, labels))))
       stop2("Unknown ID label: ", setdiff(ids, unlist(lapply(x, labels))))
 
+    # Check equality of marker counts and names
+    mNames = lapply(x, function(comp) name(comp, markers = seq_along(nMarkers(comp))))
+    if(length(unique(mNames)) > 1)
+      stop2("Components cannot have different number of markers, or different marker names. Please file an issue if this is important to you.")
+
     # Extract alleles from each component
     amList = lapply(x, function(comp) {
       ids_comp = if(!is.null(ids)) intersect(ids, labels(comp))
