@@ -61,7 +61,17 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   if(!is.ped(x) && !is.pedList(x))
     stop2("The first argument must be a `ped` object or a list of such")
 
+  if(dup <- anyDuplicated(ids)) {
+    stop2("Duplicated element of argument `ids`: ", dup)
+  }
+
   if(is.pedList(x)) {
+
+    # Check that all `ids` are known
+    if(!is.null(ids) && !all(ids %in% unlist(lapply(x, labels))))
+      stop2("Unknown ID label: ", setdiff(ids, unlist(lapply(x, labels))))
+
+    # Extract alleles from each component
     amList = lapply(x, function(comp) {
       ids_comp = if(!is.null(ids)) intersect(ids, labels(comp))
       getAlleles(comp, ids = ids_comp, markers = markers)
