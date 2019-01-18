@@ -77,9 +77,13 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
       getAlleles(comp, ids = ids_comp, markers = markers)
     })
 
-    # Sort according to input `ids`
+    # Bind into single matrix
     res = do.call(rbind, amList)
-    res = res[as.character(ids), ]
+
+    # Sort rows according to input `ids`
+    if(!is.null(ids))
+      res = res[as.character(ids), ]
+
     return(res)
   }
 
