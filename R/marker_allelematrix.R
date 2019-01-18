@@ -66,7 +66,11 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
       ids_comp = if(!is.null(ids)) intersect(ids, labels(comp))
       getAlleles(comp, ids = ids_comp, markers = markers)
     })
-    return(do.call(rbind, amList))
+
+    # Sort according to input `ids`
+    res = do.call(rbind, amList)
+    res = res[as.character(ids), ]
+    return(res)
   }
 
   # Main body: x is now is single `ped` object
