@@ -87,7 +87,7 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
 
     # Sort rows according to input `ids`
     if(!is.null(ids))
-      res = res[as.character(ids), ]
+      res = res[as.character(ids), , drop = F]
 
     return(res)
   }
