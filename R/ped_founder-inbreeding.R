@@ -4,30 +4,30 @@
 #'
 #' @param x A `ped` object
 #' @param ids Any subset of `founders(x)`. If `ids` is missing in
-#'   `founder_inbreeding()`, it is set to `founders(x)`.
+#'   `founderInbreeding()`, it is set to `founders(x)`.
 #' @param named A logical: If TRUE, the output vector is named with the ID
 #'   labels
 #'
-#' @return For `founder_inbreeding`, a numeric vector of the same length as
+#' @return For `founderInbreeding`, a numeric vector of the same length as
 #' `ids`, containing the founder inbreeding coefficients.
 #'
-#' For `founder_inbreeding<-` the updated `ped` object is returned.
+#' For `founderInbreeding<-` the updated `ped` object is returned.
 #'
 #' @examples
 #' x = nuclearPed(1)
-#' founder_inbreeding(x, ids = '1') = 1
-#' founder_inbreeding(x, named = TRUE)
+#' founderInbreeding(x, ids = '1') = 1
+#' founderInbreeding(x, named = TRUE)
 #'
 #' # Setting all founders at once (replacement value is recycled)
-#' founder_inbreeding(x, ids = founders(x)) = 0.5
-#' founder_inbreeding(x, named = TRUE)
+#' founderInbreeding(x, ids = founders(x)) = 0.5
+#' founderInbreeding(x, named = TRUE)
 #'
 #' # Alternative syntax, using a named vector
-#' founder_inbreeding(x) = c('1'=0.1, '2'=0.2)
-#' founder_inbreeding(x, named = TRUE)
+#' founderInbreeding(x) = c('1'=0.1, '2'=0.2)
+#' founderInbreeding(x, named = TRUE)
 #'
 #' @export
-founder_inbreeding = function(x, ids, named = FALSE) {
+founderInbreeding = function(x, ids, named = FALSE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
   fou = founders(x)
@@ -56,9 +56,9 @@ founder_inbreeding = function(x, ids, named = FALSE) {
 #'   case, the `ids` argument should not be used. (See examples.)
 #'
 #'
-#' @rdname founder_inbreeding
+#' @rdname founderInbreeding
 #' @export
-`founder_inbreeding<-` = function(x, ids, value) {
+`founderInbreeding<-` = function(x, ids, value) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!is.numeric(value))
     stop2("Inbreeding coefficients must be numeric: ", value)

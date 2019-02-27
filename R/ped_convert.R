@@ -64,7 +64,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
     attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
     attr(m, "FOUNDER_INBREEDING") =
       if(is.null(x$FOUNDER_INBREEDING)) NULL
-      else founder_inbreeding(x, named = TRUE)
+      else founderInbreeding(x, named = TRUE)
     if(hasMarkers(x)) {
       attr(m, "markerattr") = lapply(x$markerdata, attributes)
     }
@@ -97,7 +97,7 @@ restore_ped = function(x, attrs = NULL, validate = TRUE) {
     if(length(finb_lost) > 0)
       message("Warning: Non-zero founder inbreeding lost. (Individuals: ", toString(finb_lost), ")")
     finb = finb[intersect(names(finb), new_fou)]
-    founder_inbreeding(p) = finb
+    founderInbreeding(p) = finb
   }
 
   ### Markers

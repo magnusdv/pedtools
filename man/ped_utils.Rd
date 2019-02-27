@@ -36,7 +36,7 @@ computation is done here; the function simply returns the value of
 \code{x$UNBROKEN_LOOPS}).
 \item \code{has_inbred_founders(x)} returns TRUE is founder inbreeding is specified
 for \code{x} and at least one founder has positive inbreeding coefficient. See
-\code{\link[=founder_inbreeding]{founder_inbreeding()}} for details.
+\code{\link[=founderInbreeding]{founderInbreeding()}} for details.
 \item \code{has_selfing(x)} returns TRUE if the pedigree contains selfing events. This
 is recognised by father and mother begin equal for some child. (Note that for
 this to be allowed, the gender code of the parent must be 0.)

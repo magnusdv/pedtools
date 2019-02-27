@@ -58,7 +58,7 @@ their duplicates in the second column. All entries refer to the internal
 IDs. This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
 \item \code{FOUNDER_INBREEDING} : A numeric vector with the same length as
 \code{founders(x)}, or NULL. This is always NULL when a new \code{ped} is created.
-See \code{\link[=founder_inbreeding]{founder_inbreeding()}}.
+See \code{\link[=founderInbreeding]{founderInbreeding()}}.
 \item \code{MARKERS} : A list of \code{marker} objects, or NULL.
 }
 }

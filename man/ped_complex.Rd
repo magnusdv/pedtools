@@ -78,8 +78,8 @@ QHFC = quadHalfFirstCousins()
 \dontrun{
 x = doubleCousins(degree1 = 1, removal1 = 1, half1 = TRUE,
                   degree2 = 0, removal2 = 1, half2 = TRUE)
-founder_inbreeding(x, 1) = 3-2*sqrt(2)
-founder_inbreeding(x, 4) = .5 * sqrt(2)
+founderInbreeding(x, 1) = 3-2*sqrt(2)
+founderInbreeding(x, 4) = .5 * sqrt(2)
 j1 = ribd::ibd_identity(x, leaves(x))
 j2 = ribd::ibd_identity(QHFC, leaves(QHFC))
 stopifnot(identical(j1, j2))

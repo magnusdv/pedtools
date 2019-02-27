@@ -58,7 +58,7 @@
 #'
 #'   * `FOUNDER_INBREEDING` : A numeric vector with the same length as
 #'   `founders(x)`, or NULL. This is always NULL when a new `ped` is created.
-#'   See [founder_inbreeding()].
+#'   See [founderInbreeding()].
 #'
 #'   * `MARKERS` : A list of `marker` objects, or NULL.
 #'
