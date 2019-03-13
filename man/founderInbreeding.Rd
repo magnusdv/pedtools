@@ -5,9 +5,9 @@
 \alias{founderInbreeding<-}
 \title{Inbreeding coefficients of founders}
 \usage{
-founderInbreeding(x, ids, named = FALSE)
+founderInbreeding(x, ids, named = FALSE, chromType = "autosomal")
 
-founderInbreeding(x, ids) <- value
+founderInbreeding(x, ids, chromType = "autosomal") <- value
 }
 \arguments{
 \item{x}{A \code{ped} object}
@@ -18,6 +18,9 @@ founderInbreeding(x, ids) <- value
 \item{named}{A logical: If TRUE, the output vector is named with the ID
 labels}
 
+\item{chromType}{Either "autosomal", "x". (Not case sensitive;
+abbrevations allowed.)}
+
 \item{value}{A numeric of the same length as \code{ids}, entries in the interval
 \code{[0, 1]}. If the vector is named, then the names are interpreted as ID
 labels of the founders whose inbreeding coefficients should be set. In this
@@ -25,7 +28,8 @@ case, the \code{ids} argument should not be used. (See examples.)}
 }
 \value{
 For \code{founderInbreeding}, a numeric vector of the same length as
-\code{ids}, containing the founder inbreeding coefficients.
+\code{ids}, containing the founder inbreeding coefficients. If \code{chromType} is
+NA, a list of two vectors, named "autosomal" and "x", is returned.
 
 For \code{founderInbreeding<-} the updated \code{ped} object is returned.
 }

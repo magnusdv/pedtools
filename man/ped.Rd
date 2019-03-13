@@ -56,8 +56,8 @@ reordered, this equals \code{as.integer(sex)}.
 \item \code{LOOP_BREAKERS} : A matrix with loop breaker ID's in the first column and
 their duplicates in the second column. All entries refer to the internal
 IDs. This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
-\item \code{FOUNDER_INBREEDING} : A numeric vector with the same length as
-\code{founders(x)}, or NULL. This is always NULL when a new \code{ped} is created.
+\item \code{FOUNDER_INBREEDING} : A list of two potential entries, "autosomal" and "x"; both numeric vectors with the same length as
+\code{founders(x)}. \code{FOUNDER_INBREEDING} is always NULL when a new \code{ped} is created.
 See \code{\link[=founderInbreeding]{founderInbreeding()}}.
 \item \code{MARKERS} : A list of \code{marker} objects, or NULL.
 }

@@ -15,7 +15,7 @@ pedsize(x)
 
 has_unbroken_loops(x)
 
-has_inbred_founders(x)
+has_inbred_founders(x, chromType = "autosomal")
 
 has_selfing(x)
 
@@ -27,6 +27,8 @@ peelingOrder(x)
 }
 \arguments{
 \item{x}{A \code{ped} object, or (in some functions - see Details) a list of such.}
+
+\item{chromType}{Either "autosomal" (default) or "x".}
 }
 \value{
 \itemize{

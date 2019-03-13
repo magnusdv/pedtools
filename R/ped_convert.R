@@ -64,7 +64,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
     attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
     attr(m, "FOUNDER_INBREEDING") =
       if(is.null(x$FOUNDER_INBREEDING)) NULL
-      else founderInbreeding(x, named = TRUE)
+      else founderInbreeding(x, named = TRUE, chromType = NA)
     if(hasMarkers(x)) {
       attr(m, "markerattr") = lapply(x$markerdata, attributes)
     }
@@ -93,11 +93,20 @@ restore_ped = function(x, attrs = NULL, validate = TRUE) {
     p['FOUNDER_INBREEDING'] = list(NULL)
   else {
     new_fou = founders(p)
-    finb_lost = .mysetdiff(names(finb)[finb > 0], new_fou)
-    if(length(finb_lost) > 0)
-      message("Warning: Non-zero founder inbreeding lost. (Individuals: ", toString(finb_lost), ")")
-    finb = finb[intersect(names(finb), new_fou)]
-    founderInbreeding(p) = finb
+
+    # autosomal founder inbreeding
+    aut = finb$autosomal
+    aut_lost = .mysetdiff(names(aut)[aut > 0], new_fou)
+    if(length(aut_lost) > 0)
+      message("Warning: Autosomal founder inbreeding lost. (Individuals: ", toString(aut_lost), ")")
+    founderInbreeding(p, chromType = "autosomal") = aut[intersect(names(aut), new_fou)]
+
+    # X founder inbreeding
+    xchr = finb$x
+    x_lost = .mysetdiff(names(xchr)[xchr > 0], new_fou)
+    if(length(x_lost) > 0)
+      message("Warning: X chromosomal founder inbreeding lost. (Individuals: ", toString(x_lost), ")")
+    founderInbreeding(p, chromType = "x") = xchr[intersect(names(xchr), new_fou)]
   }
 
   ### Markers

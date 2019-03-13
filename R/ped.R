@@ -56,8 +56,8 @@
 #'   their duplicates in the second column. All entries refer to the internal
 #'   IDs. This is usually set by [breakLoops()].
 #'
-#'   * `FOUNDER_INBREEDING` : A numeric vector with the same length as
-#'   `founders(x)`, or NULL. This is always NULL when a new `ped` is created.
+#'   * `FOUNDER_INBREEDING` : A list of two potential entries, "autosomal" and "x"; both numeric vectors with the same length as
+#'   `founders(x)`. `FOUNDER_INBREEDING` is always NULL when a new `ped` is created.
 #'   See [founderInbreeding()].
 #'
 #'   * `MARKERS` : A list of `marker` objects, or NULL.

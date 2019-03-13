@@ -60,6 +60,6 @@ test_that("setting/getting founder inbreeding catches errors", {
                "Inbreeding coefficients must be in the interval")
 
   founderInbreeding(x, 1) = 1
-  expect_message(addParents(x, 1, verbose=F), "Warning: Non-zero founder inbreeding lost.")
+  expect_message(addParents(x, 1, verbose=F), "Warning: Autosomal founder inbreeding lost.")
 
 })

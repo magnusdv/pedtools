@@ -7,11 +7,14 @@
 #'   `founderInbreeding()`, it is set to `founders(x)`.
 #' @param named A logical: If TRUE, the output vector is named with the ID
 #'   labels
+#' @param chromType Either "autosomal", "x". (Not case sensitive;
+#'   abbrevations allowed.)
 #'
 #' @return For `founderInbreeding`, a numeric vector of the same length as
-#' `ids`, containing the founder inbreeding coefficients.
+#'   `ids`, containing the founder inbreeding coefficients. If `chromType` is
+#'   NA, a list of two vectors, named "autosomal" and "x", is returned.
 #'
-#' For `founderInbreeding<-` the updated `ped` object is returned.
+#'   For `founderInbreeding<-` the updated `ped` object is returned.
 #'
 #' @examples
 #' x = nuclearPed(1)
@@ -27,8 +30,10 @@
 #' founderInbreeding(x, named = TRUE)
 #'
 #' @export
-founderInbreeding = function(x, ids, named = FALSE) {
+founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(!is.na(chromType))
+    chromType = match.arg(tolower(chromType), c("autosomal", "x"))
 
   fou = founders(x)
 
@@ -39,14 +44,33 @@ founderInbreeding = function(x, ids, named = FALSE) {
     stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
   }
 
-  finb = x$FOUNDER_INBREEDING
+  if(is.na(chromType)) {
+    aut = x$FOUNDER_INBREEDING$autosomal
+    xchr = x$FOUNDER_INBREEDING$x
 
-  if(is.null(finb))
-    finb = rep(0, length(fou))
+    if(is.null(aut)) aut = rep(0, length(fou))
+    if(is.null(xchr)) xchr = ifelse(getSex(x, fou) == 1, 1, 0) # always 1 for males
 
-  res = finb[match(ids, fou)]
-  if(named)
-    names(res) = ids
+    aut = aut[match(ids, fou)]
+    xchr = xchr[match(ids, fou)]
+
+    if(named)
+      names(aut) = names(xchr) = ids
+    res = list(autosomal = aut, x = xchr)
+  }
+  else {
+    finb = x$FOUNDER_INBREEDING
+    if(is.list(finb)) finb = finb[[chromType]]
+    if(is.null(finb))
+      finb = switch(chromType,
+                    autosomal = rep(0, length(fou)),
+                    x = ifelse(getSex(x, fou) == 1, 1, 0)) # always 1 for males
+
+    res = finb[match(ids, fou)]
+    if(named)
+      names(res) = ids
+    res
+  }
   res
 }
 
@@ -58,7 +82,7 @@ founderInbreeding = function(x, ids, named = FALSE) {
 #'
 #' @rdname founderInbreeding
 #' @export
-`founderInbreeding<-` = function(x, ids, value) {
+`founderInbreeding<-` = function(x, ids, chromType = "autosomal", value) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!is.numeric(value))
     stop2("Inbreeding coefficients must be numeric: ", value)
@@ -88,11 +112,23 @@ founderInbreeding = function(x, ids, named = FALSE) {
     stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
   }
 
-  finb = x$FOUNDER_INBREEDING
-  if(is.null(finb))
-    finb = rep(0, length(fou))
+  chromType = match.arg(tolower(chromType), c("autosomal", "x"))
+  if(chromType =="x" && any(value[ids %in% males(x)] < 1))
+    stop2("X chromosomal inbreeding coefficient of males cannot be less than 1: ", value[ids %in% males(x)])
 
-  finb[match(ids, fou)] = value
-  x$FOUNDER_INBREEDING = finb
+  # Back compatibility: Allow previous version where FOUNDER_INBREEDING was just a vector
+  finb = x$FOUNDER_INBREEDING
+  if(!is.list(finb) && is.numeric(finb))
+    finb = list(autosomal = finb, x = NULL)
+
+  current = finb[[chromType]]
+
+  if(is.null(current))
+    current = switch(chromType,
+                     autosomal = rep(0, length(fou)),
+                     x = ifelse(getSex(x, fou) == 1, 1, 0))
+
+  current[match(ids, fou)] = value
+  x$FOUNDER_INBREEDING[[chromType]] = current
   x
 }

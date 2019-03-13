@@ -301,8 +301,12 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
 
   # Remove founder inbreeding
   finb = attrs$FOUNDER_INBREEDING
-  if (!is.null(finb) && length(intersect(remov, FOU)))
-    attrs$FOUNDER_INBREEDING = finb[!names(finb) %in% labs[remov]]
+  if (!is.null(finb) && length(intersect(remov, FOU))) {
+    aut = finb$autosomal
+    xchr = finb$x
+    attrs$FOUNDER_INBREEDING = list(autosomal = aut[!names(aut) %in% labs[remov]],
+                                            x = xchr[!names(xchr) %in% labs[remov]])
+  }
 
   restore_ped(new, attrs = attrs)
 }
