@@ -175,6 +175,9 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   if(length(id.labels) > 1)
     stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
+  if(is.null(marker))
+    x$markerdata = NULL
+
   y = addParents(x, labels(x)[1], verbose = FALSE)
 
   # Marker genotypes
