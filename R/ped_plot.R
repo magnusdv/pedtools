@@ -229,18 +229,13 @@ as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
     ped = as.data.frame(x)  # not as.matrix()
     ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
 
-    affected = status = NULL
+    affected = ifelse(ped$id %in% shaded, 1, 0) # shaded=NULL => affected=c(0,0,..)
+    status = ifelse(ped$id %in% deceased, 1, 0)
 
-    if(!is.null(shaded))
-      affected = ifelse(ped$id %in% shaded, 1, 0)
-
-    if(!is.null(deceased))
-      status = ifelse(ped$id %in% deceased, 1, 0)
-
-    suppressWarnings(kinship2::pedigree(id = ped$id, dadid = ped$fid,
-                                        momid = ped$mid, sex = ped$sex,
-                                        affected = affected, status = status,
-                                        missid=0))
+    suppressWarnings( # Avoid kinship2 warning about missing genders a.s.o.
+      kinship2::pedigree(id = ped$id, dadid = ped$fid, momid = ped$mid,
+                         sex = ped$sex, affected = affected,
+                         status = status,  missid = 0))
 }
 
 #' @rdname plot.ped
