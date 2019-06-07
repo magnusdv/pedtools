@@ -64,7 +64,7 @@ test_that("random ped", {
   expect_is(x, "ped")
   expect_equal(pedsize(x), 6)
 
-  y = randomPed(3, 3, seed = 4)
+  y = randomPed(3, 3, seed = 5)
   expect_true(is.pedList(y))
   expect_equal(length(y), 2)
 })
