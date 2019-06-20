@@ -94,11 +94,10 @@ has_inbred_founders = function(x, chromType = "autosomal") {
   if(is.pedList(x))
     return(any(vapply(x, has_inbred_founders, logical(1), chromType = chromType)))
 
-  chromType = match.arg(tolower(chromType), c("autosomal", "x"))
   if(is.null(x$FOUNDER_INBREEDING))
     return(FALSE)
 
-  finb = founderInbreeding(x, named=T, chromType=chromType)
+  finb = founderInbreeding(x, named = T, chromType = chromType)
 
   # If X: only females interesting (males are always 1)
   if(chromType == "x")

@@ -64,7 +64,8 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
     attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
     attr(m, "FOUNDER_INBREEDING") =
       if(is.null(x$FOUNDER_INBREEDING)) NULL
-      else founderInbreeding(x, named = TRUE, chromType = NA)
+      else list(autosomal = founderInbreeding(x, named = TRUE, chromType = "autosomal"),
+                x = founderInbreeding(x, named = TRUE, chromType = "x"))
     if(hasMarkers(x)) {
       attr(m, "markerattr") = lapply(x$markerdata, attributes)
     }

@@ -10,16 +10,15 @@ founderInbreeding(x, ids, named = FALSE, chromType = "autosomal")
 founderInbreeding(x, ids, chromType = "autosomal") <- value
 }
 \arguments{
-\item{x}{A \code{ped} object}
+\item{x}{A \code{ped} object.}
 
 \item{ids}{Any subset of \code{founders(x)}. If \code{ids} is missing in
 \code{founderInbreeding()}, it is set to \code{founders(x)}.}
 
 \item{named}{A logical: If TRUE, the output vector is named with the ID
-labels}
+labels.}
 
-\item{chromType}{Either "autosomal", "x". (Not case sensitive;
-abbrevations allowed.)}
+\item{chromType}{Either "autosomal" (default) or "x".}
 
 \item{value}{A numeric of the same length as \code{ids}, entries in the interval
 \code{[0, 1]}. If the vector is named, then the names are interpreted as ID
@@ -28,8 +27,7 @@ case, the \code{ids} argument should not be used. (See examples.)}
 }
 \value{
 For \code{founderInbreeding}, a numeric vector of the same length as
-\code{ids}, containing the founder inbreeding coefficients. If \code{chromType} is
-NA, a list of two vectors, named "autosomal" and "x", is returned.
+\code{ids}, containing the founder inbreeding coefficients.
 
 For \code{founderInbreeding<-} the updated \code{ped} object is returned.
 }
@@ -37,8 +35,8 @@ For \code{founderInbreeding<-} the updated \code{ped} object is returned.
 Functions to get or set inbreeding coefficients for the pedigree founders.
 }
 \examples{
-x = nuclearPed(1)
-founderInbreeding(x, ids = '1') = 1
+x = nuclearPed(father = "fa", mother = "mo", child = 1)
+founderInbreeding(x, "fa") = 1
 founderInbreeding(x, named = TRUE)
 
 # Setting all founders at once (replacement value is recycled)
@@ -46,7 +44,7 @@ founderInbreeding(x, ids = founders(x)) = 0.5
 founderInbreeding(x, named = TRUE)
 
 # Alternative syntax, using a named vector
-founderInbreeding(x) = c('1'=0.1, '2'=0.2)
+founderInbreeding(x) = c(fa = 0.1, mo = 0.2)
 founderInbreeding(x, named = TRUE)
 
 }

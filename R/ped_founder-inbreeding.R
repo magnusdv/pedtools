@@ -2,23 +2,21 @@
 #'
 #' Functions to get or set inbreeding coefficients for the pedigree founders.
 #'
-#' @param x A `ped` object
+#' @param x A `ped` object.
 #' @param ids Any subset of `founders(x)`. If `ids` is missing in
 #'   `founderInbreeding()`, it is set to `founders(x)`.
 #' @param named A logical: If TRUE, the output vector is named with the ID
-#'   labels
-#' @param chromType Either "autosomal", "x". (Not case sensitive;
-#'   abbrevations allowed.)
+#'   labels.
+#' @param chromType Either "autosomal" (default) or "x".
 #'
 #' @return For `founderInbreeding`, a numeric vector of the same length as
-#'   `ids`, containing the founder inbreeding coefficients. If `chromType` is
-#'   NA, a list of two vectors, named "autosomal" and "x", is returned.
+#'   `ids`, containing the founder inbreeding coefficients.
 #'
 #'   For `founderInbreeding<-` the updated `ped` object is returned.
 #'
 #' @examples
-#' x = nuclearPed(1)
-#' founderInbreeding(x, ids = '1') = 1
+#' x = nuclearPed(father = "fa", mother = "mo", child = 1)
+#' founderInbreeding(x, "fa") = 1
 #' founderInbreeding(x, named = TRUE)
 #'
 #' # Setting all founders at once (replacement value is recycled)
@@ -26,52 +24,44 @@
 #' founderInbreeding(x, named = TRUE)
 #'
 #' # Alternative syntax, using a named vector
-#' founderInbreeding(x) = c('1'=0.1, '2'=0.2)
+#' founderInbreeding(x) = c(fa = 0.1, mo = 0.2)
 #' founderInbreeding(x, named = TRUE)
 #'
 #' @export
 founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
-  if(!is.na(chromType))
-    chromType = match.arg(tolower(chromType), c("autosomal", "x"))
+  if(!chromType %in% c("autosomal", "x"))
+    stop2("Argument `chromType` must be a either 'autosomal' or 'x': ", chromType)
+
+  finb = x$FOUNDER_INBREEDING[[chromType]]
+
+  if(is.null(finb)) {
+    isFou = x$FIDX == 0
+    finb = rep_len(0, sum(isFou))
+    if(chromType == "x") {
+      maleFou = x$SEX[isFou] == 1
+      finb[maleFou] = 1 # always 1 for males
+    }
+  }
+
+  # Quick return if `ids` is missing (so no ID checks are needed)
+  if(missing(ids)) {
+    if(named)
+      names(finb) = founders(x)
+    return(finb)
+  }
 
   fou = founders(x)
-
-  if (missing(ids))
-    ids = fou
-  else if(any(!ids %in% fou)) {
+  if(any(!ids %in% fou)) {
     internalID(x, ids) # quick hack to catch unknown labels
     stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
   }
 
-  if(is.na(chromType)) {
-    aut = x$FOUNDER_INBREEDING$autosomal
-    xchr = x$FOUNDER_INBREEDING$x
+  finb = finb[match(ids, fou)]
+  if(named)
+    names(finb) = ids
 
-    if(is.null(aut)) aut = rep(0, length(fou))
-    if(is.null(xchr)) xchr = ifelse(getSex(x, fou) == 1, 1, 0) # always 1 for males
-
-    aut = aut[match(ids, fou)]
-    xchr = xchr[match(ids, fou)]
-
-    if(named)
-      names(aut) = names(xchr) = ids
-    res = list(autosomal = aut, x = xchr)
-  }
-  else {
-    finb = x$FOUNDER_INBREEDING
-    if(is.list(finb)) finb = finb[[chromType]]
-    if(is.null(finb))
-      finb = switch(chromType,
-                    autosomal = rep(0, length(fou)),
-                    x = ifelse(getSex(x, fou) == 1, 1, 0)) # always 1 for males
-
-    res = finb[match(ids, fou)]
-    if(named)
-      names(res) = ids
-    res
-  }
-  res
+  finb
 }
 
 #' @param value A numeric of the same length as `ids`, entries in the interval
