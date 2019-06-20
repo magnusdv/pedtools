@@ -106,19 +106,22 @@ founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
   if(chromType =="x" && any(value[ids %in% males(x)] < 1))
     stop2("X chromosomal inbreeding coefficient of males cannot be less than 1: ", value[ids %in% males(x)])
 
-  # Back compatibility: Allow previous version where FOUNDER_INBREEDING was just a vector
   finb = x$FOUNDER_INBREEDING
+
+  # Back compatibility: In previous versions FOUNDER_INBREEDING was a just a (autosomal) vector
   if(!is.list(finb) && is.numeric(finb))
     finb = list(autosomal = finb, x = NULL)
 
+  # Get current value. If NULL, initialise as vector
   current = finb[[chromType]]
-
   if(is.null(current))
     current = switch(chromType,
                      autosomal = rep(0, length(fou)),
                      x = ifelse(getSex(x, fou) == 1, 1, 0))
 
+  # Update coefficients
   current[match(ids, fou)] = value
-  x$FOUNDER_INBREEDING[[chromType]] = current
+  x$FOUNDER_INBREEDING[chromType] = list(chromType = current)
+
   x
 }
