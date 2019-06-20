@@ -59,7 +59,7 @@ is.markerList = function(x) {
 #'   returns FALSE.)
 #' @return TRUE or FALSE.
 #' @export
-is_Xmarker = function(x) {
+isXmarker = function(x) {
   chr = chrom(x)
   isTRUE(chr == "X" || chr == "23")
 }

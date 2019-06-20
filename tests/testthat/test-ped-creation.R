@@ -27,7 +27,7 @@ test_that("ped() catches various input errors", {
 })
 
 
-test_that("validate_ped() catches malformed pedigrees", {
+test_that("validatePed() catches malformed pedigrees", {
   id=letters[1:3]; fid=c("b",0,0); mid=c("c",0,0); sex=c(1,1,2)
 
   expect_error(ped(id, c(0,0,0), mid, sex), "Individual a has exactly 1 parent")

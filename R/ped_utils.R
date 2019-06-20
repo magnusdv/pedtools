@@ -2,8 +2,8 @@
 #'
 #' Various utility functions for `ped` objects
 #'
-#' The functions `has_unbroken_loops()`, `has_inbred_founders()` and
-#' `has_selfing()` allow as input either a single `ped` object or a list of
+#' The functions `hasUnbrokenLoops()`, `hasInbredFounders()` and
+#' `hasSelfing()` allow as input either a single `ped` object or a list of
 #' such. In the latter case each function returns TRUE if it is TRUE for any of
 #' the components.
 #'
@@ -14,19 +14,19 @@
 #'
 #' * `pedsize(x)` returns the number of pedigree members in `x`
 #'
-#' * `has_unbroken_loops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
+#' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of
 #' `x$UNBROKEN_LOOPS`).
 #'
-#' * `has_inbred_founders(x)` returns TRUE is founder inbreeding is specified
+#' * `hasInbredFounders(x)` returns TRUE is founder inbreeding is specified
 #' for `x` and at least one founder has positive inbreeding coefficient. See
 #' [founderInbreeding()] for details.
 #'
-#' * `has_selfing(x)` returns TRUE if the pedigree contains selfing events. This
+#' * `hasSelfing(x)` returns TRUE if the pedigree contains selfing events. This
 #' is recognised by father and mother begin equal for some child. (Note that for
 #' this to be allowed, the gender code of the parent must be 0.)
 #'
-#' * `has_common_ancestor(x)` computes a logical matrix `A` whose entry `A[i,j]`
+#' * `hasCommonAncestor(x)` computes a logical matrix `A` whose entry `A[i,j]`
 #' is TRUE if pedigree members i and j have a common ancestor in `x`, and FALSE
 #' otherwise. By convention, `A[i,i]` is TRUE for all i.
 #'
@@ -46,21 +46,21 @@
 #' @examples
 #' x = fullSibMating(1)
 #' stopifnot(pedsize(x) == 6)
-#' stopifnot(has_unbroken_loops(x))
+#' stopifnot(hasUnbrokenLoops(x))
 #'
 #' # All members have common ancestors except the grandparents
-#' CA = has_common_ancestor(x)
+#' CA = hasCommonAncestor(x)
 #' stopifnot(!CA[1,2], !CA[2,1], sum(CA) == length(CA) - 2)
 #'
 #' # Effect of breaking the loop
 #' y = breakLoops(x)
-#' stopifnot(!has_unbroken_loops(y))
+#' stopifnot(!hasUnbrokenLoops(y))
 #' stopifnot(pedsize(y) == 7)
 #'
 #' # A pedigree with selfing (note the neccessary `sex = 0`)
 #' z1 = singleton(1, sex = 0)
 #' z2 = addChildren(z1, father = 1, mother = 1, nch = 1)
-#' stopifnot(!has_selfing(z1), has_selfing(z2))
+#' stopifnot(!hasSelfing(z1), hasSelfing(z2))
 #'
 #' # Nucleus sub-pedigrees
 #' stopifnot(length(subnucs(z1)) == 0)
@@ -80,9 +80,9 @@ pedsize = function(x) {
 
 #' @rdname ped_utils
 #' @export
-has_unbroken_loops = function(x) {
+hasUnbrokenLoops = function(x) {
   if(is.pedList(x))
-    return(any(vapply(x, has_unbroken_loops, logical(1))))
+    return(any(vapply(x, hasUnbrokenLoops, logical(1))))
 
   isTRUE(x$UNBROKEN_LOOPS)
 }
@@ -90,9 +90,9 @@ has_unbroken_loops = function(x) {
 
 #' @rdname ped_utils
 #' @export
-has_inbred_founders = function(x, chromType = "autosomal") {
+hasInbredFounders = function(x, chromType = "autosomal") {
   if(is.pedList(x))
-    return(any(vapply(x, has_inbred_founders, logical(1), chromType = chromType)))
+    return(any(vapply(x, hasInbredFounders, logical(1), chromType = chromType)))
 
   if(is.null(x$FOUNDER_INBREEDING))
     return(FALSE)
@@ -109,9 +109,9 @@ has_inbred_founders = function(x, chromType = "autosomal") {
 
 #' @rdname ped_utils
 #' @export
-has_selfing = function(x) {
+hasSelfing = function(x) {
   if(is.pedList(x))
-    return(any(vapply(x, has_selfing, logical(1))))
+    return(any(vapply(x, hasSelfing, logical(1))))
 
   any(x$FIDX != 0 & x$FIDX == x$MIDX)
 }
@@ -119,7 +119,7 @@ has_selfing = function(x) {
 
 #' @rdname ped_utils
 #' @export
-has_common_ancestor = function(x) {
+hasCommonAncestor = function(x) {
   if(!is.ped(x))
     stop2("Input is not a `ped` object: ", x)
 

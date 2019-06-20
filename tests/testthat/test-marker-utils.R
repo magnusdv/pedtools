@@ -7,11 +7,11 @@ test_that("nAlleles of empty marker is 2", {
   expect_equal(nAlleles(m), 2)
 })
 
-test_that("is_Xmarker() works", {
-  expect_true(is_Xmarker(marker(x, chrom=23L)))
-  expect_true(is_Xmarker(marker(x, chrom=23)))
-  expect_false(is_Xmarker(marker(x)))
-  expect_false(is_Xmarker(marker(x, chrom=1)))
+test_that("isXmarker() works", {
+  expect_true(isXmarker(marker(x, chrom=23L)))
+  expect_true(isXmarker(marker(x, chrom=23)))
+  expect_false(isXmarker(marker(x)))
+  expect_false(isXmarker(marker(x, chrom=1)))
 })
 
 test_that("setMarkers() attaches a list of markers", {

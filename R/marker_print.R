@@ -5,7 +5,7 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
   al1 = als[x[, 1] + 1]
   al2 = als[x[, 2] + 1]
   gt = paste(al1, al2, sep=sep)
-  if (is_Xmarker(x)) {
+  if (isXmarker(x)) {
     male = attr(x, 'sex') == 1
 
     # Male 'homozygosity': Just show first allele
@@ -27,7 +27,7 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
     mname = "<NA>"
   names(df) = c("", mname)
 
-  if(is_Xmarker(x)) {
+  if(isXmarker(x)) {
     maleHet = attr(x, "sex") == 1 & !gt %in% c(alleles(x), missing)
     df = commentAndRealign(df, 2, maleHet, "?")
   }

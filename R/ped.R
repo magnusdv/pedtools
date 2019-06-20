@@ -26,7 +26,7 @@
 #' @param famid a character string. Default: An empty string.
 #' @param reorder a logical. If TRUE, the pedigree is reordered so that all
 #'   parents precede their children.
-#' @param validate a logical. If TRUE, [validate_ped()] is run before returning
+#' @param validate a logical. If TRUE, [validatePed()] is run before returning
 #'   the pedigree.
 #' @param verbose a logical.
 #' @param ... further arguments
@@ -74,7 +74,7 @@
 #'
 #' # Selfing
 #' z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
-#' stopifnot(has_selfing(z))
+#' stopifnot(hasSelfing(z))
 #'
 #' # Disconnected pedigree: Trio + singleton
 #' w = ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))
@@ -158,7 +158,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
     class(x) = "ped"
 
   if (validate)
-    validate_ped(x)
+    validatePed(x)
 
   if(is.singleton(x))
     return(x)
@@ -169,7 +169,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
   x$UNBROKEN_LOOPS = is.null(lastnuc_link)
 
   # reorder so that parents precede their children
-  if(reorder) x = parents_before_children(x)
+  if(reorder) x = parentsBeforeChildren(x)
 
   x
 }
@@ -195,7 +195,7 @@ singleton = function(id, sex = 1, famid = "") {
 #'   error is raised.
 #'
 #' @export
-validate_ped = function(x) {
+validatePed = function(x) {
   ID = x$ID; FIDX = x$FIDX; MIDX = x$MIDX; SEX = x$SEX; FAMID = x$FAMID
   n = length(ID)
 

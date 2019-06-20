@@ -24,7 +24,7 @@ test_that("founder inbreeding is preserved under modifications", {
   x2 = reorderPed(x, 3:1)
   expect_equal(founderInbreeding(x2, 1), 1)
 
-  x3 = restore_ped(as.matrix(x))
+  x3 = restorePed(as.matrix(x))
   expect_equal(founderInbreeding(x3, 1), 1)
 
   x4 = addSon(x, 1, verbose=F)

@@ -6,16 +6,16 @@
 #'
 #' The internal ordering is usually of little importance for end users, with one
 #' important exception: Certain pedigree-traversing algorithms require parents
-#' to precede their children. A special function, `parents_before_children()` is
+#' to precede their children. A special function, `parentsBeforeChildren()` is
 #' provided for this purpose. This is a wrapper of the more general
 #' `reorderPed()` which allows any permutation of the members.
 #'
-#' It should be noted that [ped()] by default calls `parents_before_children()`
+#' It should be noted that [ped()] by default calls `parentsBeforeChildren()`
 #' whenever a pedigree is created, unless explicitly avoided with
 #' `reorder=FALSE`.
 #'
-#' `has_parents_before_children()` can be used as a quick test to decide if it
-#' is neccessary to call `parents_before_children()`.
+#' `hasParentsBeforeChildren()` can be used as a quick test to decide if it
+#' is neccessary to call `parentsBeforeChildren()`.
 #'
 #' The utility `internalID()` converts ID labels to indices in the internal
 #' ordering.
@@ -35,7 +35,7 @@
 #' internalID(x, ids = 3)
 #' internalID(x, ids = "3")
 #'
-#' y = parents_before_children(x)
+#' y = parentsBeforeChildren(x)
 #' internalID(y, ids = 3)
 #'
 #' # A different ordering
@@ -73,14 +73,14 @@ reorderPed = function(x, neworder = order(labels(x))) {
     attr$LOOP_BREAKERS = matrix(match(lp, neworder), ncol=2)
 
   # Restore
-  restore_ped(xmatr[neworder, ], attrs = attr)
+  restorePed(xmatr[neworder, ], attrs = attr)
 }
 
 #' @rdname ped_internal
 #' @export
-parents_before_children = function(x) {
+parentsBeforeChildren = function(x) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
-  if(is.singleton(x) || has_parents_before_children(x))
+  if(is.singleton(x) || hasParentsBeforeChildren(x))
     return(x)
 
   neworder = 1:pedsize(x)
@@ -98,7 +98,7 @@ parents_before_children = function(x) {
 
 #' @rdname ped_internal
 #' @export
-has_parents_before_children = function(x) {
+hasParentsBeforeChildren = function(x) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   idx = 1:pedsize(x)
   father_before_child = x$FIDX < idx

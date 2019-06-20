@@ -2,15 +2,15 @@
 % Please edit documentation in R/ped_convert.R
 \name{as.matrix.ped}
 \alias{as.matrix.ped}
-\alias{restore_ped}
+\alias{restorePed}
 \title{Convert ped to matrix}
 \usage{
 \method{as.matrix}{ped}(x, include.attrs = TRUE, ...)
 
-restore_ped(x, attrs = NULL, validate = TRUE)
+restorePed(x, attrs = NULL, validate = TRUE)
 }
 \arguments{
-\item{x}{a \code{ped} object. In \code{restore_ped}: A numerical matrix.}
+\item{x}{a \code{ped} object. In \code{restorePed}: A numerical matrix.}
 
 \item{include.attrs}{a logical indicating if marker annotations and other
 info should be attached as attributes. See value.}
@@ -27,7 +27,7 @@ pedigree errors are performed.}
 \value{
 For \code{as.matrix}: A numerical matrix with \code{pedsize(x)} rows.
 If \code{include.attrs = TRUE} the following attributes are added to the matrix,
-allowing \code{x} to be exactly reproduced by \code{restore_ped}:
+allowing \code{x} to be exactly reproduced by \code{restorePed}:
 \itemize{
 \item \code{FAMID} the family identifier (a string)
 \item \code{LABELS} the ID labels (a character vector)
@@ -36,7 +36,7 @@ allowing \code{x} to be exactly reproduced by \code{restore_ped}:
 \item \code{markerattr} a list of length \code{nMarkers(x)}, containing the attributes of each marker
 }
 
-For \code{restore_ped}: A \code{ped} object.
+For \code{restorePed}: A \code{ped} object.
 }
 \description{
 Converts a \code{ped} object to a numeric matrix using internal labels, with
@@ -44,7 +44,7 @@ additional info neccessary to recreate the original \code{ped} attached as
 attributes.
 }
 \details{
-\code{restore_ped} is the reverse of \code{as.matrix.ped}.
+\code{restorePed} is the reverse of \code{as.matrix.ped}.
 }
 \examples{
 
@@ -60,7 +60,7 @@ attrs = attributes(m)
 attrs$LABELS = rev(attrs$LABELS)
 
 # Restore ped:
-y = restore_ped(m, attrs=attrs)
+y = restorePed(m, attrs=attrs)
 
 # Of course a simpler way is use reorderPed():
 z = reorderPed(x, 3:1)

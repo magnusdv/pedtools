@@ -32,7 +32,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
 
   nucs = subnucs(x)
 
-  chromX = which(vapply(x$markerdata, is_Xmarker, logical(1)))
+  chromX = which(vapply(x$markerdata, isXmarker, logical(1)))
   chromAUT = .mysetdiff(seq_len(nMarkers(x)), chromX)
 
   errorlist = vector(length=pedsize(x), mode="list")

@@ -47,5 +47,5 @@ sortGenotypes = function(x) {
   pedm[, a1idx][swap] = a2[swap]
   pedm[, a2idx][swap] = a1[swap]
 
-  restore_ped(pedm)
+  restorePed(pedm)
 }

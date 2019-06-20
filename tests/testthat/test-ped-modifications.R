@@ -204,7 +204,7 @@ test_that("addParents() adds parents before children", {
   x = addSon(nuclearPed(1), 3, verbose=F)
   x = addParents(x, 1, verbose=F)
   x = addParents(x, 4, father=1, verbose=F)
-  expect_true(has_parents_before_children(x))
+  expect_true(hasParentsBeforeChildren(x))
 })
 
 test_that("relabel() is strict", {

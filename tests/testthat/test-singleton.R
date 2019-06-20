@@ -23,7 +23,7 @@ test_that("addChildren works on singleton", {
 
 test_that("addParents works on singleton", {
   x = addParents(singleton(3), 3, father=1, mother=2)
-  x = parents_before_children(x)
+  x = parentsBeforeChildren(x)
   expect_identical(x, nuclearPed(1))
 })
 

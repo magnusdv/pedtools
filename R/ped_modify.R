@@ -144,7 +144,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
   p = rbind(p, cbind(children_pedcols, children_markers))
 
   attrs$LABELS = as.character(labs)
-  restore_ped(p, attrs = attrs)
+  restorePed(p, attrs = attrs)
 }
 
 
@@ -234,7 +234,7 @@ addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
   p[id_int, 2:3] = c(fath_int, moth_int)
   attrs$LABELS = newlabs
 
-  y = restore_ped(p, attrs = attrs)
+  y = restorePed(p, attrs = attrs)
   neworder = c(seq_len(id_int - 1),
                if(new.father) fath_int,
                if(new.mother) moth_int,
@@ -308,7 +308,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
                                             x = xchr[!names(xchr) %in% labs[remov]])
   }
 
-  restore_ped(new, attrs = attrs)
+  restorePed(new, attrs = attrs)
 }
 
 #' @rdname ped_modify
@@ -358,6 +358,6 @@ subset.ped = function(x, subset, ...) {
   attrs = attributes(pedm)
   attrs$LABELS = attrs$LABELS[sub_idx]
 
-  restore_ped(subped, attrs, ...)
+  restorePed(subped, attrs, ...)
 }
 

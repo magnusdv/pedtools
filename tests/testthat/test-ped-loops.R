@@ -6,13 +6,13 @@ tie_silent = function(...) tieLoops(..., verbose=F)
 test_that("example ped from identity package", {
   ex = read.table (system.file ("example", "ex.pedigree", package = "identity"))
   x = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), reorder=F)
-  expect_identical(restore_ped(as.matrix(x)), x)
+  expect_identical(restorePed(as.matrix(x)), x)
 
   y = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), famid="identity-example")
-  expect_identical(restore_ped(as.matrix(y)), y)
+  expect_identical(restorePed(as.matrix(y)), y)
 
   z = reorderPed(y, order(as.numeric(labels(y))))
-  expect_identical(restore_ped(as.matrix(z)), z)
+  expect_identical(restorePed(as.matrix(z)), z)
 })
 
 test_that("loops are detected correctly in fullSibMating peds", {
@@ -52,10 +52,10 @@ test_that("breakLoops gives same result when breakers are explicitly given", {
 
 test_that("ped->matrix->ped works with broken loops (fullsib)", {
   x = breakLoops(fullSibMating(1), verbose=F)
-  expect_identical(restore_ped(as.matrix(x)), x)
+  expect_identical(restorePed(as.matrix(x)), x)
 
   x = breakLoops(fullSibMating(2), verbose=F)
-  expect_identical(restore_ped(as.matrix(x)), x)
+  expect_identical(restorePed(as.matrix(x)), x)
 })
 
 test_that("tieLoops restores broken loops (fullSib)", {

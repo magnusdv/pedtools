@@ -152,7 +152,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
 
   # Dummy numerical IDs of the new duplicated indivs.
   # NB: These are inserted in 'new_rows' positions, hence disrupts 1,2,3,...
-  # Therefore they will always be changed in restore_ped().
+  # Therefore they will always be changed in restorePed().
   dups = n + seq_along(loop_breakers)
 
   # Create it
@@ -182,7 +182,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   attrs$LOOP_BREAKERS = rbind(old_lb_matr, new_lb_matr)
 
   ### Create new ped
-  newx = restore_ped(pedm, attrs = attrs)
+  newx = restorePed(pedm, attrs = attrs)
   if (auto)
     return(breakLoops(newx, verbose = verbose, errorIfFail = errorIfFail))
   newx
@@ -217,7 +217,7 @@ tieLoops = function(x, verbose=TRUE) {
   wrong = match(newpedm[,2:3], copies, nomatch=0)
   newpedm[,2:3][wrong > 0] = origs[wrong]
 
-  restore_ped(newpedm, attrs = attrs)
+  restorePed(newpedm, attrs = attrs)
 }
 
 #' @export

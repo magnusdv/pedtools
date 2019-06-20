@@ -4,9 +4,9 @@
 #' additional info neccessary to recreate the original `ped` attached as
 #' attributes.
 #'
-#' `restore_ped` is the reverse of `as.matrix.ped`.
+#' `restorePed` is the reverse of `as.matrix.ped`.
 #'
-#' @param x a `ped` object. In `restore_ped`: A numerical matrix.
+#' @param x a `ped` object. In `restorePed`: A numerical matrix.
 #' @param include.attrs a logical indicating if marker annotations and other
 #'   info should be attached as attributes. See value.
 #' @param attrs a list containing labels and other `ped` info compatible with
@@ -18,7 +18,7 @@
 #'
 #' @return For `as.matrix`: A numerical matrix with `pedsize(x)` rows.
 #'   If `include.attrs = TRUE` the following attributes are added to the matrix,
-#'   allowing `x` to be exactly reproduced by `restore_ped`:
+#'   allowing `x` to be exactly reproduced by `restorePed`:
 #'
 #' * `FAMID` the family identifier (a string)
 #' * `LABELS` the ID labels (a character vector)
@@ -26,7 +26,7 @@
 #' * `LOOP_BREAKERS` a numerical matrix, or NULL
 #' * `markerattr` a list of length `nMarkers(x)`, containing the attributes of each marker
 #'
-#'  For `restore_ped`: A `ped` object.
+#'  For `restorePed`: A `ped` object.
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
 #'
@@ -44,7 +44,7 @@
 #' attrs$LABELS = rev(attrs$LABELS)
 #'
 #' # Restore ped:
-#' y = restore_ped(m, attrs=attrs)
+#' y = restorePed(m, attrs=attrs)
 #'
 #' # Of course a simpler way is use reorderPed():
 #' z = reorderPed(x, 3:1)
@@ -60,7 +60,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
   if (include.attrs) {
     attr(m, "FAMID") = famid(x)
     attr(m, "LABELS") = labels(x)
-    attr(m, "UNBROKEN_LOOPS") = has_unbroken_loops(x)
+    attr(m, "UNBROKEN_LOOPS") = hasUnbrokenLoops(x)
     attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
     attr(m, "FOUNDER_INBREEDING") =
       if(is.null(x$FOUNDER_INBREEDING)) NULL
@@ -76,7 +76,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
 
 #' @rdname as.matrix.ped
 #' @export
-restore_ped = function(x, attrs = NULL, validate = TRUE) {
+restorePed = function(x, attrs = NULL, validate = TRUE) {
   if (is.null(attrs))
     attrs = attributes(x)
   p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$FAMID,
@@ -248,7 +248,7 @@ questionMaleHetX = function(x, df) {
     else
       midx = match(mname, xnames)
 
-    if(!is.na(midx) && is_Xmarker(x$markerdata[[midx]])) {
+    if(!is.na(midx) && isXmarker(x$markerdata[[midx]])) {
       maleHet = df[["sex"]] == 1 & grepl("/", df[[i]])
       df = commentAndRealign(df, i, maleHet, "?")
     }

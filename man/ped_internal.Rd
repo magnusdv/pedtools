@@ -3,16 +3,16 @@
 \name{ped_internal}
 \alias{ped_internal}
 \alias{reorderPed}
-\alias{parents_before_children}
-\alias{has_parents_before_children}
+\alias{parentsBeforeChildren}
+\alias{hasParentsBeforeChildren}
 \alias{internalID}
 \title{Internal ordering of pedigree members}
 \usage{
 reorderPed(x, neworder = order(labels(x)))
 
-parents_before_children(x)
+parentsBeforeChildren(x)
 
-has_parents_before_children(x)
+hasParentsBeforeChildren(x)
 
 internalID(x, ids)
 }
@@ -32,16 +32,16 @@ members are listed when a \code{ped} object is printed to the screen.)
 \details{
 The internal ordering is usually of little importance for end users, with one
 important exception: Certain pedigree-traversing algorithms require parents
-to precede their children. A special function, \code{parents_before_children()} is
+to precede their children. A special function, \code{parentsBeforeChildren()} is
 provided for this purpose. This is a wrapper of the more general
 \code{reorderPed()} which allows any permutation of the members.
 
-It should be noted that \code{\link[=ped]{ped()}} by default calls \code{parents_before_children()}
+It should be noted that \code{\link[=ped]{ped()}} by default calls \code{parentsBeforeChildren()}
 whenever a pedigree is created, unless explicitly avoided with
 \code{reorder=FALSE}.
 
-\code{has_parents_before_children()} can be used as a quick test to decide if it
-is neccessary to call \code{parents_before_children()}.
+\code{hasParentsBeforeChildren()} can be used as a quick test to decide if it
+is neccessary to call \code{parentsBeforeChildren()}.
 
 The utility \code{internalID()} converts ID labels to indices in the internal
 ordering.
@@ -54,7 +54,7 @@ x
 internalID(x, ids = 3)
 internalID(x, ids = "3")
 
-y = parents_before_children(x)
+y = parentsBeforeChildren(x)
 internalID(y, ids = 3)
 
 # A different ordering

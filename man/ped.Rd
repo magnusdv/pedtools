@@ -30,7 +30,7 @@ the individuals (in the same order as \code{id}.) Each entry must be either 1
 \item{reorder}{a logical. If TRUE, the pedigree is reordered so that all
 parents precede their children.}
 
-\item{validate}{a logical. If TRUE, \code{\link[=validate_ped]{validate_ped()}} is run before returning
+\item{validate}{a logical. If TRUE, \code{\link[=validatePed]{validatePed()}} is run before returning
 the pedigree.}
 
 \item{verbose}{a logical.}
@@ -86,7 +86,7 @@ y = singleton('NN', sex=2, famid="SINGLETON GIRL")
 
 # Selfing
 z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
-stopifnot(has_selfing(z))
+stopifnot(hasSelfing(z))
 
 # Disconnected pedigree: Trio + singleton
 w = ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))

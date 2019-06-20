@@ -3,23 +3,23 @@
 \name{ped_utils}
 \alias{ped_utils}
 \alias{pedsize}
-\alias{has_unbroken_loops}
-\alias{has_inbred_founders}
-\alias{has_selfing}
-\alias{has_common_ancestor}
+\alias{hasUnbrokenLoops}
+\alias{hasInbredFounders}
+\alias{hasSelfing}
+\alias{hasCommonAncestor}
 \alias{subnucs}
 \alias{peelingOrder}
 \title{Pedigree utilities}
 \usage{
 pedsize(x)
 
-has_unbroken_loops(x)
+hasUnbrokenLoops(x)
 
-has_inbred_founders(x, chromType = "autosomal")
+hasInbredFounders(x, chromType = "autosomal")
 
-has_selfing(x)
+hasSelfing(x)
 
-has_common_ancestor(x)
+hasCommonAncestor(x)
 
 subnucs(x)
 
@@ -33,16 +33,16 @@ peelingOrder(x)
 \value{
 \itemize{
 \item \code{pedsize(x)} returns the number of pedigree members in \code{x}
-\item \code{has_unbroken_loops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
+\item \code{hasUnbrokenLoops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
 computation is done here; the function simply returns the value of
 \code{x$UNBROKEN_LOOPS}).
-\item \code{has_inbred_founders(x)} returns TRUE is founder inbreeding is specified
+\item \code{hasInbredFounders(x)} returns TRUE is founder inbreeding is specified
 for \code{x} and at least one founder has positive inbreeding coefficient. See
 \code{\link[=founderInbreeding]{founderInbreeding()}} for details.
-\item \code{has_selfing(x)} returns TRUE if the pedigree contains selfing events. This
+\item \code{hasSelfing(x)} returns TRUE if the pedigree contains selfing events. This
 is recognised by father and mother begin equal for some child. (Note that for
 this to be allowed, the gender code of the parent must be 0.)
-\item \code{has_common_ancestor(x)} computes a logical matrix \code{A} whose entry \code{A[i,j]}
+\item \code{hasCommonAncestor(x)} computes a logical matrix \code{A} whose entry \code{A[i,j]}
 is TRUE if pedigree members i and j have a common ancestor in \code{x}, and FALSE
 otherwise. By convention, \code{A[i,i]} is TRUE for all i.
 \item \code{subnucs(x)} returns a list of all nuclear sub-pedigrees of \code{x}, wrapped as
@@ -62,29 +62,29 @@ probability calculations in other packages, as e.g. in
 Various utility functions for \code{ped} objects
 }
 \details{
-The functions \code{has_unbroken_loops()}, \code{has_inbred_founders()} and
-\code{has_selfing()} allow as input either a single \code{ped} object or a list of
+The functions \code{hasUnbrokenLoops()}, \code{hasInbredFounders()} and
+\code{hasSelfing()} allow as input either a single \code{ped} object or a list of
 such. In the latter case each function returns TRUE if it is TRUE for any of
 the components.
 }
 \examples{
 x = fullSibMating(1)
 stopifnot(pedsize(x) == 6)
-stopifnot(has_unbroken_loops(x))
+stopifnot(hasUnbrokenLoops(x))
 
 # All members have common ancestors except the grandparents
-CA = has_common_ancestor(x)
+CA = hasCommonAncestor(x)
 stopifnot(!CA[1,2], !CA[2,1], sum(CA) == length(CA) - 2)
 
 # Effect of breaking the loop
 y = breakLoops(x)
-stopifnot(!has_unbroken_loops(y))
+stopifnot(!hasUnbrokenLoops(y))
 stopifnot(pedsize(y) == 7)
 
 # A pedigree with selfing (note the neccessary `sex = 0`)
 z1 = singleton(1, sex = 0)
 z2 = addChildren(z1, father = 1, mother = 1, nch = 1)
-stopifnot(!has_selfing(z1), has_selfing(z2))
+stopifnot(!hasSelfing(z1), hasSelfing(z2))
 
 # Nucleus sub-pedigrees
 stopifnot(length(subnucs(z1)) == 0)

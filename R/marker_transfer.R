@@ -157,5 +157,5 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
   b[idx_to, -(1:4)] = a[idx_from, -(1:4)]
 
   # Restore `to` and return
-  restore_ped(b, attrs = b.attrs)
+  restorePed(b, attrs = b.attrs)
 }

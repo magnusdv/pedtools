@@ -25,11 +25,11 @@ test_that("pedsize works", {
 })
 
 test_that("selfing is detected", {
-  expect_false(has_selfing(singleton(1)))
-  expect_false(has_selfing(nuclearPed(1)))
+  expect_false(hasSelfing(singleton(1)))
+  expect_false(hasSelfing(nuclearPed(1)))
 
   x = addChildren(singleton(1, sex=0), 1,1,1)
-  expect_true(has_selfing(x))
+  expect_true(hasSelfing(x))
 })
 
 test_that("common ancestors are detected", {
@@ -39,7 +39,7 @@ test_that("common ancestors are detected", {
   ans = matrix(TRUE, ncol=3, nrow=3, dimnames=list(labs,labs))
   ans['fa','mo'] = ans['mo','fa'] = FALSE
 
-  expect_identical(has_common_ancestor(x), ans)
+  expect_identical(hasCommonAncestor(x), ans)
 })
 
 test_that("internalID gives empty output on empty intput", {
