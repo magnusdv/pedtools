@@ -34,7 +34,7 @@ relabel = function(x, new, old=labels(x)) {
     stop2("Duplicated entry in argument `old`: ", unique(old[duplicated(old)]))
 
   # Relabel
-  id = labels(x)
+  id = labels.ped(x)
   old_int = internalID(x, old)
   id[old_int] = new
   x$ID = id
@@ -115,7 +115,7 @@ swapSex = function(x, ids, verbose = TRUE) { #TODO add tests with sex=0
 
   if(!length(ids)) return(x)
   ids = internalID(x, ids)
-  labs = labels(x)
+  labs = labels.ped(x)
   FIDX = x$FIDX
   MIDX = x$MIDX
   spouses = c(MIDX[FIDX %in% ids], FIDX[MIDX %in% ids])

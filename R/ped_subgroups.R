@@ -45,14 +45,14 @@ NULL
 #' @export
 founders = function(x, internal = FALSE) {
   is_fou = x$FIDX == 0
-  if (internal) which(is_fou) else labels(x)[is_fou]
+  if (internal) which(is_fou) else labels.ped(x)[is_fou]
 }
 
 #' @rdname ped_subgroups
 #' @export
 nonfounders = function(x, internal = FALSE) {
   is_nonfou = x$FIDX > 0
-  if (internal) which(is_nonfou) else labels(x)[is_nonfou]
+  if (internal) which(is_nonfou) else labels.ped(x)[is_nonfou]
 }
 
 #' @rdname ped_subgroups
@@ -62,21 +62,21 @@ leaves = function(x, internal = FALSE) {
     leaves_int = 1L
   else
     leaves_int = (1:pedsize(x))[-c(x$FIDX, x$MIDX)]
-  if (internal) leaves_int else labels(x)[leaves_int]
+  if (internal) leaves_int else labels.ped(x)[leaves_int]
 }
 
 #' @rdname ped_subgroups
 #' @export
 males = function(x, internal = FALSE) {
   m = x$SEX == 1
-  if (internal) which(m) else labels(x)[m]
+  if (internal) which(m) else labels.ped(x)[m]
 }
 
 #' @rdname ped_subgroups
 #' @export
 females = function(x, internal = FALSE) {
   f = x$SEX == 2
-  if (internal) which(f) else labels(x)[f]
+  if (internal) which(f) else labels.ped(x)[f]
 }
 
 #' @rdname ped_subgroups
@@ -87,17 +87,17 @@ typedMembers = function(x, internal = FALSE) {
 
   allelematrix = do.call(cbind, x$markerdata)
   emptyrows = rowSums(allelematrix != 0) == 0
-  if(internal) which(!emptyrows) else labels(x)[!emptyrows]
+  if(internal) which(!emptyrows) else labels.ped(x)[!emptyrows]
 }
 
 #' @rdname ped_subgroups
 #' @export
 untypedMembers = function(x, internal = FALSE) {
   if (nMarkers(x) == 0)
-    return(if(internal) seq_len(pedsize(x)) else labels(x))
+    return(if(internal) seq_len(pedsize(x)) else labels.ped(x))
   allelematrix = do.call(cbind, x$markerdata)
   emptyrows = rowSums(allelematrix != 0) == 0
-  if(internal) which(emptyrows) else labels(x)[emptyrows]
+  if(internal) which(emptyrows) else labels.ped(x)[emptyrows]
 }
 
 #' @rdname ped_subgroups
@@ -105,7 +105,7 @@ untypedMembers = function(x, internal = FALSE) {
 father = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
   fa = x$FIDX[id]
-  if (internal) fa else labels(x)[fa]
+  if (internal) fa else labels.ped(x)[fa]
 }
 
 #' @rdname ped_subgroups
@@ -113,7 +113,7 @@ father = function(x, id, internal = FALSE) {
 mother = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
   mo = x$MIDX[id]
-  if (internal) mo else labels(x)[mo]
+  if (internal) mo else labels.ped(x)[mo]
 }
 
 #' @rdname ped_subgroups
@@ -122,7 +122,7 @@ children = function(x, id, internal = FALSE) {
     if (!internal) id = internalID(x, id)
     offs_int = (x$FIDX == id | x$MIDX == id)
 
-    if (internal) which(offs_int) else labels(x)[offs_int]
+    if (internal) which(offs_int) else labels.ped(x)[offs_int]
 }
 
 #' @rdname ped_subgroups
@@ -139,7 +139,7 @@ spouses = function(x, id, internal = FALSE) {
                 x$MIDX[x$FIDX == id],                        # sex = 1
                 x$FIDX[x$MIDX == id])                        # sex = 2
   spous_uniq = unique.default(spous)
-  if (internal) spous_uniq else labels(x)[spous_uniq]
+  if (internal) spous_uniq else labels.ped(x)[spous_uniq]
 }
 
 
@@ -149,7 +149,7 @@ unrelated = function(x, id, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
   ancs = c(id, ancestors(x, id))
     rel = unique.default(unlist(lapply(ancs, function(a) c(a, descendants(x, a, internal = FALSE)))))
-    unrel = setdiff(labels(x), rel)
+    unrel = setdiff(labels.ped(x), rel)
     if (internal) internalID(x, unrel) else unrel
 }
 
@@ -159,7 +159,7 @@ unrelated = function(x, id, internal = FALSE) {
 parents = function(x, id, internal = FALSE) {
   if (!internal) id = internalID(x, id)
   parents_int = c(x$FIDX[id], x$MIDX[id])
-  if (internal) parents_int else labels(x)[parents_int]
+  if (internal) parents_int else labels.ped(x)[parents_int]
 }
 
 #' @rdname ped_subgroups
@@ -169,7 +169,7 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
 
   nextgen = id
   for (i in seq_len(degree)) nextgen = c(x$FIDX[nextgen], x$MIDX[nextgen])
-  if (internal) nextgen else labels(x)[nextgen]
+  if (internal) nextgen else labels.ped(x)[nextgen]
 }
 
 #' @rdname ped_subgroups
@@ -188,7 +188,7 @@ siblings = function(x, id, half = NA, internal = FALSE) {
     else if (isFALSE(half)) xor(samefather, samemother)
     else if(is.na(half)) samefather & samemother
   sib_int[id] = FALSE
-  if (internal) which(sib_int) else labels(x)[sib_int]
+  if (internal) which(sib_int) else labels.ped(x)[sib_int]
 }
 
 #' @rdname ped_subgroups
@@ -207,7 +207,7 @@ cousins = function(x, id, degree = 1, removal = 0, half = NA, internal = FALSE) 
   for (i in seq_len(degree + removal))
     cous = unique.default(unlist(lapply(cous, children, x = x, internal = TRUE)))
 
-  if (internal) cous else labels(x)[cous]
+  if (internal) cous else labels.ped(x)[cous]
 }
 
 #' @rdname ped_subgroups
@@ -234,7 +234,7 @@ ancestors = function(x, id, internal = FALSE) {
     up1 = up1[up1>0]
   }
   ancest = .mysortInt(unique.default(ancest))
-  if (internal) ancest else labels(x)[ancest]
+  if (internal) ancest else labels.ped(x)[ancest]
 }
 
 
@@ -253,6 +253,6 @@ descendants = function(x, id, internal = FALSE) {
       desc = c(desc, nextoffs)
   }
   desc = .mysortInt(unique.default(desc))
-  if (internal) desc else labels(x)[desc]
+  if (internal) desc else labels.ped(x)[desc]
 }
 
