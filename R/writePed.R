@@ -26,6 +26,8 @@
 #' x = setMarkers(x, marker(x, '3'=1:2))
 #' writePed(x, prefix = file.path(tmpdir, "myped"))
 #'
+#' @seealso [readPed()]
+#'
 #' @importFrom utils write.table
 #' @export
 writePed = function(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"), merlin = FALSE, verbose=TRUE) {
