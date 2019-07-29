@@ -318,9 +318,10 @@ as.ped = function(x, ...) {
 #'
 #' @rdname as.ped
 #' @export
-as.ped.data.frame = function(x, famid_col=NA, id_col=NA, fid_col=NA, mid_col=NA, sex_col=NA,
-                             marker_col=NA, locus_annotations=NULL, missing=0, allele_sep=NULL,
-                             validate = TRUE, ...) {
+as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
+                             mid_col = NA, sex_col = NA, marker_col = NA,
+                             locus_annotations = NULL, missing = 0,
+                             allele_sep = NULL, validate = TRUE, ...) {
 
   colnames = tolower(names(x))
   if(is.na(famid_col))
