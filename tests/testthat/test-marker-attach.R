@@ -3,7 +3,7 @@ context("marker attachment")
 test_that("setMarkers() creates empty markers with locus_annotations", {
   x = nuclearPed(1)
   ann = list(list(alleles=1:2, name="snp1"), list(alleles=c("a", "b")))
-  x = setMarkers(x, allele_matrix = matrix(0, nrow=3, ncol=4), locus_annotations=ann)
+  x = setMarkers(x, locus_annotations=ann)
   expect_equal(nMarkers(x), 2)
   expect_true(all(do.call(cbind, x$markerdata) == 0))
   expect_equal(name(x, 1), "snp1")
@@ -15,7 +15,7 @@ test_that("addMarkers() adds empty markers with locus_annotations", {
   x = setMarkers(x, marker(x, name="M0"))
 
   ann = list(list(alleles=1:2, name="snp1"), list(alleles=c("a", "b")))
-  x = addMarkers(x, allele_matrix = matrix(0, nrow=3, ncol=4), locus_annotations=ann)
+  x = addMarkers(x, locus_annotations=ann)
   expect_equal(nMarkers(x), 3)
   expect_equal(name(x, 2), "snp1")
   expect_equal(alleles(x, 3), c("a", "b"))

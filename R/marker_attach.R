@@ -40,11 +40,18 @@ NULL
 
 #' @rdname marker_attach
 #' @export
-setMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NULL, missing=0, allele_sep=NULL) {
+setMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NULL, missing = 0, allele_sep = NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
-  if(is.null(m) && is.null(allele_matrix)) {
+
+  # If no data, remove all markers and return
+  if(is.null(m) && is.null(allele_matrix) && is.null(locus_annotations)) {
     x['markerdata'] = list(NULL)
     return(x)
+  }
+
+  # If only locus annotations are given, create allele matrix with all 0's.
+  if(is.null(m) && is.null(allele_matrix) && !is.null(locus_annotations)) {
+    allele_matrix = matrix(missing, nrow = pedsize(x), ncol = 2*length(locus_annotations))
   }
 
   if (is.marker(m))
@@ -64,8 +71,18 @@ setMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NUL
 
 #' @rdname marker_attach
 #' @export
-addMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NULL, missing=0, allele_sep=NULL) {
+addMarkers = function(x, m = NULL, allele_matrix = NULL, locus_annotations = NULL, missing = 0, allele_sep = NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
+
+  # If no data, do nothing
+  if(is.null(m) && is.null(allele_matrix) && is.null(locus_annotations)) {
+    return(x)
+  }
+
+  # If only locus annotations are given, create allele matrix with all 0's.
+  if(is.null(m) && is.null(allele_matrix) && !is.null(locus_annotations)) {
+    allele_matrix = matrix(missing, nrow = pedsize(x), ncol = 2*length(locus_annotations))
+  }
 
   if (is.marker(m))
     mlist = list(m)
