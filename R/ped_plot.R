@@ -212,15 +212,18 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     id = id.labels
   }
 
-  p = plot.ped(y, marker = y$markerdata, sep = sep, missing = missing,
+  pdat = plot.ped(y, marker = y$markerdata, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
                title = title, col = col, shaded = shaded, deceased = deceased, starred = starred,
                margins = c(margins[1], 0, 0, 0), ...)
 
   usr = par("usr")
-  rect(usr[1] - 0.1, p$y[3], usr[2] + 0.1, usr[4], border = NA, col = "white")
+  rect(usr[1] - 0.1, pdat$y[3], usr[2] + 0.1, usr[4], border = NA, col = "white")
 
   if (!is.null(title)) title(title, line = -2.8)
+
+  # par(oldmar)
+  invisible(pdat)
 }
 
 #' @rdname plot.ped
