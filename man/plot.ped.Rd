@@ -10,12 +10,12 @@
 \method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
   col = 1, shaded = NULL, deceased = NULL, starred = NULL,
-  margins = c(0.6, 1, 4.1, 1), ...)
+  fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1), ...)
 
 \method{plot}{singleton}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
   col = 1, shaded = NULL, deceased = NULL, starred = NULL,
-  margins = c(8, 0, 0, 0), ...)
+  fouInb = "autosomal", margins = c(8, 0, 0, 0), ...)
 
 as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 
@@ -66,6 +66,10 @@ symbols should appear shaded.}
 \item{starred}{a vector of ID labels indicating pedigree members that should
 be marked with a star in the pedigree plot.}
 
+\item{fouInb}{either "autosomal" (default), "x" or NULL. If "autosomal" or
+"x", inbreeding coefficients are added to the plot above the inbred
+founders. If NULL, or if no founders are inbred, nothing is added.}
+
 \item{margins}{a numeric of length 4 indicating the plot margins. For
 singletons only the first element (the 'bottom' margin) is used.}
 
@@ -104,6 +108,13 @@ plot(x, id.labels = c(FATHER = "fa", "boy"))
 
 # Colors
 plot(x, col = list(red = "fa", green = "boy"))
+
+# Founder inbreeding is shown by default
+founderInbreeding(x, "mo") = 0.1
+plot(x)
+
+# ... but can be suppressed
+plot(x, fouInb = NULL)
 
 }
 \seealso{

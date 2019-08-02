@@ -43,6 +43,9 @@
 #' @param deceased a vector of ID labels indicating deceased pedigree members.
 #' @param starred a vector of ID labels indicating pedigree members that should
 #'   be marked with a star in the pedigree plot.
+#' @param fouInb either "autosomal" (default), "x" or NULL. If "autosomal" or
+#'   "x", inbreeding coefficients are added to the plot above the inbred
+#'   founders. If NULL, or if no founders are inbred, nothing is added.
 #' @param margins a numeric of length 4 indicating the plot margins. For
 #'   singletons only the first element (the 'bottom' margin) is used.
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
@@ -74,10 +77,18 @@
 #' # Colors
 #' plot(x, col = list(red = "fa", green = "boy"))
 #'
+#' # Founder inbreeding is shown by default
+#' founderInbreeding(x, "mo") = 0.1
+#' plot(x)
+#'
+#' # ... but can be suppressed
+#' plot(x, fouInb = NULL)
+#'
+#' @importFrom graphics text
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                     id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
-                    starred = NULL, margins = c(0.6, 1, 4.1, 1), ...) {
+                    starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1), ...) {
 
   nInd = pedsize(x)
 
@@ -163,6 +174,18 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   # Add title
   if (!is.null(title)) title(title)
 
+  # Add founder inbreeding coefficients
+  if(!is.null(fouInb) && hasInbredFounders(x)) {
+    finb = founderInbreeding(x, chromType = fouInb, named = T)
+    finb = finb[finb > 0]
+    idx = internalID(x, names(finb))
+    finb.txt = sprintf("f = %.4g", finb)
+    cex = match.call(expand.dots = F)$`...`$cex # NULL is ok!
+
+    text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
+         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
+  }
+
   # par(oldmar)
   invisible(pdat)
 }
@@ -171,16 +194,22 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 #' @export
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                           id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
-                          starred = NULL, margins = c(8, 0, 0, 0), ...) {
+                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), ...) {
   if(length(id.labels) > 1)
     stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
   if(is.null(marker))
     x$markerdata = NULL
 
-  y = addParents(x, labels(x)[1], verbose = FALSE)
+  # Founder inbreeding (this must be extracted before addParents())
+  if(!is.null(fouInb) && hasInbredFounders(x))
+    finb = founderInbreeding(x, chromType = fouInb) #names unneccesary
+  else
+    finb = NULL
 
-  # Marker genotypes
+  y = suppressMessages(addParents(x, labels(x)[1], verbose = FALSE))
+
+    # Marker genotypes
   if (!is.null(marker)) {
     if (is.marker(marker))
       mlist = list(marker)
@@ -220,7 +249,18 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   usr = par("usr")
   rect(usr[1] - 0.1, pdat$y[3], usr[2] + 0.1, usr[4], border = NA, col = "white")
 
+  # Add title
   if (!is.null(title)) title(title, line = -2.8)
+
+  # Add founder inbreeding coefficients
+  if(!is.null(finb)) {
+    finb.txt = sprintf("f = %.4g", finb)
+    cex = match.call(expand.dots = F)$`...`$cex # NULL is ok!
+    idx = 3 # the "child"
+
+    text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
+         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
+  }
 
   # par(oldmar)
   invisible(pdat)
