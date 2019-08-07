@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(kableExtra)
 ```
 
 The purpose of this vignette is to show how to work with pedigrees and marker data in `pedtools`. To obtain the latest version of the package I recommend installing it from GitHub as follows:
@@ -344,7 +345,7 @@ whichMarkers(trio, chrom = 23)
 selectMarkers(trio, markers = "snp1")
 ```
 
-## Accessing and modifying marker attributes
+## Accessing and modifying individual marker attributes
 Internally, a marker object is stored as a matrix with two columns (one for each allele) and one row for each pedigree member. The matrix is numeric (for computational convenience) while the allele labels and other meta information are added as _attributes_. The most important of these are:
 
 * `alleles` : The allele labels, stored as a character vector.
@@ -378,5 +379,59 @@ In addition to the functions getting and setting marker attributes, there is one
 genotype(trio, "snpX", id = "girl")
 genotype(trio, "snpX", id = "girl") = "A"
 trio
+```
+
+## Getting and setting marker attributes globally
+Several functions in `pedtools` are indented for modifying many (or all) marker objects at the same time. Their purpose and typical use cases are summarised in the table below. The argument `x` always denotes a `ped` object.
+```{r getset, echo = FALSE}
+getters.df = rbind(
+  c("`getAlleles(x)`", 
+    "extract all alleles as a matrix.", 
+    "do summary stats on the marker alleles"),
+  c("`getFrequencyDatabase(x)`", 
+    "extract allele frequencies as a data.frame in *allelic ladder* format.", 
+    "transfer to other objects, or write the database to a file"),
+  c("`getMarkers(x)`", 
+    "extract list of marker objects. Each marker is a `N * 2` allele matrix (`N = pedsize(x)`) with locus annotations as attributes", 
+    "do computations")
+)
+
+setters.df = rbind(
+  c("`setAlleles(x, ...)`", 
+    "replace the genotypes of `x` without changing the locus attributes.", 
+    "erase all genotypes"),
+  c("`setFrequencyDatabase(x, db)`", 
+    "replace all allele frequencies without changing the genotype data. The input is a data.frame in *allelic ladder* format. Conceptually equivalent to `setMarkers(x, alleleMatrix = getAlleles(x), locusAnnotations = db)`.", 
+    "change the frequency database"),
+  c("`setMarkers(x, ...)`", 
+    "attach marker objects with or without genotype data. Locus attributes are indicated as a list; genotypes as a matrix or data.frame.", 
+    "prepare joint manipulation of a pedigree and marker data")
+)
+
+conversions.df = rbind(
+  c("`as.data.frame(x)`", 
+    "convert `x` to a data.frame, with pedigree columns in standard format followed by genotype columns. One column per marker, with genotype format `a/b` and missing alleles indicated as `-`.", 
+    "pretty-print ped objects"),
+  c("`as.matrix(x)`", 
+    "convert `x` to a *numerical* matrix, with additional info attached as attributes.", 
+    "modify a pedigree with marker data")
+)
+
+other.df = rbind(
+  c("`transferMarkers(from, to)`", 
+    "transfer genotypes and attributes between pedigree objects (or lists of such).", 
+    "transfer simulated marker data")
+)
+
+getset.df = rbind(getters.df, setters.df, conversions.df, other.df)
+tbl.getset = kable(getset.df, 
+            col.names = c("Use ...", "When you want to ...", "For example to ..."))
+tbl.getset = column_spec(tbl.getset, 1, width = "5cm")
+tbl.getset = column_spec(tbl.getset, 2, width = "8cm")
+tbl.getset = pack_rows(tbl.getset, "Get", 1, 3, indent = F)
+tbl.getset = pack_rows(tbl.getset, "Set", 4, 6, indent = F)
+tbl.getset = pack_rows(tbl.getset, "Convert", 7, 8, indent = F)
+tbl.getset = pack_rows(tbl.getset, "Transfer", 9, 9, indent = F)
+tbl.getset
 ```
 
