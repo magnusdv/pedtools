@@ -345,7 +345,7 @@ whichMarkers(trio, chrom = 23)
 selectMarkers(trio, markers = "snp1")
 ```
 
-## Accessing and modifying individual marker attributes
+## Accessing and modifying individual markers
 Internally, a marker object is stored as a matrix with two columns (one for each allele) and one row for each pedigree member. The matrix is numeric (for computational convenience) while the allele labels and other meta information are added as _attributes_. The most important of these are:
 
 * `alleles` : The allele labels, stored as a character vector.
@@ -381,8 +381,8 @@ genotype(trio, "snpX", id = "girl") = "A"
 trio
 ```
 
-## Getting and setting marker attributes globally
-Several functions in `pedtools` are indented for modifying many (or all) marker objects at the same time. Their purpose and typical use cases are summarised in the table below. The argument `x` always denotes a `ped` object.
+## Getting/setting/modifying many markers simultaneously
+Several functions in `pedtools` are indented for modifying many (or all) markers at the same time. Their purpose and typical use cases are summarised in the table below. The argument `x` always denotes a `ped` object.
 ```{r getset, echo = FALSE}
 getters.df = rbind(
   c("`getAlleles(x)`", 
