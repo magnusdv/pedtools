@@ -123,55 +123,64 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
   if(!is.ped(x) && !is.pedList(x))
     stop2("The first argument must be a `ped` object or a list of such")
 
-  if(is.pedList(x)) {
+  completeAlleleMatrix = getAlleles(x, markers = markers)
 
-    if(is.matrix(alleles) && is.null(rownames(alleles))) {
-      if(is.null(ids))
-        rownames(alleles) = unlist(lapply(x, labels))
-      else
-        stop2("When `ids` is non-NULL and `alleles` is a matrix, it must have rownames")
-    }
-
-    # Set alleles one component at a time
-    y = lapply(x, function(comp) {
-      ids_comp = if(is.null(ids)) labels(comp) else intersect(ids, labels(comp))
-      am_comp = if(is.matrix(alleles)) alleles[ids_comp, ] else alleles
-      setAlleles(comp, ids = ids_comp, markers = markers, alleles = am_comp)
-    })
-    return(y)
-  }
-
-  # Main body: x is now is single `ped` object
   if(is.null(ids))
-    ids = labels(x)
-
-  if(length(ids) == 0)
-    return(x)
-
-  if(is.null(markers))
-    markers = seq_len(nMarkers(x))
-
-  midx = whichMarkers(x, markers = markers)
-  if(length(midx) == 0) {
-    cat("No markers to set, returning `x` unchanged\n")
-    return(x)
+    ids = rownames(completeAlleleMatrix)
+  else {
+    ids = as.character(ids)
+    if(!all(ids %in% rownames(completeAlleleMatrix)))
+      stop2("Unknown ID label: ", setdiff(ids, rownames(completeAlleleMatrix)))
   }
+
+  oldAlleles = completeAlleleMatrix[ids, , drop = F]
+  if(is.null(oldAlleles))
+    return(x)
 
   # Fix `alleles` if not matrix
   if(is.data.frame(alleles))
     alleles = as.matrix(alleles)
+
+  if(length(alleles) == 1)
+    alleles = rep(alleles, length(oldAlleles))
+  else if(length(alleles) != length(oldAlleles))
+    stop2("Replacement `alleles` has incorrect length (should be either 1 or ",length(oldAlleles), ")")
+
   if(!is.matrix(alleles))
-    alleles = matrix(alleles, nrow = length(ids), ncol = 2*length(markers))
+    dim(alleles) = dim(oldAlleles)
 
-  mlist = getMarkers(x, midx)
-  am = markerlist2allelematrix(mlist)
-  am[internalID(x, ids), ] = alleles
+  if(is.null(rownames(alleles)))
+    rownames(alleles) = ids
+  else if(!setequal(rownames(alleles), ids))
+    stop2("Unknown ID label(s) found in rownames of `alleles`: ",
+          setdiff(ids, rownames(alleles)))
 
-  loci = lapply(mlist, attributes)
-  mlistNew = allelematrix2markerlist(x, am, locusAttributes = loci, missing = NA)
+  # Function for doing one component
+  setAllelesComponent = function(comp) {
+    ids_comp = intersect(ids, labels(comp))
 
-  x$markerdata[midx] = mlistNew
-  x
+    am = completeAlleleMatrix[labels(comp), , drop = F]
+    am[ids_comp, ] = alleles[ids_comp, ]
+
+    # Locus attributes
+    if(is.null(markers)) markers = seq_len(nMarkers(comp))
+    loci = getLocusAttributes(comp, markers = markers)
+
+    # Convert back to marker list and replace the old ones
+    mlistNew = allelematrix2markerlist(comp, am, locusAttributes = loci, missing = NA) # why NA?
+
+    midx = whichMarkers(comp, markers)
+    comp$markerdata[midx] = mlistNew
+
+    # Return modified ped oject
+    comp
+  }
+
+
+  if(is.pedList(x))
+    lapply(x, setAllelesComponent)
+  else
+    setAllelesComponent(x)
 }
 
 

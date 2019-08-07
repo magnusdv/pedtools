@@ -17,29 +17,61 @@
 #' getFrequencyDatabase(x)
 #'
 #' @export
-getFrequencyDatabase = function(x, markers) {
-  if(missing(markers))
-    markers = seq_len(nMarkers(x))
+getFrequencyDatabase = function(x, markers = seq_len(nMarkers(x))) {
 
-  mlist = getMarkers(x, markers)
-  mnames = unlist(lapply(mlist, name))
-  afr = lapply(mlist, afreq)
-  allAlleles = unique.default(names(unlist(afr)))
+  # If list of pedigrees, use the first component
+  if(is.pedList(x))
+    return(getFrequencyDatabase(x[[1]], markers))
 
+  attrs = getLocusAttributes(x, markers, attribs = c("name", "alleles", "afreq"))
+  mnames = lapply(attrs, '[[', "name")
+  mnames = unlist(mnames) # what about NA's?
+  als = lapply(attrs, '[[', "alleles")
+  afr = lapply(attrs, '[[', "afreq")
+
+  allAlleles = unique.default(unlist(als))
+
+  # Sort numerically if possible
   nums = !anyNA(suppressWarnings(is.numeric(allAlleles)))
   if(nums)
     allAlleles = allAlleles[order(as.numeric(allAlleles))]
   else
     allAlleles = allAlleles[order(allAlleles)]
 
-  res = matrix(NA, nrow = length(allAlleles), ncol = length(mlist),
+  # Create output matrix
+  res = matrix(NA, nrow = length(allAlleles), ncol = length(attrs),
                dimnames = list(allAlleles, mnames))
 
-  for(i in seq_along(mlist)) {
-    a = afr[[i]]
-    res[names(a), i] = a
+  # Fill inn correct frequencies for each marker
+  for(i in seq_along(attrs)) {
+    als.i = als[[i]]
+    afr.i = afr[[i]]
+    res[als.i, i] = afr.i
   }
 
   res
+}
+
+setFrequencyDatabase = function(x, database) {
+
+  database = as.data.frame(database)
+  als = rownames(database)
+  mnames = colnames(database)
+
+  loci = lapply(database, function(m) {
+    idx = !is.na(m)
+    list(alleles = als[idx], afreq = m[idx])
+  })
+
+  loci
+}
+
+## Internal methods
+getLocusAttributes = function(x, markers = seq_len(nMarkers(x)),
+                   attribs = c("alleles", "afreq", "name" ,"chrom" ,"posMb","posCm")) {
+
+  attribs = match.arg(attribs, several.ok = T)
+  mlist = getMarkers(x, markers)
+  lapply(mlist, function(m) attributes(m)[attribs])
 }
 

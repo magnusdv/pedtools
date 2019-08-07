@@ -4,7 +4,7 @@
 \alias{getFrequencyDatabase}
 \title{Allele frequency database}
 \usage{
-getFrequencyDatabase(x, markers)
+getFrequencyDatabase(x, markers = seq_len(nMarkers(x)))
 }
 \arguments{
 \item{x}{A \code{ped} object}
