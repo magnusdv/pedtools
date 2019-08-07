@@ -10,14 +10,15 @@
 #'   individuals.
 #' @param erase a logical. If `TRUE` (default), all markers attached to `to` are
 #'   erased prior to transfer, and new marker objects are created with the same
-#'   annotations as in `from`. If `FALSE` no new marker objects are attached to
+#'   attributes as in `from`. If `FALSE` no new marker objects are attached to
 #'   `to`. Only the genotypes of the `ids` individuals are modified, while
-#'   genotypes for other pedigree members - and marker annotations - remain
+#'   genotypes for other pedigree members - and marker attributes - remain
 #'   untouched.
 #' @param matchNames a logical, only relevant if `erase = FALSE`. If `matchNames
 #'   = TRUE` (default) marker names are used to ensure genotypes are transferred
-#'   into the right markers. The output will contain only the markers in `from`, in the same order. (An error is raised if the
-#'   markers are not named.) In this case
+#'   into the right markers. The output will contain only the markers in `from`,
+#'   in the same order. (An error is raised if the markers are not named.) In
+#'   this case
 #'
 #' @return A `ped` object (or a list of such) similar to `to`, but where all
 #'   individuals also present in `from` have marker genotypes copied over.  Any
@@ -37,11 +38,10 @@
 #' # Transfer data for the boy only
 #' transferMarkers(x, y, ids = "boy")
 #'
-#' ### Transfer without erasing annotations and others genotypes
+#' # Transfer without erasing marker attributes or others genotypes
+#' # Note that `erase = FALSE` requires markers to be named
 #' z = nuclearPed(children = "boy")
 #' z = setMarkers(z, marker(z, '1' = c(2,2), alleles = 1:2, afreq = c(.1, .9)))
-#'
-#' # `erase = F` requires markers to be named
 #' name(x, 1) = name(z, 1) = 'M1'
 #' z2 = transferMarkers(x, z, ids = "boy", erase = FALSE)
 #' z2
@@ -149,7 +149,7 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
     # Add empty allele matrix
     b = cbind(b, matrix(0L, ncol = 2*M, nrow = pedsize(to)))
 
-    # Transfer loci annotations
+    # Transfer locus attributes
     b.attrs$markerattr = attr(a, 'markerattr')
   }
 

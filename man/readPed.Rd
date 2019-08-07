@@ -6,8 +6,8 @@
 \usage{
 readPed(pedfile, header = NA, famid_col = NA, id_col = NA,
   fid_col = NA, mid_col = NA, sex_col = NA, marker_col = NA,
-  locus_annotations = NULL, missing = 0, allele_sep = NULL,
-  validate = TRUE, ...)
+  locusAttributes = NULL, missing = 0, sep = NULL, validate = TRUE,
+  ...)
 }
 \arguments{
 \item{pedfile}{A file name}
@@ -34,15 +34,15 @@ If this is not found, genders of parents are deduced from the data, leaving
 the remaining as unknown.}
 
 \item{marker_col}{Index vector indicating columns with marker alleles. If NA,
-all columns to the right of all pedigree columns are used. If \code{allele_sep}
+all columns to the right of all pedigree columns are used. If \code{sep}
 (see below) is non-NULL, each column is interpreted as a genotype column
-and split into separate alleles with \code{strsplit(..., split=allele_sep)}.}
+and split into separate alleles with \code{strsplit(..., split = sep, fixed = T)}.}
 
-\item{locus_annotations}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+\item{locusAttributes}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
 \item{missing}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
-\item{allele_sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+\item{sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
 \item{validate}{A logical indicating if the pedigree structure should be validated.}
 
@@ -65,7 +65,7 @@ readPed(tf)
 # With marker data in one column
 trio.marker = cbind(trio, M = c("1/1", "2/2", "1/2"))
 write.table(trio.marker, file = tf, row.names = FALSE)
-readPed(tf, allele_sep = "/")
+readPed(tf, sep = "/")
 
 # With marker data in two allele columns
 trio.marker2 = cbind(trio, A1 = c(1,2,1), A2 = c(1,2,2))
@@ -77,7 +77,7 @@ singles = data.frame(id = c("S1", "S2"),
                      fid = c(0,0), mid = c(0,0), sex = c(2,1),
                      M = c("9/14.2", "9/9"))
 write.table(singles, file = tf, row.names = FALSE)
-readPed(tf, allele_sep = "/")
+readPed(tf, sep = "/")
 
 ### Two trios in the same file
 trio2 = cbind(famid = rep(c("trio1", "trio2"), each = 3), rbind(trio, trio))

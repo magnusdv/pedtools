@@ -9,8 +9,8 @@ as.ped(x, ...)
 
 \method{as.ped}{data.frame}(x, famid_col = NA, id_col = NA,
   fid_col = NA, mid_col = NA, sex_col = NA, marker_col = NA,
-  locus_annotations = NULL, missing = 0, allele_sep = NULL,
-  validate = TRUE, ...)
+  locusAttributes = NULL, missing = 0, sep = NULL, validate = TRUE,
+  ...)
 }
 \arguments{
 \item{x}{Any object.}
@@ -35,15 +35,15 @@ If this is not found, genders of parents are deduced from the data, leaving
 the remaining as unknown.}
 
 \item{marker_col}{Index vector indicating columns with marker alleles. If NA,
-all columns to the right of all pedigree columns are used. If \code{allele_sep}
+all columns to the right of all pedigree columns are used. If \code{sep}
 (see below) is non-NULL, each column is interpreted as a genotype column
-and split into separate alleles with \code{strsplit(..., split=allele_sep)}.}
+and split into separate alleles with \code{strsplit(..., split = sep, fixed = T)}.}
 
-\item{locus_annotations}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+\item{locusAttributes}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
 \item{missing}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
-\item{allele_sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+\item{sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
 \item{validate}{A logical indicating if the pedigree structure should be validated.}
 }
@@ -70,7 +70,7 @@ as.ped(df1)
 # Disconnected example: Trio (1-3) + singleton (4)
 df2 = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
                 M = c("1/2", "1/1", "2/2", "3/4"))
-as.ped(df2, allele_sep = "/")
+as.ped(df2, sep = "/")
 
 # Two singletons
 df3 = data.frame(id = 1:2, fid = 0, mid = 0, sex = 1)

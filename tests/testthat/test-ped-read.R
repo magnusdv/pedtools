@@ -48,20 +48,20 @@ test_that("as.ped() converts data.frame with marker columns", {
   expect_identical(x1$markerdata[[2]], marker(trio, boy=2))
 
   # force two alleles
-  x2 = as.ped(df, locus_annotation = list(alleles=1:2))
+  x2 = as.ped(df, locusAttributes = list(alleles=1:2))
   expect_identical(x2$markerdata[[1]], marker(trio, boy=1:2))
   expect_identical(x2$markerdata[[2]], marker(trio, boy=2, alleles=1:2))
 
   # Same, with markers in single columns:
   dfS = data.frame(id=c('fa','mo','boy'), fid=c(0,0,'fa'), mid=c(0,0,'mo'), sex=c(1,2,1),
                   m1 = c(NA,NA,"1/2"), m2 = c(NA,NA,"2/2"), stringsAsFactors = F)
-  expect_identical(x1, as.ped(dfS, allele_sep="/"))
-  expect_identical(x2, as.ped(dfS, allele_sep="/", locus_annotations = list(alleles=1:2)))
+  expect_identical(x1, as.ped(dfS, sep="/"))
+  expect_identical(x2, as.ped(dfS, sep="/", locusAttributes = list(alleles=1:2)))
 })
 
 test_that("as.ped() converts data.frame to singletons with marker columns", {
   df = data.frame(famid=c("s1", "s2"), id=1, fid=0, mid=0, sex=1, m1=c(NA, "1/2"))
-  pedlist = as.ped(df, allele_sep="/")
+  pedlist = as.ped(df, sep="/")
 
   s1 = singleton(1, famid="s1")
   s1 = setMarkers(s1, marker(s1))
@@ -79,7 +79,7 @@ test_that("as.ped() does not reorder (i.e. does not shuffle genotypes", {
   df = rbind(as.data.frame(x), as.data.frame(s))
   df = cbind(famid = c(1,1,1,2), df)
 
-  y = as.ped(df, allele_sep="/")
+  y = as.ped(df, sep="/")
   famid(y[[1]]) = famid(y[[2]]) = ""
 
   expect_identical(list('1'=x, '2'=s), y)

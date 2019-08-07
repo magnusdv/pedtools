@@ -29,7 +29,7 @@ while the columns are named \code{<m1>.1}, \code{<m1>.2}, ... where \code{<m1>} 
 name of the first marker, a.s.o.
 
 \code{setAlleles()} returns a \code{ped} object identical to \code{x}, except for the
-modified alleles. In particular, all locus annotations are unchanged.
+modified alleles. In particular, all locus attributes are unchanged.
 }
 \description{
 Functions for getting and setting the genotypes of multiple

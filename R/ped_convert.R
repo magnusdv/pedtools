@@ -36,7 +36,7 @@
 #'
 #' # To examplify the ped -> matrix -> ped trick, we show how to
 #' # reverse the internal ordering of the pedigree.
-#' m = as.matrix(x, include.attrs=TRUE)
+#' m = as.matrix(x, include.attrs = TRUE)
 #' m[] = m[3:1, ]
 #'
 #' # Must reverse the labels also:
@@ -44,7 +44,7 @@
 #' attrs$LABELS = rev(attrs$LABELS)
 #'
 #' # Restore ped:
-#' y = restorePed(m, attrs=attrs)
+#' y = restorePed(m, attrs = attrs)
 #'
 #' # Of course a simpler way is use reorderPed():
 #' z = reorderPed(x, 3:1)
@@ -79,8 +79,8 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
 restorePed = function(x, attrs = NULL, validate = TRUE) {
   if (is.null(attrs))
     attrs = attributes(x)
-  p = ped(id=x[,1], fid=x[,2], mid=x[,3], sex=x[,4], famid=attrs$FAMID,
-          validate = validate, reorder=F)
+  p = ped(id = x[,1], fid = x[,2], mid = x[,3], sex = x[,4],
+          famid = attrs$FAMID, validate = validate, reorder = F)
 
   if(is.pedList(p))
     stop2("Cannot restore to `ped` object: Disconnected input")
@@ -164,7 +164,8 @@ as.data.frame.ped = function(x, ..., markers) {
   fid = mid = rep("0", pedsize(x))
   fid[x$FIDX > 0] = lab[x$FIDX]
   mid[x$MIDX > 0] = lab[x$MIDX]
-  df = data.frame(id = lab, fid=fid, mid=mid, sex=x$SEX, stringsAsFactors=FALSE)
+  df = data.frame(id = lab, fid = fid, mid = mid, sex = x$SEX,
+                  stringsAsFactors = FALSE)
 
   if(hasMarkers(x)) {
     # Make sure `markers` is an index vector (not missing or character)
@@ -294,12 +295,12 @@ as.ped = function(x, ...) {
 #'   If this is not found, genders of parents are deduced from the data, leaving
 #'   the remaining as unknown.
 #' @param marker_col Index vector indicating columns with marker alleles. If NA,
-#'   all columns to the right of all pedigree columns are used. If `allele_sep`
+#'   all columns to the right of all pedigree columns are used. If `sep`
 #'   (see below) is non-NULL, each column is interpreted as a genotype column
-#'   and split into separate alleles with `strsplit(..., split=allele_sep)`.
-#' @param locus_annotations Passed on to [setMarkers()] (see explanation there).
+#'   and split into separate alleles with `strsplit(..., split = sep, fixed = T)`.
+#' @param locusAttributes Passed on to [setMarkers()] (see explanation there).
 #' @param missing Passed on to [setMarkers()] (see explanation there).
-#' @param allele_sep Passed on to [setMarkers()] (see explanation there).
+#' @param sep Passed on to [setMarkers()] (see explanation there).
 #' @param validate A logical indicating if the pedigree structure should be validated.
 #'
 #' @examples
@@ -310,7 +311,7 @@ as.ped = function(x, ...) {
 #' # Disconnected example: Trio (1-3) + singleton (4)
 #' df2 = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
 #'                 M = c("1/2", "1/1", "2/2", "3/4"))
-#' as.ped(df2, allele_sep = "/")
+#' as.ped(df2, sep = "/")
 #'
 #' # Two singletons
 #' df3 = data.frame(id = 1:2, fid = 0, mid = 0, sex = 1)
@@ -320,8 +321,21 @@ as.ped = function(x, ...) {
 #' @export
 as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
                              mid_col = NA, sex_col = NA, marker_col = NA,
-                             locus_annotations = NULL, missing = 0,
-                             allele_sep = NULL, validate = TRUE, ...) {
+                             locusAttributes = NULL, missing = 0,
+                             sep = NULL, validate = TRUE, ...) {
+
+  # Check for deprecated arguments
+  dots = list(...)
+  for(arg in names(dots)) {
+    if(!is.na(pmatch(arg, "locus_annotations"))) {
+      warning("Argument `locus_annotations` is deprecated; use `locusAttributes` instead")
+      locusAttributes = dots[[arg]]
+    }
+    if(!is.na(pmatch(arg, "allele_sep"))) {
+      warning("Argument `allele_sep` is deprecated; use `sep` instead")
+      sep = dots[[arg]]
+    }
+  }
 
   colnames = tolower(names(x))
   if(is.na(famid_col))
@@ -344,8 +358,8 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
 
       as.ped.data.frame(comp, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
                         mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
-                        locus_annotations = locus_annotations, missing = missing,
-                        allele_sep=allele_sep, validate = validate, ...)
+                        locusAttributes = locusAttributes, missing = missing, sep = sep,
+                        validate = validate, ...)
     })
 
     names(pedlist) = unique_fams
@@ -421,15 +435,14 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
         rows = match(labels(comp), id)
         AM = x[rows, marker_col, drop = F]
         rownames(AM) = comp$id
-        setMarkers(comp, allele_matrix = AM,
-                   locus_annotations = locus_annotations,
-                   missing = missing, allele_sep = allele_sep)
+        setMarkers(comp, alleleMatrix = AM, locusAttributes = locusAttributes,
+                   missing = missing, sep = sep)
       })
     }
     else
-      p = setMarkers(p, allele_matrix = x[marker_col],
-                     locus_annotations = locus_annotations,
-                     missing = missing, allele_sep = allele_sep)
+      p = setMarkers(p, alleleMatrix = x[marker_col],
+                     locusAttributes = locusAttributes,
+                     missing = missing, sep = sep)
   }
 
   p

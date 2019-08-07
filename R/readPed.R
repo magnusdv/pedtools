@@ -20,7 +20,7 @@
 #' # With marker data in one column
 #' trio.marker = cbind(trio, M = c("1/1", "2/2", "1/2"))
 #' write.table(trio.marker, file = tf, row.names = FALSE)
-#' readPed(tf, allele_sep = "/")
+#' readPed(tf, sep = "/")
 #'
 #' # With marker data in two allele columns
 #' trio.marker2 = cbind(trio, A1 = c(1,2,1), A2 = c(1,2,2))
@@ -32,7 +32,7 @@
 #'                      fid = c(0,0), mid = c(0,0), sex = c(2,1),
 #'                      M = c("9/14.2", "9/9"))
 #' write.table(singles, file = tf, row.names = FALSE)
-#' readPed(tf, allele_sep = "/")
+#' readPed(tf, sep = "/")
 #'
 #' ### Two trios in the same file
 #' trio2 = cbind(famid = rep(c("trio1", "trio2"), each = 3), rbind(trio, trio))
@@ -53,8 +53,21 @@
 #' @export
 readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = NA,
                    mid_col = NA, sex_col = NA, marker_col = NA,
-                   locus_annotations = NULL, missing = 0,
-                   allele_sep = NULL, validate = TRUE, ...) {
+                   locusAttributes = NULL, missing = 0,
+                   sep = NULL, validate = TRUE, ...) {
+
+  # Check for deprecated arguments
+  dots = list(...)
+  for(arg in names(dots)) {
+    if(!is.na(pmatch(arg, "locus_annotations"))) {
+      warning("Argument `locus_annotations` is deprecated; use `locusAttributes` instead")
+      locusAttributes = dots[[arg]]
+    }
+    if(!is.na(pmatch(arg, "allele_sep"))) {
+      warning("Argument `allele_sep` is deprecated; use `sep` instead")
+      sep = dots[[arg]]
+    }
+  }
 
   # If header = NA, check first line
   if(is.na(header)) {
@@ -68,7 +81,7 @@ readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = 
   ped.df = read.table(pedfile, header = header, colClasses = "character", ...)
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
-         locus_annotations = locus_annotations, missing = missing,
-         allele_sep=allele_sep, validate = validate)
+         locusAttributes = locusAttributes, missing = missing,
+         sep = sep, validate = validate)
 
 }

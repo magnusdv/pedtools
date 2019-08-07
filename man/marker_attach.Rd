@@ -6,31 +6,33 @@
 \alias{addMarkers}
 \title{Attach markers to pedigrees}
 \usage{
-setMarkers(x, m = NULL, allele_matrix = NULL,
-  locus_annotations = NULL, missing = 0, allele_sep = NULL)
+setMarkers(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL,
+  missing = 0, sep = NULL, ...)
 
-addMarkers(x, m = NULL, allele_matrix = NULL,
-  locus_annotations = NULL, missing = 0, allele_sep = NULL)
+addMarkers(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL,
+  missing = 0, sep = NULL, ...)
 }
 \arguments{
 \item{x}{A \code{ped} object}
 
 \item{m}{Either a single \code{marker} object or a list of \code{marker} objects}
 
-\item{allele_matrix}{A matrix with \code{pedsize(x)} rows, containing the observed
+\item{alleleMatrix}{A matrix with \code{pedsize(x)} rows, containing the observed
 alleles for one or several markers. The matrix must have either 1 or 2
-columns per marker. If the former, then the argument \code{allele_sep} must be
-non-NULL, and will be used to split all entries.}
+columns per marker. If the former, then a \code{sep} string must be a given, and
+will be used to split all entries.}
 
-\item{locus_annotations}{A list of lists, with annotations for each marker.
-See \code{\link[=marker]{marker()}} for possible entries.}
+\item{locusAttributes}{A list of lists, with attributes for each marker.
+Possible attributes are See \code{\link[=marker]{marker()}} for possible entries.}
 
 \item{missing}{A single character (or coercible to one) indicating the symbol
 for missing alleles.}
 
-\item{allele_sep}{If this is a single string, each entry of \code{allele_matrix}
-is interpreted as a genotype, and will be split by calling \code{str_split(..., split = allele_sep, fixed = T)}. For example, if the entries are formatted
-as "A/B", put \code{allele_sep="/"}. Default: NULL.}
+\item{sep}{If this is a single string, each entry of \code{alleleMatrix} is
+interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = T)}. For example, if the entries are formatted
+as "A/B", put \code{sep="/"}. Default: NULL.}
+
+\item{...}{Further arguments}
 }
 \value{
 A \code{ped} object.
@@ -42,10 +44,25 @@ it easier to manipulate the dataset as a unit. The function \code{setMarkers()}
 replaces all existing markers with the supplied ones, while \code{addMarkers()}
 appends the supplied markers to any existing ones.
 }
+\details{
+When the argument \code{locusAttributes} is used, this must be a list of lists
+(one for each marker), where possible entries (default values in parenthesis)
+in the inner lists are:
+\itemize{
+\item 'alleles' : a character vector with allele labels
+\item 'afreq' :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
+where \code{L = length(alleles)})
+\item 'chrom' : chromosome number (NA)
+\item 'posMb' : physical location in megabases (NA)
+\item 'posCm' : position in centiMorgan (NA)
+\item 'name' : marker name (NA)
+\item 'mutmat' : a list of two (male and female) mutation matrices (NULL)
+}
+}
 \examples{
 x = singleton(1)
-m1 = marker(x, '1'=1:2)
-m2 = marker(x, '1'='a')
+m1 = marker(x, '1' = 1:2)
+m2 = marker(x, '1' = 'a')
 
 x = setMarkers(x, m1)
 x = addMarkers(x, m2)

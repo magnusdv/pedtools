@@ -52,7 +52,7 @@ x = relabel(nuclearPed(1), letters[1:3])
 
 # To examplify the ped -> matrix -> ped trick, we show how to
 # reverse the internal ordering of the pedigree.
-m = as.matrix(x, include.attrs=TRUE)
+m = as.matrix(x, include.attrs = TRUE)
 m[] = m[3:1, ]
 
 # Must reverse the labels also:
@@ -60,7 +60,7 @@ attrs = attributes(m)
 attrs$LABELS = rev(attrs$LABELS)
 
 # Restore ped:
-y = restorePed(m, attrs=attrs)
+y = restorePed(m, attrs = attrs)
 
 # Of course a simpler way is use reorderPed():
 z = reorderPed(x, 3:1)

@@ -23,7 +23,7 @@
 #'   name of the first marker, a.s.o.
 #'
 #'   `setAlleles()` returns a `ped` object identical to `x`, except for the
-#'   modified alleles. In particular, all locus annotations are unchanged.
+#'   modified alleles. In particular, all locus attributes are unchanged.
 #'
 #' @seealso [transferMarkers()]
 #'
@@ -168,7 +168,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
   am[internalID(x, ids), ] = alleles
 
   loci = lapply(mlist, attributes)
-  mlistNew = allelematrix2markerlist(x, am, locus_annotations = loci, missing = NA)
+  mlistNew = allelematrix2markerlist(x, am, locusAttributes = loci, missing = NA)
 
   x$markerdata[midx] = mlistNew
   x
@@ -176,12 +176,12 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
 
 
 # For internal use
-allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=0, allele_sep=NULL) {
+allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0, sep = NULL) {
 
-  if(!is.matrix(allele_matrix) && !is.data.frame(allele_matrix))
-    stop2("Argument `allele_matrix` must be either a matrix or a data.frame")
+  if(!is.matrix(alleleMatrix) && !is.data.frame(alleleMatrix))
+    stop2("Argument `alleleMatrix` must be either a matrix or a data.frame")
 
-  m = as.matrix(allele_matrix)
+  m = as.matrix(alleleMatrix)
   row_nms = rownames(m)
 
   # If no rownames - dimensions must be correct
@@ -210,9 +210,9 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
     #
   }
 
-  # If allele_sep is given, interpret entries as diploid genotypes
-  if(!is.null(allele_sep))
-    m = split_genotype_cols(m, allele_sep, missing)
+  # If alleleSep is given, interpret entries as diploid genotypes
+  if(!is.null(sep))
+    m = split_genotype_cols(m, sep, missing)
 
   if (ncol(m) %% 2 != 0)
     stop2("Uneven number of marker allele columns")
@@ -222,10 +222,9 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
   }
 
   nMark = ncol(m)/2
-  ann = locus_annotations
 
-  # Quick return if no annotations given
-  if(is.null(ann)) {
+  # Quick return if no locus attributes are given
+  if(is.null(locusAttributes)) {
     mlist = lapply(seq_len(nMark), function(i) {
       mi = m[, c(2*i - 1, 2*i), drop = FALSE]
       marker(x, allelematrix = mi, validate = FALSE)
@@ -234,40 +233,40 @@ allelematrix2markerlist = function(x, allele_matrix, locus_annotations, missing=
     return(mlist)
   }
 
-  # If same annotations for all: Recycle
-  if (!is.list(ann[[1]]))
-    ann = rep(list(ann), nMark)
+  # If same attributes for all: Recycle
+  if (!is.list(locusAttributes[[1]]))
+    locusAttributes = rep(list(locusAttributes), nMark)
 
-  if (length(ann) != nMark)
-    stop2(sprintf("Length of annotation list (%d) does not equal number of markers (%d)",
-                  length(ann), nMark))
+  L = length(locusAttributes)
+  if (L != nMark)
+    stop2(sprintf("Unequal number of markers (%d) and locus attributes (%d)", nMark, L))
 
-  mlist = lapply(seq_len(nMark), function(i) {
-    attribs = ann[[i]]
-    attribs$x = x
-    attribs$allelematrix = m[, c(2*i - 1, 2*i), drop = FALSE]
-    do.call(marker, attribs)
+  mlist = lapply(seq_len(L), function(i) {
+    attri = locusAttributes[[i]]
+    attri$x = x
+    attri$allelematrix = m[, c(2*i - 1, 2*i), drop = FALSE]
+    do.call(marker, attri)
   })
 
   class(mlist) = "markerList"
   mlist
 }
 
-split_genotype_cols = function(m, allele_sep, missing) {
+split_genotype_cols = function(m, sep, missing) {
   nas = is.na(m) | m == missing
   if(all(nas))
     return(matrix(0, nrow = nrow(m), ncol = 2*ncol(m)))
 
   nonNA = m[!nas][1]
-  if(!grepl(allele_sep, nonNA))
+  if(!grepl(sep, nonNA))
     stop2("Allele separator not found in first non-NA entry of allele matrix: ", nonNA)
 
   # Replace NA's and missing by <miss>/<miss>. (Suboptimal strategy, but simple)
-  m[nas] = sprintf("%s%s%s", missing, allele_sep, missing)
+  m[nas] = sprintf("%s%s%s", missing, sep, missing)
 
   nc = ncol(m)
   nr = nrow(m)
-  splitvec = unlist(strsplit(m, allele_sep, fixed = T))
+  splitvec = unlist(strsplit(m, sep, fixed = T))
   msplit = matrix(0, ncol = 2 * nc, nrow = nr)
   msplit[, 2 * seq_len(nc) - 1] = splitvec[2 * seq_len(nc * nr) - 1]
   msplit[, 2 * seq_len(nc)] = splitvec[2 * seq_len(nc * nr)]
