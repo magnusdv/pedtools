@@ -47,7 +47,7 @@
 #'
 #'   * 'name' (marker identifier; default = NA)
 #'
-#'   * 'mutmat' (a list of two (male and female) mutation matrices; default =
+#'   * 'mutmod' (a list of two (male and female) mutation matrices; default =
 #'   NULL)
 #'
 #' @seealso [marker_attach]

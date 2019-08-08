@@ -56,7 +56,8 @@ where \code{L = length(alleles)})
 \item 'posMb' : physical location in megabases (NA)
 \item 'posCm' : position in centiMorgan (NA)
 \item 'name' : marker name (NA)
-\item 'mutmat' : a list of two (male and female) mutation matrices (NULL)
+\item 'mutmod' : mutation model, or model name (NULL)
+\item 'rate' : mutation model parameter (NULL)
 }
 }
 \examples{

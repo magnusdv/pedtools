@@ -56,7 +56,7 @@ and one row per individual, and the following attributes:
 \item 'posMb' (physical location in megabases; default = NA)
 \item 'posCm' (position in centiMorgan; default = NA)
 \item 'name' (marker identifier; default = NA)
-\item 'mutmat' (a list of two (male and female) mutation matrices; default =
+\item 'mutmod' (a list of two (male and female) mutation matrices; default =
 NULL)
 }
 }

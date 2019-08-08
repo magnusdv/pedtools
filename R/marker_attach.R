@@ -23,7 +23,10 @@
 #'
 #' * 'name' : marker name (NA)
 #'
-#' * 'mutmat' : a list of two (male and female) mutation matrices (NULL)
+#' * 'mutmod' : mutation model, or model name (NULL)
+#'
+#' * 'rate' : mutation model parameter (NULL)
+
 #'
 #' @param x A `ped` object
 #' @param m Either a single `marker` object or a list of `marker` objects

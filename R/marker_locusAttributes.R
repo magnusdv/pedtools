@@ -13,14 +13,34 @@
 #' entries of `locusAttributes` have a 'name' component which matches the name a
 #' an attached marker.
 #'
+#' Possible attributes given in `locusAttributes` are as follows (default values
+#' in parenthesis):
+#'
+#' * 'alleles' : a character vector with allele labels
+#'
+#' * 'afreq' :  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
+#' where `L = length(alleles)`)
+#'
+#' * 'name' : marker name (NA)
+#'
+#' * 'chrom' : chromosome number (NA)
+#'
+#' * 'posMb' : physical location in megabases (NA)
+#'
+#' * 'posCm' : position in centiMorgan (NA)
+#'
+#' * 'mutmod' : mutation model, or model name (NULL)
+#'
+#' * 'rate' : mutation model parameter (NULL)
+#'
 #' @param x A `ped` object, or a list of such.
 #' @param markers A character vector (with marker names) or a numeric vector
 #'   (with marker indices). If NULL (default), the behaviour depends on
 #'   `matchNames`, see Details.
 #' @param attribs A subset of the character vector `c("alleles", "afreq", "name"
-#'   ,"chrom" ,"posMb","posCm", "pedmut")`. By default all are included.
+#'   ,"chrom" ,"posMb","posCm", "mutmod")`.
 #' @param locusAttributes A list of lists, with attributes for each marker. If
-#'   `locusAttributes` is a list, but not a list of lists, then it is repeated
+#'   `locusAttributes` is just a list (not a list of lists), then it is repeated
 #'   to match the number of markers.
 #' @param matchNames A logical, only relevant if `markers = NULL`. If TRUE, then
 #'   the markers to be modified are identified by the 'name' component of each

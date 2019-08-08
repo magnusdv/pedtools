@@ -19,10 +19,10 @@ setLocusAttributes(x, markers = NULL, locusAttributes, matchNames = NA,
 (with marker indices). If NULL (default), the behaviour depends on
 \code{matchNames}, see Details.}
 
-\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb","posCm", "pedmut")}. By default all are included.}
+\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb","posCm", "mutmod")}.}
 
 \item{locusAttributes}{A list of lists, with attributes for each marker. If
-\code{locusAttributes} is a list, but not a list of lists, then it is repeated
+\code{locusAttributes} is just a list (not a list of lists), then it is repeated
 to match the number of markers.}
 
 \item{matchNames}{A logical, only relevant if \code{markers = NULL}. If TRUE, then
@@ -54,6 +54,20 @@ these are missing).
 Note that the default value \code{NA} of \code{matchNames} is changed to TRUE if all
 entries of \code{locusAttributes} have a 'name' component which matches the name a
 an attached marker.
+
+Possible attributes given in \code{locusAttributes} are as follows (default values
+in parenthesis):
+\itemize{
+\item 'alleles' : a character vector with allele labels
+\item 'afreq' :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
+where \code{L = length(alleles)})
+\item 'name' : marker name (NA)
+\item 'chrom' : chromosome number (NA)
+\item 'posMb' : physical location in megabases (NA)
+\item 'posCm' : position in centiMorgan (NA)
+\item 'mutmod' : mutation model, or model name (NULL)
+\item 'rate' : mutation model parameter (NULL)
+}
 }
 \examples{
 x = singleton(1)
