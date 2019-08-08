@@ -32,7 +32,7 @@
 #'   columns per marker. If the former, then a `sep` string must be a given, and
 #'   will be used to split all entries.
 #' @param locusAttributes A list of lists, with attributes for each marker.
-#'   Possible attributes are See [marker()] for possible entries.
+#'   See Details for possible attributes.
 #' @param missing A single character (or coercible to one) indicating the symbol
 #'   for missing alleles.
 #' @param sep If this is a single string, each entry of `alleleMatrix` is

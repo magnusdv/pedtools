@@ -23,7 +23,7 @@ columns per marker. If the former, then a \code{sep} string must be a given, and
 will be used to split all entries.}
 
 \item{locusAttributes}{A list of lists, with attributes for each marker.
-Possible attributes are See \code{\link[=marker]{marker()}} for possible entries.}
+See Details for possible attributes.}
 
 \item{missing}{A single character (or coercible to one) indicating the symbol
 for missing alleles.}
