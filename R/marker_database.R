@@ -1,27 +1,55 @@
 #' Allele frequency database
 #'
-#' Extract marker allele frequencies as a data.frame, sorted according to the
-#' 'allelic ladder'
+#' Extract or set marker allele frequencies using the 'allelic ladder' format
 #'
-#' @param x A `ped` object
+#' These functions are essentially special cases of [getLocusAttributes()] and
+#' [setLocusAttributes()].
+#'
+#' If `database` is a data.frame, it must have the allele labels as row names
+#' and marker names as column names.
+#'
+#' If `database` is a file path, it is read with the command
+#' `read.table(database, header = T, row.names = T, stringsAsFactors = F,
+#' colClasses = "character", ...)`
+#'
+#' @param x A `ped` object, or a list of such
 #' @param markers A character vector (with marker names) or a numeric vector
 #'   (with marker indices)
+#' @param database Either a data.frame or a character file path. See details.
+#' @param ... Optional arguments passed on to [read.table()]
+#' @return
 #'
-#' @return A data.frame with allele labels as now names, and marker labels as
-#'   column names
+#' * `getFrequencyDatabase` : a data.frame with allele labels as row names, and
+#' marker labels as column names
+#'
+#' * `getFrequencyDatabase`: a modified version of `x`
+#'
+#' @seealso [setLocusAttributes()], [setMarkers()], [setAlleles()]
 #'
 #' @examples
 #' loc1 = list(name = "m1", alleles = 3:4, afreq = c(.1, .9))
 #' loc2 = list(name = "m2", alleles = c("1", "10.2", "3"))
 #' x = setMarkers(singleton(1), locus = list(loc1, loc2))
-#' getFrequencyDatabase(x)
+#' db = getFrequencyDatabase(x)
+#' db
 #'
+#' y = setFrequencyDatabase(x, database = db)
+#' stopifnot(identical(x, y))
+#'
+#' @name freqDatabase
+NULL
+
+
+#' @rdname freqDatabase
 #' @export
-getFrequencyDatabase = function(x, markers = seq_len(nMarkers(x))) {
+getFrequencyDatabase = function(x, markers = NULL) {
 
   # If list of pedigrees, use the first component
   if(is.pedList(x))
-    return(getFrequencyDatabase(x[[1]], markers))
+    return(getFrequencyDatabase(x[[1]], markers = markers))
+
+  if(!is.ped(x))
+    stop2("Input must be a `ped` object or a list of such")
 
   attrs = getLocusAttributes(x, markers, attribs = c("name", "alleles", "afreq"))
   mnames = lapply(attrs, '[[', "name")
@@ -52,26 +80,33 @@ getFrequencyDatabase = function(x, markers = seq_len(nMarkers(x))) {
   res
 }
 
-setFrequencyDatabase = function(x, database) {
+#' @rdname freqDatabase
+#' @export
+setFrequencyDatabase = function(x, database, ...) {
 
-  database = as.data.frame(database)
+  # Read the table if file path
+  if(is.character(database) && length(database) == 1) {
+    database = read.table(database, header = T, row.names = T,
+                          stringsAsFactors = F, colClasses = "character", ...)
+  }
+  else {
+    database = as.data.frame(database)
+  }
+
   als = rownames(database)
-  mnames = colnames(database)
+  nms = colnames(database)
 
-  loci = lapply(database, function(m) {
-    idx = !is.na(m)
-    list(alleles = als[idx], afreq = m[idx])
+  loci = lapply(seq_along(database), function(i) {
+
+    # Column of frequencies
+    frqs = database[[i]]
+
+    # Index of rows with non-missing entries
+    idx = !is.na(frqs)
+
+    list(name = nms[i], alleles = als[idx], afreq = frqs[idx])
   })
 
-  loci
-}
-
-## Internal methods
-getLocusAttributes = function(x, markers = seq_len(nMarkers(x)),
-                   attribs = c("alleles", "afreq", "name" ,"chrom" ,"posMb","posCm")) {
-
-  attribs = match.arg(attribs, several.ok = T)
-  mlist = getMarkers(x, markers)
-  lapply(mlist, function(m) attributes(m)[attribs])
+  setLocusAttributes(x, locusAttributes = loci, matchNames = T, erase = F)
 }
 
