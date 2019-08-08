@@ -38,7 +38,7 @@ If \code{database} is a data.frame, it must have the allele labels as row names
 and marker names as column names.
 
 If \code{database} is a file path, it is read with the command
-\code{read.table(database, header = T, row.names = T, stringsAsFactors = F, colClasses = "character", ...)}
+\code{read.table(database, header = T, row.names = 1, as.is = T, ...)}
 }
 \examples{
 loc1 = list(name = "m1", alleles = 3:4, afreq = c(.1, .9))
@@ -49,6 +49,13 @@ db
 
 y = setFrequencyDatabase(x, database = db)
 stopifnot(identical(x, y))
+
+# The database can also be read directly from file
+tmp = tempfile()
+write.table(db, tmp, row.names = TRUE, col.names = TRUE)
+
+z = setFrequencyDatabase(x, database = tmp)
+stopifnot(all.equal(x, z))
 
 }
 \seealso{

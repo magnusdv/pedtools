@@ -9,8 +9,7 @@
 #' and marker names as column names.
 #'
 #' If `database` is a file path, it is read with the command
-#' `read.table(database, header = T, row.names = T, stringsAsFactors = F,
-#' colClasses = "character", ...)`
+#' `read.table(database, header = T, row.names = 1, as.is = T, ...)`
 #'
 #' @param x A `ped` object, or a list of such
 #' @param markers A character vector (with marker names) or a numeric vector
@@ -24,7 +23,7 @@
 #'
 #' * `getFrequencyDatabase`: a modified version of `x`
 #'
-#' @seealso [setLocusAttributes()], [setMarkers()], [setAlleles()]
+#' @seealso  [setLocusAttributes()], [setMarkers()], [setAlleles()]
 #'
 #' @examples
 #' loc1 = list(name = "m1", alleles = 3:4, afreq = c(.1, .9))
@@ -35,6 +34,13 @@
 #'
 #' y = setFrequencyDatabase(x, database = db)
 #' stopifnot(identical(x, y))
+#'
+#' # The database can also be read directly from file
+#' tmp = tempfile()
+#' write.table(db, tmp, row.names = TRUE, col.names = TRUE)
+#'
+#' z = setFrequencyDatabase(x, database = tmp)
+#' stopifnot(all.equal(x, z))
 #'
 #' @name freqDatabase
 NULL
@@ -86,13 +92,12 @@ setFrequencyDatabase = function(x, database, ...) {
 
   # Read the table if file path
   if(is.character(database) && length(database) == 1) {
-    database = read.table(database, header = T, row.names = T,
-                          stringsAsFactors = F, colClasses = "character", ...)
+    database = read.table(database, header = T, row.names = 1, as.is = T, ...)
   }
   else {
     database = as.data.frame(database)
   }
-
+print(database)
   als = rownames(database)
   nms = colnames(database)
 
