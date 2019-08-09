@@ -219,12 +219,22 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     #
   }
 
-  # If alleleSep is given, interpret entries as diploid genotypes
-  if(!is.null(sep))
-    m = split_genotype_cols(m, sep, missing)
+  # Marker names (if present)
+  nms = colnames(m)
 
-  if (ncol(m) %% 2 != 0)
-    stop2("Uneven number of marker allele columns")
+  # If `sep` is given, interpret entries as diploid genotypes
+  if(!is.null(sep)) {
+    # Split columns
+    m = split_genotype_cols(m, sep, missing)
+  }
+  else {
+    if (ncol(m) %% 2 != 0)
+      stop2("Uneven number of marker allele columns")
+
+    # Marker names: Assuming "M1.1, M1.2, M2.1, ..." --> "M1, M2, .."
+    if(!is.null(nms))
+      nms = sub("\\..*", "", nms[seq(1, length(nms), by = 2)])
+  }
 
   if(!identical(missing, 0)) {
     m[m %in% missing] = 0
@@ -236,7 +246,8 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
   if(is.null(locusAttributes)) {
     mlist = lapply(seq_len(nMark), function(i) {
       mi = m[, c(2*i - 1, 2*i), drop = FALSE]
-      marker(x, allelematrix = mi, validate = FALSE)
+      nm = nms[i] # NULL is ok!
+      marker(x, allelematrix = mi, name = nm, validate = FALSE)
     })
 
     return(mlist)
@@ -252,8 +263,11 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
   mlist = lapply(seq_len(L), function(i) {
     attri = locusAttributes[[i]]
+    if('name' %in% names(attri) && !is.null(nms[i]) && !identical(attri$name, nms[i]))
+      stop2("Genotype columns are sorted differently from `locusAttributes`. Please contact MDV")
     attri$x = x
     attri$allelematrix = m[, c(2*i - 1, 2*i), drop = FALSE]
+    attri$name = nms[i]
     do.call(marker, attri)
   })
 
