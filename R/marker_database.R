@@ -97,7 +97,7 @@ setFrequencyDatabase = function(x, database, ...) {
   else {
     database = as.data.frame(database)
   }
-print(database)
+
   als = rownames(database)
   nms = colnames(database)
 
