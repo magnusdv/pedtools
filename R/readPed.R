@@ -79,6 +79,7 @@ readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = 
   }
 
   ped.df = read.table(pedfile, header = header, colClasses = "character", ...)
+
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
          locusAttributes = locusAttributes, missing = missing,

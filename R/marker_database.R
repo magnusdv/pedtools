@@ -60,6 +60,7 @@ getFrequencyDatabase = function(x, markers = NULL) {
   attrs = getLocusAttributes(x, markers, attribs = c("name", "alleles", "afreq"))
   mnames = lapply(attrs, '[[', "name")
   mnames = unlist(mnames) # what about NA's?
+
   als = lapply(attrs, '[[', "alleles")
   afr = lapply(attrs, '[[', "afreq")
 
