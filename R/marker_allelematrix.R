@@ -193,34 +193,23 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
   m = as.matrix(alleleMatrix)
   row_nms = rownames(m)
 
+  # Marker names (if present)
+  nms = colnames(m)
+
   # If no rownames - dimensions must be correct
-  if(is.null(row_nms)) {
-    if(nrow(m) != pedsize(x))
+  if(is.null(row_nms) && nrow(m) != pedsize(x))
     stop2("Incompatible input.\n  Pedigree size = ", pedsize(x),
           "\n  Allele matrix rows = ", nrow(m))
-  }
-  else {
+
+  # If rownames, insert them into matrix for complete ped
+  if(!is.null(row_nms)) {
     tmp = matrix("0", nrow = pedsize(x), ncol = ncol(m))
     idx = match(row_nms, labels(x))
 
     tmp[idx[!is.na(idx)], ] = m[row_nms[!is.na(idx)], ]
 
     m = tmp
-    #   missing_labs = setdiff(labels(x), row_nms)
-    #   if (length(missing_labs))
-    #     stop2("Pedigree member missing in allele matrix row names: ", missing_labs)
-    #   unknown_labs = setdiff(row_nms, labels(x))
-    #   if (length(unknown_labs))
-    #     stop2("Unknown row name in allele matrix: ", unknown_labs)
-    #
-    #   # Reorder
-    #   if(!identical(labels(x), row_nms))
-    #     m = m[labels(x), ]
-    #
   }
-
-  # Marker names (if present)
-  nms = colnames(m)
 
   # If `sep` is given, interpret entries as diploid genotypes
   if(!is.null(sep)) {
@@ -263,11 +252,18 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
   mlist = lapply(seq_len(L), function(i) {
     attri = locusAttributes[[i]]
-    if('name' %in% names(attri) && !is.null(nms[i]) && !identical(attri$name, nms[i]))
-      stop2("Genotype columns are sorted differently from `locusAttributes`. Please contact MDV")
     attri$x = x
     attri$allelematrix = m[, c(2*i - 1, 2*i), drop = FALSE]
-    attri$name = nms[i]
+
+    # Marker name
+    if(!is.null(nms[i])) {
+      if(!'name' %in% names(attri))
+        attri$name = nms[i]
+      else if(!identical(attri$name, nms[i]))
+        stop2("Genotype columns are sorted differently from `locusAttributes`. Please contact MDV")
+    }
+
+    # Create marker object
     do.call(marker, attri)
   })
 

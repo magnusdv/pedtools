@@ -40,7 +40,7 @@ test_that("data.frame with multiple peds is converted to pedlist", {
 
 test_that("as.ped() converts data.frame with marker columns", {
   df = data.frame(id=c('fa','mo','boy'), fid=c(0,0,'fa'), mid=c(0,0,'mo'), sex=c(1,2,1),
-              c(0,0,1), c(0,0,2), c(0,0,2), c(0,0,2), stringsAsFactors = F)
+                  c(0,0,1), c(0,0,2), c(0,0,2), c(0,0,2), fix.empty.names = F, stringsAsFactors = F)
   trio = nuclearPed(fa="fa", mo="mo", child="boy")
   x1 = as.ped(df)
   expect_equal(nMarkers(x1), 2)
@@ -54,7 +54,7 @@ test_that("as.ped() converts data.frame with marker columns", {
 
   # Same, with markers in single columns:
   dfS = data.frame(id=c('fa','mo','boy'), fid=c(0,0,'fa'), mid=c(0,0,'mo'), sex=c(1,2,1),
-                  m1 = c(NA,NA,"1/2"), m2 = c(NA,NA,"2/2"), stringsAsFactors = F)
+                   c(NA,NA,"1/2"), c(NA,NA,"2/2"), fix.empty.names = F, stringsAsFactors = F)
   expect_identical(x1, as.ped(dfS, sep="/"))
   expect_identical(x2, as.ped(dfS, sep="/", locusAttributes = list(alleles=1:2)))
 })
@@ -64,18 +64,18 @@ test_that("as.ped() converts data.frame to singletons with marker columns", {
   pedlist = as.ped(df, sep="/")
 
   s1 = singleton(1, famid="s1")
-  s1 = setMarkers(s1, marker(s1))
+  s1 = setMarkers(s1, marker(s1, name = "m1"))
   s2 = singleton(1, famid="s2")
-  s2 = setMarkers(s2, marker(s2, '1'=1:2))
+  s2 = setMarkers(s2, marker(s2, '1'=1:2, name = "m1"))
 
   expect_identical(pedlist, list('s1'=s1, 's2'=s2))
 })
 
 test_that("as.ped() does not reorder (i.e. does not shuffle genotypes", {
   x = reorderPed(nuclearPed(1), 3:1)
-  x = setMarkers(x, marker(x, '3' = 1:2))
+  x = setMarkers(x, marker(x, '3' = 1:2, name = "M"))
   s = singleton("NN")
-  s = setMarkers(s, marker(s, NN=1:2))
+  s = setMarkers(s, marker(s, NN = 1:2, name = "M"))
   df = rbind(as.data.frame(x), as.data.frame(s))
   df = cbind(famid = c(1,1,1,2), df)
 

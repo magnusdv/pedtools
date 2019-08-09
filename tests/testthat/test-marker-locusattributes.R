@@ -10,10 +10,10 @@ df = data.frame(id = 4:1,
                 fid = c(0,0,0,3),
                 mid = c(0,0,0,2),
                 sex = c(1,1,2,1),
-                A1 = c("1/1", "2/1", "1/2", "2/2"),
-                A2 = "b/b")
-attrs = list(list(name = "m1", alleles = 1:2),
-             list(name = "m2", alleles = letters[1:2]))
+                m1 = c("1/1", "2/1", "1/2", "2/2"),
+                m2 = "b/b")
+attrs = list(list(alleles = 1:2),
+             list(alleles = letters[1:2]))
 y = as.ped(df, locusAttributes = attrs, sep = "/")
 
 test_that("setLocusAttributes erases only when erase = T", {
