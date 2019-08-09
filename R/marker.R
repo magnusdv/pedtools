@@ -74,6 +74,12 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
   # Symbols treated as NA
   NA_allele_ = c(0, "", NA, "-")
 
+  # Some parameters cannot have length 0 or be ""
+  if(length(chrom) == 0) chrom = NA
+  if(length(posMb) == 0) posMb = NA
+  if(length(posCm) == 0) posCm = NA
+  if(length(name) == 0 || identical(name, "")) name = NA
+
   if (is.null(allelematrix)) {
     # Initalize empty allele matrix
     m = matrix(0, ncol = 2, nrow = pedsize(x))
