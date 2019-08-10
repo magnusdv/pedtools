@@ -154,12 +154,13 @@ setLocusAttributes = function(x, markers = NULL, locusAttributes,
       else
         nms = names(locusAttributes)
 
-      # Names of all attached markers
-      existingNms = name(x, 1:N)
+      if(dup <- anyDuplicated(nms))
+        stop2("Duplicated marker name in attribute list: ", nms[dup])
 
       # If matchNames = NA, change to TRUE if all new names match existing ones
-      if(is.na(matchNames))
-        matchNames = !is.null(nms) && all(nms %in% existingNms)
+      if(is.na(matchNames)) {
+        matchNames = !is.null(nms) && all(nms %in% name(x, 1:N))
+      }
     }
 
     # By now, matchNames is either T or F

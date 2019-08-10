@@ -438,9 +438,6 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {
     p = lapply(p, function(comp) {
-      #rows = match(labels(comp), id)
-      #AM = x[rows, marker_col, drop = F]
-      #rownames(AM) = comp$id
       setMarkers(comp, alleleMatrix = AM[labels(comp), , drop = F],
                  locusAttributes = locusAttributes,
                  missing = missing, sep = sep)
@@ -451,8 +448,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   }
 
   # Otherwise, attach markers to the single ped
-  setMarkers(p, alleleMatrix = AM,
-                   locusAttributes = locusAttributes,
-                   missing = missing, sep = sep)
+  setMarkers(p, alleleMatrix = AM, locusAttributes = locusAttributes,
+             missing = missing, sep = sep)
 }
 
