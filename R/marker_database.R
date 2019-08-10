@@ -9,7 +9,7 @@
 #' and marker names as column names.
 #'
 #' If `database` is a file path, it is read with the command
-#' `read.table(database, header = T, row.names = 1, as.is = T, ...)`
+#' `read.table(database, header = T, row.names = 1, as.is = T, check.names = F, ...)`
 #'
 #' @param x A `ped` object, or a list of such
 #' @param markers A character vector (with marker names) or a numeric vector
@@ -93,7 +93,7 @@ setFrequencyDatabase = function(x, database, ...) {
 
   # Read the table if file path
   if(is.character(database) && length(database) == 1) {
-    database = read.table(database, header = T, row.names = 1, as.is = T, ...)
+    database = read.table(database, header = T, row.names = 1, as.is = T, check.names = F, ...)
   }
   else {
     database = as.data.frame(database)
@@ -101,6 +101,9 @@ setFrequencyDatabase = function(x, database, ...) {
 
   als = rownames(database)
   nms = colnames(database)
+  if(dup <- anyDuplicated(nms))
+    stop2("Duplicated marker name in database file: ", nms[dup])
+
 
   loci = lapply(seq_along(database), function(i) {
 

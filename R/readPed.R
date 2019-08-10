@@ -1,4 +1,3 @@
-
 #' Read a pedigree from file
 #'
 #' @param pedfile A file name
@@ -78,7 +77,7 @@ readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = 
     header = grepl("id", first[1], fixed = T) && "sex" %in% first
   }
 
-  ped.df = read.table(pedfile, header = header, colClasses = "character", ...)
+  ped.df = read.table(pedfile, header = header, colClasses = "character", check.names = F, ...)
 
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,

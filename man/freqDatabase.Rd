@@ -38,7 +38,7 @@ If \code{database} is a data.frame, it must have the allele labels as row names
 and marker names as column names.
 
 If \code{database} is a file path, it is read with the command
-\code{read.table(database, header = T, row.names = 1, as.is = T, ...)}
+\code{read.table(database, header = T, row.names = 1, as.is = T, check.names = F, ...)}
 }
 \examples{
 loc1 = list(name = "m1", alleles = 3:4, afreq = c(.1, .9))
