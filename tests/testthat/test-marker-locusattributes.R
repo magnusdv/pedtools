@@ -31,6 +31,10 @@ test_that("setLocusAttributes erases only when erase = T", {
 test_that("setLocusAttributes catches errors", {
   sla = function(x = y, ...) setLocusAttributes(x, ...)
 
+  expect_error(sla(loc = list(list(name = "m1"), list(name = "m1"))),
+               "Duplicated marker name in attribute list: m1")
+  expect_error(sla(loc = list(m1 = list(), m1 = list())),
+               "Duplicated marker name in attribute list: m1")
   expect_error(sla(marker = 2, loc = list(alleles = 1:2), erase = T),
                "Invalid allele for this marker")
   expect_error(sla(markers = 2, loc = list(alleles = 1:2), erase = F),

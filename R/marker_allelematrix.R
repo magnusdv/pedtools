@@ -220,16 +220,25 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     if (ncol(m) %% 2 != 0)
       stop2("Uneven number of marker allele columns")
 
-    # Marker names: Assuming "M1.1, M1.2, M2.1, ..." --> "M1, M2, .."
+    # Marker names: Use odd numbered columns; delete from last period
+    # e.g. M1.1, M1.2, M2.1, M2.2, ... --> M1, M2, ...
     if(!is.null(nms))
-      nms = sub("\\..*", "", nms[seq(1, length(nms), by = 2)])
+      nms = sub("\\.[^.]*$", "", nms[seq(1, length(nms), by = 2)])
   }
 
-  if(!identical(missing, 0)) {
-    m[m %in% missing] = 0
-  }
-
+  # Settle the number of markers
   nMark = ncol(m)/2
+
+  # Check for (nontrivial) duplicated marker names
+  if(!is.null(nms)) {
+    dups = duplicated(nms) & !is.na(nms) & nms != ""
+    if(any(dups))
+      stop2("Duplicated marker name(s): ", nms[dups])
+  }
+
+  # Replace `missing` with zeroes
+  if(!identical(missing, 0))
+    m[m %in% missing] = 0
 
   # Quick return if no locus attributes are given
   if(is.null(locusAttributes)) {
