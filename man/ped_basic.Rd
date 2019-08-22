@@ -8,6 +8,7 @@
 \alias{cousinPed}
 \alias{halfCousinPed}
 \alias{ancestralPed}
+\alias{selfingPed}
 \title{Create simple pedigrees}
 \usage{
 nuclearPed(nch, sex = 1, father = "1", mother = "2",
@@ -24,6 +25,8 @@ halfCousinPed(degree, removal = 0, side = c("right", "left"),
   child = FALSE)
 
 ancestralPed(g)
+
+selfingPed(s, sex = 1)
 }
 \arguments{
 \item{nch}{The number of children. If NULL, it is taken to be the
@@ -33,7 +36,9 @@ ancestralPed(g)
 In \code{nuclearPed()}, it contains the genders of the children and is recycled
 (if neccessary) to length \code{nch}. In \code{linearPed()} it also contains the
 genders of the children (1 in each generation) and should have length at
-most \code{n} (recycled if shorter than this).}
+most \code{n} (recycled if shorter than this). In \code{selfingPed()} it should be a
+single number, indicating the gender of the last individual (the others
+must necessarily have gender code 0.)}
 
 \item{father}{The label of the father.}
 
@@ -60,6 +65,9 @@ added.}
 
 \item{g}{A nonnegative integer indicating the number of ancestral generations
 to include. The resulting pedigree has \code{2^(g+1)-1} members. The case \code{g = 0} results in a singleton.}
+
+\item{s}{A nonnegative integer indicating the number of consecutive selfings.
+The case \code{s = 0} results in a singleton.}
 }
 \value{
 A \code{ped} object.
@@ -80,6 +88,8 @@ times removed. By default, removals are added on the right side, but .
 
 \code{ancestralPed(g)} returns the family tree of a single individual, including
 all ancestors \code{g} generations back.
+
+\code{selfingPed(s)} returns a line of \code{s} consecutive selfings.
 }
 \examples{
 

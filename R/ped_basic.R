@@ -14,6 +14,8 @@
 #'
 #' `ancestralPed(g)` returns the family tree of a single individual, including
 #' all ancestors `g` generations back.
+#'
+#' `selfingPed(s)` returns a line of `s` consecutive selfings.
 
 #' @param nch The number of children. If NULL, it is taken to be the
 #'   `length(children)`
@@ -21,7 +23,9 @@
 #'   In `nuclearPed()`, it contains the genders of the children and is recycled
 #'   (if neccessary) to length `nch`. In `linearPed()` it also contains the
 #'   genders of the children (1 in each generation) and should have length at
-#'   most `n` (recycled if shorter than this).
+#'   most `n` (recycled if shorter than this). In `selfingPed()` it should be a
+#'   single number, indicating the gender of the last individual (the others
+#'   must necessarily have gender code 0.)
 #' @param father The label of the father.
 #' @param mother The label of the father.
 #' @param children A character of length `nch`, with labels of the children.
@@ -38,6 +42,8 @@
 #' @param g A nonnegative integer indicating the number of ancestral generations
 #'   to include. The resulting pedigree has `2^(g+1)-1` members. The case `g =
 #'   0` results in a singleton.
+#' @param s A nonnegative integer indicating the number of consecutive selfings.
+#'   The case `s = 0` results in a singleton.
 #' @return A `ped` object.
 #'
 #' @seealso [ped()], [singleton()], [ped_complex], [ped_subgroups]
@@ -236,5 +242,18 @@ ancestralPed = function(g) {
       fid = c(rep_len(0, 2^g), fathers),
       mid = c(rep_len(0, 2^g), mothers),
       sex = rep_len(1:2, N),
+      reorder = FALSE, validate = FALSE, verbose = FALSE)
+}
+
+#' @rdname ped_basic
+#' @export
+selfingPed = function(s, sex = 1) {
+  if(!is_count(s, minimum=0))
+    stop2("`s` must be a nonnegative integer: ", s)
+
+  if(s == 0)
+    return(singleton(1))
+
+  ped(id = 1:(s+1), fid = 0:s, mid = 0:s, sex = c(rep(0, s), sex),
       reorder = FALSE, validate = FALSE, verbose = FALSE)
 }
