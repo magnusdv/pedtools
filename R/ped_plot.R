@@ -90,6 +90,9 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
                     id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1), ...) {
 
+  if(hasSelfing(x))
+    stop2("Plotting of pedigrees with selfing is not yet supported")
+
   nInd = pedsize(x)
 
   # Labels
