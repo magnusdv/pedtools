@@ -38,10 +38,8 @@
 #'   (with marker indices). If NULL (default), the behaviour depends on
 #'   `matchNames`, see Details.
 #' @param attribs A subset of the character vector `c("alleles", "afreq", "name"
-#'   ,"chrom" ,"posMb","posCm", "mutmod")`.
-#' @param locusAttributes A list of lists, with attributes for each marker. If
-#'   `locusAttributes` is just a list (not a list of lists), then it is repeated
-#'   to match the number of markers.
+#'   ,"chrom" ,"posMb","posCm", "mutmod", "rate")`.
+#' @param locusAttributes A list of lists, with attributes for each marker.
 #' @param matchNames A logical, only relevant if `markers = NULL`. If TRUE, then
 #'   the markers to be modified are identified by the 'name' component of each
 #'   `locusAttributes` entry. If FALSE, all markers attached to `x` are selected

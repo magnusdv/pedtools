@@ -19,11 +19,9 @@ setLocusAttributes(x, markers = NULL, locusAttributes, matchNames = NA,
 (with marker indices). If NULL (default), the behaviour depends on
 \code{matchNames}, see Details.}
 
-\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb","posCm", "mutmod")}.}
+\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb","posCm", "mutmod", "rate")}.}
 
-\item{locusAttributes}{A list of lists, with attributes for each marker. If
-\code{locusAttributes} is just a list (not a list of lists), then it is repeated
-to match the number of markers.}
+\item{locusAttributes}{A list of lists, with attributes for each marker.}
 
 \item{matchNames}{A logical, only relevant if \code{markers = NULL}. If TRUE, then
 the markers to be modified are identified by the 'name' component of each

@@ -22,15 +22,15 @@ alleles for one or several markers. The matrix must have either 1 or 2
 columns per marker. If the former, then a \code{sep} string must be a given, and
 will be used to split all entries.}
 
-\item{locusAttributes}{A list of lists, with attributes for each marker.
-See Details for possible attributes.}
+\item{locusAttributes}{A list of lists, with attributes for each marker. See
+Details for possible attributes.}
 
 \item{missing}{A single character (or coercible to one) indicating the symbol
 for missing alleles.}
 
 \item{sep}{If this is a single string, each entry of \code{alleleMatrix} is
-interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = T)}. For example, if the entries are formatted
-as "A/B", put \code{sep="/"}. Default: NULL.}
+interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = T)}. For example, if the entries are formatted as
+"A/B", put \code{sep="/"}. Default: NULL.}
 
 \item{...}{Further arguments}
 }
@@ -45,9 +45,9 @@ replaces all existing markers with the supplied ones, while \code{addMarkers()}
 appends the supplied markers to any existing ones.
 }
 \details{
-When the argument \code{locusAttributes} is used, this must be a list of lists
-(one for each marker), where possible entries (default values in parenthesis)
-in the inner lists are:
+The most general format of \code{locusAttributes} a list of lists, one for each
+marker, where possible entries in the inner lists are as follows (default
+values in parenthesis):
 \itemize{
 \item 'alleles' : a character vector with allele labels
 \item 'afreq' :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
@@ -59,6 +59,16 @@ where \code{L = length(alleles)})
 \item 'mutmod' : mutation model, or model name (NULL)
 \item 'rate' : mutation model parameter (NULL)
 }
+
+If \code{locusAttributes} is just a single list of attributes (not a list of
+lists), then it is repeated to match the number of markers.
+
+Two alternative format of \code{locusAttributes} are allowed: If a data.frame or
+matrix is given, an attempt is made to interprete it as a frequency database
+in \code{allelic ladder} format. Such an interpretation is also attempted if
+\code{locusAttributes} is a list of named frequency vectors (where the names are
+the allele labels). See the Examples section for an example of this using the
+\code{Familias::NorwegianFrequencies} database.
 }
 \examples{
 x = singleton(1)
@@ -72,5 +82,13 @@ x
 # Reversing the order of the markers
 x = setMarkers(x, list(m2, m1))
 x
+
+\dontrun{
+# Attach empty markers corresponding to a realistic forensic database
+require(Familias)
+data(NorwegianFrequencies)
+x = nuclearPed(1)
+x = setMarkers(x, locusAttributes = NorwegianFrequencies)
+}
 
 }

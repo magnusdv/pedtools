@@ -93,29 +93,55 @@ setFrequencyDatabase = function(x, database, ...) {
 
   # Read the table if file path
   if(is.character(database) && length(database) == 1) {
-    database = read.table(database, header = T, row.names = 1, as.is = T, check.names = F, ...)
-  }
-  else {
-    database = as.data.frame(database)
+    database = read.table(database, header = T, row.names = 1,
+                          as.is = T, check.names = F, ...)
   }
 
-  als = rownames(database)
-  nms = colnames(database)
-  if(dup <- anyDuplicated(nms))
-    stop2("Duplicated marker name in database file: ", nms[dup])
-
-
-  loci = lapply(seq_along(database), function(i) {
-
-    # Column of frequencies
-    frqs = database[[i]]
-
-    # Index of rows with non-missing entries
-    idx = !is.na(frqs)
-
-    list(name = nms[i], alleles = als[idx], afreq = frqs[idx])
-  })
+  # Format 1: Allelic ladder
+  if(is.data.frame(database) || is.matrix(database))
+    loci = freqDb2attribList(database, format = "allelicLadder")
+  else if (is.list(database))
+    loci = freqDb2attribList(database, format = "list")
 
   setLocusAttributes(x, locusAttributes = loci, matchNames = T, erase = F)
 }
 
+
+# Conversion frequency database to list of locus attributes
+freqDb2attribList = function(database, format = c("list", "allelicLadder")) {
+
+  attrList = switch(match.arg(format),
+    # Format 1: List of named vectors
+    list = {
+      lapply(names(database), function(nm) {
+        v = database[[nm]]
+        als = names(v)
+        if(is.null(als))
+          stop2("When `database` is a list, then each entry must:\n",
+                " * be a numeric vector of allele frequencies\n",
+                " * be named with allelic labels")
+
+        list(name = nm, alleles = als, afreq = unname(v))
+      })
+    },
+    # Format 2: "Allelic ladder" as dataframe or matrix
+    allelicLadder = {
+      als = rownames(database)
+      nms = colnames(database)
+      if(dup <- anyDuplicated(nms))
+        stop2("Duplicated marker name in database file: ", nms[dup])
+
+      lapply(seq_along(nms), function(i) {
+
+        # Column of frequencies
+        frqs = database[, i]
+
+        # Index of rows with non-missing entries
+        idx = !is.na(frqs)
+
+        list(name = nms[i], alleles = als[idx], afreq = frqs[idx])
+      })
+    })
+
+  attrList
+}

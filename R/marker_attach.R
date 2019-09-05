@@ -6,9 +6,9 @@
 #' replaces all existing markers with the supplied ones, while `addMarkers()`
 #' appends the supplied markers to any existing ones.
 #'
-#' When the argument `locusAttributes` is used, this must be a list of lists
-#' (one for each marker), where possible entries (default values in parenthesis)
-#' in the inner lists are:
+#' The most general format of `locusAttributes` a list of lists, one for each
+#' marker, where possible entries in the inner lists are as follows (default
+#' values in parenthesis):
 #'
 #' * 'alleles' : a character vector with allele labels
 #'
@@ -26,7 +26,16 @@
 #' * 'mutmod' : mutation model, or model name (NULL)
 #'
 #' * 'rate' : mutation model parameter (NULL)
-
+#'
+#' If `locusAttributes` is just a single list of attributes (not a list of
+#' lists), then it is repeated to match the number of markers.
+#'
+#' Two alternative format of `locusAttributes` are allowed: If a data.frame or
+#' matrix is given, an attempt is made to interprete it as a frequency database
+#' in `allelic ladder` format. Such an interpretation is also attempted if
+#' `locusAttributes` is a list of named frequency vectors (where the names are
+#' the allele labels). See the Examples section for an example of this using the
+#' `Familias::NorwegianFrequencies` database.
 #'
 #' @param x A `ped` object
 #' @param m Either a single `marker` object or a list of `marker` objects
@@ -34,14 +43,14 @@
 #'   alleles for one or several markers. The matrix must have either 1 or 2
 #'   columns per marker. If the former, then a `sep` string must be a given, and
 #'   will be used to split all entries.
-#' @param locusAttributes A list of lists, with attributes for each marker.
-#'   See Details for possible attributes.
+#' @param locusAttributes A list of lists, with attributes for each marker. See
+#'   Details for possible attributes.
 #' @param missing A single character (or coercible to one) indicating the symbol
 #'   for missing alleles.
 #' @param sep If this is a single string, each entry of `alleleMatrix` is
 #'   interpreted as a genotype, and will be split by calling `strsplit(...,
-#'   split = sep, fixed = T)`. For example, if the entries are formatted
-#'   as "A/B", put `sep="/"`. Default: NULL.
+#'   split = sep, fixed = T)`. For example, if the entries are formatted as
+#'   "A/B", put `sep="/"`. Default: NULL.
 #' @param ... Further arguments
 #'
 #' @return A `ped` object.
@@ -57,6 +66,14 @@
 #' # Reversing the order of the markers
 #' x = setMarkers(x, list(m2, m1))
 #' x
+#'
+#' \dontrun{
+#' # Attach empty markers corresponding to a realistic forensic database
+#' require(Familias)
+#' data(NorwegianFrequencies)
+#' x = nuclearPed(1)
+#' x = setMarkers(x, locusAttributes = NorwegianFrequencies)
+#' }
 #'
 #' @name marker_attach
 NULL
@@ -85,13 +102,14 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
-  L = length(locusAttributes)
-
   # If no data, remove all markers and return
-  if(is.null(m) && is.null(alleleMatrix) && L == 0) {
+  if(is.null(m) && is.null(alleleMatrix) && length(locusAttributes) == 0) {
     x['markerdata'] = list(NULL)
     return(x)
   }
+
+  locusAttributes = checkLocusAttribs(locusAttributes)
+  L = length(locusAttributes)
 
   # If only locus attributes are given, create allele matrix with all 0's.
   if(is.null(m) && is.null(alleleMatrix) && L > 0) {
@@ -137,12 +155,13 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
-  L = length(locusAttributes)
-
   # If no data, do nothing
-  if(is.null(m) && is.null(alleleMatrix) && L == 0) {
+  if(is.null(m) && is.null(alleleMatrix) && length(locusAttributes) == 0) {
     return(x)
   }
+
+  locusAttributes = checkLocusAttribs(locusAttributes)
+  L = length(locusAttributes)
 
   # If only locus attributes are given, create allele matrix with all 0's.
   if(is.null(m) && is.null(alleleMatrix) && L > 0) {
@@ -164,4 +183,38 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   class(mlist) = "markerList"
   x$markerdata = mlist
   x
+}
+
+
+checkLocusAttribs = function(a) {
+  if(length(a) == 0) return(a)
+
+  attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "posCm", "mutmod", "rate")
+
+  # Format 1: List of lists
+  if(is.list(a) && all(sapply(a, is.list))) {
+    for(i in seq_along(a)) {
+      nms = names(a[[i]])
+      if(is.null(nms))
+        stop2("Entry ", i, " of `locusAttributes` has no names")
+      if(!all(nms %in% attribNames))
+        stop2("Entry ", i, " of `locusAttributes` has illegal entries: ", setdiff(nms, attribNames))
+    }
+    return(a)
+  }
+
+  # Format 2: Single list of attributes
+  if(is.list(a) && !is.list(a[[1]]) && !is.null(names(a)) && all(names(a) %in% attribNames)) {
+    return(a)
+  }
+
+  # Format 3: Allelic ladder as data.frame or matrix
+  if(is.data.frame(a) || is.matrix(a)) {
+    return(freqDb2attribList(a, format = "allelicLadder"))
+  }
+
+  if(is.list(a) && all(sapply(a, function(aa) !is.null(names(aa))))) {
+    return(freqDb2attribList(a, format = "list"))
+  }
+
 }
