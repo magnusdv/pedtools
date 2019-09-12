@@ -3,17 +3,6 @@ context("ped loops")
 break_silent = function(...) breakLoops(..., verbose=F)
 tie_silent = function(...) tieLoops(..., verbose=F)
 
-test_that("example ped from identity package", {
-  ex = read.table (system.file ("example", "ex.pedigree", package = "identity"))
-  x = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), reorder=F)
-  expect_identical(restorePed(as.matrix(x)), x)
-
-  y = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), famid="identity-example")
-  expect_identical(restorePed(as.matrix(y)), y)
-
-  z = reorderPed(y, order(as.numeric(labels(y))))
-  expect_identical(restorePed(as.matrix(z)), z)
-})
 
 test_that("loops are detected correctly in fullSibMating peds", {
   expect_false(fullSibMating(0)$UNBROKEN_LOOPS)
