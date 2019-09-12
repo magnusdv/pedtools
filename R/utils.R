@@ -34,6 +34,10 @@ is_number = function(x, minimum = NA, maximum = NA) {
          (is.na(maximum) || x <= maximum))
 }
 
+`%||%` = function(x, y) {
+  if(is.null(x)) y else x
+}
+
 # A safer version of base::sample
 safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 

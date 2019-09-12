@@ -191,18 +191,16 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     stop2("Argument `alleleMatrix` must be either a matrix or a data.frame")
 
   m = as.matrix(alleleMatrix)
+
+  # Marker names in matrix (if present)
+  hasMatrixNames = !is.null(nms <- colnames(m)) && !any(is.na(nms))
+
+  # Rownames (ID labels)
   row_nms = rownames(m)
 
-  # Marker names (if present)
-  nms = colnames(m)
-
-  # If no rownames - dimensions must be correct
-  if(is.null(row_nms) && nrow(m) != pedsize(x))
-    stop2("Incompatible input.\n  Pedigree size = ", pedsize(x),
-          "\n  Allele matrix rows = ", nrow(m))
-
-  # If rownames, insert them into matrix for complete ped
+  # If rownames, reorder according to pedigree
   if(!is.null(row_nms)) {
+
     tmp = matrix("0", nrow = pedsize(x), ncol = ncol(m))
     idx = match(row_nms, labels(x))
 
@@ -210,10 +208,14 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     m = tmp
   }
+  else {  # If no rownames - dimensions must be correct
+    if(nrow(m) != pedsize(x))
+    stop2(sprintf("Incompatible input.\n  Pedigree size = %d\n  Allele matrix rows = %d",
+                  pedsize(x), nrow(m)))
+  }
 
-  # If `sep` is given, interpret entries as diploid genotypes
+  # If `sep` is given, split each column into single-allele columns
   if(!is.null(sep)) {
-    # Split columns
     m = split_genotype_cols(m, sep, missing)
   }
   else {
@@ -222,18 +224,18 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     # Marker names: Use odd numbered columns; delete from last period
     # e.g. M1.1, M1.2, M2.1, M2.2, ... --> M1, M2, ...
-    if(!is.null(nms))
+    if(hasMatrixNames)
       nms = sub("\\.[^.]*$", "", nms[seq(1, length(nms), by = 2)])
   }
 
   # Settle the number of markers
   nMark = ncol(m)/2
 
-  # Check for (nontrivial) duplicated marker names
-  if(!is.null(nms)) {
+  # Check for (nontrivial) duplicated marker names found in matrix
+  if(hasMatrixNames) {
     dups = duplicated(nms) & !is.na(nms) & nms != ""
     if(any(dups))
-      stop2("Duplicated marker name(s): ", nms[dups])
+      stop2("Duplicated marker name: ", nms[dups])
   }
 
   # Replace `missing` with zeroes
@@ -251,26 +253,55 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     return(mlist)
   }
 
+  ####### locusAttributes #########
+
   # If same attributes for all: Recycle
-  if (!is.list(locusAttributes[[1]]))
-    locusAttributes = rep(list(locusAttributes), nMark)
+  if (length(locusAttributes) == 1 && nMark > 1) {
+    nm = locusAttributes[[1]]$name
+    if(!is.null(nm) && !is.na(nm))
+      stop2("Cannot recycle `name` attribute")
+    locusAttributes = rep(locusAttributes, nMark)
+  }
 
-  L = length(locusAttributes)
-  if (L != nMark)
-    stop2(sprintf("Unequal number of markers (%d) and locus attributes (%d)", nMark, L))
+  # Scenario 1: Allele matrix has marker names
+  if(hasMatrixNames) {
 
-  mlist = lapply(seq_len(L), function(i) {
+    # Use names(locusAttributes) if these exist
+    nms_attr = names(locusAttributes)
+    hasAttrNames = !is.null(nms_attr)
+
+    # Otherwise use `name` attributes if given
+    if(!hasAttrNames) {
+      nms_attr = vapply(locusAttributes, function(a) as.character(a$name %||% NA), "")
+      hasAttrNames = !all(is.na(nms_attr))
+    }
+
+    if(hasAttrNames) {
+      if(anyNA(idx <- match(nms, nms_attr)))
+        stop2("Marker name found in `allelematrix`, but not in `locusAttributes`: ", setdiff(nms, nms_attr))
+      locusAttributes = locusAttributes[idx]
+    }
+    else {
+      # If no names found in locusAttributes: Insert names from matrix!
+      if(nMark != length(locusAttributes))
+        stop2("When `locusAttributes` doesn't contain marker names, its length must match the number of markers")
+      locusAttributes = lapply(seq_len(nMark), function(i) {
+        a = locusAttributes[[i]]
+        a$name = nms[i]
+        a
+      })
+    }
+  }
+  else {
+    # No marker names in matrix
+    if(nMark != length(locusAttributes))
+      stop2("Length of `locusAttributes` must match `alleleMatrix`, when the latter doesn't contain marker names")
+  }
+
+  mlist = lapply(seq_len(nMark), function(i) {
     attri = locusAttributes[[i]]
     attri$x = x
     attri$allelematrix = m[, c(2*i - 1, 2*i), drop = FALSE]
-
-    # Marker name
-    if(!is.null(nms[i])) {
-      if(!'name' %in% names(attri))
-        attri$name = nms[i]
-      else if(!identical(attri$name, nms[i]))
-        stop2("Genotype columns are sorted differently from `locusAttributes`. Please contact MDV")
-    }
 
     # Create marker object
     do.call(marker, attri)
@@ -279,6 +310,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
   class(mlist) = "markerList"
   mlist
 }
+
 
 split_genotype_cols = function(m, sep, missing) {
   nas = is.na(m) | m == missing

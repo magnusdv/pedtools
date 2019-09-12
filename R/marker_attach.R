@@ -205,7 +205,7 @@ checkLocusAttribs = function(a) {
 
   # Format 2: Single list of attributes
   if(is.list(a) && !is.list(a[[1]]) && !is.null(names(a)) && all(names(a) %in% attribNames)) {
-    return(a)
+    return(list(a))
   }
 
   # Format 3: Allelic ladder as data.frame or matrix
@@ -213,6 +213,7 @@ checkLocusAttribs = function(a) {
     return(freqDb2attribList(a, format = "allelicLadder"))
   }
 
+  # Format 4: Frequency database as a list of frequency vectors
   if(is.list(a) && all(sapply(a, function(aa) !is.null(names(aa))))) {
     return(freqDb2attribList(a, format = "list"))
   }

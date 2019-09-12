@@ -49,3 +49,48 @@ test_that("addMarkers() gives same result with and without alleleMarkers", {
   expect_identical(y,z)
 })
 
+test_that("setMarkers() deals with marker names and ordering", {
+  ### singleton
+  s = singleton("a")
+  m1 = marker(s, a = 1:2, name = "M1")
+  m2 = marker(s, a = 2:3, name = "M2")
+  s12 = setMarkers(s, list(m1, m2))
+
+  am = getAlleles(s12)
+  locAttr = getLocusAttributes(s12)
+
+  expect_identical(s12, setMarkers(s, alleleMatrix = am, locus = locAttr))
+  expect_identical(s12, setMarkers(s, alleleMatrix = am, locus = locAttr[2:1]))
+
+  am2 = am[, 3:4, drop = F]
+  expect_identical(setMarkers(s, m2),
+                   setMarkers(s, alleleMatrix = am2, locusAttributes = locAttr))
+  expect_error(setMarkers(s, alleleMatrix = am2, locusAttributes = locAttr[1]),
+               "Marker name found in `allelematrix`, but not in `locusAttributes`: M2")
+
+  ### trio
+  trio = nuclearPed(child = "a")
+  m1 = marker(trio, a = 1:2, name = "M1")
+  m2 = marker(trio, a = 2:3, name = "M2")
+  trio12 = setMarkers(trio, list(m1, m2))
+
+  am_all = getAlleles(trio12)
+  am_child = getAlleles(trio12, ids = "a")
+  locAttr = getLocusAttributes(trio12)
+
+  expect_identical(trio12, setMarkers(trio, alleleMatrix = am_all, locus = locAttr))
+  expect_identical(trio12, setMarkers(trio, alleleMatrix = am_child, locus = locAttr))
+
+  expect_identical(trio12, setMarkers(trio, alleleMatrix = am_all, locus = locAttr[2:1]))
+  expect_identical(trio12, setMarkers(trio, alleleMatrix = am_child, locus = locAttr[2:1]))
+
+  am2_all = am_all[, 3:4, drop = F]
+  am2_child = am_child[, 3:4, drop = F]
+  expect_identical(setMarkers(trio, m2),
+                   setMarkers(trio, alleleMatrix = am2_all, locusAttributes = locAttr))
+  expect_identical(setMarkers(trio, m2),
+                   setMarkers(trio, alleleMatrix = am2_child, locusAttributes = locAttr))
+
+  expect_error(setMarkers(trio, alleleMatrix = am2_all, locusAttributes = locAttr[1]),
+               "Marker name found in `allelematrix`, but not in `locusAttributes`: M2")
+})
