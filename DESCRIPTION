@@ -1,6 +1,6 @@
 Package: pedtools
 Type: Package
-Title: Tools for working with pedigrees in R
+Title: Tools for Working with Pedigrees in R
 Version: 0.9.0
 Authors@R: person("Magnus Dehli", "Vigeland", email = "m.d.vigeland@medisin.uio.no", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9134-4962"))
