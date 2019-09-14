@@ -1,10 +1,46 @@
-### genotype ###
+#' Get/set marker attributes
+#'
+#' These functions can be used to manipulate a single attribute of one or
+#' several markers. Each getter/setter can be used in two ways: Either directly
+#' on a `marker` object, or on a `ped` object which has markers attached to it.
+#'
+#' @param x A [ped] object or a [marker] object
+#' @param marker,markers The index or name of a marker (or a vector indicating
+#'   several markers) attached to `ped`. Used if `x` is a `ped` object
+#' @param id The ID label of a single pedigree member
+#' @param ... Further arguments, not used in most of these functions
+#' @param value Replacement value(s)
+#'
+#' @return The getters return the value of the query. The setters perform
+#'   in-place modification of the input.
+#'
+#' @examples
+#' x = nuclearPed(1)
+#' x = setMarkers(x, locusAttributes = list(name = "M", alleles = 1:2))
+#'
+#' # Set genotype
+#' genotype(x, marker = "M", id = 1) = 1:2
+#' genotype(x, marker = "M", id = 3) = 1
+#'
+#' # Genotypes are returned as a vector of length 2
+#' genotype(x, marker = "M", id = 1)
+#'
+#' # Change allele freqs
+#' afreq(x, "M") = c(`1` = 0.1, `2` = 0.9)
+#'
+#' # Check the new frequencies
+#' afreq(x, "M")
+#'
+#' @name marker_getset
+NULL
 
+#' @rdname marker_getset
 #' @export
 genotype = function(x, ...) {
   UseMethod("genotype")
 }
 
+#' @rdname marker_getset
 #' @export
 genotype.marker = function(x, id, ...) {
   if(length(id) != 1)
@@ -21,6 +57,7 @@ genotype.marker = function(x, id, ...) {
   g
 }
 
+#' @rdname marker_getset
 #' @export
 genotype.ped = function(x, markers=NULL, id, ...) {
   mlist = getMarkers(x, markers=markers)
@@ -33,11 +70,13 @@ genotype.ped = function(x, markers=NULL, id, ...) {
   genotype(m, id)
 }
 
+#' @rdname marker_getset
 #' @export
 `genotype<-` = function(x, ..., value) {
   UseMethod("genotype<-")
 }
 
+#' @rdname marker_getset
 #' @export
 `genotype<-.marker` = function(x, id, ..., value) {
   pedlabels = attr(x, 'pedmembers')
@@ -67,6 +106,7 @@ genotype.ped = function(x, markers=NULL, id, ...) {
   x
 }
 
+#' @rdname marker_getset
 #' @export
 `genotype<-.ped` = function(x, marker, id, ..., value) {
   if(missing(marker) || length(marker) == 0)
@@ -80,16 +120,19 @@ genotype.ped = function(x, markers=NULL, id, ...) {
 }
 
 ### mutmod ###
+#' @rdname marker_getset
 #' @export
 mutmod = function(x, ...) {
   UseMethod("mutmod")
 }
 
+#' @rdname marker_getset
 #' @export
 mutmod.marker = function(x, ...) {
   attr(x, 'mutmod')
 }
 
+#' @rdname marker_getset
 #' @export
 mutmod.ped = function(x, marker, ...) {
   if(missing(marker) || length(marker) == 0)
@@ -102,11 +145,13 @@ mutmod.ped = function(x, marker, ...) {
   mutmod(m)
 }
 
+#' @rdname marker_getset
 #' @export
 `mutmod<-` = function(x, ..., value) {
   UseMethod("mutmod<-")
 }
 
+#' @rdname marker_getset
 #' @export
 `mutmod<-.marker` = function(x, ..., value) {
   if (!requireNamespace("pedmut", quietly = TRUE))
@@ -121,6 +166,7 @@ mutmod.ped = function(x, marker, ...) {
   x
 }
 
+#' @rdname marker_getset
 #' @export
 `mutmod<-.ped` = function(x, marker, ..., value) {
   if(missing(marker) || length(marker) == 0)
@@ -134,17 +180,19 @@ mutmod.ped = function(x, marker, ...) {
 }
 
 ### alleles ###
-
+#' @rdname marker_getset
 #' @export
 alleles = function(x, ...) {
   UseMethod("alleles")
 }
 
+#' @rdname marker_getset
 #' @export
 alleles.marker = function(x, ...) {
   attr(x, 'alleles')
 }
 
+#' @rdname marker_getset
 #' @export
 alleles.ped = function(x, marker, ...) {
   if(missing(marker) || length(marker) == 0)
@@ -159,12 +207,13 @@ alleles.ped = function(x, marker, ...) {
 
 
 ### afreq ###
-
+#' @rdname marker_getset
 #' @export
 afreq = function(x, ...) {
   UseMethod("afreq")
 }
 
+#' @rdname marker_getset
 #' @export
 afreq.marker = function(x, ...) {
   afr = attr(x, "afreq")
@@ -172,6 +221,7 @@ afreq.marker = function(x, ...) {
   afr
 }
 
+#' @rdname marker_getset
 #' @export
 afreq.ped = function(x, marker, ...) {
   if(missing(marker) || length(marker) == 0)
@@ -184,11 +234,13 @@ afreq.ped = function(x, marker, ...) {
   afreq(m)
 }
 
+#' @rdname marker_getset
 #' @export
 `afreq<-` = function(x, ..., value) {
   UseMethod("afreq<-")
 }
 
+#' @rdname marker_getset
 #' @export
 `afreq<-.marker` = function(x, ..., value) {
   als = alleles(x)
@@ -215,6 +267,7 @@ afreq.ped = function(x, marker, ...) {
   x
 }
 
+#' @rdname marker_getset
 #' @export
 `afreq<-.ped` = function(x, marker, ..., value) {
   if(missing(marker) || length(marker) == 0)
@@ -237,65 +290,76 @@ afreq.ped = function(x, marker, ...) {
 
 
 ### getters
-
+#' @rdname marker_getset
 #' @export
 name = function(x, ...) {
   UseMethod("name")
 }
 
+#' @rdname marker_getset
 #' @export
 name.marker = function(x, ...) {
   attr(x, 'name')
 }
 
+#' @rdname marker_getset
 #' @export
 name.ped = function(x, markers, ...) {
   mlist = getMarkers(x, markers=markers)
   vapply(mlist, name, character(1))
 }
 
+#' @rdname marker_getset
 #' @export
 chrom = function(x, ...) {
   UseMethod("chrom")
 }
 
+#' @rdname marker_getset
 #' @export
 chrom.marker = function(x, ...) {
   attr(x, 'chrom')
 }
 
+#' @rdname marker_getset
 #' @export
 chrom.ped = function(x, markers, ...) {
   mlist = getMarkers(x, markers=markers)
   vapply(mlist, chrom, character(1))
 }
 
+#' @rdname marker_getset
 #' @export
 posMb = function(x, ...) {
   UseMethod("posMb")
 }
 
+#' @rdname marker_getset
 #' @export
 posMb.marker = function(x, ...) {
   as.numeric(attr(x, 'posMb'))
 }
 
+#' @rdname marker_getset
 #' @export
 posMb.ped = function(x, markers, ...) {
   mlist = getMarkers(x, markers=markers)
   vapply(mlist, posMb, numeric(1))
 }
 
+#' @rdname marker_getset
 #' @export
 posCm = function(x, ...) {
   UseMethod("posCm")
 }
 
+#' @rdname marker_getset
 #' @export
 posCm.marker = function(x, ...) {
   as.numeric(attr(x, 'posCm'))
 }
 
+#' @rdname marker_getset
 #' @export
 posCm.ped = function(x, markers, ...) {
   mlist = getMarkers(x, markers=markers)
@@ -304,11 +368,13 @@ posCm.ped = function(x, markers, ...) {
 
 
 ### name setter
+#' @rdname marker_getset
 #' @export
 `name<-` = function(x, ..., value) {
   UseMethod("name<-")
 }
 
+#' @rdname marker_getset
 #' @export
 `name<-.marker` = function(x, ..., value) {
   name = as.character(value)
@@ -322,6 +388,7 @@ posCm.ped = function(x, markers, ...) {
   x
 }
 
+#' @rdname marker_getset
 #' @export
 `name<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
@@ -344,11 +411,13 @@ posCm.ped = function(x, markers, ...) {
 }
 
 ### chrom setter
+#' @rdname marker_getset
 #' @export
 `chrom<-` = function(x, ..., value) {
   UseMethod("chrom<-")
 }
 
+#' @rdname marker_getset
 #' @export
 `chrom<-.marker` = function(x, ..., value) {
   chrom = as.character(value)
@@ -360,6 +429,7 @@ posCm.ped = function(x, markers, ...) {
   x
 }
 
+#' @rdname marker_getset
 #' @export
 `chrom<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
@@ -382,11 +452,13 @@ posCm.ped = function(x, markers, ...) {
 
 ### posCm setter
 
+#' @rdname marker_getset
 #' @export
 `posCm<-` = function(x, ..., value) {
   UseMethod("posCm<-")
 }
 
+#' @rdname marker_getset
 #' @export
 `posCm<-.marker` = function(x, ..., value) {
   pos = suppressWarnings(as.numeric(value))
@@ -400,6 +472,7 @@ posCm.ped = function(x, markers, ...) {
   x
 }
 
+#' @rdname marker_getset
 #' @export
 `posCm<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
@@ -420,12 +493,13 @@ posCm.ped = function(x, markers, ...) {
 }
 
 ### posMb setter
-
+#' @rdname marker_getset
 #' @export
 `posMb<-` = function(x, ..., value) {
   UseMethod("posMb<-")
 }
 
+#' @rdname marker_getset
 #' @export
 `posMb<-.marker` = function(x, ..., value) {
   pos = suppressWarnings(as.numeric(value))
@@ -439,6 +513,7 @@ posCm.ped = function(x, markers, ...) {
   x
 }
 
+#' @rdname marker_getset
 #' @export
 `posMb<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
