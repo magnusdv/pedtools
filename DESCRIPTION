@@ -1,19 +1,22 @@
 Package: pedtools
 Type: Package
 Title: Tools for working with pedigrees in R
-Version: 0.1.0
-Authors@R: person("Magnus Dehli", "Vigeland", email = "m.d.vigeland@medisin.uio.no", role = c("aut", "cre"))
+Version: 0.9.0
+Authors@R: person("Magnus Dehli", "Vigeland", email = "m.d.vigeland@medisin.uio.no", 
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9134-4962"))
 Description: A collection of tools for creating, manipulating and visualising pedigrees with marker data.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat,
- igraph,
- knitr,
- rmarkdown,
- pedmut,
- kableExtra
-Imports: kinship2
+Imports: 
+    kinship2
+Suggests: 
+    testthat,
+    igraph,
+    knitr,
+    rmarkdown,
+    pedmut,
+    kableExtra
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
