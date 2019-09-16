@@ -1,5 +1,5 @@
-R/.*
 .Rproj.user
 .Rhistory
 .RData
 inst/doc
+notes-private
