@@ -218,8 +218,12 @@ validateMarker = function(x) {
 
   # mutation model
   mutmod = attrs$mutmod
-  if(!is.null(mutmod))
+  if(!is.null(mutmod)) {
+    if (!requireNamespace("pedmut", quietly = TRUE))
+      stop2("Package `pedmut` is not installed")
+
     pedmut::validateMutationModel(mutmod)
+  }
 
   x
 }
