@@ -85,3 +85,10 @@ test_that("as.ped() does not reorder (i.e. does not shuffle genotypes", {
   expect_identical(list('1'=x, '2'=s), y)
 
 })
+
+test_that("marker_col argument of as.ped() works", {
+  trio = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1),
+                    M1a = c(1,2,1), M1b=c(1,2,2))
+  trio.ped = as.ped(trio, marker_col=5:ncol(trio))
+  expect_length(trio.ped$markerdata, 1)
+})

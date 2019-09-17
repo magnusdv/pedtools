@@ -337,6 +337,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
     }
   }
 
+  # Identify `famid` column and check for multiple pedigrees
   colnames = tolower(names(x))
   if(is.na(famid_col))
     famid_col = match("famid", colnames)
@@ -380,7 +381,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
 
   ### Various checks
   NC = ncol(x)
-  col_idx = c(famid=famid_col, id=id_col, fid=fid_col, mid=mid_col, sex=sex_col)
+  col_idx = c(famid=famid_col, id=id_col, fid=fid_col, mid=mid_col, sex=sex_col, marker = marker_col)
 
   # id, fid, mid cannot be missing
   required = col_idx[2:4]
@@ -388,9 +389,11 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
     stop2("Cannot find required column: ", names(required)[is.na(required)])
 
   # Catch duplicated column indices
-  dup_idx = anyDuplicated.default(col_idx, incomparables = NA)
-  if(dup_idx > 0)
-    stop2("Column ", dup_idx, " has mulitple assignments: ", names(col_idx)[col_idx == dup_idx])
+  if(dup_idx <- anyDuplicated.default(col_idx, incomparables = NA)) {
+    dup = col_idx[dup_idx]
+    stop2(sprintf("Column %s has mulitple assignments: ", dup),
+          names(col_idx)[!is.na(col_idx) & col_idx == dup])
+  }
 
   # Chech that columns exist
   nonexist = !is.na(col_idx) & (col_idx < 1 | col_idx > NC)
@@ -421,11 +424,13 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
           validate = validate, reorder = FALSE)
 
   ### Marker columns
-  last_pedcol = max(col_idx, na.rm = TRUE)
-  if(is.na(marker_col) && NC > last_pedcol)
-    marker_col = seq.int(last_pedcol + 1, NC)
-  else
-    marker_col = NULL
+  # Index of last pedigree column
+  if(length(marker_col) == 1 && is.na(marker_col)) {
+    pedmax = max(col_idx[1:5], na.rm = TRUE)
+    marker_col = if(NC > pedmax) (pedmax + 1):NC else NULL
+  }
+  else if(!is.numeric(marker_col))
+    stop2("`marker_col` must be numeric, not ", typeof(marker_col))
 
   # If no markers, return p
   if(length(marker_col) == 0)
