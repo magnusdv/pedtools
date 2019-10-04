@@ -7,6 +7,7 @@ Authors@R: person("Magnus Dehli", "Vigeland", email = "m.d.vigeland@medisin.uio.
 Description: A collection of tools for creating, manipulating and visualising pedigrees with marker data.
 License: GPL-3
 Encoding: UTF-8
+Language: en-GB
 LazyData: true
 Imports: 
     kinship2

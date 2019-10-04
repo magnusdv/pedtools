@@ -214,7 +214,7 @@ test_that("relabel() is strict", {
   expect_error(relabel(x, old=3, new=2), "Duplicated ID label: 2")
 })
 
-test_that("relabeling is passed on to markers", {
+test_that("relabelling is passed on to markers", {
   x = nuclearPed(1)
   x = setMarkers(x, marker(x))
   x = relabel(x, old=2, new="mother")

@@ -41,7 +41,7 @@
 #' it is called each time a new `ped` object is created by [ped()] in order to
 #' detect loops.) The main purpose of the function, however, is to prepare for
 #' probability calculations in other packages, as e.g. in
-#' [pedprobr::likelihood()].
+#' `pedprobr::likelihood`.
 #'
 #' @examples
 #' x = fullSibMating(1)
@@ -57,7 +57,7 @@
 #' stopifnot(!hasUnbrokenLoops(y))
 #' stopifnot(pedsize(y) == 7)
 #'
-#' # A pedigree with selfing (note the neccessary `sex = 0`)
+#' # A pedigree with selfing (note the necessary `sex = 0`)
 #' z1 = singleton(1, sex = 0)
 #' z2 = addChildren(z1, father = 1, mother = 1, nch = 1)
 #' stopifnot(!hasSelfing(z1), hasSelfing(z2))

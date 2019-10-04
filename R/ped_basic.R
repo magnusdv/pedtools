@@ -21,17 +21,17 @@
 #'   `length(children)`
 #' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).
 #'   In `nuclearPed()`, it contains the genders of the children and is recycled
-#'   (if neccessary) to length `nch`. In `linearPed()` it also contains the
+#'   (if necessary) to length `nch`. In `linearPed()` it also contains the
 #'   genders of the children (1 in each generation) and should have length at
 #'   most `n` (recycled if shorter than this). In `selfingPed()` it should be a
 #'   single number, indicating the gender of the last individual (the others
 #'   must necessarily have gender code 0.)
 #' @param father The label of the father.
-#' @param mother The label of the father.
+#' @param mother The label of the mother.
 #' @param children A character of length `nch`, with labels of the children.
 #' @param nch1,nch2 The number of children in each sibship.
 #' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
-#'   Recycled (if neccessary) to lengths `nch1` and `nch2` respectively.
+#'   Recycled (if necessary) to lengths `nch1` and `nch2` respectively.
 #' @param n The number of generations, not including the initial founders.
 #' @param degree A non-negative integer: 0=siblings, 1=first cousins; 2=second
 #'   cousins, a.s.o.

@@ -52,10 +52,10 @@ instead of the ID label. See Examples.
 
 \item{title}{the plot title. If NULL or '', no title is added to the plot.}
 
-\item{col}{a vector of colors for the pedigree members, recycled if
-necessary. Alternatively, \code{col} can be a list assigning colors to specific
-members. For example if \code{col = list(red = "foo", blue = c("bar", "baz"))}
-then "foo" will be red, "bar" and "baz" blue, and everyone else black. By
+\item{col}{a vector of colours for the pedigree members, recycled if
+necessary. Alternatively, \code{col} can be a list assigning colours to specific
+members. For example if \code{col = list(red = "a", blue = c("b", "c"))}
+then individual "a" will be red, "b" and "c" blue, and everyone else black. By
 default everyone is drawn black.}
 
 \item{shaded}{a vector of ID labels indicating pedigree members whose plot
@@ -106,7 +106,7 @@ plot(x, id.labels = c("fa", "boy"))
 # Labelling only some members, and renaming the father
 plot(x, id.labels = c(FATHER = "fa", "boy"))
 
-# Colors
+# Colours
 plot(x, col = list(red = "fa", green = "boy"))
 
 # Founder inbreeding is shown by default

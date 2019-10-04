@@ -12,7 +12,7 @@
 #'
 #' `addSon()` and `addDaughter()` are wrappers for a common use of
 #' `addChildren()`, namely adding a single child to a pedigree member. Note that
-#' its argument `parent` is gender-neutral, unlike in addChildren where you have
+#' its argument `parent` is gender-neutral, unlike in `addChildren()` where you have
 #' to know the parental genders. Also note that the other parent is always
 #' created as a new individual. Thus, applying `addDaughter()` twice with the
 #' same parent will create half sisters.

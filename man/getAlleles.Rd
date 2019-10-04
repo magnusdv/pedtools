@@ -37,7 +37,7 @@ individuals/markers simultaneously
 }
 \details{
 If the \code{alleles} argument of \code{setAlleles()} is not a matrix, it is recycled
-(if neccessary), and converted into a matrix of the correct dimensions. For
+(if necessary), and converted into a matrix of the correct dimensions. For
 example, setting \code{alleles = 0} gives a simple way of removing the genotypes
 of some or all individuals (while keeping the markers attached).
 }

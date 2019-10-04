@@ -1,4 +1,4 @@
-test_that("nuclearPed() direct labeling works", {
+test_that("nuclearPed() direct labelling works", {
   expect_identical(nuclearPed(1), nuclearPed(children='3'))
   expect_identical(nuclearPed(1, sex=2), nuclearPed(children='3', sex=2))
   expect_identical(relabel(nuclearPed(1), letters[3:1]),

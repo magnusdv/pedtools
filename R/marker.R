@@ -11,7 +11,7 @@
 #'   non-NULL, then `...` must be empty.
 #' @param alleles a character (or coercible to character) containing allele
 #'   names. If not given, and `afreq` is named, `names(afreq)` is used. The
-#'   default action is to take the sorted vector of distinct alleles occuring in
+#'   default action is to take the sorted vector of distinct alleles occurring in
 #'   `allelematrix` or `...`.
 #' @param afreq a numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
@@ -20,7 +20,7 @@
 #'   alleles)` is not TRUE. If `afreq` is not specified, all alleles are given
 #'   equal frequencies.
 #' @param chrom a single integer: the chromosome number. Default: NA.
-#' @param posMb a nonnegative real number: the phsyical position of the marker,
+#' @param posMb a nonnegative real number: the physical position of the marker,
 #'   in megabases. Default: NA.
 #' @param posCm a nonnegative real number: the centiMorgan position of the
 #'   marker. Default: NA.
@@ -34,20 +34,20 @@
 #' @return An object of class `marker`. This is an integer matrix with 2 columns
 #'   and one row per individual, and the following attributes:
 #'
-#'   * 'alleles' (a character vector with allele labels)
+#'   * `alleles` (a character vector with allele labels)
 #'
-#'   * 'afreq' (allele frequencies; default `rep.int(1/length(alleles),
+#'   * `afreq` (allele frequencies; default `rep.int(1/length(alleles),
 #'   length(alleles))`)
 #'
-#'   * 'chrom' (chromosome number; default = NA)
+#'   * `chrom` (chromosome number; default = NA)
 #'
-#'   * 'posMb' (physical location in megabases; default = NA)
+#'   * `posMb` (physical location in megabases; default = NA)
 #'
-#'   * 'posCm' (position in centiMorgan; default = NA)
+#'   * `posCm` (position in centiMorgan; default = NA)
 #'
-#'   * 'name' (marker identifier; default = NA)
+#'   * `name` (marker identifier; default = NA)
 #'
-#'   * 'mutmod' (a list of two (male and female) mutation matrices; default =
+#'   * `mutmod` (a list of two (male and female) mutation matrices; default =
 #'   NULL)
 #'
 #' @seealso [marker_attach]

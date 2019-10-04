@@ -20,7 +20,7 @@ non-NULL, then \code{...} must be empty.}
 
 \item{alleles}{a character (or coercible to character) containing allele
 names. If not given, and \code{afreq} is named, \code{names(afreq)} is used. The
-default action is to take the sorted vector of distinct alleles occuring in
+default action is to take the sorted vector of distinct alleles occurring in
 \code{allelematrix} or \code{...}.}
 
 \item{afreq}{a numeric of the same length as \code{alleles}, indicating the
@@ -31,7 +31,7 @@ equal frequencies.}
 
 \item{chrom}{a single integer: the chromosome number. Default: NA.}
 
-\item{posMb}{a nonnegative real number: the phsyical position of the marker,
+\item{posMb}{a nonnegative real number: the physical position of the marker,
 in megabases. Default: NA.}
 
 \item{posCm}{a nonnegative real number: the centiMorgan position of the
@@ -50,13 +50,13 @@ checked.}
 An object of class \code{marker}. This is an integer matrix with 2 columns
 and one row per individual, and the following attributes:
 \itemize{
-\item 'alleles' (a character vector with allele labels)
-\item 'afreq' (allele frequencies; default \code{rep.int(1/length(alleles),   length(alleles))})
-\item 'chrom' (chromosome number; default = NA)
-\item 'posMb' (physical location in megabases; default = NA)
-\item 'posCm' (position in centiMorgan; default = NA)
-\item 'name' (marker identifier; default = NA)
-\item 'mutmod' (a list of two (male and female) mutation matrices; default =
+\item \code{alleles} (a character vector with allele labels)
+\item \code{afreq} (allele frequencies; default \code{rep.int(1/length(alleles),   length(alleles))})
+\item \code{chrom} (chromosome number; default = NA)
+\item \code{posMb} (physical location in megabases; default = NA)
+\item \code{posCm} (position in centiMorgan; default = NA)
+\item \code{name} (marker identifier; default = NA)
+\item \code{mutmod} (a list of two (male and female) mutation matrices; default =
 NULL)
 }
 }

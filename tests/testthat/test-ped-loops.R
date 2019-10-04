@@ -68,7 +68,7 @@ test_that("tieLoops restores broken IDENTITY ped", {
   expect_identical(x, tie_silent(break_silent(x)))
 })
 
-test_that("loop breaking commutes with relabeling", {
+test_that("loop breaking commutes with relabelling", {
   x = fullSibMating(2)
   x_r = relabel(x, old=1:8, new=letters[1:8])
   x_r_b = break_silent(x_r)
@@ -76,7 +76,7 @@ test_that("loop breaking commutes with relabeling", {
   x_b = break_silent(x)
   x_b_r = relabel(x_b, old=1:8, new=letters[1:8])
 
-  skip("TODO: fix loop_breakers when relabeling...in relabel()")
+  skip("TODO: fix loop_breakers when relabelling...in relabel()")
   expect_identical(x_r_b, x_b_r)
 })
 

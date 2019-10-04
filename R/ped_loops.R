@@ -14,7 +14,7 @@
 #'
 #' The function `findLoopBreakers` identifies a set of individuals breaking all
 #' inbreeding loops, but not marriage loops. These require more machinery for
-#' efficient detection, and pedtools does this is a seperate function,
+#' efficient detection, and pedtools does this is a separate function,
 #' `findLoopBreakers2`, utilizing methods from the `igraph` package. Since this
 #' is rarely needed for most users, `igraph` is not imported when loading
 #' pedtools, only when `findLoopBreakers2` is called.
@@ -43,11 +43,11 @@
 #'
 #'   For `inbreedingLoops`, a list containing all inbreeding loops (not marriage
 #'   loops) found in the pedigree. Each loop is represented as a list with
-#'   elements 'top', a 'bottom' individual, 'pathA' (individuals forming a path
-#'   from top to bottom) and 'pathB' (creating a different path from top to
-#'   bottom, with no individuals in common with pathA). Note that the number of
-#'   loops reported here counts all closed paths in the pedigree and will in
-#'   general be larger than the genus of the underlying graph.
+#'   elements `top`, `bottom`, `pathA` (individuals forming a path from top to
+#'   bottom) and `pathB` (creating a different path from top to bottom, with no
+#'   individuals in common with `pathA`). Note that the number of loops reported
+#'   here counts all closed paths in the pedigree and will in general be larger
+#'   than the genus of the underlying graph.
 #'
 #'   For `findLoopBreakers` and `findLoopBreakers2`, a numeric vector of
 #'   individual ID's.
@@ -55,15 +55,20 @@
 #'
 #' @examples
 #'
-#' x = cousinPed(1, child=TRUE)
-#' plot(x)
+#' x = cousinPed(1, child = TRUE)
+#' plot(breakLoops(x))
 #'
 #' # Pedigree with marriage loop: Double first cousins
-#' if(require('igraph')) {
-#'   #y = doubleCousins(1, 1, child=TRUE)
-#'   #findLoopBreakers(y) # --> 9
-#'   #findLoopBreakers2(y) # --> 9 and 4
-#'   #breakLoops(y) # uses both 9 and 4
+#' if(requireNamespace("igraph", quietly = TRUE)) {
+#'   y = doubleCousins(1, 1, child = TRUE)
+#'   findLoopBreakers(y) # --> 5
+#'   findLoopBreakers2(y) # --> 5 and 6
+#'   y2 = breakLoops(y)
+#'   plot(y2)
+#'
+#'   # Or loop breakers chosen by user
+#'   y3 = breakLoops(y, c(3, 7))
+#'   plot(y3)
 #' }
 #'
 #' @export
@@ -241,7 +246,7 @@ findLoopBreakers = function(x) {
 #' @rdname inbreedingLoops
 findLoopBreakers2 = function(x, errorIfFail = TRUE) {
   if (!requireNamespace("igraph", quietly = TRUE)) {
-    cat("This pedigree has marriage loops. The package 'igraph' must be installed for automatic selection of loop breakers.\n")
+    warning("This pedigree has marriage loops. The package 'igraph' must be installed for automatic selection of loop breakers.\n")
     return(numeric())
   }
 

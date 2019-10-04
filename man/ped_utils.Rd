@@ -55,7 +55,7 @@ find a complete peeling order if and only if the pedigree has loops. (In fact
 it is called each time a new \code{ped} object is created by \code{\link[=ped]{ped()}} in order to
 detect loops.) The main purpose of the function, however, is to prepare for
 probability calculations in other packages, as e.g. in
-\code{\link[pedprobr:likelihood]{pedprobr::likelihood()}}.
+\code{pedprobr::likelihood}.
 }
 }
 \description{
@@ -81,7 +81,7 @@ y = breakLoops(x)
 stopifnot(!hasUnbrokenLoops(y))
 stopifnot(pedsize(y) == 7)
 
-# A pedigree with selfing (note the neccessary `sex = 0`)
+# A pedigree with selfing (note the necessary `sex = 0`)
 z1 = singleton(1, sex = 0)
 z2 = addChildren(z1, father = 1, mother = 1, nch = 1)
 stopifnot(!hasSelfing(z1), hasSelfing(z2))

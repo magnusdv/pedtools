@@ -34,7 +34,7 @@ selfingPed(s, sex = 1)
 
 \item{sex}{A vector with integer gender codes (0=unknown, 1=male, 2=female).
 In \code{nuclearPed()}, it contains the genders of the children and is recycled
-(if neccessary) to length \code{nch}. In \code{linearPed()} it also contains the
+(if necessary) to length \code{nch}. In \code{linearPed()} it also contains the
 genders of the children (1 in each generation) and should have length at
 most \code{n} (recycled if shorter than this). In \code{selfingPed()} it should be a
 single number, indicating the gender of the last individual (the others
@@ -42,14 +42,14 @@ must necessarily have gender code 0.)}
 
 \item{father}{The label of the father.}
 
-\item{mother}{The label of the father.}
+\item{mother}{The label of the mother.}
 
 \item{children}{A character of length \code{nch}, with labels of the children.}
 
 \item{nch1, nch2}{The number of children in each sibship.}
 
 \item{sex1, sex2}{Vectors of gender codes for the children in each sibship.
-Recycled (if neccessary) to lengths \code{nch1} and \code{nch2} respectively.}
+Recycled (if necessary) to lengths \code{nch1} and \code{nch2} respectively.}
 
 \item{n}{The number of generations, not including the initial founders.}
 

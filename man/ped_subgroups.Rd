@@ -77,7 +77,7 @@ order.}
 
 \item{half}{a logical or NA. If TRUE (resp FALSE), only half (resp. full)
 siblings/cousins/nephews/nieces are returned. If NA, both categories are
-inclucded.}
+included.}
 }
 \value{
 For \code{ancestors(x,id)}, a vector containing the IDs of all ancestors

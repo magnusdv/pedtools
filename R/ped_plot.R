@@ -33,10 +33,10 @@
 #'
 #'
 #' @param title the plot title. If NULL or '', no title is added to the plot.
-#' @param col a vector of colors for the pedigree members, recycled if
-#'   necessary. Alternatively, `col` can be a list assigning colors to specific
-#'   members. For example if `col = list(red = "foo", blue = c("bar", "baz"))`
-#'   then "foo" will be red, "bar" and "baz" blue, and everyone else black. By
+#' @param col a vector of colours for the pedigree members, recycled if
+#'   necessary. Alternatively, `col` can be a list assigning colours to specific
+#'   members. For example if `col = list(red = "a", blue = c("b", "c"))`
+#'   then individual "a" will be red, "b" and "c" blue, and everyone else black. By
 #'   default everyone is drawn black.
 #' @param shaded a vector of ID labels indicating pedigree members whose plot
 #'   symbols should appear shaded.
@@ -74,7 +74,7 @@
 #' # Labelling only some members, and renaming the father
 #' plot(x, id.labels = c(FATHER = "fa", "boy"))
 #'
-#' # Colors
+#' # Colours
 #' plot(x, col = list(red = "fa", green = "boy"))
 #'
 #' # Founder inbreeding is shown by default
@@ -130,7 +130,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
     else if (is.markerList(marker))
       mlist = marker
     else if (is.numeric(marker) || is.character(marker))
-      mlist = getMarkers(x, markers=marker)
+      mlist = getMarkers(x, markers = marker)
     else
       stop2("Argument `marker` must be either:\n",
            "  * a n object of class `marker`\n",
@@ -150,7 +150,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   # Needed for centered title. Without, par() doesnt equal 'margins'...(why??)
   oldmar = par(mar = margins)
 
-  # Colors
+  # Colours
   if(is.list(col)) {
     colnames = names(col)
     cols = rep(1, nInd)
@@ -319,73 +319,79 @@ plot.pedList = function(x, ...) {
 #'   position of the frames.
 #' @param newdev A logical, indicating if a new plot window should be opened.
 #' @param dev.height,dev.width The dimensions of the new device (only relevant
-#'   if newdev is TRUE). If these are NA suitable values are guessed from the
+#'   if `newdev` is TRUE). If these are NA suitable values are guessed from the
 #'   pedigree sizes.
 #' @param \dots Further arguments passed on to each call to [plot.ped()].
+#'
 #' @author Magnus Dehli Vigeland
+#'
 #' @seealso [plot.ped()]
+#'
 #' @examples
 #' # Simplest use: Just give a list of ped objects.
-#' # To guess suitable plot window dimensions, use 'newdev=T'
+#' # To guess suitable plot window dimensions, use 'newdev = TRUE'
 #' peds = list(nuclearPed(3), cousinPed(2), singleton(12), halfSibPed())
-#' plotPedList(peds, newdev=TRUE)
+#' plotPedList(peds, newdev = TRUE)
 #'
 #' # Modify the relative widths (which are not guessed)
 #' widths = c(2, 3, 1, 2)
-#' plotPedList(peds, widths=widths)
+#' plotPedList(peds, widths = widths)
 #'
 #' # In most cases the guessed dimensions are ok but not perfect.
-#' # Resize plot window manually, and then plot again with newdev=F (default)
-#' # plotPedList(peds, widths=widths)
+#' # Resize plot window manually, and then plot again with `newdev = F` (default)
+#' # plotPedList(peds, widths = widths)
 #'
 #' ## Remove frames
-#' plotPedList(peds, widths=widths, frames=FALSE)
+#' plotPedList(peds, widths = widths, frames = FALSE)
 #'
 #' # Non-default frames
 #' frames = list(1, 2:3)
-#' plotPedList(peds, widths=widths, frames=frames, frametitles=c('First', 'Second'))
+#' plotPedList(peds, widths = widths, frames = frames,
+#'             frametitles = c('First', 'Second'))
 #'
 #' # To give *the same* parameter to all plots, it can just be added at the end:
-#' margins=c(2,4,2,4)
-#' title='Same title'
-#' id.labels=''
-#' symbolsize=1.5
-#' plotPedList(peds, widths=widths, frames=frames, margins=margins, title=title,
-#'             id.labels=id.labels, symbolsize=symbolsize, newdev=TRUE)
+#' margins = c(2, 4, 2, 4)
+#' title = 'Same title'
+#' id.labels = ''
+#' symbolsize = 1.5
+#' plotPedList(peds, widths = widths, frames = frames, margins = margins,
+#'             title = title, id.labels = id.labels, symbolsize = symbolsize,
+#'             newdev = TRUE)
 #'
-#' \dontrun{
 #' # COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS
 #' # For more control of individual plots, each plot and all its parameters
 #' # can be specified in its own list:
 #' x1 = nuclearPed(nch = 3)
-#' m1 = marker(x1, '3' = 1:2)
+#' m1 = marker(x1, `3` = 1:2)
 #' marg1 = c(7, 4, 7, 4)
-#' plot1 = list(x1, marker=m1, margins=marg1, title='Plot 1', deceased=1:2, cex=1.3)
+#' plot1 = list(x1, marker = m1, margins = marg1, title = "Plot 1",
+#'              deceased = 1:2, cex = 1.3)
 #'
 #' x2 = cousinPed(2)
-#' m2 = marker(x2, alleles='A')
-#' genotype(m2, leaves(x2)) = 'A'
+#' m2 = marker(x2, alleles = "A")
+#' genotype(m2, leaves(x2)) = "A"
 #' marg2 = c(3, 4, 2, 4)
-#' plot2 = list(x2, marker=m2, margins=marg2, title='Plot 2', symbolsize=1.2,
-#'              skip.empty.genotypes=T, id=NULL)
+#' plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2", symbolsize = 1.2,
+#'              skip.empty.genotypes = TRUE, id = NULL)
 #'
 #' x3 = singleton("Mr. X")
 #' marg3 = c(10, 0, 0, 0)
-#' plot3 = list(x3, margins=marg3, title='Plot 3', symbolsize=1, cex=2)
+#' plot3 = list(x3, margins = marg3, title = "Plot 3", symbolsize = 1, cex = 2)
 #'
 #' x4 = halfSibPed()
 #' shaded = 4:5
 #' col = c("black", "black", "black", "blue", "blue")
 #' marg4 = marg1
-#' plot4 = list(x4, margins=marg4, title='Plot 4', shaded=shaded, col=col)
+#' plot4 = list(x4, margins = marg4, title = "Plot 4", shaded = shaded, col = col)
 #'
-#' plotPedList(list(plot1, plot2, plot3, plot4), widths=c(2,3,1,2),
-#'             frames=list(1,2:3,4), newdev=T)
+#' plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
+#'             frames = list(1, 2:3, 4), newdev = TRUE)
 #'
 #' # Different example:
-#' plotPedList(list(halfCousinPed(4), cousinPed(7)), title='Many generations',
-#'     new=T, dev.height=9, dev.width=9)
-#' }
+#' plotPedList(list(halfCousinPed(4), cousinPed(7)),
+#'             title = c('Many generations', 'Very many generations'),
+#'             newdev = TRUE, dev.height = 9, dev.width = 9)
+#'
 #'
 #' @importFrom grDevices dev.new dev.size
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot

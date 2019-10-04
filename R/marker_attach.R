@@ -10,28 +10,28 @@
 #' marker, where possible entries in the inner lists are as follows (default
 #' values in parenthesis):
 #'
-#' * 'alleles' : a character vector with allele labels
+#' * `alleles` : a character vector with allele labels
 #'
-#' * 'afreq' :  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
+#' * `afreq` :  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
 #' where `L = length(alleles)`)
 #'
-#' * 'chrom' : chromosome number (NA)
+#' * `chrom` : chromosome number (NA)
 #'
-#' * 'posMb' : physical location in megabases (NA)
+#' * `posMb` : physical location in megabases (NA)
 #'
-#' * 'posCm' : position in centiMorgan (NA)
+#' * `posCm` : position in centiMorgan (NA)
 #'
-#' * 'name' : marker name (NA)
+#' * `name` : marker name (NA)
 #'
-#' * 'mutmod' : mutation model, or model name (NULL)
+#' * `mutmod` : mutation model, or model name (NULL)
 #'
-#' * 'rate' : mutation model parameter (NULL)
+#' * `rate` : mutation model parameter (NULL)
 #'
 #' If `locusAttributes` is just a single list of attributes (not a list of
 #' lists), then it is repeated to match the number of markers.
 #'
 #' Two alternative format of `locusAttributes` are allowed: If a data.frame or
-#' matrix is given, an attempt is made to interprete it as a frequency database
+#' matrix is given, an attempt is made to interpret it as a frequency database
 #' in `allelic ladder` format. Such an interpretation is also attempted if
 #' `locusAttributes` is a list of named frequency vectors (where the names are
 #' the allele labels). See the Examples section for an example of this using the
@@ -66,14 +66,6 @@
 #' # Reversing the order of the markers
 #' x = setMarkers(x, list(m2, m1))
 #' x
-#'
-#' \dontrun{
-#' # Attach empty markers corresponding to a realistic forensic database
-#' require(Familias)
-#' data(NorwegianFrequencies)
-#' x = nuclearPed(1)
-#' x = setMarkers(x, locusAttributes = NorwegianFrequencies)
-#' }
 #'
 #' @name marker_attach
 NULL

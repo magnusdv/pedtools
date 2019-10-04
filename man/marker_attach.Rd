@@ -49,22 +49,22 @@ The most general format of \code{locusAttributes} a list of lists, one for each
 marker, where possible entries in the inner lists are as follows (default
 values in parenthesis):
 \itemize{
-\item 'alleles' : a character vector with allele labels
-\item 'afreq' :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
+\item \code{alleles} : a character vector with allele labels
+\item \code{afreq} :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
 where \code{L = length(alleles)})
-\item 'chrom' : chromosome number (NA)
-\item 'posMb' : physical location in megabases (NA)
-\item 'posCm' : position in centiMorgan (NA)
-\item 'name' : marker name (NA)
-\item 'mutmod' : mutation model, or model name (NULL)
-\item 'rate' : mutation model parameter (NULL)
+\item \code{chrom} : chromosome number (NA)
+\item \code{posMb} : physical location in megabases (NA)
+\item \code{posCm} : position in centiMorgan (NA)
+\item \code{name} : marker name (NA)
+\item \code{mutmod} : mutation model, or model name (NULL)
+\item \code{rate} : mutation model parameter (NULL)
 }
 
 If \code{locusAttributes} is just a single list of attributes (not a list of
 lists), then it is repeated to match the number of markers.
 
 Two alternative format of \code{locusAttributes} are allowed: If a data.frame or
-matrix is given, an attempt is made to interprete it as a frequency database
+matrix is given, an attempt is made to interpret it as a frequency database
 in \code{allelic ladder} format. Such an interpretation is also attempted if
 \code{locusAttributes} is a list of named frequency vectors (where the names are
 the allele labels). See the Examples section for an example of this using the
@@ -82,13 +82,5 @@ x
 # Reversing the order of the markers
 x = setMarkers(x, list(m2, m1))
 x
-
-\dontrun{
-# Attach empty markers corresponding to a realistic forensic database
-require(Familias)
-data(NorwegianFrequencies)
-x = nuclearPed(1)
-x = setMarkers(x, locusAttributes = NorwegianFrequencies)
-}
 
 }

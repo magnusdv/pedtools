@@ -59,10 +59,10 @@ genotype.marker = function(x, id, ...) {
 
 #' @rdname marker_getset
 #' @export
-genotype.ped = function(x, markers=NULL, id, ...) {
-  mlist = getMarkers(x, markers=markers)
+genotype.ped = function(x, markers = NULL, id, ...) {
+  mlist = getMarkers(x, markers = markers)
   if(length(mlist) == 0)
-    stop2("No markers selected") #TODO
+    stop2("No markers selected")
   if(length(mlist) > 1)
     stop2("More than one marker selected")
 
@@ -92,7 +92,7 @@ genotype.ped = function(x, markers=NULL, id, ...) {
     value = rep(value, 2)
 
   if(length(id_int) > 1)
-    value = rep(value, each=length(id_int))
+    value = rep(value, each = length(id_int))
 
   a = alleles(x)
   g_num = match(value, a, nomatch=0)
@@ -114,7 +114,7 @@ genotype.ped = function(x, markers=NULL, id, ...) {
   if(length(marker) > 1)
     stop2("Genotype replacement can only be done for a single marker")
 
-  idx = whichMarkers(x, markers=marker)
+  idx = whichMarkers(x, markers = marker)
   genotype(x$markerdata[[idx]], id) = value
   x
 }
@@ -140,7 +140,7 @@ mutmod.ped = function(x, marker, ...) {
   if(length(marker) > 1)
     stop2("Mutation model can only be accessed for one marker at a time")
 
-  mlist = getMarkers(x, markers=marker)
+  mlist = getMarkers(x, markers = marker)
   m = mlist[[1]]
   mutmod(m)
 }
@@ -200,7 +200,7 @@ alleles.ped = function(x, marker, ...) {
   if(length(marker) > 1)
     stop2("Allele extraction can only be done for a single marker")
 
-  mlist = getMarkers(x, markers=marker)
+  mlist = getMarkers(x, markers = marker)
   m = mlist[[1]]
   alleles(m)
 }
@@ -228,7 +228,7 @@ afreq.ped = function(x, marker, ...) {
     stop2("Argument `marker` cannot be empty")
   if(length(marker) > 1)
     stop2("Frequency extraction can only be done for a single marker")
-  mlist = getMarkers(x, markers=marker)
+  mlist = getMarkers(x, markers = marker)
 
   m = mlist[[1]]
   afreq(m)
@@ -275,7 +275,7 @@ afreq.ped = function(x, marker, ...) {
   if(length(marker) > 1)
     stop2("Frequency replacement can only be done for a single marker")
 
-  idx = whichMarkers(x, markers=marker)
+  idx = whichMarkers(x, markers = marker)
   afreq(x$markerdata[[idx]]) = value
   x
 }
@@ -305,7 +305,7 @@ name.marker = function(x, ...) {
 #' @rdname marker_getset
 #' @export
 name.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers=markers)
+  mlist = getMarkers(x, markers = markers)
   vapply(mlist, name, character(1))
 }
 
@@ -324,7 +324,7 @@ chrom.marker = function(x, ...) {
 #' @rdname marker_getset
 #' @export
 chrom.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers=markers)
+  mlist = getMarkers(x, markers = markers)
   vapply(mlist, chrom, character(1))
 }
 
@@ -343,7 +343,7 @@ posMb.marker = function(x, ...) {
 #' @rdname marker_getset
 #' @export
 posMb.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers=markers)
+  mlist = getMarkers(x, markers = markers)
   vapply(mlist, posMb, numeric(1))
 }
 
@@ -362,7 +362,7 @@ posCm.marker = function(x, ...) {
 #' @rdname marker_getset
 #' @export
 posCm.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers=markers)
+  mlist = getMarkers(x, markers = markers)
   vapply(mlist, posCm, numeric(1))
 }
 
@@ -400,7 +400,7 @@ posCm.ped = function(x, markers, ...) {
   if(anyDuplicated.default(value))
     stop2("Replacement values must be unique")
 
-  idx = whichMarkers(x, markers=markers)
+  idx = whichMarkers(x, markers = markers)
 
   x$markerdata[idx] = lapply(seq_along(idx), function(i) {
     m = x$markerdata[[idx[i]]]
@@ -482,7 +482,7 @@ posCm.ped = function(x, markers, ...) {
   if(anyDuplicated.default(value))
     stop2("Replacement values must be unique")
 
-  idx = whichMarkers(x, markers=markers)
+  idx = whichMarkers(x, markers = markers)
 
   x$markerdata[idx] = lapply(seq_along(idx), function(i) {
     m = x$markerdata[[idx[i]]]
@@ -523,7 +523,7 @@ posCm.ped = function(x, markers, ...) {
   if(anyDuplicated.default(value))
     stop2("Replacement values must be unique")
 
-  idx = whichMarkers(x, markers=markers)
+  idx = whichMarkers(x, markers = markers)
 
   x$markerdata[idx] = lapply(seq_along(idx), function(i) {
     m = x$markerdata[[idx[i]]]

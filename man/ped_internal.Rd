@@ -41,7 +41,7 @@ whenever a pedigree is created, unless explicitly avoided with
 \code{reorder=FALSE}.
 
 \code{hasParentsBeforeChildren()} can be used as a quick test to decide if it
-is neccessary to call \code{parentsBeforeChildren()}.
+is necessary to call \code{parentsBeforeChildren()}.
 
 The utility \code{internalID()} converts ID labels to indices in the internal
 ordering.

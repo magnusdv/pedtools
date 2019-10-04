@@ -39,7 +39,7 @@ relabel = function(x, new, old=labels(x)) {
   id[old_int] = new
   x$ID = id
 
-  # Duplicated IDs after relabeling?
+  # Duplicated IDs after relabelling?
   if(anyDuplicated.default(id) > 0)
     stop2("Duplicated ID label: ", unique(id[duplicated(id)]))
 

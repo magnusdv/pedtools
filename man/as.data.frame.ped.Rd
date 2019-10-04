@@ -32,8 +32,8 @@ form nice-looking genotypes.
 
 The matrix method, on the other hand, is a handy tool for manipulating the
 pedigree structure. It produces a numeric matrix, using the internal index
-labeling both for individuals and alleles, making it very fast. In addition,
-all neccessary meta information (loop breakers, allele frequencies a.s.o) is
+labelling both for individuals and alleles, making it very fast. In addition,
+all necessary meta information (loop breakers, allele frequencies a.s.o) is
 kept as attributes, which makes it possible to recreate the original \code{ped}
 object.
 }

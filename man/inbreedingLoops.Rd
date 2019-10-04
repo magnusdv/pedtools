@@ -45,11 +45,11 @@ the call \code{tieLoops(breakLoops(x))} should return \code{x}.
 
 For \code{inbreedingLoops}, a list containing all inbreeding loops (not marriage
 loops) found in the pedigree. Each loop is represented as a list with
-elements 'top', a 'bottom' individual, 'pathA' (individuals forming a path
-from top to bottom) and 'pathB' (creating a different path from top to
-bottom, with no individuals in common with pathA). Note that the number of
-loops reported here counts all closed paths in the pedigree and will in
-general be larger than the genus of the underlying graph.
+elements \code{top}, \code{bottom}, \code{pathA} (individuals forming a path from top to
+bottom) and \code{pathB} (creating a different path from top to bottom, with no
+individuals in common with \code{pathA}). Note that the number of loops reported
+here counts all closed paths in the pedigree and will in general be larger
+than the genus of the underlying graph.
 
 For \code{findLoopBreakers} and \code{findLoopBreakers2}, a numeric vector of
 individual ID's.
@@ -70,7 +70,7 @@ labels (see examples).
 
 The function \code{findLoopBreakers} identifies a set of individuals breaking all
 inbreeding loops, but not marriage loops. These require more machinery for
-efficient detection, and pedtools does this is a seperate function,
+efficient detection, and pedtools does this is a separate function,
 \code{findLoopBreakers2}, utilizing methods from the \code{igraph} package. Since this
 is rarely needed for most users, \code{igraph} is not imported when loading
 pedtools, only when \code{findLoopBreakers2} is called.
@@ -81,15 +81,20 @@ returned individuals. If the resulting ped object still has loops,
 }
 \examples{
 
-x = cousinPed(1, child=TRUE)
-plot(x)
+x = cousinPed(1, child = TRUE)
+plot(breakLoops(x))
 
 # Pedigree with marriage loop: Double first cousins
-if(require('igraph')) {
-  #y = doubleCousins(1, 1, child=TRUE)
-  #findLoopBreakers(y) # --> 9
-  #findLoopBreakers2(y) # --> 9 and 4
-  #breakLoops(y) # uses both 9 and 4
+if(requireNamespace("igraph", quietly = TRUE)) {
+  y = doubleCousins(1, 1, child = TRUE)
+  findLoopBreakers(y) # --> 5
+  findLoopBreakers2(y) # --> 5 and 6
+  y2 = breakLoops(y)
+  plot(y2)
+
+  # Or loop breakers chosen by user
+  y3 = breakLoops(y, c(3, 7))
+  plot(y3)
 }
 
 }

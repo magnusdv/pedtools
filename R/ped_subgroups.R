@@ -9,7 +9,7 @@
 #' @param degree,removal Non-negative integers.
 #' @param half a logical or NA. If TRUE (resp FALSE), only half (resp. full)
 #'   siblings/cousins/nephews/nieces are returned. If NA, both categories are
-#'   inclucded.
+#'   included.
 #'
 #' @return For `ancestors(x,id)`, a vector containing the IDs of all ancestors
 #'   of the individual `id`.  For `descendants(x,id)`, a vector containing the

@@ -1,16 +1,15 @@
 #' Random pedigree
 #'
 #' Generate a random pedigree by applying random mating starting from a finite
-#' population. The resulting pedigree will have `f + g` members, where
-#' `f` is the number of founders and `g` is the number of matings.
+#' population. The resulting pedigree will have `f + g` members, where `f` is
+#' the number of founders and `g` is the number of matings.
 #'
-#' The sampling scheme for chosing parents in each mating depends on the
-#' `selfing` parameter. If `selfing=FALSE`, a father is randomly
-#' sampled from the exisiting males, and a mother from the existing females. If
-#' `selfing=TRUE` then one parent P1 is sampled first (among all members),
-#' and then a second parent from the set consisting of P1 and all members of the
-#' opposite sex. The gender of the child is randomly chosen with equal
-#' probabilities.
+#' The sampling scheme for choosing parents in each mating depends on the
+#' `selfing` parameter. If `selfing = FALSE`, a father is randomly sampled from
+#' the existing males, and a mother from the existing females. If `selfing =
+#' TRUE` then one parent P1 is sampled first (among all members), and then a
+#' second parent from the set consisting of P1 and all members of the opposite
+#' sex. The gender of the child is randomly chosen with equal probabilities.
 #'
 #' @param g A positive integer: The number of matings.
 #' @param founders A positive integer: The size of the initial population.

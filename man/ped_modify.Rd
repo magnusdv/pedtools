@@ -76,7 +76,7 @@ already exists, the numbers are adjusted accordingly.
 
 \code{addSon()} and \code{addDaughter()} are wrappers for a common use of
 \code{addChildren()}, namely adding a single child to a pedigree member. Note that
-its argument \code{parent} is gender-neutral, unlike in addChildren where you have
+its argument \code{parent} is gender-neutral, unlike in \code{addChildren()} where you have
 to know the parental genders. Also note that the other parent is always
 created as a new individual. Thus, applying \code{addDaughter()} twice with the
 same parent will create half sisters.

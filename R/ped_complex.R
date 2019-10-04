@@ -23,7 +23,7 @@
 #'
 #'
 #' @param degree1,degree2,removal1,removal2 Nonnegative integers.
-#' @param half1,half2 Logicals, indicating if the fathers (resp mothers) should
+#' @param half1,half2 Logicals, indicating if the fathers (resp. mothers) should
 #'   be full or half cousins.
 #' @param child A logical: Should a child be added to the double cousins?
 #' @param n A positive integer indicating the number of crossings.
@@ -48,18 +48,6 @@
 #' QHFC = quadHalfFirstCousins()
 #' # plot(QHFC) # Weird plotting behaviour for this pedigree.
 #'
-#' # A double half cousins pedigree with inbred founders,
-#' # with the same identity coefficients as QHFC above.
-#' # (Requires the `ribd` package.)
-#' \dontrun{
-#' x = doubleCousins(degree1 = 1, removal1 = 1, half1 = TRUE,
-#'                   degree2 = 0, removal2 = 1, half2 = TRUE)
-#' founderInbreeding(x, 1) = 3-2*sqrt(2)
-#' founderInbreeding(x, 4) = .5 * sqrt(2)
-#' j1 = ribd::condensedIdentity(x, leaves(x))
-#' j2 = ribd::condensedIdentity(QHFC, leaves(QHFC))
-#' stopifnot(identical(j1, j2))
-#' }
 #' @name ped_complex
 NULL
 
@@ -117,8 +105,11 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
     x = mergePed(x1, x2)
   }
 
-  if (child)
+  if (child) {
+    x = swapSex(x, offs[2])
     x = addChildren(x, father = offs[1], mother = offs[2], nch = 1)
+  }
+
   x
 }
 

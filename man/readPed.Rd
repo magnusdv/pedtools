@@ -12,7 +12,7 @@ readPed(pedfile, header = NA, famid_col = NA, id_col = NA,
 \arguments{
 \item{pedfile}{A file name}
 
-\item{header}{A logical. If NA, the program will interprete the first line as
+\item{header}{A logical. If NA, the program will interpret the first line as
 a header line if the first entry contains "id" AND the word "sex" is an
 entry.}
 
@@ -56,9 +56,11 @@ A \link{ped} object or a list of such.
 Read a pedigree from file
 }
 \examples{
+
+tf = tempfile()
+
 ### Write and read a trio
 trio = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
-tf = tempfile()
 write.table(trio, file = tf, row.names = FALSE)
 readPed(tf)
 
@@ -90,7 +92,7 @@ readPed(tf)
 write.table(trio2, file = tf, col.names = FALSE, row.names = FALSE)
 readPed(tf, famid = 1, id = 2, fid = 3, mid = 4, sex = 5)
 
-
+# Cleanup
 unlink(tf)
 
 }

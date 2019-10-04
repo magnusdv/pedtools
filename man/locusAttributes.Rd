@@ -44,27 +44,25 @@ Retrieve or modify the attributes of attached markers
 \details{
 The default setting \code{markers = NULL} select markers automatically, depending
 on the \code{matchNames} argument. If \code{matchNames = FALSE}, all markers are chosen
-(and an error issued if this is incompatible with the given
-\code{locusAttributes}). If \code{matchNames = TRUE}, markers will be matched against
-'name' attributese included in \code{locusAttributes} (and an error issued if
-these are missing).
+If \code{matchNames = TRUE}, markers will be matched against the \code{name} entries in
+\code{locusAttributes} (and an error issued if these are missing).
 
 Note that the default value \code{NA} of \code{matchNames} is changed to TRUE if all
-entries of \code{locusAttributes} have a 'name' component which matches the name a
+entries of \code{locusAttributes} have a \code{name} component which matches the name a
 an attached marker.
 
 Possible attributes given in \code{locusAttributes} are as follows (default values
 in parenthesis):
 \itemize{
-\item 'alleles' : a character vector with allele labels
-\item 'afreq' :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
+\item \code{alleles} : a character vector with allele labels
+\item \code{afreq} :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
 where \code{L = length(alleles)})
-\item 'name' : marker name (NA)
-\item 'chrom' : chromosome number (NA)
-\item 'posMb' : physical location in megabases (NA)
-\item 'posCm' : position in centiMorgan (NA)
-\item 'mutmod' : mutation model, or model name (NULL)
-\item 'rate' : mutation model parameter (NULL)
+\item \code{name} : marker name (NA)
+\item \code{chrom} : chromosome number (NA)
+\item \code{posMb} : physical location in megabases (NA)
+\item \code{posCm} : position in centiMorgan (NA)
+\item \code{mutmod} : mutation model, or model name (NULL)
+\item \code{rate} : mutation model parameter (NULL)
 }
 }
 \examples{

@@ -23,7 +23,7 @@ basic pedigree objects and many new utility functions.
 
 ## Installation
 
-To get `pedtools`, install from GitHub as follows:
+To get pedtools, install from GitHub as follows:
 
 ``` r
  # First install devtools if needed
@@ -62,3 +62,6 @@ plot(x, m, skip.empty.genotypes = TRUE)
 ```
 
 ![](man/figures/README-example-1.png)<!-- -->
+
+For details about what pedtools can do, and many other examples, the
+vignette is the recommended place to start.

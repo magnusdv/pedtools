@@ -4,34 +4,32 @@
 #'
 #' The default setting `markers = NULL` select markers automatically, depending
 #' on the `matchNames` argument. If `matchNames = FALSE`, all markers are chosen
-#' (and an error issued if this is incompatible with the given
-#' `locusAttributes`). If `matchNames = TRUE`, markers will be matched against
-#' 'name' attributese included in `locusAttributes` (and an error issued if
-#' these are missing).
+#' If `matchNames = TRUE`, markers will be matched against the `name` entries in
+#' `locusAttributes` (and an error issued if these are missing).
 #'
 #' Note that the default value `NA` of `matchNames` is changed to TRUE if all
-#' entries of `locusAttributes` have a 'name' component which matches the name a
+#' entries of `locusAttributes` have a `name` component which matches the name a
 #' an attached marker.
 #'
 #' Possible attributes given in `locusAttributes` are as follows (default values
 #' in parenthesis):
 #'
-#' * 'alleles' : a character vector with allele labels
+#' * `alleles` : a character vector with allele labels
 #'
-#' * 'afreq' :  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
+#' * `afreq` :  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
 #' where `L = length(alleles)`)
 #'
-#' * 'name' : marker name (NA)
+#' * `name` : marker name (NA)
 #'
-#' * 'chrom' : chromosome number (NA)
+#' * `chrom` : chromosome number (NA)
 #'
-#' * 'posMb' : physical location in megabases (NA)
+#' * `posMb` : physical location in megabases (NA)
 #'
-#' * 'posCm' : position in centiMorgan (NA)
+#' * `posCm` : position in centiMorgan (NA)
 #'
-#' * 'mutmod' : mutation model, or model name (NULL)
+#' * `mutmod` : mutation model, or model name (NULL)
 #'
-#' * 'rate' : mutation model parameter (NULL)
+#' * `rate` : mutation model parameter (NULL)
 #'
 #' @param x A `ped` object, or a list of such.
 #' @param markers A character vector (with marker names) or a numeric vector

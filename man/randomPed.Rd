@@ -21,17 +21,15 @@ A \code{ped} object.
 }
 \description{
 Generate a random pedigree by applying random mating starting from a finite
-population. The resulting pedigree will have \code{f + g} members, where
-\code{f} is the number of founders and \code{g} is the number of matings.
+population. The resulting pedigree will have \code{f + g} members, where \code{f} is
+the number of founders and \code{g} is the number of matings.
 }
 \details{
-The sampling scheme for chosing parents in each mating depends on the
-\code{selfing} parameter. If \code{selfing=FALSE}, a father is randomly
-sampled from the exisiting males, and a mother from the existing females. If
-\code{selfing=TRUE} then one parent P1 is sampled first (among all members),
-and then a second parent from the set consisting of P1 and all members of the
-opposite sex. The gender of the child is randomly chosen with equal
-probabilities.
+The sampling scheme for choosing parents in each mating depends on the
+\code{selfing} parameter. If \code{selfing = FALSE}, a father is randomly sampled from
+the existing males, and a mother from the existing females. If \code{selfing = TRUE} then one parent P1 is sampled first (among all members), and then a
+second parent from the set consisting of P1 and all members of the opposite
+sex. The gender of the child is randomly chosen with equal probabilities.
 }
 \examples{
 randomPed(3, 3)

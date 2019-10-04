@@ -2,16 +2,16 @@
 #'
 #' @param x A `ped` object
 #' @param prefix A character string giving the prefix of the files. For
-#'   instance, if `prefix="myped"` and `what=c("ped", "map")`, the output files
-#'   are "myped.ped" and "myped.map" in the current directory. Paths to other
-#'   folder may be included, e.g. `prefix = "path-to-my-dir/myped"`. By default,
-#'   the family identifier `famid(x)` is used. Note that if this is empty, the
-#'   files become ".ped" and so on.
+#'   instance, if `prefix = "myped"` and `what = c("ped", "map")`, the output
+#'   files are "myped.ped" and "myped.map" in the current directory. Paths to
+#'   other folder may be included, e.g. `prefix = "path-to-my-dir/myped"`. By
+#'   default, the family identifier `famid(x)` is used. Note that if this is
+#'   empty, the files become ".ped" and so on.
 #' @param what A subset of the character vector c("ped", "map", "dat" and
 #'   "freq"), indicating which files should be created. All files are written in
 #'   MERLIN style (but see the `merlin` parameter below!) By default all files
 #'   are created.
-#' @param merlin A logical. If TRUE, the marker alleles are relabeled to
+#' @param merlin A logical. If TRUE, the marker alleles are relabelled to
 #'   1,2,..., making sure that the generated files are readable by MERLIN (which
 #'   does not accept non-numerical allele labels in the frequency file.) If
 #'   FALSE (the default) the allele labels are unchanged. In this case, `x`

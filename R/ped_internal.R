@@ -15,7 +15,7 @@
 #' `reorder=FALSE`.
 #'
 #' `hasParentsBeforeChildren()` can be used as a quick test to decide if it
-#' is neccessary to call `parentsBeforeChildren()`.
+#' is necessary to call `parentsBeforeChildren()`.
 #'
 #' The utility `internalID()` converts ID labels to indices in the internal
 #' ordering.

@@ -1,7 +1,7 @@
 #' Read a pedigree from file
 #'
 #' @param pedfile A file name
-#' @param header A logical. If NA, the program will interprete the first line as
+#' @param header A logical. If NA, the program will interpret the first line as
 #'   a header line if the first entry contains "id" AND the word "sex" is an
 #'   entry.
 #' @param ... Further parameters passed on to [read.table()], e.g. `sep`,
@@ -10,9 +10,11 @@
 #' @return A [ped] object or a list of such.
 #'
 #' @examples
+#'
+#' tf = tempfile()
+#'
 #' ### Write and read a trio
 #' trio = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
-#' tf = tempfile()
 #' write.table(trio, file = tf, row.names = FALSE)
 #' readPed(tf)
 #'
@@ -44,7 +46,7 @@
 #' write.table(trio2, file = tf, col.names = FALSE, row.names = FALSE)
 #' readPed(tf, famid = 1, id = 2, fid = 3, mid = 4, sex = 5)
 #'
-#'
+#' # Cleanup
 #' unlink(tf)
 #'
 #' @inheritParams as.ped.data.frame
@@ -73,7 +75,7 @@ readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = 
     # Read first line
     first = tolower(scan(pedfile, what = "", nlines = 1, quiet = TRUE, ...))
 
-    # Interprete as header line if 1) first element contains "id" and 2) "sex" is an entry
+    # Interpret as header line if 1) first element contains "id" and 2) "sex" is an entry
     header = grepl("id", first[1], fixed = T) && "sex" %in% first
   }
 

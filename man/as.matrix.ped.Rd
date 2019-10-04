@@ -3,7 +3,7 @@
 \name{as.matrix.ped}
 \alias{as.matrix.ped}
 \alias{restorePed}
-\title{Convert ped to matrix}
+\title{Convert \code{ped} to matrix}
 \usage{
 \method{as.matrix}{ped}(x, include.attrs = TRUE, ...)
 
@@ -13,7 +13,7 @@ restorePed(x, attrs = NULL, validate = TRUE)
 \item{x}{a \code{ped} object. In \code{restorePed}: A numerical matrix.}
 
 \item{include.attrs}{a logical indicating if marker annotations and other
-info should be attached as attributes. See value.}
+info should be attached as attributes. See Value.}
 
 \item{\dots}{not used.}
 
@@ -25,22 +25,23 @@ itself are used.}
 pedigree errors are performed.}
 }
 \value{
-For \code{as.matrix}: A numerical matrix with \code{pedsize(x)} rows.
-If \code{include.attrs = TRUE} the following attributes are added to the matrix,
+For \code{as.matrix}: A numerical matrix with \code{pedsize(x)} rows. If
+\code{include.attrs = TRUE} the following attributes are added to the matrix,
 allowing \code{x} to be exactly reproduced by \code{restorePed}:
 \itemize{
 \item \code{FAMID} the family identifier (a string)
 \item \code{LABELS} the ID labels (a character vector)
-\item \code{UNBROKEN_LOOPS} a logical indicating whether \code{x} has unboken loops
+\item \code{UNBROKEN_LOOPS} a logical indicating whether \code{x} has unbroken loops
 \item \code{LOOP_BREAKERS} a numerical matrix, or NULL
-\item \code{markerattr} a list of length \code{nMarkers(x)}, containing the attributes of each marker
+\item \code{markerattr} a list of length \code{nMarkers(x)}, containing the attributes of
+each marker
 }
 
 For \code{restorePed}: A \code{ped} object.
 }
 \description{
 Converts a \code{ped} object to a numeric matrix using internal labels, with
-additional info neccessary to recreate the original \code{ped} attached as
+additional info necessary to recreate the original \code{ped} attached as
 attributes.
 }
 \details{

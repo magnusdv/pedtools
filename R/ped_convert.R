@@ -1,14 +1,14 @@
-#' Convert ped to matrix
+#' Convert `ped` to matrix
 #'
 #' Converts a `ped` object to a numeric matrix using internal labels, with
-#' additional info neccessary to recreate the original `ped` attached as
+#' additional info necessary to recreate the original `ped` attached as
 #' attributes.
 #'
 #' `restorePed` is the reverse of `as.matrix.ped`.
 #'
 #' @param x a `ped` object. In `restorePed`: A numerical matrix.
 #' @param include.attrs a logical indicating if marker annotations and other
-#'   info should be attached as attributes. See value.
+#'   info should be attached as attributes. See Value.
 #' @param attrs a list containing labels and other `ped` info compatible with
 #'   `x`, in the format produced by `as.matrix`. If NULL, the attributes of `x`
 #'   itself are used.
@@ -16,17 +16,22 @@
 #'   pedigree errors are performed.
 #' @param \dots not used.
 #'
-#' @return For `as.matrix`: A numerical matrix with `pedsize(x)` rows.
-#'   If `include.attrs = TRUE` the following attributes are added to the matrix,
+#' @return For `as.matrix`: A numerical matrix with `pedsize(x)` rows. If
+#'   `include.attrs = TRUE` the following attributes are added to the matrix,
 #'   allowing `x` to be exactly reproduced by `restorePed`:
 #'
-#' * `FAMID` the family identifier (a string)
-#' * `LABELS` the ID labels (a character vector)
-#' * `UNBROKEN_LOOPS` a logical indicating whether `x` has unboken loops
-#' * `LOOP_BREAKERS` a numerical matrix, or NULL
-#' * `markerattr` a list of length `nMarkers(x)`, containing the attributes of each marker
+#'   * `FAMID` the family identifier (a string)
 #'
-#'  For `restorePed`: A `ped` object.
+#'   * `LABELS` the ID labels (a character vector)
+#'
+#'   * `UNBROKEN_LOOPS` a logical indicating whether `x` has unbroken loops
+#'
+#'   * `LOOP_BREAKERS` a numerical matrix, or NULL
+#'
+#'   * `markerattr` a list of length `nMarkers(x)`, containing the attributes of
+#'   each marker
+#'
+#'   For `restorePed`: A `ped` object.
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
 #'
@@ -146,8 +151,8 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
 #'
 #' The matrix method, on the other hand, is a handy tool for manipulating the
 #' pedigree structure. It produces a numeric matrix, using the internal index
-#' labeling both for individuals and alleles, making it very fast. In addition,
-#' all neccessary meta information (loop breakers, allele frequencies a.s.o) is
+#' labelling both for individuals and alleles, making it very fast. In addition,
+#' all necessary meta information (loop breakers, allele frequencies a.s.o) is
 #' kept as attributes, which makes it possible to recreate the original `ped`
 #' object.
 #'

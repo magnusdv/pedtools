@@ -41,8 +41,6 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
 
   ### AUTOSOMAL
   if (length(chromAUT) > 0) {
-    #if (verbose)
-    #    cat("\n### Checking autosomal markers ###\n")
     allelematr = do.call(cbind, x$markerdata[chromAUT])
     for (sub in nucs) {
       fa = allelematr[sub$father, ]
@@ -81,8 +79,6 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
 
   ### X
   if (length(chromX) > 0) {
-    #if (verbose)
-    #    cat("\n### Checking X-linked markers ###\n")
     sex = x$SEX
     allelematr = do.call(cbind, x$markerdata[chromX])
 

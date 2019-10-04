@@ -21,7 +21,7 @@ The goal of pedtools is to provide a lightweight, but comprehensive tool set for
 pedtools is a rewritten and improved version of one part of the [paramlink](https://CRAN.R-project.org/package=paramlink) package, which is no longer actively developed. The functionality of paramlink dealing with basic manipulation of pedigrees and markers has been moved to pedtools, in many cases using the same function names. Under the hood, however, many things are changed, including a new S3 class `ped` for basic pedigree objects and many new utility functions. 
 
 ## Installation
-To get `pedtools`, install from GitHub as follows: 
+To get pedtools, install from GitHub as follows: 
 ```{r, eval = FALSE}
  # First install devtools if needed
 if(!require(devtools)) install.packages("devtools")
@@ -53,3 +53,5 @@ x = addChildren(x, father = 4, mother = 5, nch = 1)
 m = marker(x, "6" = c("A", "B"))
 plot(x, m, skip.empty.genotypes = TRUE)
 ```
+
+For details about what pedtools can do, and many other examples, the vignette is the recommended place to start.
