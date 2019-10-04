@@ -1,8 +1,7 @@
 #' Complex pedigree structures
 #'
-#' These functions create certain classes of pedigrees that are not
-#' straightforward to construct starting from the simple structures described in
-#' [ped_basic].
+#' Functions for creating a selection of pedigrees that are awkward to construct
+#' from scratch, or by using the simple structures described in [ped_basic].
 #'
 #' The function `doubleCousins` returns a pedigree linking two individuals who
 #' are simultaneous paternal and maternal cousins. More precisely, they are:
@@ -19,7 +18,8 @@
 #' `fullSibMating` crosses full sibs consecutively `n` times.
 #'
 #' `halfSibStack` produces a breeding scheme where the two individuals in the
-#' final generation are simultaneous half k'th cousins, for each `k=0,...,n-1`.
+#' final generation are simultaneous half k'th cousins, for each `k =
+#' 0,...,n-1`.
 #'
 #'
 #' @param degree1,degree2,removal1,removal2 Nonnegative integers.
@@ -35,18 +35,20 @@
 #' @examples
 #'
 #' # Consecutive brother-sister matings.
-#' fullSibMating(2)
+#' x = fullSibMating(2)
+#' # plot(X)
 #'
 #' # Simultaneous half siblings and half first cousins
-#' halfSibStack(2)
+#' x = halfSibStack(2)
+#' # plot(x)
 #'
 #' # Double first cousins
 #' x = doubleFirstCousins()
-#' plot(x)
+#' # plot(x)
 #'
 #' # Quadruple half first cousins
-#' QHFC = quadHalfFirstCousins()
-#' # plot(QHFC) # Weird plotting behaviour for this pedigree.
+#' x = quadHalfFirstCousins()
+#' # plot(x) # Weird plotting behaviour for this pedigree.
 #'
 #' @name ped_complex
 NULL

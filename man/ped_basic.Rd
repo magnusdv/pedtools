@@ -73,8 +73,7 @@ The case \code{s = 0} results in a singleton.}
 A \code{ped} object.
 }
 \description{
-These are utility functions for creating some common pedigree structures as
-\code{ped} objects.
+Utility functions for creating some common pedigree structures.
 }
 \details{
 \code{halfSibPed(nch1, nch2)} produces a pedigree containing two sibships (of
@@ -115,13 +114,13 @@ cousinPed(degree = 0, removal = 2)
 cousinPed(degree = 2, removal = 1)
 
 # Same, but with the 'removal' on the left side.
-cousinPed(2, 1, side="left")
+cousinPed(2, 1, side = "left")
 
-# A child of half first cousin parents.
+# A child of half first cousins.
 halfCousinPed(degree = 1, child = TRUE)
 
-# Family tree of a single individuals
-ancestralPed(2)
+# The 'family tree' of a person
+ancestralPed(g = 2)
 
 }
 \seealso{

@@ -1,7 +1,6 @@
 #' Create simple pedigrees
 #'
-#' These are utility functions for creating some common pedigree structures as
-#' `ped` objects.
+#' Utility functions for creating some common pedigree structures.
 #'
 #' `halfSibPed(nch1, nch2)` produces a pedigree containing two sibships (of
 #' sizes `nch1` and `nch2`) with the same father, but different mothers. If
@@ -72,13 +71,13 @@
 #' cousinPed(degree = 2, removal = 1)
 #'
 #' # Same, but with the 'removal' on the left side.
-#' cousinPed(2, 1, side="left")
+#' cousinPed(2, 1, side = "left")
 #'
-#' # A child of half first cousin parents.
+#' # A child of half first cousins.
 #' halfCousinPed(degree = 1, child = TRUE)
 #'
-#' # Family tree of a single individuals
-#' ancestralPed(2)
+#' # The 'family tree' of a person
+#' ancestralPed(g = 2)
 #'
 #' @name ped_basic
 NULL

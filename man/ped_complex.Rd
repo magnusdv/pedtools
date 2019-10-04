@@ -34,9 +34,8 @@ be full or half cousins.}
 A \code{\link{ped}} object.
 }
 \description{
-These functions create certain classes of pedigrees that are not
-straightforward to construct starting from the simple structures described in
-\link{ped_basic}.
+Functions for creating a selection of pedigrees that are awkward to construct
+from scratch, or by using the simple structures described in \link{ped_basic}.
 }
 \details{
 The function \code{doubleCousins} returns a pedigree linking two individuals who
@@ -54,23 +53,25 @@ common case, double first cousins.
 \code{fullSibMating} crosses full sibs consecutively \code{n} times.
 
 \code{halfSibStack} produces a breeding scheme where the two individuals in the
-final generation are simultaneous half k'th cousins, for each \code{k=0,...,n-1}.
+final generation are simultaneous half k'th cousins, for each \code{k = 0,...,n-1}.
 }
 \examples{
 
 # Consecutive brother-sister matings.
-fullSibMating(2)
+x = fullSibMating(2)
+# plot(X)
 
 # Simultaneous half siblings and half first cousins
-halfSibStack(2)
+x = halfSibStack(2)
+# plot(x)
 
 # Double first cousins
 x = doubleFirstCousins()
-plot(x)
+# plot(x)
 
 # Quadruple half first cousins
-QHFC = quadHalfFirstCousins()
-# plot(QHFC) # Weird plotting behaviour for this pedigree.
+x = quadHalfFirstCousins()
+# plot(x) # Weird plotting behaviour for this pedigree.
 
 }
 \seealso{

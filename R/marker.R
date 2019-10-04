@@ -5,7 +5,7 @@
 #'
 #' @param x a [`ped`] object
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
-#'   the ID label of a member of `x`, and genotype is a numeric or character
+#'   the ID label of a member of `x`, and `genotype` is a numeric or character
 #'   vector of length 1 or 2 (see Examples).
 #' @param allelematrix a matrix with 2 columns and `pedsize(x)` rows. If this is
 #'   non-NULL, then `...` must be empty.
@@ -53,7 +53,7 @@
 #' @seealso [marker_attach]
 #'
 #' @examples
-#' x = nuclearPed(father="fa", mother="mo", children="child")
+#' x = nuclearPed(father = "fa", mother = "mo", children = "child")
 #'
 #' # A rare SNP marker for which the child is heterozygous
 #' m = marker(x, child = 1:2, alleles = 1:2, afreq = c(0.01, 0.99))

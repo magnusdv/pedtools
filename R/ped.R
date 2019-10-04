@@ -4,7 +4,7 @@
 #' creating many common pedigree structures are described in [ped_basic].
 #'
 #' A singleton is a special `ped` object whose pedigree contains 1 individual.
-#' The class attribute of a singleton is `c('singleton', 'ped')`
+#' The class attribute of a singleton is `c('singleton', 'ped')`.
 #'
 #' Selfing, i.e. the presence of pedigree members whose father and mother are
 #' the same individual, is allowed in `ped` objects. Any such "self-fertilizing"
@@ -70,7 +70,7 @@
 #' x = ped(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
 #'
 #' # Female singleton
-#' y = singleton('NN', sex=2, famid="SINGLETON GIRL")
+#' y = singleton('NN', sex=2)
 #'
 #' # Selfing
 #' z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
@@ -85,7 +85,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
 
   # Check input
   n = length(id)
-  if(n ==0)
+  if(n == 0)
     stop2("`id` vector has length 0")
   if(length(fid) != n)
     stop2(sprintf("Incompatible input: length(id) = %d, but length(fid) = %d", n, length(fid)))

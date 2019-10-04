@@ -3,7 +3,7 @@
 \name{is.marker}
 \alias{is.marker}
 \alias{is.markerList}
-\title{Test if something is a marker or a markerList}
+\title{Test if something is a marker}
 \usage{
 is.marker(x)
 
@@ -16,5 +16,5 @@ is.markerList(x)
 A logical
 }
 \description{
-Test if something is a marker or a markerList
+Functions for testing if something is a \code{marker} object, or a list of such objects.
 }

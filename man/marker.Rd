@@ -12,7 +12,7 @@ marker(x, ..., allelematrix = NULL, alleles = NULL, afreq = NULL,
 \item{x}{a \code{\link{ped}} object}
 
 \item{...}{one or more expressions of the form \code{id = genotype}, where \code{id} is
-the ID label of a member of \code{x}, and genotype is a numeric or character
+the ID label of a member of \code{x}, and \code{genotype} is a numeric or character
 vector of length 1 or 2 (see Examples).}
 
 \item{allelematrix}{a matrix with 2 columns and \code{pedsize(x)} rows. If this is
@@ -64,7 +64,7 @@ NULL)
 Creating a marker object associated with a pedigree
 }
 \examples{
-x = nuclearPed(father="fa", mother="mo", children="child")
+x = nuclearPed(father = "fa", mother = "mo", children = "child")
 
 # A rare SNP marker for which the child is heterozygous
 m = marker(x, child = 1:2, alleles = 1:2, afreq = c(0.01, 0.99))

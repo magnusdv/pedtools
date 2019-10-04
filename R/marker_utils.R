@@ -35,7 +35,9 @@ nAlleles = function(m) {
 }
 
 
-#' Test if something is a marker or a markerList
+#' Test if something is a marker
+#'
+#' Functions for testing if something is a `marker` object, or a list of such objects.
 #'
 #' @param x Any object
 #'
@@ -53,7 +55,7 @@ is.markerList = function(x) {
 
 #' Test if a marker is on the X chromosome
 #'
-#' Tests if the `chrom` attribute of a marker is 23.
+#' Tests if the `chrom` attribute of a marker is either "X" or "23".
 #'
 #' @param x A marker object. (If `x` is not a marker object, the function
 #'   returns FALSE.)

@@ -67,8 +67,7 @@ Two alternative format of \code{locusAttributes} are allowed: If a data.frame or
 matrix is given, an attempt is made to interpret it as a frequency database
 in \code{allelic ladder} format. Such an interpretation is also attempted if
 \code{locusAttributes} is a list of named frequency vectors (where the names are
-the allele labels). See the Examples section for an example of this using the
-\code{Familias::NorwegianFrequencies} database.
+the allele labels).
 }
 \examples{
 x = singleton(1)

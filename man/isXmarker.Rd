@@ -14,5 +14,5 @@ returns FALSE.)}
 TRUE or FALSE.
 }
 \description{
-Tests if the \code{chrom} attribute of a marker is 23.
+Tests if the \code{chrom} attribute of a marker is either "X" or "23".
 }

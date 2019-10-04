@@ -1,16 +1,19 @@
-#' Is an object a ped object?
+#' Is an object a `ped` object?
 #'
-#' Functions for checking whether an object is a [ped()] object, a [singleton()] or
-#' a list of such.
+#' Functions for checking whether an object is a [ped()] object, a [singleton()]
+#' or a list of such.
 #'
-#' Note that the `singleton` class inherits from `ped`, so if
-#' `x` is a singleton, `is.ped(x)` returns TRUE.
+#' Note that the `singleton` class inherits from `ped`, so if `x` is a
+#' singleton, `is.ped(x)` returns TRUE.
 #'
 #' @param x Any `R` object.
-#' @return For `is.ped`: TRUE if `x` is a ped (or singleton)
-#' object, and FALSE otherwise.\cr For `is.singleton`: TRUE if `x` is
-#' a singleton object, and FALSE otherwise.\cr For `is.ped.list`: TRUE
-#' if `x` is a list of ped/singleton objects.
+#' @return For `is.ped()`: TRUE if `x` is a `ped` or `singleton` object, otherwise FALSE.
+#'
+#'   For `is.singleton()`: TRUE if `x` is a `singleton` object, otherwise FALSE.
+#'
+#'   For `is.pedList()`: TRUE if `x` is a list of `ped` and/or `singleton`
+#'   objects, otherwise FALSE.
+#'
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
 #' @examples

@@ -34,8 +34,7 @@
 #' matrix is given, an attempt is made to interpret it as a frequency database
 #' in `allelic ladder` format. Such an interpretation is also attempted if
 #' `locusAttributes` is a list of named frequency vectors (where the names are
-#' the allele labels). See the Examples section for an example of this using the
-#' `Familias::NorwegianFrequencies` database.
+#' the allele labels).
 #'
 #' @param x A `ped` object
 #' @param m Either a single `marker` object or a list of `marker` objects

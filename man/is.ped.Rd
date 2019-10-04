@@ -4,7 +4,7 @@
 \alias{is.ped}
 \alias{is.singleton}
 \alias{is.pedList}
-\title{Is an object a ped object?}
+\title{Is an object a \code{ped} object?}
 \usage{
 is.ped(x)
 
@@ -16,18 +16,20 @@ is.pedList(x)
 \item{x}{Any \code{R} object.}
 }
 \value{
-For \code{is.ped}: TRUE if \code{x} is a ped (or singleton)
-object, and FALSE otherwise.\cr For \code{is.singleton}: TRUE if \code{x} is
-a singleton object, and FALSE otherwise.\cr For \code{is.ped.list}: TRUE
-if \code{x} is a list of ped/singleton objects.
+For \code{is.ped()}: TRUE if \code{x} is a \code{ped} or \code{singleton} object, otherwise FALSE.
+
+For \code{is.singleton()}: TRUE if \code{x} is a \code{singleton} object, otherwise FALSE.
+
+For \code{is.pedList()}: TRUE if \code{x} is a list of \code{ped} and/or \code{singleton}
+objects, otherwise FALSE.
 }
 \description{
-Functions for checking whether an object is a \code{\link[=ped]{ped()}} object, a \code{\link[=singleton]{singleton()}} or
-a list of such.
+Functions for checking whether an object is a \code{\link[=ped]{ped()}} object, a \code{\link[=singleton]{singleton()}}
+or a list of such.
 }
 \details{
-Note that the \code{singleton} class inherits from \code{ped}, so if
-\code{x} is a singleton, \code{is.ped(x)} returns TRUE.
+Note that the \code{singleton} class inherits from \code{ped}, so if \code{x} is a
+singleton, \code{is.ped(x)} returns TRUE.
 }
 \examples{
 
