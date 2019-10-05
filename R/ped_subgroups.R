@@ -85,7 +85,7 @@ typedMembers = function(x, internal = FALSE) {
   if (nMarkers(x) == 0)
     return(if(internal) integer(0) else character(0))
 
-  allelematrix = do.call(cbind, x$markerdata)
+  allelematrix = do.call(cbind, x$MARKERS)
   emptyrows = rowSums(allelematrix != 0) == 0
   if(internal) which(!emptyrows) else labels.ped(x)[!emptyrows]
 }
@@ -95,7 +95,7 @@ typedMembers = function(x, internal = FALSE) {
 untypedMembers = function(x, internal = FALSE) {
   if (nMarkers(x) == 0)
     return(if(internal) seq_len(pedsize(x)) else labels.ped(x))
-  allelematrix = do.call(cbind, x$markerdata)
+  allelematrix = do.call(cbind, x$MARKERS)
   emptyrows = rowSums(allelematrix != 0) == 0
   if(internal) which(emptyrows) else labels.ped(x)[emptyrows]
 }

@@ -45,7 +45,7 @@ relabel = function(x, new, old=labels(x)) {
 
   # Replace `pedmembers` attribute of each marker
   if(hasMarkers(x))
-    x$markerdata = lapply(x$markerdata, `attr<-`, 'pedmembers', id)
+    x$MARKERS = lapply(x$MARKERS, `attr<-`, 'pedmembers', id)
 
   x
 }

@@ -27,7 +27,7 @@ as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 \item{marker}{either NULL, a vector of positive integers, a \code{\link{marker}}
 object, or a list of such. If NULL, no genotypes are plotted.  If a vector
 of integers is given, the corresponding marker objects are extracted from
-\code{x$markerdata}. The genotypes are written below each individual in the
+\code{x$MARKERS}. The genotypes are written below each individual in the
 pedigree, in the format determined by \code{sep} and \code{missing}. See also
 \code{skip.empty.genotypes} below.}
 

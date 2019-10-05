@@ -149,7 +149,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
            UNBROKEN_LOOPS = FALSE,
            LOOP_BREAKERS = NULL,
            FOUNDER_INBREEDING = NULL,
-           markerdata = NULL)
+           MARKERS = NULL)
 
   # Set class attribute
   if(n == 1)

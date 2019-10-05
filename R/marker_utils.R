@@ -74,13 +74,13 @@ isXmarker = function(x) {
 #'
 #' @export
 nMarkers = function(x) {
-  length(x$markerdata)
+  length(x$MARKERS)
 }
 
 #' @export
 #' @rdname nMarkers
 hasMarkers = function(x) {
-  !is.null(x$markerdata) && nMarkers(x) > 0
+  !is.null(x$MARKERS) && nMarkers(x) > 0
 }
 
 

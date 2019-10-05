@@ -32,16 +32,16 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
 
   nucs = subnucs(x)
 
-  chromX = which(vapply(x$markerdata, isXmarker, logical(1)))
+  chromX = which(vapply(x$MARKERS, isXmarker, logical(1)))
   chromAUT = .mysetdiff(seq_len(nMarkers(x)), chromX)
 
-  errorlist = vector(length=pedsize(x), mode="list")
+  errorlist = vector(length = pedsize(x), mode = "list")
   names(errorlist) = labels(x)
   nuc_errors = numeric()  # container for allele count errors...belongs to the whole subnuc.
 
   ### AUTOSOMAL
   if (length(chromAUT) > 0) {
-    allelematr = do.call(cbind, x$markerdata[chromAUT])
+    allelematr = do.call(cbind, x$MARKERS[chromAUT])
     for (sub in nucs) {
       fa = allelematr[sub$father, ]
       mo = allelematr[sub$mother, ]
@@ -80,15 +80,15 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
   ### X
   if (length(chromX) > 0) {
     sex = x$SEX
-    allelematr = do.call(cbind, x$markerdata[chromX])
+    allelematr = do.call(cbind, x$MARKERS[chromX])
 
     # Identify & report male heterozygosity
     even = 2 * seq_along(chromX)
     odd = even - 1
-    maleXhet = allelematr[sex==1, odd, drop=F] != allelematr[sex==1, even, drop=F]
+    maleXhet = allelematr[sex == 1, odd, drop = F] != allelematr[sex == 1, even, drop = F]
     if(any(maleXhet)) {
-      maleXhet_errors = which(maleXhet, arr.ind=T)
-      error_males_int = which(sex==1)[maleXhet_errors[, 1]] # modify first col from index *among males*, to *among all*
+      maleXhet_errors = which(maleXhet, arr.ind = T)
+      error_males_int = which(sex == 1)[maleXhet_errors[, 1]] # modify first col from index *among males*, to *among all*
       error_markers = maleXhet_errors[, 2]
       for(i in unique.default(error_males_int)) {
         new_errs = chromX[error_markers[error_males_int == i]]

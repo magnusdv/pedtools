@@ -200,7 +200,7 @@ setLocusAttributes = function(x, markers = NULL, locusAttributes,
     newM = do.call(marker, arglist)
 
     # Insert in place
-    x$markerdata[[midx[i]]] = newM
+    x$MARKERS[[midx[i]]] = newM
   }
 
   # Return modified ped oject

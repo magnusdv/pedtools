@@ -48,7 +48,7 @@ writePed = function(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"),
 
   if (any(c("map", "dat", "freq") %in% what)) {
     mapmatr = getMap(x, na.action = 1, verbose = F)
-    markerdata = x$markerdata
+    markerdata = x$MARKERS
   }
 
   if ("map" %in% what) {

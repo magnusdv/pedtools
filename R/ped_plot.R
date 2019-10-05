@@ -11,7 +11,7 @@
 #' @param marker either NULL, a vector of positive integers, a [`marker`]
 #'   object, or a list of such. If NULL, no genotypes are plotted.  If a vector
 #'   of integers is given, the corresponding marker objects are extracted from
-#'   `x$markerdata`. The genotypes are written below each individual in the
+#'   `x$MARKERS`. The genotypes are written below each individual in the
 #'   pedigree, in the format determined by `sep` and `missing`. See also
 #'   `skip.empty.genotypes` below.
 #' @param sep a character of length 1 separating alleles for diploid markers.
@@ -202,7 +202,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
   if(is.null(marker))
-    x$markerdata = NULL
+    x$MARKERS = NULL
 
   # Founder inbreeding (this must be extracted before addParents())
   if(!is.null(fouInb) && hasInbredFounders(x))
@@ -244,10 +244,10 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     id = id.labels
   }
 
-  pdat = plot.ped(y, marker = y$markerdata, sep = sep, missing = missing,
+  pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
-               title = title, col = col, shaded = shaded, deceased = deceased, starred = starred,
-               margins = c(margins[1], 0, 0, 0), ...)
+               title = title, col = col, shaded = shaded, deceased = deceased,
+               starred = starred, margins = c(margins[1], 0, 0, 0), ...)
 
   usr = par("usr")
   rect(usr[1] - 0.1, pdat$y[3], usr[2] + 0.1, usr[4], border = NA, col = "white")

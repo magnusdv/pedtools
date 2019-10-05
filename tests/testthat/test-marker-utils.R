@@ -20,7 +20,7 @@ test_that("setMarkers() attaches a list of markers", {
   x2 = setMarkers(x, list(m))
   expect_identical(x1, x2)
   expect_equal(nMarkers(x1), 1)
-  expect_is(x1$markerdata, "markerList")
+  expect_is(x1$MARKERS, "markerList")
   expect_true(hasMarkers(x1))
 })
 

@@ -95,7 +95,7 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 
   # If no data, remove all markers and return
   if(is.null(m) && is.null(alleleMatrix) && length(locusAttributes) == 0) {
-    x['markerdata'] = list(NULL)
+    x['MARKERS'] = list(NULL)
     return(x)
   }
 
@@ -118,7 +118,7 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 
   class(mlist) = "markerList"
   checkConsistency(x, mlist)
-  x$markerdata = mlist
+  x$MARKERS = mlist
   x
 }
 
@@ -170,9 +170,9 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 
   # Append to x and return
   checkConsistency(x, mlist)
-  mlist = c(x$markerdata, mlist)
+  mlist = c(x$MARKERS, mlist)
   class(mlist) = "markerList"
-  x$markerdata = mlist
+  x$MARKERS = mlist
   x
 }
 

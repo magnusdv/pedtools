@@ -5,7 +5,7 @@ test_that("setMarkers() creates empty markers with locusAttributes", {
   ann = list(list(alleles=1:2, name="snp1"), list(alleles=c("a", "b")))
   x = setMarkers(x, locusAttributes=ann)
   expect_equal(nMarkers(x), 2)
-  expect_true(all(do.call(cbind, x$markerdata) == 0))
+  expect_true(all(do.call(cbind, x$MARKERS) == 0))
   expect_equal(name(x, 1), "snp1")
   expect_equal(alleles(x, 2), c("a", "b"))
 })

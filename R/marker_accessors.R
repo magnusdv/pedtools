@@ -115,7 +115,7 @@ genotype.ped = function(x, markers = NULL, id, ...) {
     stop2("Genotype replacement can only be done for a single marker")
 
   idx = whichMarkers(x, markers = marker)
-  genotype(x$markerdata[[idx]], id) = value
+  genotype(x$MARKERS[[idx]], id) = value
   x
 }
 
@@ -175,7 +175,7 @@ mutmod.ped = function(x, marker, ...) {
     stop2("Mutation model replacement can only be done for a single marker")
 
   idx = whichMarkers(x, markers = marker)
-  mutmod(x$markerdata[[idx]]) = value
+  mutmod(x$MARKERS[[idx]]) = value
   x
 }
 
@@ -276,7 +276,7 @@ afreq.ped = function(x, marker, ...) {
     stop2("Frequency replacement can only be done for a single marker")
 
   idx = whichMarkers(x, markers = marker)
-  afreq(x$markerdata[[idx]]) = value
+  afreq(x$MARKERS[[idx]]) = value
   x
 }
 
@@ -402,8 +402,8 @@ posCm.ped = function(x, markers, ...) {
 
   idx = whichMarkers(x, markers = markers)
 
-  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
-    m = x$markerdata[[idx[i]]]
+  x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
+    m = x$MARKERS[[idx[i]]]
     name(m) = value[i]
     m
   })
@@ -442,8 +442,8 @@ posCm.ped = function(x, markers, ...) {
 
   idx = whichMarkers(x, markers = markers)
 
-  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
-    m = x$markerdata[[idx[i]]]
+  x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
+    m = x$MARKERS[[idx[i]]]
     chrom(m) = value[i]
     m
   })
@@ -484,8 +484,8 @@ posCm.ped = function(x, markers, ...) {
 
   idx = whichMarkers(x, markers = markers)
 
-  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
-    m = x$markerdata[[idx[i]]]
+  x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
+    m = x$MARKERS[[idx[i]]]
     posCm(m) = value[i]
     m
   })
@@ -525,8 +525,8 @@ posCm.ped = function(x, markers, ...) {
 
   idx = whichMarkers(x, markers = markers)
 
-  x$markerdata[idx] = lapply(seq_along(idx), function(i) {
-    m = x$markerdata[[idx[i]]]
+  x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
+    m = x$MARKERS[[idx[i]]]
     posMb(m) = value[i]
     m
   })

@@ -35,7 +35,7 @@
 #'
 #' @export
 mergePed = function(x, y, ...) {
-  if (!is.null(x$markerdata) || !is.null(y$markerdata))
+  if (!is.null(x$MARKERS) || !is.null(y$MARKERS))
     stop2("Merging is only supported for pedigrees without marker data")
   xlabs = labels(x)
   ylabs = labels(y)

@@ -133,7 +133,6 @@ test_that("adding and removing child restores original - with markers", {
 })
 
 test_that("adding and removing parents restores original - with markers", {
-  skip("`branch()` not implemented yet")
   x = nuclearPed(1)
   x = setMarkers(x, marker(x, '1'=1:2))
   y = addParents(x, id=1, verbose=F)
@@ -218,7 +217,7 @@ test_that("relabelling is passed on to markers", {
   x = nuclearPed(1)
   x = setMarkers(x, marker(x))
   x = relabel(x, old=2, new="mother")
-  expect_identical(attr(x$markerdata[[1]], 'pedmembers'),
+  expect_identical(attr(x$MARKERS[[1]], 'pedmembers'),
                    c('1','mother','3'))
 })
 

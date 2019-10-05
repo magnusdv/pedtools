@@ -170,7 +170,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
     mlistNew = allelematrix2markerlist(comp, am, locusAttributes = loci, missing = NA) # why NA?
 
     midx = whichMarkers(comp, markers)
-    comp$markerdata[midx] = mlistNew
+    comp$MARKERS[midx] = mlistNew
 
     # Return modified ped oject
     comp

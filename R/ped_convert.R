@@ -59,7 +59,7 @@
 as.matrix.ped = function(x, include.attrs = TRUE, ...) {
   m = cbind(1:pedsize(x), x$FIDX, x$MIDX, x$SEX)
   if(hasMarkers(x)) {
-    markermatr = do.call(cbind, x$markerdata)
+    markermatr = do.call(cbind, x$MARKERS)
     m = cbind(m, markermatr)
   }
   if (include.attrs) {
@@ -72,7 +72,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
       else list(autosomal = founderInbreeding(x, named = TRUE, chromType = "autosomal"),
                 x = founderInbreeding(x, named = TRUE, chromType = "x"))
     if(hasMarkers(x)) {
-      attr(m, "markerattr") = lapply(x$markerdata, attributes)
+      attr(m, "markerattr") = lapply(x$MARKERS, attributes)
     }
   }
   m
@@ -254,7 +254,7 @@ questionMaleHetX = function(x, df) {
     else
       midx = match(mname, xnames)
 
-    if(!is.na(midx) && isXmarker(x$markerdata[[midx]])) {
+    if(!is.na(midx) && isXmarker(x$MARKERS[[midx]])) {
       maleHet = df[["sex"]] == 1 & grepl("/", df[[i]])
       df = commentAndRealign(df, i, maleHet, "?")
     }
