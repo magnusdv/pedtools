@@ -250,14 +250,3 @@ checkMutationMatrix = function(mutmat, alleles, identifier = NULL) {
 
 
 
-
-
-
-
-
-.setSNPfreqs = function(x, newfreqs) { # TODO: review function
-    stopifnot2(all(vapply(x$markerdata, function(m) attr(m, "nalleles"), numeric(1)) == 2))
-    newfreqs = rep(newfreqs, length = x$nMark)
-    for (i in seq_len(x$nMark)) attr(x$markerdata[[i]], "afreq") = c(newfreqs[i], 1 - newfreqs[i])
-    x
-}
