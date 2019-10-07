@@ -29,12 +29,12 @@
 #'
 #' @examples
 #' x = nuclearPed(1)
-#' m1 = marker(x, `2` = 1:2, alleles = 1:2, name="m1")
-#' m2 = marker(x, `3` = 2, alleles = 1:2, name="m2")
+#' m1 = marker(x, `2` = 1:2, alleles = 1:2, name = "m1")
+#' m2 = marker(x, `3` = 2, alleles = 1:2, name = "m2")
 #' x = setMarkers(x, list(m1, m2))
 #'
 #' mat1 = getAlleles(x)
-#' mat2 = getAlleles(x, ids=2:3, markers = "m2")
+#' mat2 = getAlleles(x, ids = 2:3, markers = "m2")
 #' stopifnot(identical(mat1[2:3, 3:4], mat2))
 #'
 #' # Remove all genotypes
@@ -42,7 +42,7 @@
 #' y
 #'
 #' # Setting a single genotype
-#' z = setAlleles(y, ids="1", marker = "m2", alleles = 1:2)
+#' z = setAlleles(y, ids = "1", marker = "m2", alleles = 1:2)
 #'
 #' # Alternative: In-place modification with `genotype()`
 #' genotype(y, id = "1", marker = "m2") = 1:2
@@ -54,7 +54,7 @@
 #'
 #' getAlleles(peds)
 #'
-#' setAlleles(peds, ids="s", marker="m1", alleles=1:2)
+#' setAlleles(peds, ids = "s", marker = "m1", alleles = 1:2)
 #'
 #' @export
 getAlleles = function(x, ids = NULL, markers = NULL) {
@@ -96,15 +96,17 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   if(is.null(ids))
     ids = labels(x)
 
-  if(length(ids) == 0)
-    return(NULL)
-
   if(is.null(markers))
     markers = seq_len(nMarkers(x))
 
+  # If no `ids` or no `markers`, return empty (but properly formed) matrix
+  if(length(ids) == 0 || length(markers) == 0) {
+    am = matrix(character(0), nrow = length(ids), ncol = 2*length(markers),
+                dimnames = list(ids, sprintf("%s.%d", rep(markers, each = 2), 1:2)))
+    return(am)
+  }
+
   mlist = getMarkers(x, markers = markers)
-  if(length(mlist) == 0)
-    return(NULL)
 
   # Convert to character matrix
   am = markerlist2allelematrix(mlist)
@@ -345,11 +347,11 @@ markerlist2allelematrix = function(mlist, missing = NA) {
   # Bind
   amat = do.call(cbind, alist)
 
-  # Column names
+  # Column namse
   mnames = sapply(mlist, name)
   if(any(naname <- is.na(mnames)))
     mnames[naname] = paste0("na", 1:sum(naname))
-  colnames(amat) = paste(rep(mnames, each=2), 1:2, sep=".")
+  colnames(amat) = sprintf("%s.%d", rep(mnames, each = 2), 1:2)
 
   # Return character matrix
   amat

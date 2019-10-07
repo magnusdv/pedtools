@@ -43,12 +43,12 @@ of some or all individuals (while keeping the markers attached).
 }
 \examples{
 x = nuclearPed(1)
-m1 = marker(x, `2` = 1:2, alleles = 1:2, name="m1")
-m2 = marker(x, `3` = 2, alleles = 1:2, name="m2")
+m1 = marker(x, `2` = 1:2, alleles = 1:2, name = "m1")
+m2 = marker(x, `3` = 2, alleles = 1:2, name = "m2")
 x = setMarkers(x, list(m1, m2))
 
 mat1 = getAlleles(x)
-mat2 = getAlleles(x, ids=2:3, markers = "m2")
+mat2 = getAlleles(x, ids = 2:3, markers = "m2")
 stopifnot(identical(mat1[2:3, 3:4], mat2))
 
 # Remove all genotypes
@@ -56,7 +56,7 @@ y = setAlleles(x, alleles = 0)
 y
 
 # Setting a single genotype
-z = setAlleles(y, ids="1", marker = "m2", alleles = 1:2)
+z = setAlleles(y, ids = "1", marker = "m2", alleles = 1:2)
 
 # Alternative: In-place modification with `genotype()`
 genotype(y, id = "1", marker = "m2") = 1:2
@@ -68,7 +68,7 @@ peds = list(x, s)
 
 getAlleles(peds)
 
-setAlleles(peds, ids="s", marker="m1", alleles=1:2)
+setAlleles(peds, ids = "s", marker = "m1", alleles = 1:2)
 
 }
 \seealso{

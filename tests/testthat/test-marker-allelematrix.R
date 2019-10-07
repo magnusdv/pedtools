@@ -9,6 +9,12 @@ x = as.ped(df, locus = list(list(alleles = 1:2), list(alleles = 2:3)))
 test_that("`getAlleles()` returns a character matrix", {
   a = getAlleles(x, ids = "3", marker = "M1")
   expect_true(is.character(a) && is.matrix(a) && all(dim(a) == 1:2))
+
+  b1 = getAlleles(x, ids = character(0), marker = "M1")
+  expect_true(is.character(b1) && is.matrix(b1) && all(dim(b1) == c(0,2)))
+
+  b2 = getAlleles(x, ids = "3", marker = character(0))
+  expect_true(is.character(b2) && is.matrix(b2) && all(dim(b2) == c(1,0)))
 })
 
 test_that("`getAlleles()` and `setAlleles()` are inverses", {
@@ -31,6 +37,11 @@ test_that("`getAlleles()` and `setAlleles()` are inverses", {
   ids = 3; m = 2
   y4 = setAlleles(x, ids = ids, markers = m, alleles = getAlleles(x, ids = ids, markers = m))
   expect_identical(x, y4)
+
+  # Empty subset of ids/markers
+  ids = character(); m = character(0)
+  y5 = setAlleles(x, ids = ids, markers = m, alleles = getAlleles(x, ids = ids, markers = m))
+  expect_identical(x, y5)
 })
 
 test_that("`setAlleles()` catches errors", {
