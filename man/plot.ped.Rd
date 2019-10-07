@@ -88,7 +88,7 @@ of the work is done by the plotting functionality in the 'kinship2' package.
 \examples{
 
 x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-m = marker(x, fa = 1, boy = 1:2, name="SNP")
+m = marker(x, fa = 1, boy = 1:2, name = "SNP")
 
 plot(x, marker = m)
 

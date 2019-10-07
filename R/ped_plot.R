@@ -56,7 +56,7 @@
 #' @examples
 #'
 #' x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-#' m = marker(x, fa = 1, boy = 1:2, name="SNP")
+#' m = marker(x, fa = 1, boy = 1:2, name = "SNP")
 #'
 #' plot(x, marker = m)
 #'

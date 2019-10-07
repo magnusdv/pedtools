@@ -40,7 +40,7 @@ Write a pedigree to file
 
 tmpdir = tempdir()
 x = nuclearPed(1)
-x = setMarkers(x, marker(x, '3'=1:2))
+x = setMarkers(x, marker(x, '3' = 1:2))
 writePed(x, prefix = file.path(tmpdir, "myped"))
 
 }

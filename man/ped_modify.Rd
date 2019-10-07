@@ -99,7 +99,7 @@ x = nuclearPed(1)
 
 # To see the effect of each command below, use plot(x) in between.
 x = addSon(x, 3)
-x = addParents(x, id=4, father=6, mother=7)
+x = addParents(x, id = 4, father = 6, mother = 7)
 x = removeIndividuals(x, 4)
 
 }

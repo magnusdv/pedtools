@@ -81,9 +81,10 @@ sizes \code{nch1} and \code{nch2}) with the same father, but different mothers. 
 maternal halfsibs are wanted instead, use \code{\link[=swapSex]{swapSex()}} afterwards. (See
 examples below.)
 
-\code{cousinPed(degree=n, removal=k)} creates a pedigree with two n'th cousins, k
-times removed. By default, removals are added on the right side, but .
-(Similarly for \code{halfCousinPed}.)
+\code{cousinPed(degree = n, removal = k)} creates a pedigree with two \code{n}'th
+cousins, \code{k} times removed. By default, removals are added on the right side,
+but this can be changed by adding \code{side = left}. (Similarly for
+\code{halfCousinPed}.)
 
 \code{ancestralPed(g)} returns the family tree of a single individual, including
 all ancestors \code{g} generations back.
@@ -93,7 +94,7 @@ all ancestors \code{g} generations back.
 \examples{
 
 # A nuclear family with 2 boys and 3 girls
-nuclearPed(5, sex=c(1,1,2,2,2))
+nuclearPed(5, sex = c(1, 1, 2, 2, 2))
 
 # A straight line of females
 linearPed(3, sex = 2)

@@ -72,7 +72,7 @@ The class attribute of a singleton is \code{c('singleton', 'ped')}.
 
 Selfing, i.e. the presence of pedigree members whose father and mother are
 the same individual, is allowed in \code{ped} objects. Any such "self-fertilizing"
-parent must have undecided gender (\code{sex=0}).
+parent must have undecided gender (\code{sex = 0}).
 
 If the pedigree is disconnected, it is split into its connected components
 and returned as a list of \code{ped} objects.
@@ -82,7 +82,7 @@ and returned as a list of \code{ped} objects.
 x = ped(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
 
 # Female singleton
-y = singleton('NN', sex=2)
+y = singleton('NN', sex = 2)
 
 # Selfing
 z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)

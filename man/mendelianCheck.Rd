@@ -18,7 +18,7 @@ are shown.}
 }
 \value{
 A numeric containing the indices of the markers
-that did not pass all tests, or (if \code{remove=TRUE}) a new \code{ped}
+that did not pass all tests, or (if \code{remove = TRUE}) a new \code{ped}
 object where the failing markers are removed.
 }
 \description{
@@ -29,7 +29,7 @@ Check marker data for Mendelian inconsistencies
 x = nuclearPed(3)
 
 # Add a SNP with Mendelian error
-m = marker(x, '1'=1, '2'=1, '3'=1:2)
+m = marker(x, '1' = 1, '2' = 1, '3' = 1:2)
 x = setMarkers(x, m)
 
 mendelianCheck(x)

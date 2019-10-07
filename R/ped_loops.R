@@ -74,7 +74,7 @@
 #' @export
 inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedingLoops
   n = pedsize(x)
-  dls = .descentPaths(x, 1:n, internal=TRUE)
+  dls = .descentPaths(x, 1:n, internal = TRUE)
   dls = dls[lengths(dls) > 1]
 
   loops = list()
@@ -132,7 +132,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   # Convert to internal IDs and sort (don't skip this)
   loop_breakers = .mysortInt(internalID(x, loop_breakers))
 
-  FOU = founders(x, internal=T)
+  FOU = founders(x, internal = T)
   FOU_LB = intersect(loop_breakers, FOU)
   if (length(FOU_LB) > 0) {
     mess = "Breaking loops at founders is not implemented"
@@ -166,8 +166,8 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   pedm[new_rows, 2:3] = 0
 
   # Change original loop breakers occuring in FIDX and MIDX
-  wrong = match(pedm[,2:3], loop_breakers, nomatch=0)
-  pedm[,2:3][wrong > 0] = dups[wrong]
+  wrong = match(pedm[, 2:3], loop_breakers, nomatch = 0)
+  pedm[, 2:3][wrong > 0] = dups[wrong]
 
   ### Modify labels
   attrs = attributes(oldpedm)  #all attributes except 'dim'
@@ -178,10 +178,10 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   ### Loop breaker matrix.
   # Previous loop_breakers must be fixed!
   if(!is.null(old_lb_matr <- attrs$LOOP_BREAKERS))
-    old_lb_matr[] = match(old_lb_matr, pedm[,1])
+    old_lb_matr[] = match(old_lb_matr, pedm[, 1])
 
   # New rows. (Remember internal numbering, i.e. indices.)
-  new_lb_matr = cbind(orig=which(new_rows)-1, copy=which(new_rows))
+  new_lb_matr = cbind(orig = which(new_rows)-1, copy = which(new_rows))
 
   # Append the new lb matrix to the old
   attrs$LOOP_BREAKERS = rbind(old_lb_matr, new_lb_matr)
@@ -195,7 +195,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
 
 #' @export
 #' @rdname inbreedingLoops
-tieLoops = function(x, verbose=TRUE) {
+tieLoops = function(x, verbose = TRUE) {
   dups = x$LOOP_BREAKERS
   if (is.null(dups) || nrow(dups) == 0) {
     if(verbose) cat("No loops to tie\n")
@@ -219,7 +219,7 @@ tieLoops = function(x, verbose=TRUE) {
   newpedm = oldpedm[-copies, ]
 
   # Restore wrong parents
-  wrong = match(newpedm[,2:3], copies, nomatch=0)
+  wrong = match(newpedm[,2:3], copies, nomatch = 0)
   newpedm[,2:3][wrong > 0] = origs[wrong]
 
   restorePed(newpedm, attrs = attrs)
@@ -263,7 +263,7 @@ findLoopBreakers2 = function(x, errorIfFail = TRUE) {
     rbind(edge.marriage_F, edge.marriage_M, edge.children)
   }
 
-  NONFOU = nonfounders(x, internal=T)
+  NONFOU = nonfounders(x, internal = T)
   id = NONFOU
   fid = x$FIDX[NONFOU]
   mid = x$MIDX[NONFOU]
@@ -279,7 +279,7 @@ findLoopBreakers2 = function(x, errorIfFail = TRUE) {
     if (length(good.breakers) == 0) {
       if(errorIfFail) stop("\
 This pedigree requires founders as loop breakers, which is not implemented in pedtools yet.\
-Please contact magnusdv at medisin.uio.no if this is important to you.", call.=FALSE)
+Please contact package maintainer if this is important to you.", call. = FALSE)
       else return()
     }
 

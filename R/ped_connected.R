@@ -18,7 +18,7 @@
 #' connectedComponents(x$id, x$fid, x$mid)
 #'
 #' @export
-connectedComponents = function(id, fid, mid, fidx=NULL, midx=NULL) {
+connectedComponents = function(id, fid, mid, fidx = NULL, midx = NULL) {
   if(!missing(id)) {
     fidx = match(fid, id, nomatch = 0L)
     midx = match(mid, id, nomatch = 0L)

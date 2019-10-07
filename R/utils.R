@@ -72,7 +72,7 @@ safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 
 .rand01 = function(n) sample.int(2, size = n, replace = T) - 1  #random 0/1 vector of length n.
 
-stopifnotSimpleVector = function(x, argname="x") {
+stopifnotSimpleVector = function(x, argname = "x") {
   if(is.null(x))
     return()
 

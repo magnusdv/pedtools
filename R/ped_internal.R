@@ -12,7 +12,7 @@
 #'
 #' It should be noted that [ped()] by default calls `parentsBeforeChildren()`
 #' whenever a pedigree is created, unless explicitly avoided with
-#' `reorder=FALSE`.
+#' `reorder = FALSE`.
 #'
 #' `hasParentsBeforeChildren()` can be used as a quick test to decide if it
 #' is necessary to call `parentsBeforeChildren()`.
@@ -70,7 +70,7 @@ reorderPed = function(x, neworder = order(labels(x))) {
 
   # Fix loop breakers
   if(!is.null(lp <- attr$LOOP_BREAKERS))
-    attr$LOOP_BREAKERS = matrix(match(lp, neworder), ncol=2)
+    attr$LOOP_BREAKERS = matrix(match(lp, neworder), ncol = 2)
 
   # Restore
   restorePed(xmatr[neworder, ], attrs = attr)
@@ -84,7 +84,7 @@ parentsBeforeChildren = function(x) {
     return(x)
 
   neworder = 1:pedsize(x)
-  i=1
+  i = 1
   while (i < pedsize(x)) {
     current = neworder[i]
     maxpar = max(match(c(x$FIDX[current], x$MIDX[current]), neworder, nomatch = 0))

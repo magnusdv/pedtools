@@ -24,7 +24,7 @@ NULL
 #' @rdname marker_select
 #' @export
 selectMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
-  idx = whichMarkers(x, markers=markers, chroms=chroms, fromPos=fromPos, toPos=toPos)
+  idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS = x$MARKERS[idx]
   x
 }
@@ -32,14 +32,14 @@ selectMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos
 #' @rdname marker_select
 #' @export
 getMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
-  idx = whichMarkers(x, markers=markers, chroms=chroms, fromPos=fromPos, toPos=toPos)
+  idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS[idx]
 }
 
 #' @rdname marker_select
 #' @export
 removeMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
-  idx = whichMarkers(x, markers=markers, chroms=chroms, fromPos=fromPos, toPos=toPos)
+  idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS[idx] = NULL
   x
 }

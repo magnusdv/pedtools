@@ -49,7 +49,7 @@
 #' @param sep If this is a single string, each entry of `alleleMatrix` is
 #'   interpreted as a genotype, and will be split by calling `strsplit(...,
 #'   split = sep, fixed = T)`. For example, if the entries are formatted as
-#'   "A/B", put `sep="/"`. Default: NULL.
+#'   "A/B", put `sep = "/"`. Default: NULL.
 #' @param ... Further arguments
 #'
 #' @return A `ped` object.

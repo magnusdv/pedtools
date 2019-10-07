@@ -23,12 +23,13 @@
 #'
 #' tmpdir = tempdir()
 #' x = nuclearPed(1)
-#' x = setMarkers(x, marker(x, '3'=1:2))
+#' x = setMarkers(x, marker(x, '3' = 1:2))
 #' writePed(x, prefix = file.path(tmpdir, "myped"))
 #'
 #' @importFrom utils write.table
 #' @export
-writePed = function(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"), merlin = FALSE, verbose=TRUE) {
+writePed = function(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"),
+                    merlin = FALSE, verbose = TRUE) {
   generated.files = character(0)
 
   if (merlin) {
@@ -36,7 +37,7 @@ writePed = function(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"),
   }
   else { #TODO: avoid actual data.frame here. Slow! (Paramlink original ok...)
     famid = if(x$FAMID == "") 1 else x$FAMID
-    pedmatr = cbind(famid=famid, as.data.frame(x))
+    pedmatr = cbind(famid = famid, as.data.frame(x))
   }
 
   if ("ped" %in% what) {

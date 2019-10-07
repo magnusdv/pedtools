@@ -4,7 +4,7 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
   als = c(missing, alleles(x))
   al1 = als[x[, 1] + 1]
   al2 = als[x[, 2] + 1]
-  gt = paste(al1, al2, sep=sep)
+  gt = paste(al1, al2, sep = sep)
   if (isXmarker(x)) {
     male = attr(x, 'sex') == 1
 
@@ -18,8 +18,8 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
 #' @export
 print.marker = function(x, sep = "/", missing = "-", ...) {
   pedlabels = attr(x, 'pedmembers')
-  gt = format(x, sep=sep, missing=missing)
-  df = data.frame(pedlabels, gt, stringsAsFactors=F)
+  gt = format(x, sep = sep, missing = missing)
+  df = data.frame(pedlabels, gt, stringsAsFactors = F)
 
   # Use marker name as column header, or "<NA>"
   mname = name(x)

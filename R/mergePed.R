@@ -27,10 +27,10 @@
 #' y = swapSex(y, 10)
 #'
 #' # Joining x and y at the common individuals (in this case: id = 10)
-#' z = mergePed(x,y)
+#' z = mergePed(x, y)
 #'
 #' # plot all three pedigrees
-#' par(mfrow=c(1,3))
+#' par(mfrow = c(1, 3))
 #' plot(x); plot(y); plot(z)
 #'
 #' @export
@@ -62,5 +62,5 @@ mergePed = function(x, y, ...) {
   ym = as.data.frame(y)
   z = rbind(xm[!xlabs %in% del$x, ], ym[!ylabs %in% del$y, ])
 
-  ped(id=z$id, fid=z$fid, mid=z$mid, sex=z$sex, ...)
+  ped(id = z$id, fid = z$fid, mid = z$mid, sex = z$sex, ...)
 }

@@ -38,7 +38,7 @@ provided for this purpose. This is a wrapper of the more general
 
 It should be noted that \code{\link[=ped]{ped()}} by default calls \code{parentsBeforeChildren()}
 whenever a pedigree is created, unless explicitly avoided with
-\code{reorder=FALSE}.
+\code{reorder = FALSE}.
 
 \code{hasParentsBeforeChildren()} can be used as a quick test to decide if it
 is necessary to call \code{parentsBeforeChildren()}.

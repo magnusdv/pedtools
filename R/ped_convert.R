@@ -187,7 +187,7 @@ as.data.frame.ped = function(x, ..., markers) {
     colnames(geno) = nms
 
     # Bind to pedcols
-    df = cbind(df, geno, stringsAsFactors=FALSE)
+    df = cbind(df, geno, stringsAsFactors = FALSE)
   }
 
   df
@@ -208,7 +208,7 @@ as.data.frame.ped = function(x, ..., markers) {
 #' @param verbose If TRUE, a message is printed if only the first 5 markers are
 #'   printed. (See above).
 #' @export
-print.ped = function(x, ..., markers, verbose=TRUE) {
+print.ped = function(x, ..., markers, verbose = TRUE) {
   nm = nMarkers(x)
   showmess = F
   if (missing(markers)) {
@@ -229,7 +229,7 @@ print.ped = function(x, ..., markers, verbose=TRUE) {
   # Add question marks at any genotypes shoing male X heterozygosity
   datafr = questionMaleHetX(x, datafr)
 
-  print(datafr, row.names=FALSE, ...)
+  print(datafr, row.names = FALSE, ...)
 
   if(showmess && verbose)
     message("Only 5 (out of ", nm, ") markers are shown. See `?print.ped` for options.")
@@ -360,7 +360,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   # NB: a single ped may still be disconnected; this is handled in ped()
   if(multiple_fams) {
     pedlist = lapply(unique_fams, function(fam) {
-      comp = x[famid == fam, , drop=FALSE]
+      comp = x[famid == fam, , drop = FALSE]
 
       as.ped.data.frame(comp, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
                         mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
@@ -386,7 +386,8 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
 
   ### Various checks
   NC = ncol(x)
-  col_idx = c(famid=famid_col, id=id_col, fid=fid_col, mid=mid_col, sex=sex_col, marker = marker_col)
+  col_idx = c(famid = famid_col, id = id_col, fid = fid_col, mid = mid_col,
+              sex = sex_col, marker = marker_col)
 
   # id, fid, mid cannot be missing
   required = col_idx[2:4]

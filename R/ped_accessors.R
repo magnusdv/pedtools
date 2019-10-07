@@ -21,10 +21,10 @@
 #' x
 #' labels(x)
 #'
-#' relabel(x, new="girl", old=3)
+#' relabel(x, new = "girl", old = 3)
 #'
 #' @export
-relabel = function(x, new, old=labels(x)) {
+relabel = function(x, new, old = labels(x)) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
   if(length(new) != length(old))

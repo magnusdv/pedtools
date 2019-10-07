@@ -33,6 +33,6 @@ sex. The gender of the child is randomly chosen with equal probabilities.
 }
 \examples{
 randomPed(3, 3)
-randomPed(3, 3, selfing=TRUE)
+randomPed(3, 3, selfing = TRUE)
 
 }

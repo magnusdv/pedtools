@@ -8,7 +8,7 @@
 #'
 #' Selfing, i.e. the presence of pedigree members whose father and mother are
 #' the same individual, is allowed in `ped` objects. Any such "self-fertilizing"
-#' parent must have undecided gender (`sex=0`).
+#' parent must have undecided gender (`sex = 0`).
 #'
 #' If the pedigree is disconnected, it is split into its connected components
 #' and returned as a list of `ped` objects.
@@ -70,7 +70,7 @@
 #' x = ped(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
 #'
 #' # Female singleton
-#' y = singleton('NN', sex=2)
+#' y = singleton('NN', sex = 2)
 #'
 #' # Selfing
 #' z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
@@ -180,7 +180,7 @@ singleton = function(id, sex = 1, famid = "") {
   if (length(id) != 1)
     stop2("Parameter `id` must have length 1")
   sex = validate_sex(sex, nInd = 1)
-  ped(id=id, fid=0, mid=0, sex=sex, famid=famid)
+  ped(id = id, fid = 0, mid = 0, sex = sex, famid = famid)
 }
 
 
@@ -226,7 +226,7 @@ validatePed = function(x) {
     errs = c(errs, paste("Individual", self_anc, "is their own ancestor"))
 
   # If singleton: return here
-  # if(n==1) return()
+  # if(n == 1) return()
 
   # Duplicated IDs
   if(anyDuplicated.default(ID) > 0)
@@ -254,7 +254,7 @@ validatePed = function(x) {
 
   if(length(errs) > 0) {
     errs = c("Malformed pedigree.", errs)
-    stop2(paste0(errs, collapse="\n "))
+    stop2(paste0(errs, collapse = "\n "))
   }
 
   invisible()

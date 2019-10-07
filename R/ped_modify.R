@@ -59,7 +59,7 @@
 #'
 #' # To see the effect of each command below, use plot(x) in between.
 #' x = addSon(x, 3)
-#' x = addParents(x, id=4, father=6, mother=7)
+#' x = addParents(x, id = 4, father = 6, mother = 7)
 #' x = removeIndividuals(x, 4)
 #'
 #' @name ped_modify
@@ -67,7 +67,7 @@ NULL
 
 #' @rdname ped_modify
 #' @export
-addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
+addChildren = function(x, father = NULL, mother = NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(!is_count(nch)) stop2("Argument `nch` must be a positive integer: ", nch)
 
@@ -97,7 +97,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
   nextlabs = function(labs, len) {
     if(has_numlabs(x)) {
       mx = max(as.numeric(labs))
-      seq.int(mx + 1, length.out=len)
+      seq.int(mx + 1, length.out = len)
     }
     else {
       res = character(0)
@@ -133,7 +133,7 @@ addChildren = function(x, father=NULL, mother=NULL, nch = 1, sex = 1, ids = NULL
     mother_int = internalID(x, mother)
   }
   # Children
-  if(is.null(ids)) ids = nextlabs(labs, len=nch)
+  if(is.null(ids)) ids = nextlabs(labs, len = nch)
   labs = c(labs, ids)
 
   if (anyDuplicated.default(labs))
@@ -172,7 +172,7 @@ addDaughter = function(x, parent, id = NULL, verbose = TRUE) {
 
 #' @rdname ped_modify
 #' @export
-addParents = function(x, id, father=NULL, mother=NULL, verbose = TRUE) {
+addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
   if (length(id) > 1)
       stop2("Parents cannot be added to multiple individuals at once: ", id)
   if (id %in% nonfounders(x))
@@ -260,7 +260,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   # The redundancy in 'desc' does not matter.
   desc = numeric(0)
   for (id in ids_int) {
-    dd = descendants(x, id, internal=T)
+    dd = descendants(x, id, internal = T)
     desc = c(desc, dd)
 
     if (verbose) {
@@ -276,7 +276,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   parents_of_remain = c(x$FIDX[-c(ids_int, desc)], x$MIDX[-c(ids_int, desc)])
 
   # But remove founders that are NOT among the above
-  FOU = founders(x, internal=T)
+  FOU = founders(x, internal = T)
   leftover_spouses = setdiff(FOU, c(ids_int, parents_of_remain))
 
   if (verbose && length(leftover_spouses))
@@ -287,7 +287,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
 
   # The actual reduction. Using the as.matrix trick anticipating marker data a.s.o.
   xmatr = as.matrix(x)
-  new = xmatr[-remov, , drop=F]
+  new = xmatr[-remov, , drop = F]
 
   if(nrow(new) == 0) {
     if(verbose) message("Remaining pedigree is empty!")
@@ -351,7 +351,7 @@ subset.ped = function(x, subset, ...) {
   # set FID = 0 if father is not in subset
   subped[!(subped[, 2] %in% sub_idx), 2] = 0L
 
-  # set MID=0 if mother is not in subset
+  # set MID = 0 if mother is not in subset
   subped[!(subped[, 3] %in% sub_idx), 3] = 0L
 
   # Fix labels

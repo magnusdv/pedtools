@@ -100,8 +100,10 @@ A collection of utility functions for identifying pedigree members with certain 
 }
 \examples{
 
-x = ped(id=2:9, fid=c(0,0,2,0,4,4,0,2), mid=c(0,0,3,0,5,5,0,8),
-        sex=c(1,2,1,2,1,2,2,2))
+x = ped(id = 2:9,
+         fid = c(0,0,2,0,4,4,0,2),
+         mid = c(0,0,3,0,5,5,0,8),
+         sex = c(1,2,1,2,1,2,2,2))
 stopifnot(setequal(spouses(x, 2), c(3,8)),
           setequal(children(x, 2), c(4,9)),
           setequal(descendants(x, 2), c(4,6,7,9)),

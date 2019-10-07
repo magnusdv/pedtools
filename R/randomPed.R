@@ -19,11 +19,11 @@
 #'
 #' @examples
 #' randomPed(3, 3)
-#' randomPed(3, 3, selfing=TRUE)
+#' randomPed(3, 3, selfing = TRUE)
 #'
 #' @importFrom stats rpois
 #' @export
-randomPed = function(g, founders=rpois(1,3)+1, selfing=FALSE, seed=NULL) {
+randomPed = function(g, founders = rpois(1,3)+1, selfing = FALSE, seed = NULL) {
   if(!is.null(seed)) set.seed(seed)
   if(!selfing) founders = max(2, founders)
   id = seq_len(founders + g)
@@ -31,11 +31,11 @@ randomPed = function(g, founders=rpois(1,3)+1, selfing=FALSE, seed=NULL) {
 
   foundersM = ceiling(founders/2)
   foundersF = founders - foundersM
-  sex = c(rep(1:2, c(foundersM, foundersF)), sample.int(2, size=g, replace = T))
+  sex = c(rep(1:2, c(foundersM, foundersF)), sample.int(2, size = g, replace = T))
   males = (sex == 1)
   females = (sex == 2)
 
-  for(k in seq(founders+1, length=g)) {
+  for(k in seq(founders+1, length = g)) {
 
     if(selfing) {
       # First parent: Any member
@@ -53,7 +53,7 @@ randomPed = function(g, founders=rpois(1,3)+1, selfing=FALSE, seed=NULL) {
       fid[k] = par1
       mid[k] = par2
       }
-      if(par1==par2) sex[k] = 0
+      if(par1 == par2) sex[k] = 0
     } else {
       potential_fathers = which(males[1:(k-1)])
       potential_mothers = which(females[1:(k-1)])

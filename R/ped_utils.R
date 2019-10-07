@@ -126,12 +126,12 @@ hasCommonAncestor = function(x) {
   n = pedsize(x)
   labs = labels(x)
 
-  A = matrix(FALSE, ncol=n, nrow=n, dimnames=list(labs, labs))
+  A = matrix(FALSE, ncol = n, nrow = n, dimnames = list(labs, labs))
 
-  FOU = founders(x, internal=TRUE)
+  FOU = founders(x, internal = TRUE)
   for(i in FOU) {
     # vector of all descendants of i, including i
-    desc = c(i, descendants(x, i, internal=TRUE))
+    desc = c(i, descendants(x, i, internal = TRUE))
     A[fast.grid(rep(list(desc), 2))] = TRUE
   }
   A
@@ -185,7 +185,7 @@ subnucs = function(x) {
 #' @export
 peelingOrder = function(x) {
   # output: list of nuclear subfamilies. Format for each nuc:
-  # list(father,mother,children,link), where link=0 for the last nuc.
+  # list(father,mother,children,link), where link = 0 for the last nuc.
   nucs = subnucs(x)
   if(length(nucs) == 0)
     return(nucs)
@@ -200,7 +200,7 @@ peelingOrder = function(x) {
     # Identify links to other remaining nucs
     if(length(nucs) > 1) {
       nucmembers = c(nuc$father, nuc$mother, nuc$children)
-      links = nucmembers[nucmembers %in% unlist(nucs[-i], use.names=F)]
+      links = nucmembers[nucmembers %in% unlist(nucs[-i], use.names = F)]
     }
     else
       links = 0 # if nuc is the last
@@ -250,7 +250,7 @@ print.nucleus = function(x, ...) {
     linktext = sprintf("%s (%s)", labs[link], who)
   }
   cat(sprintf("Nucleus: Fa/mo/ch = %s/%s/%s\nLink individual: %s\n",
-              labs[fa], labs[mo], paste(labs[ch], collapse=","), linktext))
+              labs[fa], labs[mo], paste(labs[ch], collapse = ","), linktext))
 }
 
 
@@ -263,8 +263,8 @@ has_numlabs = function(x) {
 
 
 .generations = function(x) {
-  FOU = founders(x, internal=T)
-  max(lengths(unlist(.descentPaths(x, FOU, internal=T), recursive=F)))
+  FOU = founders(x, internal = T)
+  max(lengths(unlist(.descentPaths(x, FOU, internal = T), recursive = F)))
 }
 
 # Utility function for generating numbered "NN" labels.
@@ -276,7 +276,7 @@ nextNN = function(labs) { # labs a character vector
   NNnum = suppressWarnings(as.numeric(sub("^NN[._-]?", "", labs[NNs])))
   if(all(is.na(NNnum)))
     return("NN_1")
-  nextNNnum = max(NNnum, na.rm=T) + 1
+  nextNNnum = max(NNnum, na.rm = T) + 1
   return(sprintf("NN_%d", nextNNnum))
 }
 

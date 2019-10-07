@@ -11,7 +11,7 @@
 #'
 #' @return
 #' A numeric containing the indices of the markers
-#' that did not pass all tests, or (if `remove=TRUE`) a new `ped`
+#' that did not pass all tests, or (if `remove = TRUE`) a new `ped`
 #' object where the failing markers are removed.
 #' @author Magnus Dehli Vigeland
 #'
@@ -20,7 +20,7 @@
 #' x = nuclearPed(3)
 #'
 #' # Add a SNP with Mendelian error
-#' m = marker(x, '1'=1, '2'=1, '3'=1:2)
+#' m = marker(x, '1' = 1, '2' = 1, '3' = 1:2)
 #' x = setMarkers(x, m)
 #'
 #' mendelianCheck(x)

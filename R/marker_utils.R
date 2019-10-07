@@ -90,7 +90,7 @@ checkConsistency = function(x, mlist) {
     erri = which(wrongSize)[1]
     errsize = nrow(mlist[[erri]])
     stop("Incompatible input: Pedigree has size ", pedsize(x),
-         " but marker ", erri, " has ", errsize, " rows", call.=FALSE)
+         " but marker ", erri, " has ", errsize, " rows", call. = FALSE)
   }
   #TODO: check loop breakers, ped labels, sex
   return(TRUE)

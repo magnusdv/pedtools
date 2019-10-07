@@ -34,7 +34,7 @@ x = nuclearPed(1)
 x
 labels(x)
 
-relabel(x, new="girl", old=3)
+relabel(x, new = "girl", old = 3)
 
 }
 \seealso{

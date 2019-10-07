@@ -95,7 +95,7 @@ genotype.ped = function(x, markers = NULL, id, ...) {
     value = rep(value, each = length(id_int))
 
   a = alleles(x)
-  g_num = match(value, a, nomatch=0)
+  g_num = match(value, a, nomatch = 0)
 
   miss = value[g_num == 0]
   unknown = setdiff(miss, c("0", "", "-", NA))

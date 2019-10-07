@@ -7,9 +7,10 @@
 #' maternal halfsibs are wanted instead, use [swapSex()] afterwards. (See
 #' examples below.)
 #'
-#' `cousinPed(degree=n, removal=k)` creates a pedigree with two n'th cousins, k
-#' times removed. By default, removals are added on the right side, but .
-#' (Similarly for `halfCousinPed`.)
+#' `cousinPed(degree = n, removal = k)` creates a pedigree with two `n`'th
+#' cousins, `k` times removed. By default, removals are added on the right side,
+#' but this can be changed by adding `side = left`. (Similarly for
+#' `halfCousinPed`.)
 #'
 #' `ancestralPed(g)` returns the family tree of a single individual, including
 #' all ancestors `g` generations back.
@@ -50,7 +51,7 @@
 #' @examples
 #'
 #' # A nuclear family with 2 boys and 3 girls
-#' nuclearPed(5, sex=c(1,1,2,2,2))
+#' nuclearPed(5, sex = c(1, 1, 2, 2, 2))
 #'
 #' # A straight line of females
 #' linearPed(3, sex = 2)
@@ -85,7 +86,7 @@ NULL
 #' @rdname ped_basic
 #' @export
 nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
-                      children = as.character(seq.int(3, length.out=nch))) {
+                      children = as.character(seq.int(3, length.out = nch))) {
   if(missing(nch))
     nch = length(children)
   if(!is_count(nch))
@@ -140,7 +141,7 @@ linearPed = function(n, sex = 1) {
   sex = validate_sex(sex, nInd = n)
 
   nInd = 1 + 2*n
-  child_idx = seq(3, nInd, by=2)
+  child_idx = seq(3, nInd, by = 2)
 
   # Create ped
   id = 1:nInd
@@ -163,9 +164,9 @@ linearPed = function(n, sex = 1) {
 #' @rdname ped_basic
 #' @export
 cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
-  if(!is_count(degree, minimum=0))
+  if(!is_count(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum=0))
+  if(!is_count(removal, minimum = 0))
     stop2("`removal` must be a nonnegative integer: ", removal)
 
   deg_right = deg_left = degree
@@ -196,9 +197,9 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FAL
 #' @rdname ped_basic
 #' @export
 halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
-  if(!is_count(degree, minimum=0))
+  if(!is_count(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum=0))
+  if(!is_count(removal, minimum = 0))
     stop2("`removal` must be a nonnegative integer: ", removal)
 
   deg_right = deg_left = degree
@@ -227,7 +228,7 @@ halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child =
 #' @rdname ped_basic
 #' @export
 ancestralPed = function(g) {
-  if(!is_count(g, minimum=0))
+  if(!is_count(g, minimum = 0))
     stop2("`g` must be a nonnegative integer: ", g)
 
   if(g == 0)
@@ -247,7 +248,7 @@ ancestralPed = function(g) {
 #' @rdname ped_basic
 #' @export
 selfingPed = function(s, sex = 1) {
-  if(!is_count(s, minimum=0))
+  if(!is_count(s, minimum = 0))
     stop2("`s` must be a nonnegative integer: ", s)
 
   if(s == 0)
