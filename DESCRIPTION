@@ -1,15 +1,15 @@
 Package: pedtools
 Type: Package
-Title: Tools for Working with Pedigrees in R
+Title: Tools for Working with Pedigrees and Genetic Marker Data
 Version: 0.9.0
 Authors@R: person("Magnus Dehli", "Vigeland", email = "m.d.vigeland@medisin.uio.no", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9134-4962"))
-Description: A lightweight, but comprehensive collection of tools for creating, manipulating
-    and visualising pedigrees and genetic marker data. Pedigrees can be read from text files
-    or created on the 
-    fly with built-in functions. A range of utilities enable modifications like adding 
-    or removing individuals, breaking loops, and merging pedigrees. Pedigree plots 
-    are produced by wrapping the plotting functionality of the 'kinship2' package.
+Description: A lightweight, but comprehensive collection of tools for creating, 
+    manipulating and visualising pedigrees and genetic marker data. Pedigrees 
+    can be read from text files or created on the fly with built-in functions. 
+    A range of utilities enable modifications like adding or removing individuals,
+    breaking loops, and merging pedigrees. Pedigree plots are produced by wrapping
+    the plotting functionality of the 'kinship2' package.
 License: GPL-3
 Encoding: UTF-8
 Language: en-GB
