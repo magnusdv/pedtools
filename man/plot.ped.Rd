@@ -10,7 +10,8 @@
 \method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
   col = 1, shaded = NULL, deceased = NULL, starred = NULL,
-  fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1), ...)
+  fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1), keep.par = F,
+  ...)
 
 \method{plot}{singleton}(x, marker = NULL, sep = "/", missing = "-",
   skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
@@ -54,8 +55,8 @@ instead of the ID label. See Examples.
 
 \item{col}{a vector of colours for the pedigree members, recycled if
 necessary. Alternatively, \code{col} can be a list assigning colours to specific
-members. For example if \code{col = list(red = "a", blue = c("b", "c"))}
-then individual "a" will be red, "b" and "c" blue, and everyone else black. By
+members. For example if \code{col = list(red = "a", blue = c("b", "c"))} then
+individual "a" will be red, "b" and "c" blue, and everyone else black. By
 default everyone is drawn black.}
 
 \item{shaded}{a vector of ID labels indicating pedigree members whose plot
@@ -72,6 +73,10 @@ founders. If NULL, or if no founders are inbred, nothing is added.}
 
 \item{margins}{a numeric of length 4 indicating the plot margins. For
 singletons only the first element (the 'bottom' margin) is used.}
+
+\item{keep.par}{A logical (default = FALSE). If TRUE, the graphical
+parameters are not reset after plotting, which may be useful for adding
+additional annotation.}
 
 \item{\dots}{arguments passed on to \code{plot.pedigree} in the \code{kinship2}
 package. In particular \code{symbolsize} and \code{cex} can be useful.}

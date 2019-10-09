@@ -29,9 +29,12 @@
 #' # Joining x and y at the common individuals (in this case: id = 10)
 #' z = mergePed(x, y)
 #'
-#' # plot all three pedigrees
-#' par(mfrow = c(1, 3))
+#' # Plot all three pedigrees
+#' opar = par(mfrow = c(1, 3))
 #' plot(x); plot(y); plot(z)
+#'
+#' # Reset graphical parameters
+#' par(opar)
 #'
 #' @export
 mergePed = function(x, y, ...) {

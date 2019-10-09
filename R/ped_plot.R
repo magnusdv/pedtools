@@ -35,8 +35,8 @@
 #' @param title the plot title. If NULL or '', no title is added to the plot.
 #' @param col a vector of colours for the pedigree members, recycled if
 #'   necessary. Alternatively, `col` can be a list assigning colours to specific
-#'   members. For example if `col = list(red = "a", blue = c("b", "c"))`
-#'   then individual "a" will be red, "b" and "c" blue, and everyone else black. By
+#'   members. For example if `col = list(red = "a", blue = c("b", "c"))` then
+#'   individual "a" will be red, "b" and "c" blue, and everyone else black. By
 #'   default everyone is drawn black.
 #' @param shaded a vector of ID labels indicating pedigree members whose plot
 #'   symbols should appear shaded.
@@ -48,6 +48,9 @@
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
 #' @param margins a numeric of length 4 indicating the plot margins. For
 #'   singletons only the first element (the 'bottom' margin) is used.
+#' @param keep.par A logical (default = FALSE). If TRUE, the graphical
+#'   parameters are not reset after plotting, which may be useful for adding
+#'   additional annotation.
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
 #' @author Magnus Dehli Vigeland
@@ -88,7 +91,8 @@
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                     id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
-                    starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1), ...) {
+                    starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
+                    keep.par = F, ...) {
 
   if(hasSelfing(x))
     stop2("Plotting of pedigrees with selfing is not yet supported")
@@ -148,7 +152,9 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   }
 
   # Needed for centered title. Without, par() doesnt equal 'margins'...(why??)
-  oldmar = par(mar = margins)
+  opar = par(mar = margins)
+  if(!keep.par)
+    on.exit(par(opar))
 
   # Colours
   if(is.list(col)) {
@@ -172,7 +178,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 
   pedigree = as_kinship2_pedigree(x, deceased = deceased, shaded = shaded)
   pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
-                                 density = density, angle = angle, ...)
+                                 density = density, angle = angle, keep.par = keep.par, ...)
 
   # Add title
   if (!is.null(title)) title(title)
@@ -189,7 +195,6 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
          cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
   }
 
-  # par(oldmar)
   invisible(pdat)
 }
 
@@ -247,7 +252,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
                title = title, col = col, shaded = shaded, deceased = deceased,
-               starred = starred, margins = c(margins[1], 0, 0, 0), ...)
+               starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = T, ...)
 
   usr = par("usr")
   rect(usr[1] - 0.1, pdat$y[3], usr[2] + 0.1, usr[4], border = NA, col = "white")
@@ -265,7 +270,6 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
          cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
   }
 
-  # par(oldmar)
   invisible(pdat)
 }
 
@@ -483,10 +487,9 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
     dev.new(height = dev.height, width = dev.width, noRStudioGD = TRUE)
   }
 
-  if (hastitles)
-    par(oma = c(0, 0, 3, 0), xpd = NA)
-  else
-    par(oma = c(0, 0, 0, 0), xpd = NA)
+  new.oma = if (hastitles) c(0, 0, 3, 0) else c(0, 0, 0, 0)
+  opar = par(oma = new.oma, xpd = NA)
+  on.exit(par(opar))
 
   layout(rbind(1:N), widths = widths)
   for (arglist in plot.arg.list)
@@ -514,7 +517,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NUL
     rect(xleft = frame_start,
          ybottom = grconvertY(1 - fmar, from = "ndc"),
          xright = frame_stop,
-         ytop = grconvertY(fmar, from = "ndc"))
+         ytop = grconvertY(fmar, from = "ndc"), xpd = NA)
   }
 
   cex.title =
