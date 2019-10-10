@@ -439,12 +439,17 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
     stop2("`marker_col` must be numeric, not ", typeof(marker_col))
 
   # If no markers, return p
-  if(length(marker_col) == 0)
-    return(p)
+  if(length(marker_col) == 0) {
+    AM = NULL
+  }
+  else { # Otherwise, convert marker-cols to matrix
+    AM = as.matrix(x)[, marker_col, drop = F]
+    rownames(AM) = id
+  }
 
-  # Otherwise, convert marker-cols to matrix
-  AM = as.matrix(x)[, marker_col, drop = F]
-  rownames(AM) = id
+  # Return if neither alleles or locus data are given
+  if(is.null(AM) && is.null(locusAttributes))
+    return(p)
 
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {
