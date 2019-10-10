@@ -158,11 +158,21 @@ mutmod.ped = function(x, marker, ...) {
     stop2("Package `pedmut` must be installed in order to include mutation models")
 
   if(is.null(value))
-    attr(x, 'mutmod') = NULL
-  else {
-    als = alleles(x)
-    attr(x, 'mutmod') = pedmut::mutationModel(model = value, alleles = als)
+    mdl = NULL
+  else if(inherits(value, "mutationModel"))
+    mdl = value
+  else if(is.list(value)) {
+    value$alleles = alleles(x)
+    value$afreq = afreq(x)
+    mdl = do.call(pedmut::mutationModel, value)
   }
+  else
+    stop2("Mutation model replacement must be either:\n",
+          "  * NULL\n",
+          "  * a `mutationModel` object\n",
+          "  * a list of arguments to be passed onto `pedmut::mutationModel()`")
+  attr(x, 'mutmod') = mdl
+
   x
 }
 
@@ -171,11 +181,11 @@ mutmod.ped = function(x, marker, ...) {
 `mutmod<-.ped` = function(x, marker, ..., value) {
   if(missing(marker) || length(marker) == 0)
     stop2("Argument `marker` cannot be empty")
-  if(length(marker) > 1)
-    stop2("Mutation model replacement can only be done for a single marker")
 
   idx = whichMarkers(x, markers = marker)
-  mutmod(x$MARKERS[[idx]]) = value
+  for(i in idx)
+    mutmod(x$MARKERS[[i]]) = value
+
   x
 }
 
