@@ -26,18 +26,23 @@
 #'
 #' @export
 is.ped = function(x)
-    inherits(x, "ped")
+  inherits(x, "ped")
 
 #' @rdname is.ped
 #' @export
 is.singleton = function(x)
-    inherits(x, "singleton")
+  inherits(x, "singleton")
 
 #' @rdname is.ped
 #' @export
 is.pedList = function(x) {
-  if(!is.list(x) || length(x) == 0)
+  # Most common FALSE case: ped
+  if(is.ped(x) || !is.list(x) || length(x) == 0)
     return(FALSE)
+
+  if(inherits(x, "pedList"))
+    return(TRUE)
+
   for(comp in x) {
     if(!inherits(comp, what = "ped"))
       return(FALSE)
