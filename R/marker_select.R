@@ -2,7 +2,8 @@
 #'
 #' Functions for manipulating markers attached to a `ped` object.
 #'
-#' @param x A `ped` object
+#' @param x A `ped` object, or (in `selectMarkers()` and `removeMarkers()`) a
+#'   list of such
 #' @param markers Either a character vector (with marker names), a numeric
 #'   vector (with marker indices), or NULL
 #' @param chroms A vector of chromosome names, or NULL
@@ -11,10 +12,17 @@
 #'
 #' @return The return values of these functions are:
 #'
-#' * `selectMarkers()` : a `ped` object where only the indicated markers are kept
-#' * `removeMarkers()` : a `ped` object where the indicated markers are removed
-#' * `getMarkers()` : a list of `marker` objects
-#' * `whichMarkers()` : an integer vector with indices of the indicated markers
+#'   * `selectMarkers()`: a `ped` object where only the indicated markers are
+#'   kept
+#'
+#'   * `removeMarkers()`: a `ped` object where the indicated markers are removed
+#'
+#'   * `getMarkers()`: a list of `marker` objects
+#'
+#'   * `whichMarkers()`: an integer vector with indices of the indicated markers
+#'
+#'   In `selectMarkers()` and `removeMarkers()` the first argument may be a list
+#'   of `ped` objects, in which case the output will be the same.
 #'
 #' @seealso [`setMarkers()`]
 #'
@@ -24,6 +32,12 @@ NULL
 #' @rdname marker_select
 #' @export
 selectMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  if(is.pedList(x)) {
+    y = lapply(x, function(comp)
+      selectMarkers(comp, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos))
+    return(y)
+  }
+
   idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS = x$MARKERS[idx]
   x
@@ -39,6 +53,12 @@ getMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = 
 #' @rdname marker_select
 #' @export
 removeMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL) {
+  if(is.pedList(x)) {
+    y = lapply(x, function(comp)
+      removeMarkers(comp, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos))
+    return(y)
+  }
+
   idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS[idx] = NULL
   x

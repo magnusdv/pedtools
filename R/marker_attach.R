@@ -91,7 +91,15 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
     }
   }
 
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  # If pedlist input, recurse over components
+  if(is.pedList(x)) {
+    if(!is.null(m))
+      stop2("When `x` is a list of pedigrees, argument `m` must be NULL")
+    y = lapply(x, function(comp)
+      setMarkers(comp, alleleMatrix = alleleMatrix, locusAttributes = locusAttributes,
+                 missing = missing, sep = sep))
+    return(y)
+  }
 
   # If no data, remove all markers and return
   if(is.null(m) && is.null(alleleMatrix) && length(locusAttributes) == 0) {
