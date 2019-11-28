@@ -164,3 +164,27 @@ isXmarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
     stop2("The output of `isXmarker()` differs between components")
   comp_wise[[1]]
 }
+
+#' @rdname marker_prop
+#' @export
+nTyped = function(x, ...) {
+  UseMethod("nTyped")
+}
+
+#' @rdname marker_prop
+#' @export
+nTyped.marker = function(x, ...) {
+  sum(x[, 1] > 0 | x[, 2] > 0)
+}
+
+#' @rdname marker_prop
+#' @export
+nTyped.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
+  vapply(getMarkers(x, markers), nTyped.marker, integer(1))
+}
+
+#' @rdname marker_prop
+#' @export
+nTyped.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+  comp_wise = lapply(x, nTyped.ped, markers = markers)
+  Reduce(`+`, comp_wise)

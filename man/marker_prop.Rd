@@ -18,6 +18,10 @@
 \alias{isXmarker.marker}
 \alias{isXmarker.ped}
 \alias{isXmarker.list}
+\alias{nTyped}
+\alias{nTyped.marker}
+\alias{nTyped.ped}
+\alias{nTyped.list}
 \title{Marker properties}
 \usage{
 emptyMarker(x, ...)
@@ -51,6 +55,14 @@ isXmarker(x, ...)
 \method{isXmarker}{ped}(x, markers = seq_len(nMarkers(x)), ...)
 
 \method{isXmarker}{list}(x, markers = seq_len(nMarkers(x)), ...)
+
+nTyped(x, ...)
+
+\method{nTyped}{marker}(x, ...)
+
+\method{nTyped}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+
+\method{nTyped}{list}(x, markers = seq_len(nMarkers(x)), ...)
 }
 \arguments{
 \item{x}{A single \code{marker} object or a \code{ped} object (or a list of such)}
@@ -88,27 +100,42 @@ cmp2 = singleton(10)
 loc = list(alleles = 1:2)
 x = setMarkers(list(cmp1, cmp2), locus = rep(list(loc), 3))
 
-# Check that all markers has 2 alleles
+#-------- nAlleles() ------------
+# All markers have 2 alleles
 stopifnot(identical(nAlleles(x), c(2L,2L,2L)))
 
-# Indiv 1 is genotyped for the first marker
+#-------- emptyMarkers() ------------
+# Add genotype for indiv 1 at marker 1
 genotype(x[[1]], 1, 1) = 1:2
 
 # Check that markers 2 and 3 are empty
 stopifnot(identical(emptyMarker(x), c(FALSE,TRUE,TRUE)),
           identical(emptyMarker(x[[1]]), c(FALSE,TRUE,TRUE)),
           identical(emptyMarker(x[[2]]), c(TRUE,TRUE,TRUE)),
-          identical(emptyMarker(x, markers = c(3,1)), c(TRUE,FALSE))
-          )
+          identical(emptyMarker(x, markers = c(3,1)), c(TRUE,FALSE)))
 
+#-------- nTyped() ------------
+stopifnot(identical(nTyped(x), c(1L,0L,0L)))
+
+# Add genotypes for third marker
+genotype(x[[1]], marker = 3, id = 1:3) = 1
+genotype(x[[2]], marker = 3, id = 10) = 2
+
+# nTyped() returns total over all components
+stopifnot(identical(nTyped(x), c(1L,0L,4L)))
+
+#-------- allowsMutations() ------------
 # Marker 2 allows mutations
 mutmod(x, 2) = list("prop", rate = 0.1)
-stopifnot(identical(allowsMutations(x), c(FALSE,TRUE,FALSE)),
-          identical(allowsMutations(x, markers = 2:3), c(TRUE,FALSE))
-          )
 
+stopifnot(identical(allowsMutations(x), c(FALSE,TRUE,FALSE)),
+          identical(allowsMutations(x, markers = 2:3), c(TRUE,FALSE)))
+
+#-------- isXmarker() ------------
 # Make marker 3 X-linked
 chrom(x[[1]], 3) = "X"
 chrom(x[[2]], 3) = "X"
+
 stopifnot(identical(isXmarker(x), c(FALSE,FALSE,TRUE)))
+
 }
