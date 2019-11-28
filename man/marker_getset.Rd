@@ -28,21 +28,25 @@
 \alias{name}
 \alias{name.marker}
 \alias{name.ped}
+\alias{name.list}
+\alias{name<-}
+\alias{name<-.marker}
+\alias{name<-.ped}
+\alias{name<-.list}
 \alias{chrom}
 \alias{chrom.marker}
 \alias{chrom.ped}
+\alias{chrom.list}
+\alias{chrom<-}
+\alias{chrom<-.marker}
+\alias{chrom<-.ped}
+\alias{chrom<-.list}
 \alias{posMb}
 \alias{posMb.marker}
 \alias{posMb.ped}
 \alias{posCm}
 \alias{posCm.marker}
 \alias{posCm.ped}
-\alias{name<-}
-\alias{name<-.marker}
-\alias{name<-.ped}
-\alias{chrom<-}
-\alias{chrom<-.marker}
-\alias{chrom<-.ped}
 \alias{posCm<-}
 \alias{posCm<-.marker}
 \alias{posCm<-.ped}
@@ -103,11 +107,31 @@ name(x, ...)
 
 \method{name}{ped}(x, markers, ...)
 
+\method{name}{list}(x, markers, ...)
+
+name(x, ...) <- value
+
+\method{name}{marker}(x, ...) <- value
+
+\method{name}{ped}(x, markers, ...) <- value
+
+\method{name}{list}(x, markers, ...) <- value
+
 chrom(x, ...)
 
 \method{chrom}{marker}(x, ...)
 
 \method{chrom}{ped}(x, markers, ...)
+
+\method{chrom}{list}(x, markers, ...)
+
+chrom(x, ...) <- value
+
+\method{chrom}{marker}(x, ...) <- value
+
+\method{chrom}{ped}(x, markers, ...) <- value
+
+\method{chrom}{list}(x, markers, ...) <- value
 
 posMb(x, ...)
 
@@ -120,18 +144,6 @@ posCm(x, ...)
 \method{posCm}{marker}(x, ...)
 
 \method{posCm}{ped}(x, markers, ...)
-
-name(x, ...) <- value
-
-\method{name}{marker}(x, ...) <- value
-
-\method{name}{ped}(x, markers, ...) <- value
-
-chrom(x, ...) <- value
-
-\method{chrom}{marker}(x, ...) <- value
-
-\method{chrom}{ped}(x, markers, ...) <- value
 
 posCm(x, ...) <- value
 

@@ -105,6 +105,7 @@ stopifnot(identical(emptyMarker(x), c(FALSE,TRUE,TRUE)),
 mutmod(x, 2) = list("prop", rate = 0.1)
 stopifnot(identical(allowsMutations(x), c(FALSE,TRUE,FALSE)),
           identical(allowsMutations(x, markers = 2:3), c(TRUE,FALSE))
+          )
 
 # Make marker 3 X-linked
 chrom(x[[1]], 3) = "X"

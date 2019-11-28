@@ -331,66 +331,17 @@ name.marker = function(x, ...) {
 #' @export
 name.ped = function(x, markers, ...) {
   mlist = getMarkers(x, markers = markers)
-  vapply(mlist, name, character(1))
+  vapply(mlist, name.marker, character(1))
 }
 
 #' @rdname marker_getset
 #' @export
-chrom = function(x, ...) {
-  UseMethod("chrom")
+name.list = function(x, markers, ...) {
+  comp_wise = lapply(x, name.ped, markers = markers)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `name()` differs between pedigree components")
+  comp_wise[[1]]
 }
-
-#' @rdname marker_getset
-#' @export
-chrom.marker = function(x, ...) {
-  attr(x, 'chrom')
-}
-
-#' @rdname marker_getset
-#' @export
-chrom.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, chrom, character(1))
-}
-
-#' @rdname marker_getset
-#' @export
-posMb = function(x, ...) {
-  UseMethod("posMb")
-}
-
-#' @rdname marker_getset
-#' @export
-posMb.marker = function(x, ...) {
-  as.numeric(attr(x, 'posMb'))
-}
-
-#' @rdname marker_getset
-#' @export
-posMb.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, posMb, numeric(1))
-}
-
-#' @rdname marker_getset
-#' @export
-posCm = function(x, ...) {
-  UseMethod("posCm")
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.marker = function(x, ...) {
-  as.numeric(attr(x, 'posCm'))
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, posCm, numeric(1))
-}
-
 
 ### name setter
 #' @rdname marker_getset
@@ -435,6 +386,41 @@ posCm.ped = function(x, markers, ...) {
   x
 }
 
+#' @rdname marker_getset
+#' @export
+`name<-.list` = function(x, markers, ..., value) {
+  lapply(x, function(cmp) `name<-.ped`(cmp, markers = markers, value = value))
+}
+
+
+#' @rdname marker_getset
+#' @export
+chrom = function(x, ...) {
+  UseMethod("chrom")
+}
+
+#' @rdname marker_getset
+#' @export
+chrom.marker = function(x, ...) {
+  attr(x, 'chrom')
+}
+
+#' @rdname marker_getset
+#' @export
+chrom.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers = markers)
+  vapply(mlist, chrom.marker, character(1))
+}
+
+#' @rdname marker_getset
+#' @export
+chrom.list = function(x, markers, ...) {
+  comp_wise = lapply(x, chrom.ped, markers = markers)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `chrom()` differs between pedigree components")
+  comp_wise[[1]]
+}
+
 ### chrom setter
 #' @rdname marker_getset
 #' @export
@@ -474,6 +460,53 @@ posCm.ped = function(x, markers, ...) {
   })
   x
 }
+
+#' @rdname marker_getset
+#' @export
+`chrom<-.list` = function(x, markers, ..., value) {
+  lapply(x, function(cmp) `chrom<-.ped`(cmp, markers = markers, value = value))
+}
+
+#' @rdname marker_getset
+#' @export
+posMb = function(x, ...) {
+  UseMethod("posMb")
+}
+
+#' @rdname marker_getset
+#' @export
+posMb.marker = function(x, ...) {
+  as.numeric(attr(x, 'posMb'))
+}
+
+#' @rdname marker_getset
+#' @export
+posMb.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers = markers)
+  vapply(mlist, posMb, numeric(1))
+}
+
+#' @rdname marker_getset
+#' @export
+posCm = function(x, ...) {
+  UseMethod("posCm")
+}
+
+#' @rdname marker_getset
+#' @export
+posCm.marker = function(x, ...) {
+  as.numeric(attr(x, 'posCm'))
+}
+
+#' @rdname marker_getset
+#' @export
+posCm.ped = function(x, markers, ...) {
+  mlist = getMarkers(x, markers = markers)
+  vapply(mlist, posCm, numeric(1))
+}
+
+
+
 
 ### posCm setter
 
