@@ -32,12 +32,13 @@ peelingOrder(x)
 }
 \value{
 \itemize{
-\item \code{pedsize(x)} returns the number of pedigree members in \code{x}
+\item \code{pedsize(x)} returns the number of pedigree members in each component of
+\code{x}.
 \item \code{hasUnbrokenLoops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
 computation is done here; the function simply returns the value of
 \code{x$UNBROKEN_LOOPS}).
-\item \code{hasInbredFounders(x)} returns TRUE is founder inbreeding is specified
-for \code{x} and at least one founder has positive inbreeding coefficient. See
+\item \code{hasInbredFounders(x)} returns TRUE is founder inbreeding is specified for
+\code{x} and at least one founder has positive inbreeding coefficient. See
 \code{\link[=founderInbreeding]{founderInbreeding()}} for details.
 \item \code{hasSelfing(x)} returns TRUE if the pedigree contains selfing events. This
 is recognised by father and mother begin equal for some child. (Note that for
@@ -62,10 +63,10 @@ probability calculations in other packages, as e.g. in
 Various utility functions for \code{ped} objects
 }
 \details{
-The functions \code{hasUnbrokenLoops()}, \code{hasInbredFounders()} and
-\code{hasSelfing()} allow as input either a single \code{ped} object or a list of
-such. In the latter case each function returns TRUE if it is TRUE for any of
-the components.
+The functions \code{pedsize()}, \code{hasUnbrokenLoops()}, \code{hasInbredFounders()} and
+\code{hasSelfing()} allow as input either a single \code{ped} object or a list of such.
+In the latter case each function returns TRUE if it is TRUE for any of the
+components.
 }
 \examples{
 x = fullSibMating(1)
