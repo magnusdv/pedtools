@@ -41,10 +41,10 @@ nMarkers = function(x) {
   if(is.ped(x))
     return(length(x$MARKERS))
   else if(is.pedList(x)) {
-    n = vapply(x, function(comp) length(comp$MARKERS), 1L)
-    if(length(n) > 1 && !all(n[-1] == n[1]))
-      stop2("The components of `x` have different number of markers attached: ", n)
-    return(n[1])
+    nvec = vapply(x, function(comp) length(comp$MARKERS), 1L)
+    if(!listIdentical(nvec))
+      stop2("The pedigree components have different number of markers attached")
+    return(nvec[[1]])
   }
   stop2("Input to `nMarkers()` must be a `ped` object or a list of such")
 }
