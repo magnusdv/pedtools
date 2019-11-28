@@ -254,7 +254,7 @@ questionMaleHetX = function(x, df) {
     else
       midx = match(mname, xnames)
 
-    if(!is.na(midx) && isXmarker(x$MARKERS[[midx]])) {
+    if(!is.na(midx) && isXmarker(x, midx)) {
       maleHet = df[["sex"]] == 1 & grepl("/", df[[i]])
       df = commentAndRealign(df, i, maleHet, "?")
     }

@@ -10,11 +10,14 @@ nMarkers(x)
 hasMarkers(x)
 }
 \arguments{
-\item{x}{A \code{ped} object.}
+\item{x}{A \code{ped} object or a list of such (se Value).}
 }
 \value{
 The function \code{nMarkers} returns the number of marker objects attached
-to \code{x}. The function \code{hasMarkers} returns TRUE if \code{nMarkers(x) > 0}.
+to \code{x}. If \code{x} is a list of pedigrees, an error is raised unless all of
+them have the same number of markers.
+
+The function \code{hasMarkers} returns TRUE if \code{nMarkers(x) > 0}.
 }
 \description{
 The number of markers attached to a pedigree

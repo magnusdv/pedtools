@@ -122,3 +122,9 @@ commentAndRealign = function(df, i, pred, comment) {
   df
 }
 
+# Check that all elements (typically vectors) of a list are identical
+listIdentical = function(x) {
+  if(length(x) <= 1)
+    return(TRUE)
+  all(vapply(x[-1], identical, y = x[[1]], logical(1)))
+}

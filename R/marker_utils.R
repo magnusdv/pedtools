@@ -1,39 +1,12 @@
 
-#' Check if a marker allows mutations
-#'
-#' @param marker A `marker` object
-#'
-#' @return Returns TRUE if the `mutmod` attribute of the input is non-NULL and differs from the identity matrix.
-#' @export
-allowsMutations = function(marker) {
-  mut = mutmod(marker)
-  !is.null(mut) && !trivialMut(mut)
-}
 
 # Check if a mutation matrix - or a list of such - is diagonal (= trivial)
 trivialMut = function(mut) {
   if(is.list(mut))
     return(all(vapply(mut, trivialMut, logical(1))))
+
   all(diag(mut) == 1)
 }
-
-#' Number of marker alleles
-#'
-#' @param m An object of class [marker].
-#'
-#' @return A positive integer.
-#' @export
-#'
-#' @examples
-#' x = nuclearPed(1)
-#' m = marker(x)
-#' nAlleles(m)
-#'
-nAlleles = function(m) {
-  if(!is.marker(m)) stop2("Input is not a `marker` object")
-  length(attr(m, 'alleles'))
-}
-
 
 #' Test if something is a marker
 #'
@@ -53,34 +26,33 @@ is.markerList = function(x) {
   inherits(x, "markerList") || (is.list(x) && all(sapply(x, is.marker)))
 }
 
-#' Test if a marker is on the X chromosome
-#'
-#' Tests if the `chrom` attribute of a marker is either "X" or "23".
-#'
-#' @param x A marker object. (If `x` is not a marker object, the function
-#'   returns FALSE.)
-#' @return TRUE or FALSE.
-#' @export
-isXmarker = function(x) {
-  chr = chrom(x)
-  isTRUE(chr == "X" || chr == "23")
-}
 
 #' The number of markers attached to a pedigree
 #'
-#' @param x A `ped` object.
+#' @param x A `ped` object or a list of such (se Value).
 #' @return The function `nMarkers` returns the number of marker objects attached
-#'   to `x`. The function `hasMarkers` returns TRUE if `nMarkers(x) > 0`.
+#'   to `x`. If `x` is a list of pedigrees, an error is raised unless all of
+#'   them have the same number of markers.
+#'
+#'   The function `hasMarkers` returns TRUE if `nMarkers(x) > 0`.
 #'
 #' @export
 nMarkers = function(x) {
-  length(x$MARKERS)
+  if(is.ped(x))
+    return(length(x$MARKERS))
+  else if(is.pedList(x)) {
+    n = vapply(x, function(comp) length(comp$MARKERS), 1L)
+    if(length(n) > 1 && !all(n[-1] == n[1]))
+      stop2("The components of `x` have different number of markers attached: ", n)
+    return(n[1])
+  }
+  stop2("Input to `nMarkers()` must be a `ped` object or a list of such")
 }
 
 #' @export
 #' @rdname nMarkers
 hasMarkers = function(x) {
-  !is.null(x$MARKERS) && nMarkers(x) > 0
+  nMarkers(x) > 0
 }
 
 

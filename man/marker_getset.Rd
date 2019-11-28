@@ -11,9 +11,11 @@
 \alias{mutmod}
 \alias{mutmod.marker}
 \alias{mutmod.ped}
+\alias{mutmod.list}
 \alias{mutmod<-}
 \alias{mutmod<-.marker}
 \alias{mutmod<-.ped}
+\alias{mutmod<-.list}
 \alias{alleles}
 \alias{alleles.marker}
 \alias{alleles.ped}
@@ -67,11 +69,15 @@ mutmod(x, ...)
 
 \method{mutmod}{ped}(x, marker, ...)
 
+\method{mutmod}{list}(x, marker, ...)
+
 mutmod(x, ...) <- value
 
 \method{mutmod}{marker}(x, ...) <- value
 
 \method{mutmod}{ped}(x, marker, ...) <- value
+
+\method{mutmod}{list}(x, marker, ...) <- value
 
 alleles(x, ...)
 

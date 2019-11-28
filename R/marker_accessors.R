@@ -147,6 +147,12 @@ mutmod.ped = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
+mutmod.list = function(x, marker, ...) {
+  mutmod(x[[1]], marker = marker)
+}
+
+#' @rdname marker_getset
+#' @export
 `mutmod<-` = function(x, ..., value) {
   UseMethod("mutmod<-")
 }
@@ -185,6 +191,15 @@ mutmod.ped = function(x, marker, ...) {
   idx = whichMarkers(x, markers = marker)
   for(i in idx)
     mutmod(x$MARKERS[[i]]) = value
+
+  x
+}
+
+#' @rdname marker_getset
+#' @export
+`mutmod<-.list` = function(x, marker, ..., value) {
+  for(i in seq_along(x))
+    mutmod(x[[i]], marker) = value
 
   x
 }

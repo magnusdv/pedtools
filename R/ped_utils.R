@@ -2,24 +2,25 @@
 #'
 #' Various utility functions for `ped` objects
 #'
-#' The functions `hasUnbrokenLoops()`, `hasInbredFounders()` and
-#' `hasSelfing()` allow as input either a single `ped` object or a list of
-#' such. In the latter case each function returns TRUE if it is TRUE for any of
-#' the components.
+#' The functions `pedsize()`, `hasUnbrokenLoops()`, `hasInbredFounders()` and
+#' `hasSelfing()` allow as input either a single `ped` object or a list of such.
+#' In the latter case each function returns TRUE if it is TRUE for any of the
+#' components.
 #'
 #' @param x A `ped` object, or (in some functions - see Details) a list of such.
 #' @param chromType Either "autosomal" (default) or "x".
 #'
 #' @return
 #'
-#' * `pedsize(x)` returns the number of pedigree members in `x`
+#' * `pedsize(x)` returns the number of pedigree members in each component of
+#' `x`.
 #'
 #' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of
 #' `x$UNBROKEN_LOOPS`).
 #'
-#' * `hasInbredFounders(x)` returns TRUE is founder inbreeding is specified
-#' for `x` and at least one founder has positive inbreeding coefficient. See
+#' * `hasInbredFounders(x)` returns TRUE is founder inbreeding is specified for
+#' `x` and at least one founder has positive inbreeding coefficient. See
 #' [founderInbreeding()] for details.
 #'
 #' * `hasSelfing(x)` returns TRUE if the pedigree contains selfing events. This
@@ -73,8 +74,11 @@ NULL
 #' @rdname ped_utils
 #' @export
 pedsize = function(x) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
-  length(x$ID)
+  if(is.ped(x))
+    return(length(x$ID))
+  else if (is.pedList(x))
+    return(vapply(x, function(comp) length(comp$ID), 1L))
+  stop2("Input to `pedsize()` must be a `ped` object or a list of such")
 }
 
 
