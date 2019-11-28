@@ -6,10 +6,10 @@
 \alias{emptyMarker.marker}
 \alias{emptyMarker.ped}
 \alias{emptyMarker.list}
-\alias{allowsMutations}
-\alias{allowsMutations.marker}
-\alias{allowsMutations.ped}
-\alias{allowsMutations.list}
+\alias{nTyped}
+\alias{nTyped.marker}
+\alias{nTyped.ped}
+\alias{nTyped.list}
 \alias{nAlleles}
 \alias{nAlleles.marker}
 \alias{nAlleles.ped}
@@ -18,10 +18,10 @@
 \alias{isXmarker.marker}
 \alias{isXmarker.ped}
 \alias{isXmarker.list}
-\alias{nTyped}
-\alias{nTyped.marker}
-\alias{nTyped.ped}
-\alias{nTyped.list}
+\alias{allowsMutations}
+\alias{allowsMutations.marker}
+\alias{allowsMutations.ped}
+\alias{allowsMutations.list}
 \title{Marker properties}
 \usage{
 emptyMarker(x, ...)
@@ -32,13 +32,13 @@ emptyMarker(x, ...)
 
 \method{emptyMarker}{list}(x, markers = seq_len(nMarkers(x)), ...)
 
-allowsMutations(x, ...)
+nTyped(x, ...)
 
-\method{allowsMutations}{marker}(x, ...)
+\method{nTyped}{marker}(x, ...)
 
-\method{allowsMutations}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+\method{nTyped}{ped}(x, markers = seq_len(nMarkers(x)), ...)
 
-\method{allowsMutations}{list}(x, markers = seq_len(nMarkers(x)), ...)
+\method{nTyped}{list}(x, markers = seq_len(nMarkers(x)), ...)
 
 nAlleles(x, ...)
 
@@ -56,13 +56,13 @@ isXmarker(x, ...)
 
 \method{isXmarker}{list}(x, markers = seq_len(nMarkers(x)), ...)
 
-nTyped(x, ...)
+allowsMutations(x, ...)
 
-\method{nTyped}{marker}(x, ...)
+\method{allowsMutations}{marker}(x, ...)
 
-\method{nTyped}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+\method{allowsMutations}{ped}(x, markers = seq_len(nMarkers(x)), ...)
 
-\method{nTyped}{list}(x, markers = seq_len(nMarkers(x)), ...)
+\method{allowsMutations}{list}(x, markers = seq_len(nMarkers(x)), ...)
 }
 \arguments{
 \item{x}{A single \code{marker} object or a \code{ped} object (or a list of such)}
@@ -74,12 +74,11 @@ the case that \code{x} is a \code{ped} object or a list of such. By default all
 attached markers are selected.}
 }
 \value{
-If \code{x} is a single \code{marker} object, the output is a vector of length
-1.
+If \code{x} is a single \code{marker} object, the output is a vector of length 1.
 
-Alternatively, if \code{x} is a \code{ped} object, or a list of such, the output is a
-vector of the same length as \code{markers} (which includes all attached markers
-by default), reporting the property of each marker.
+If \code{x} is a \code{ped} object, or a list of such, the output is a vector of the
+same length as \code{markers} (which includes all attached markers by default),
+reporting the property of each marker.
 }
 \description{
 These functions are used to retrieve various properties of marker objects.
@@ -87,12 +86,17 @@ Each function accepts as input either a single \code{marker} object, a \code{ped
 object, or a list of \code{ped} objects.
 }
 \details{
-\code{emptyMarker()} returns TRUE for markers with no genotypes.
+\code{emptyMarker()} returns TRUE for markers with no genotypes. If the input is a
+list of pedigrees, all must be empty for the result to be TRUE.
+
+\code{nTyped()} returns the number of typed individuals for each marker. Note that
+if the input is a list of pedigrees, the function returns the sum over all
+components.
+
+\code{nAlleles()} returns the number of alleles of each marker.
 
 \code{allowsMutations} returns TRUE for markers whose \code{mutmod} attribute is
 non-NULL and differs from the identity matrix.
-
-\code{nAlleles()} returns the number of alleles of each marker.
 }
 \examples{
 cmp1 = nuclearPed(1)

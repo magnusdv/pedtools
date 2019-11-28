@@ -4,12 +4,17 @@
 #' Each function accepts as input either a single `marker` object, a `ped`
 #' object, or a list of `ped` objects.
 #'
-#' `emptyMarker()` returns TRUE for markers with no genotypes.
+#' `emptyMarker()` returns TRUE for markers with no genotypes. If the input is a
+#' list of pedigrees, all must be empty for the result to be TRUE.
+#'
+#' `nTyped()` returns the number of typed individuals for each marker. Note that
+#' if the input is a list of pedigrees, the function returns the sum over all
+#' components.
+#'
+#' `nAlleles()` returns the number of alleles of each marker.
 #'
 #' `allowsMutations` returns TRUE for markers whose `mutmod` attribute is
 #' non-NULL and differs from the identity matrix.
-#'
-#' `nAlleles()` returns the number of alleles of each marker.
 #'
 #' @param x A single `marker` object or a `ped` object (or a list of such)
 #' @param markers A vector of names of indices of markers attached to `x`, in
@@ -17,12 +22,13 @@
 #'   attached markers are selected.
 #' @param ... Not used.
 #'
-#' @return If `x` is a single `marker` object, the output is a vector of length
-#'   1.
+#' @return
 #'
-#'   Alternatively, if `x` is a `ped` object, or a list of such, the output is a
-#'   vector of the same length as `markers` (which includes all attached markers
-#'   by default), reporting the property of each marker.
+#' If `x` is a single `marker` object, the output is a vector of length 1.
+#'
+#' If `x` is a `ped` object, or a list of such, the output is a vector of the
+#' same length as `markers` (which includes all attached markers by default),
+#' reporting the property of each marker.
 #'
 #' @examples
 #' cmp1 = nuclearPed(1)
@@ -99,31 +105,29 @@ emptyMarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
 
 #' @rdname marker_prop
 #' @export
-allowsMutations = function(x, ...) {
-  UseMethod("allowsMutations")
+nTyped = function(x, ...) {
+  UseMethod("nTyped")
 }
 
 #' @rdname marker_prop
 #' @export
-allowsMutations.marker = function(x, ...) {
-  mut = mutmod(x)
-  !is.null(mut) || !trivialMut(mut)
+nTyped.marker = function(x, ...) {
+  sum(x[, 1] > 0 | x[, 2] > 0)
 }
 
 #' @rdname marker_prop
 #' @export
-allowsMutations.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
-  vapply(getMarkers(x, markers), allowsMutations.marker, logical(1))
+nTyped.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
+  vapply(getMarkers(x, markers), nTyped.marker, integer(1))
 }
 
 #' @rdname marker_prop
 #' @export
-allowsMutations.list = function(x, markers = seq_len(nMarkers(x)), ...) {
-  comp_wise = lapply(x, allowsMutations.ped, markers = markers)
-  if(!listIdentical(comp_wise))
-    stop2("The output of `allowsMutations()` differs between components")
-  comp_wise[[1]]
+nTyped.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+  comp_wise = lapply(x, nTyped.ped, markers = markers)
+  Reduce(`+`, comp_wise)
 }
+
 
 #' @rdname marker_prop
 #' @export
@@ -151,6 +155,7 @@ nAlleles.list = function(x, markers = seq_len(nMarkers(x)), ...) {
     stop2("The output of `nAlleles()` differs between components")
   comp_wise[[1]]
 }
+
 
 #' @rdname marker_prop
 #' @export
@@ -180,27 +185,31 @@ isXmarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
   comp_wise[[1]]
 }
 
+
 #' @rdname marker_prop
 #' @export
-nTyped = function(x, ...) {
-  UseMethod("nTyped")
+allowsMutations = function(x, ...) {
+  UseMethod("allowsMutations")
 }
 
 #' @rdname marker_prop
 #' @export
-nTyped.marker = function(x, ...) {
-  sum(x[, 1] > 0 | x[, 2] > 0)
+allowsMutations.marker = function(x, ...) {
+  mut = mutmod(x)
+  !is.null(mut) || !trivialMut(mut)
 }
 
 #' @rdname marker_prop
 #' @export
-nTyped.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
-  vapply(getMarkers(x, markers), nTyped.marker, integer(1))
+allowsMutations.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
+  vapply(getMarkers(x, markers), allowsMutations.marker, logical(1))
 }
 
 #' @rdname marker_prop
 #' @export
-nTyped.list = function(x, markers = seq_len(nMarkers(x)), ...) {
-  comp_wise = lapply(x, nTyped.ped, markers = markers)
-  Reduce(`+`, comp_wise)
+allowsMutations.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+  comp_wise = lapply(x, allowsMutations.ped, markers = markers)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `allowsMutations()` differs between components")
+  comp_wise[[1]]
 }
