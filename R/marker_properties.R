@@ -13,6 +13,9 @@
 #'
 #' `nAlleles()` returns the number of alleles of each marker.
 #'
+#' `isXmarker()` returns TRUE for markers whose `chrom` attribute is either "X"
+#' or 23.
+#'
 #' `allowsMutations` returns TRUE for markers whose `mutmod` attribute is
 #' non-NULL and differs from the identity matrix.
 #'
@@ -85,6 +88,12 @@ emptyMarker = function(x, ...) {
 
 #' @rdname marker_prop
 #' @export
+emptyMarker.default = function(x, ...) {
+  stop2("No method defined for objects of class ", class(x)[1])
+}
+
+#' @rdname marker_prop
+#' @export
 emptyMarker.marker = function(x, ...) {
   all(x == 0)
 }
@@ -98,6 +107,8 @@ emptyMarker.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @rdname marker_prop
 #' @export
 emptyMarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+  if(length(x) == 0)
+    return(logical(0))
   comp_wise = lapply(x, emptyMarker.ped, markers = markers)
   Reduce(`&`, comp_wise)
 }
@@ -107,6 +118,12 @@ emptyMarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @export
 nTyped = function(x, ...) {
   UseMethod("nTyped")
+}
+
+#' @rdname marker_prop
+#' @export
+nTyped.default = function(x, ...) {
+  stop2("No method defined for objects of class ", class(x)[1])
 }
 
 #' @rdname marker_prop
@@ -124,6 +141,8 @@ nTyped.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @rdname marker_prop
 #' @export
 nTyped.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+  if(length(x) == 0)
+    return(logical(0))
   comp_wise = lapply(x, nTyped.ped, markers = markers)
   Reduce(`+`, comp_wise)
 }
@@ -133,6 +152,12 @@ nTyped.list = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @export
 nAlleles = function(x, ...) {
   UseMethod("nAlleles")
+}
+
+#' @rdname marker_prop
+#' @export
+nAlleles.default = function(x, ...) {
+  stop2("No method defined for objects of class ", class(x)[1])
 }
 
 #' @rdname marker_prop
@@ -150,6 +175,8 @@ nAlleles.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @rdname marker_prop
 #' @export
 nAlleles.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+  if(length(x) == 0)
+    return(integer(0))
   comp_wise = lapply(x, nAlleles.ped, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `nAlleles()` differs between components")
@@ -161,6 +188,13 @@ nAlleles.list = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @export
 isXmarker = function(x, ...) {
   UseMethod("isXmarker")
+}
+
+#' @rdname marker_prop
+#' @export
+isXmarker.default = function(x, ...) {
+  if(is.null(x)) return(FALSE)
+  stop2("No method defined for objects of class ", class(x)[1])
 }
 
 #' @rdname marker_prop
@@ -179,6 +213,8 @@ isXmarker.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @rdname marker_prop
 #' @export
 isXmarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+  if(length(x) == 0)
+    return(logical(0))
   comp_wise = lapply(x, isXmarker.ped, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `isXmarker()` differs between components")
@@ -190,6 +226,12 @@ isXmarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
 #' @export
 allowsMutations = function(x, ...) {
   UseMethod("allowsMutations")
+}
+
+#' @rdname marker_prop
+#' @export
+allowsMutations.default = function(x, ...) {
+  stop2("No method defined for objects of class ", class(x)[1])
 }
 
 #' @rdname marker_prop

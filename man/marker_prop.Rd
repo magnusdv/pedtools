@@ -3,28 +3,35 @@
 \name{marker_prop}
 \alias{marker_prop}
 \alias{emptyMarker}
+\alias{emptyMarker.default}
 \alias{emptyMarker.marker}
 \alias{emptyMarker.ped}
 \alias{emptyMarker.list}
 \alias{nTyped}
+\alias{nTyped.default}
 \alias{nTyped.marker}
 \alias{nTyped.ped}
 \alias{nTyped.list}
 \alias{nAlleles}
+\alias{nAlleles.default}
 \alias{nAlleles.marker}
 \alias{nAlleles.ped}
 \alias{nAlleles.list}
 \alias{isXmarker}
+\alias{isXmarker.default}
 \alias{isXmarker.marker}
 \alias{isXmarker.ped}
 \alias{isXmarker.list}
 \alias{allowsMutations}
+\alias{allowsMutations.default}
 \alias{allowsMutations.marker}
 \alias{allowsMutations.ped}
 \alias{allowsMutations.list}
 \title{Marker properties}
 \usage{
 emptyMarker(x, ...)
+
+\method{emptyMarker}{default}(x, ...)
 
 \method{emptyMarker}{marker}(x, ...)
 
@@ -34,6 +41,8 @@ emptyMarker(x, ...)
 
 nTyped(x, ...)
 
+\method{nTyped}{default}(x, ...)
+
 \method{nTyped}{marker}(x, ...)
 
 \method{nTyped}{ped}(x, markers = seq_len(nMarkers(x)), ...)
@@ -41,6 +50,8 @@ nTyped(x, ...)
 \method{nTyped}{list}(x, markers = seq_len(nMarkers(x)), ...)
 
 nAlleles(x, ...)
+
+\method{nAlleles}{default}(x, ...)
 
 \method{nAlleles}{marker}(x, ...)
 
@@ -50,6 +61,8 @@ nAlleles(x, ...)
 
 isXmarker(x, ...)
 
+\method{isXmarker}{default}(x, ...)
+
 \method{isXmarker}{marker}(x, ...)
 
 \method{isXmarker}{ped}(x, markers = seq_len(nMarkers(x)), ...)
@@ -57,6 +70,8 @@ isXmarker(x, ...)
 \method{isXmarker}{list}(x, markers = seq_len(nMarkers(x)), ...)
 
 allowsMutations(x, ...)
+
+\method{allowsMutations}{default}(x, ...)
 
 \method{allowsMutations}{marker}(x, ...)
 
@@ -94,6 +109,9 @@ if the input is a list of pedigrees, the function returns the sum over all
 components.
 
 \code{nAlleles()} returns the number of alleles of each marker.
+
+\code{isXmarker()} returns TRUE for markers whose \code{chrom} attribute is either "X"
+or 23.
 
 \code{allowsMutations} returns TRUE for markers whose \code{mutmod} attribute is
 non-NULL and differs from the identity matrix.
