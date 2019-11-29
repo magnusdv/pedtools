@@ -76,7 +76,7 @@ whichMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos 
   if(is.pedList(x)) {
     idxList = lapply(x, function(comp)
       whichMarkers(comp, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos))
-    if(length(x) > 1 && !all(vapply(idxList[-1], identical, y = idxList[[1]], logical(1))))
+    if(!listIdentical(idxList))
       stop2("The output of `whichMarkers()` differs between components")
     return(idxList[[1]])
   }
@@ -109,7 +109,7 @@ whichMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos 
 
   }
   else if (is.character(markers)) {
-    allnames = vapply(x$MARKERS, name, character(1))
+    allnames = vapply(x$MARKERS, name.marker, character(1))
     idx = match(markers, allnames)
 
     if(anyNA(idx))
@@ -126,17 +126,17 @@ whichMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos 
 
   ### chrom
   if (!is.null(chroms)) {
-    chrom_attr = vapply(x$MARKERS[idx], chrom, character(1))
+    chrom_attr = vapply(x$MARKERS[idx], chrom.marker, character(1))
     idx = idx[chrom_attr %in% chroms]
   }
 
   ### pos
   if (!is.null(fromPos)) {
-    pos_attr = vapply(x$MARKERS[idx], posMb, 1)
+    pos_attr = vapply(x$MARKERS[idx], posMb.marker, 1)
     idx = idx[pos_attr >= fromPos]
   }
   if (!is.null(toPos)) {
-    pos_attr = vapply(x$MARKERS[idx], posMb, 1)
+    pos_attr = vapply(x$MARKERS[idx], posMb.marker, 1)
     idx = idx[pos_attr <= toPos]
   }
   idx

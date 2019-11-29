@@ -181,7 +181,7 @@ as.data.frame.ped = function(x, ..., markers) {
     geno = do.call(cbind, lapply(mlist, format))
 
     # Headers of genotype columns: name if present, otherwise <idx>
-    nms = vapply(mlist, name, character(1))
+    nms = vapply(mlist, name.marker, character(1))
     if(any(na_name <- is.na(nms)))
       nms[na_name] = sprintf("<%d>", markers[na_name])
     colnames(geno) = nms
