@@ -213,8 +213,9 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   if(length(id.labels) > 1)
     stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
-  if(is.null(marker))
-    x$MARKERS = NULL
+  if(length(marker) == 0) {
+    marker = x$MARKERS = NULL
+  }
 
   # Founder inbreeding (this must be extracted before addParents())
   if(!is.null(fouInb) && hasInbredFounders(x))
