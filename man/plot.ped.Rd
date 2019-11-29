@@ -25,12 +25,12 @@ as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 \arguments{
 \item{x}{a \code{\link[=ped]{ped()}} object.}
 
-\item{marker}{either NULL, a vector of positive integers, a \code{\link{marker}}
-object, or a list of such. If NULL, no genotypes are plotted.  If a vector
-of integers is given, the corresponding marker objects are extracted from
-\code{x$MARKERS}. The genotypes are written below each individual in the
-pedigree, in the format determined by \code{sep} and \code{missing}. See also
-\code{skip.empty.genotypes} below.}
+\item{marker}{either a vector of names or indices referring to markers
+attached to \code{x}, a \code{marker} object, or a list of such. The genotypes for
+the chosen markers are written below each individual in the pedigree, in
+the format determined by \code{sep} and \code{missing}. See also
+\code{skip.empty.genotypes} below. If NULL (the default), no genotypes are
+plotted.}
 
 \item{sep}{a character of length 1 separating alleles for diploid markers.}
 
@@ -40,7 +40,7 @@ pedigree, in the format determined by \code{sep} and \code{missing}. See also
 empty genotypes (which by default looks like '-/-') are not printed.}
 
 \item{id.labels}{a vector with labels for each pedigree member. This defaults
-to \code{labels(x)}. Several syntaxes are possible:
+to \code{labels(x)}. Alternative forms:
 \itemize{
 \item If \code{id.labels} is NULL or the empty character "", then no labels are
 drawn.
