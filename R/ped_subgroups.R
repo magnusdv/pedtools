@@ -84,6 +84,9 @@ females = function(x, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 typedMembers = function(x, internal = FALSE) {
+  if(is.pedList(x))
+    return(unlist(lapply(x, typedMembers)))
+
   if (nMarkers(x) == 0)
     return(if(internal) integer(0) else character(0))
 
@@ -95,6 +98,9 @@ typedMembers = function(x, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 untypedMembers = function(x, internal = FALSE) {
+  if(is.pedList(x))
+    return(unlist(lapply(x, untypedMembers)))
+
   if (nMarkers(x) == 0)
     return(if(internal) seq_len(pedsize(x)) else labels.ped(x))
   allelematrix = do.call(cbind, x$MARKERS)
