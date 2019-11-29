@@ -31,7 +31,6 @@
 #'   labelled. If the vector is named, then the (non-empty) names are used
 #'   instead of the ID label. See Examples.
 #'
-#'
 #' @param title the plot title. If NULL or '', no title is added to the plot.
 #' @param col a vector of colours for the pedigree members, recycled if
 #'   necessary. Alternatively, `col` can be a list assigning colours to specific
@@ -100,6 +99,9 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   nInd = pedsize(x)
 
   # Labels
+  if(is.function(id.labels))
+    id.labels = id.labels(labels(x))
+
   nms = names(id.labels)
   if (is.null(id.labels) || identical(id.labels, ""))
     id.labels = rep("", nInd)
@@ -124,6 +126,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   text = id.labels
 
   # Add stars to labels
+  if(is.function(starred))
+    starred = starred(x)
   starred = internalID(x, starred)
   text[starred] = paste0(text[starred], "*")
 
@@ -169,6 +173,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   }
 
   # Shading
+  if(is.function(shaded))
+    shaded = shaded(x)
   if (!is.null(shaded)) {
     density = 25
     angle = 45
@@ -238,9 +244,12 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   }
 
   # Tweak id.labels if necessary. After addParents, internal index is 3!
+  if(is.function(id.labels))
+    id.labels = id.labels(labels(x))
+
   if(length(id.labels) == 0 || id.labels == "")
     id = NULL
-  else if(id.labels == "num")
+  else if(identical(id.labels, "num"))
     id = c(`1` = labels(x))
   else if(is.null(names(id.labels))) {
     id = labels(x)
@@ -249,6 +258,11 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   else if(!is.null(names(id.labels))) {
     id = id.labels
   }
+
+  if(is.function(shaded))
+    shaded = shaded(x)
+  if(is.function(starred))
+    starred = starred(x)
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
