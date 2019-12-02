@@ -21,12 +21,16 @@ knitr::opts_chunk$set(
 library(kableExtra)
 ```
 
-The purpose of this vignette is to show how to work with pedigrees and marker data in `pedtools`. To obtain the latest version of the package I recommend installing it from GitHub as follows:
-```{r, eval = FALSE}
- # First install devtools if needed
-if(!require(devtools)) install.packages("devtools")
+The purpose of this vignette is to show how to work with pedigrees and marker data in `pedtools`. 
 
-# Install pedtools from github
+The following command installs the current CRAN version of the package:
+```{r, eval = FALSE}
+install.packages("pedtools")
+```
+
+Alternatively, you may want the latest development version from GitHub:
+```{r, eval = FALSE}
+# install.packages("devtools") # install devtools if needed
 devtools::install_github("magnusdv/pedtools")
 ```
 
@@ -72,7 +76,7 @@ From the way it is printed, the object `trio` appears to be a data frame, but th
 unclass(trio)
 ```
 
-In most cases it is not recommended for regular users to interact directly with the internal slots of a `ped`, since this can have unfortunate consequences unless you know exactly what you are doing. Instead, one should use accessor functions like `relabel()`, `parents()` and `getSex()`. The most important accessors are described within this vignette, while others are documented in the help page `?ped_utils`.
+In most cases it is not recommended for regular users to interact directly with the internal slots of a `ped`, since this can have unfortunate consequences unless you know exactly what you are doing. Instead, one should use accessor functions like `labels()`, `getMarkers()` and `founderInbreeding()`. The most important accessors are described within this vignette, while others are documented in the help page `?ped_utils`.
 
 ## Basic pedigree plots
 To plot a pedigree, simply use `plot()`.
@@ -85,7 +89,7 @@ plot(trio)
 plot(trio, margins = c(1,1,1,1))
 ```
 
-Several options are available for controlling the appearance of individual pedigree members and the plot as a whole. A complete overview can be found in the documentation `?plot.ped`, but a quick example should get you started:
+Under the hood, `pedtools::plot()` is an elaborate wrapper of the excellent plotting functionality of the `kinship2` package. Most of the possibilities provided by kinship2 are available from pedtools, and several features are added. An overview can be found in the documentation `?plot.ped`, but a quick example should get you started:
 
 ```{r eval=FALSE}
 plot(trio, deceased = "fa", starred = "mo", shaded = "girl", 
@@ -96,6 +100,7 @@ plot(trio, deceased = "fa", starred = "mo", shaded = "girl",
      col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,1.5,1))
 ```
 
+See Section 2.2 for how to add, and control the appearence of, marker genotypes to pedgree plots.
 
 ## Built-in pedigree structures {#builtin}
 Rather than using the `ped()` function directly, it is usually quicker and safer to build pedigrees step by step, applying the arsenal of utility functions offered by `pedtools`. A typical workflow is as follows:
@@ -332,7 +337,7 @@ trio
 ```
 
 **Selecting and removing attached markers**  
-Four closely related functions functions are useful for manipulating markers attached to a `ped` object:
+Four closely related functions functions are useful for manipulating markers attached to a pedigree:
 
 * `selectMarkers()`, returns a `ped` object where only the indicated markers are retained
 * `removeMarkers()`, returns a `ped` object where the indicated markers are removed
