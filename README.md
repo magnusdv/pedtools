@@ -13,37 +13,24 @@ like adding or removing individuals, extracting subsets, loop breaking,
 and merging pedigrees. The plotting functionality is imported from the
 [kinship2](https://CRAN.R-project.org/package=kinship2) package.
 
-pedtools is a rewritten and improved version of one part of the
+pedtools is a continuation of the
 [paramlink](https://CRAN.R-project.org/package=paramlink) package, which
-is no longer actively developed. The functionality of paramlink dealing
-with basic manipulation of pedigrees and markers has been moved to
-pedtools, in many cases using the same function names. Under the hood,
-however, many things are changed, including a new S3 class `ped` for
-basic pedigree objects and many new utility functions.
+is no longer actively developed.
 
 ## Installation
 
-To get pedtools, install from GitHub as follows:
+To get pedtools, install from CRAN as follows:
 
 ``` r
- # First install devtools if needed
-if(!require(devtools)) install.packages("devtools")
+install.packages("pedtools")
+```
 
-# Install pedtools from github
+Alternatively, you can obtain the latest development version from
+GitHub:
+
+``` r
+# install.packages("devtools") # install devtools if needed
 devtools::install_github("magnusdv/pedtools")
-```
-
-If you want to include the detailed user manual, you should add the
-option `build_vignettes = TRUE` when you install:
-
-``` r
-devtools::install_github("magnusdv/pedtools", build_vignettes = TRUE)
-```
-
-Then after installation you can view the vignette by running
-
-``` r
-vignette("pedtools")
 ```
 
 ## Example
