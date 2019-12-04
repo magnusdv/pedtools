@@ -11,8 +11,15 @@
 \alias{subset.ped}
 \title{Add/remove pedigree members}
 \usage{
-addChildren(x, father = NULL, mother = NULL, nch = 1, sex = 1,
-  ids = NULL, verbose = TRUE)
+addChildren(
+  x,
+  father = NULL,
+  mother = NULL,
+  nch = 1,
+  sex = 1,
+  ids = NULL,
+  verbose = TRUE
+)
 
 addSon(x, parent, id = NULL, verbose = TRUE)
 

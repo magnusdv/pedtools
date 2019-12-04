@@ -4,8 +4,13 @@
 \alias{writePed}
 \title{Write a pedigree to file}
 \usage{
-writePed(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"),
-  merlin = FALSE, verbose = TRUE)
+writePed(
+  x,
+  prefix = famid(x),
+  what = c("ped", "map", "dat", "freq"),
+  merlin = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{A \code{ped} object}

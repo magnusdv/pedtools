@@ -9,8 +9,15 @@
 \alias{halfSibStack}
 \title{Complex pedigree structures}
 \usage{
-doubleCousins(degree1, degree2, removal1 = 0, removal2 = 0,
-  half1 = FALSE, half2 = FALSE, child = FALSE)
+doubleCousins(
+  degree1,
+  degree2,
+  removal1 = 0,
+  removal2 = 0,
+  half1 = FALSE,
+  half2 = FALSE,
+  child = FALSE
+)
 
 doubleFirstCousins()
 
@@ -53,7 +60,7 @@ common case, double first cousins.
 \code{fullSibMating} crosses full sibs consecutively \code{n} times.
 
 \code{halfSibStack} produces a breeding scheme where the two individuals in the
-final generation are simultaneous half k'th cousins, for each \code{k = 0,...,n-1}.
+final generation are simultaneous half k'th cousins, for each \verb{k = 0,...,n-1}.
 }
 \examples{
 

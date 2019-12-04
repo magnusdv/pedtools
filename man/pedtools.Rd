@@ -3,7 +3,6 @@
 \docType{package}
 \name{pedtools}
 \alias{pedtools}
-\alias{pedtools-package}
 \title{pedtools: Tools for working with pedigrees in R}
 \description{
 A collection of tools for creating, manipulating and visualising pedigrees.

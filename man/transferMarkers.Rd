@@ -4,8 +4,7 @@
 \alias{transferMarkers}
 \title{Transfer marker data}
 \usage{
-transferMarkers(from, to, ids = NULL, erase = TRUE,
-  matchNames = TRUE)
+transferMarkers(from, to, ids = NULL, erase = TRUE, matchNames = TRUE)
 }
 \arguments{
 \item{from}{a \code{ped} or \code{singleton} object, or a list of such objects.}

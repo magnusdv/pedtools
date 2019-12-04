@@ -4,9 +4,20 @@
 \alias{marker}
 \title{Marker objects}
 \usage{
-marker(x, ..., allelematrix = NULL, alleles = NULL, afreq = NULL,
-  chrom = NA, posMb = NA, posCm = NA, name = NA, mutmod = NULL,
-  rate = NULL, validate = TRUE)
+marker(
+  x,
+  ...,
+  allelematrix = NULL,
+  alleles = NULL,
+  afreq = NULL,
+  chrom = NA,
+  posMb = NA,
+  posCm = NA,
+  name = NA,
+  mutmod = NULL,
+  rate = NULL,
+  validate = TRUE
+)
 }
 \arguments{
 \item{x}{a \code{\link{ped}} object}

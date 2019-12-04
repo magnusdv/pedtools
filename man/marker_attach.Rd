@@ -6,11 +6,25 @@
 \alias{addMarkers}
 \title{Attach markers to pedigrees}
 \usage{
-setMarkers(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL,
-  missing = 0, sep = NULL, ...)
+setMarkers(
+  x,
+  m = NULL,
+  alleleMatrix = NULL,
+  locusAttributes = NULL,
+  missing = 0,
+  sep = NULL,
+  ...
+)
 
-addMarkers(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL,
-  missing = 0, sep = NULL, ...)
+addMarkers(
+  x,
+  m = NULL,
+  alleleMatrix = NULL,
+  locusAttributes = NULL,
+  missing = 0,
+  sep = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{ped} object}
@@ -65,7 +79,7 @@ lists), then it is repeated to match the number of markers.
 
 Two alternative format of \code{locusAttributes} are allowed: If a data.frame or
 matrix is given, an attempt is made to interpret it as a frequency database
-in \code{allelic ladder} format. Such an interpretation is also attempted if
+in \verb{allelic ladder} format. Such an interpretation is also attempted if
 \code{locusAttributes} is a list of named frequency vectors (where the names are
 the allele labels).
 }

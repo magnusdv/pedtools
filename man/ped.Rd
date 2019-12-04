@@ -5,8 +5,16 @@
 \alias{singleton}
 \title{Pedigree construction}
 \usage{
-ped(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
-  verbose = FALSE)
+ped(
+  id,
+  fid,
+  mid,
+  sex,
+  famid = "",
+  reorder = TRUE,
+  validate = TRUE,
+  verbose = FALSE
+)
 
 singleton(id, sex = 1, famid = "")
 }

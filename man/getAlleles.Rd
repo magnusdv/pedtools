@@ -25,7 +25,7 @@ NULL (default) all markers are included.}
 \value{
 \code{getAlleles()} returns a character matrix with \code{length(ids)} rows and
 \code{2 * length(markers)} columns. The ID labels of \code{x} are used as rownames,
-while the columns are named \code{<m1>.1}, \code{<m1>.2}, ... where \code{<m1>} is the
+while the columns are named \verb{<m1>.1}, \verb{<m1>.2}, ... where \verb{<m1>} is the
 name of the first marker, a.s.o.
 
 \code{setAlleles()} returns a \code{ped} object identical to \code{x}, except for the

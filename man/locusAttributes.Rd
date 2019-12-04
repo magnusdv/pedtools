@@ -6,11 +6,19 @@
 \alias{setLocusAttributes}
 \title{Get or set locus attributes}
 \usage{
-getLocusAttributes(x, markers = NULL, attribs = c("alleles", "afreq",
-  "name", "chrom", "posMb", "posCm", "mutmod"))
+getLocusAttributes(
+  x,
+  markers = NULL,
+  attribs = c("alleles", "afreq", "name", "chrom", "posMb", "posCm", "mutmod")
+)
 
-setLocusAttributes(x, markers = NULL, locusAttributes, matchNames = NA,
-  erase = F)
+setLocusAttributes(
+  x,
+  markers = NULL,
+  locusAttributes,
+  matchNames = NA,
+  erase = F
+)
 }
 \arguments{
 \item{x}{A \code{ped} object, or a list of such.}

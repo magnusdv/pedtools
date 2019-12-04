@@ -7,10 +7,20 @@
 \usage{
 as.ped(x, ...)
 
-\method{as.ped}{data.frame}(x, famid_col = NA, id_col = NA,
-  fid_col = NA, mid_col = NA, sex_col = NA, marker_col = NA,
-  locusAttributes = NULL, missing = 0, sep = NULL, validate = TRUE,
-  ...)
+\method{as.ped}{data.frame}(
+  x,
+  famid_col = NA,
+  id_col = NA,
+  fid_col = NA,
+  mid_col = NA,
+  sex_col = NA,
+  marker_col = NA,
+  locusAttributes = NULL,
+  missing = 0,
+  sep = NULL,
+  validate = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{Any object.}

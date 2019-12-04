@@ -24,6 +24,6 @@ Suggests:
     rmarkdown,
     pedmut,
     kableExtra
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.1
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr

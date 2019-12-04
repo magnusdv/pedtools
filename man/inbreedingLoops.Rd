@@ -10,8 +10,7 @@
 \usage{
 inbreedingLoops(x)
 
-breakLoops(x, loop_breakers = NULL, verbose = TRUE,
-  errorIfFail = TRUE)
+breakLoops(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRUE)
 
 tieLoops(x, verbose = TRUE)
 

@@ -21,7 +21,7 @@ labels.}
 \item{chromType}{Either "autosomal" (default) or "x".}
 
 \item{value}{A numeric of the same length as \code{ids}, entries in the interval
-\code{[0, 1]}. If the vector is named, then the names are interpreted as ID
+\verb{[0, 1]}. If the vector is named, then the names are interpreted as ID
 labels of the founders whose inbreeding coefficients should be set. In this
 case, the \code{ids} argument should not be used. (See examples.)}
 }
@@ -29,7 +29,7 @@ case, the \code{ids} argument should not be used. (See examples.)}
 For \code{founderInbreeding}, a numeric vector of the same length as
 \code{ids}, containing the founder inbreeding coefficients.
 
-For \code{founderInbreeding<-} the updated \code{ped} object is returned.
+For \verb{founderInbreeding<-} the updated \code{ped} object is returned.
 }
 \description{
 Functions to get or set inbreeding coefficients for the pedigree founders.

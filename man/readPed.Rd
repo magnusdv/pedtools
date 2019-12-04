@@ -4,10 +4,21 @@
 \alias{readPed}
 \title{Read a pedigree from file}
 \usage{
-readPed(pedfile, header = NA, famid_col = NA, id_col = NA,
-  fid_col = NA, mid_col = NA, sex_col = NA, marker_col = NA,
-  locusAttributes = NULL, missing = 0, sep = NULL, validate = TRUE,
-  ...)
+readPed(
+  pedfile,
+  header = NA,
+  famid_col = NA,
+  id_col = NA,
+  fid_col = NA,
+  mid_col = NA,
+  sex_col = NA,
+  marker_col = NA,
+  locusAttributes = NULL,
+  missing = 0,
+  sep = NULL,
+  validate = TRUE,
+  ...
+)
 }
 \arguments{
 \item{pedfile}{A file name}

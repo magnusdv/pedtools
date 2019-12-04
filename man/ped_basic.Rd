@@ -11,18 +11,21 @@
 \alias{selfingPed}
 \title{Create simple pedigrees}
 \usage{
-nuclearPed(nch, sex = 1, father = "1", mother = "2",
-  children = as.character(seq.int(3, length.out = nch)))
+nuclearPed(
+  nch,
+  sex = 1,
+  father = "1",
+  mother = "2",
+  children = as.character(seq.int(3, length.out = nch))
+)
 
 halfSibPed(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1)
 
 linearPed(n, sex = 1)
 
-cousinPed(degree, removal = 0, side = c("right", "left"),
-  child = FALSE)
+cousinPed(degree, removal = 0, side = c("right", "left"), child = FALSE)
 
-halfCousinPed(degree, removal = 0, side = c("right", "left"),
-  child = FALSE)
+halfCousinPed(degree, removal = 0, side = c("right", "left"), child = FALSE)
 
 ancestralPed(g)
 

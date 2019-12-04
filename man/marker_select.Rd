@@ -8,17 +8,13 @@
 \alias{whichMarkers}
 \title{Select or remove attached markers}
 \usage{
-selectMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
-  toPos = NULL)
+selectMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL)
 
-getMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
-  toPos = NULL)
+getMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL)
 
-removeMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
-  toPos = NULL)
+removeMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL)
 
-whichMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL,
-  toPos = NULL)
+whichMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL)
 }
 \arguments{
 \item{x}{A \code{ped} object, or a list of such}

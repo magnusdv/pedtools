@@ -7,16 +7,40 @@
 \alias{plot.pedList}
 \title{Plot pedigrees with genotypes}
 \usage{
-\method{plot}{ped}(x, marker = NULL, sep = "/", missing = "-",
-  skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
-  col = 1, shaded = NULL, deceased = NULL, starred = NULL,
-  fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1), keep.par = F,
-  ...)
+\method{plot}{ped}(
+  x,
+  marker = NULL,
+  sep = "/",
+  missing = "-",
+  skip.empty.genotypes = FALSE,
+  id.labels = labels(x),
+  title = NULL,
+  col = 1,
+  shaded = NULL,
+  deceased = NULL,
+  starred = NULL,
+  fouInb = "autosomal",
+  margins = c(0.6, 1, 4.1, 1),
+  keep.par = F,
+  ...
+)
 
-\method{plot}{singleton}(x, marker = NULL, sep = "/", missing = "-",
-  skip.empty.genotypes = FALSE, id.labels = labels(x), title = NULL,
-  col = 1, shaded = NULL, deceased = NULL, starred = NULL,
-  fouInb = "autosomal", margins = c(8, 0, 0, 0), ...)
+\method{plot}{singleton}(
+  x,
+  marker = NULL,
+  sep = "/",
+  missing = "-",
+  skip.empty.genotypes = FALSE,
+  id.labels = labels(x),
+  title = NULL,
+  col = 1,
+  shaded = NULL,
+  deceased = NULL,
+  starred = NULL,
+  fouInb = "autosomal",
+  margins = c(8, 0, 0, 0),
+  ...
+)
 
 as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 

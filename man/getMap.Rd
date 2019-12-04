@@ -4,8 +4,13 @@
 \alias{getMap}
 \title{Tabulate marker positions}
 \usage{
-getMap(x, markers = seq_len(nMarkers(x)), pos = c("cm", "mb"),
-  na.action = 0, verbose = TRUE)
+getMap(
+  x,
+  markers = seq_len(nMarkers(x)),
+  pos = c("cm", "mb"),
+  na.action = 0,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{An object of class \code{ped}.}
