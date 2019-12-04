@@ -165,8 +165,10 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   if(is.list(col)) {
     colnames = names(col)
     cols = rep(1, nInd)
-    for(cc in colnames)
-      cols[internalID(x, col[[cc]])] = cc
+    for(cc in colnames) {
+      ids_col = intersect(labels(x), col[[cc]])
+      cols[internalID(x, ids_col)] = cc
+    }
   }
   else {
      cols = rep(col, length = nInd)
