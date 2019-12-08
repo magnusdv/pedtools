@@ -131,6 +131,9 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
       }
 
       # Sibships - X
+      # TODO: skip this for now - needs fixing!
+      next
+
       if (length(offs) <= 2)
         next
 
