@@ -8,9 +8,12 @@
 #'
 #' @return
 #'
-#' * `labels()` returns a character vector containing the ID labels of all pedigree members.
+#' * `labels()` returns a character vector containing the ID labels of all
+#' pedigree members. If the input is a list of ped objects, the output is a list
+#' of character vectors.
 #'
-#' * `relabel()` returns `ped` object similar to the input except for the labels.
+#' * `relabel()` returns `ped` object similar to the input except for the
+#' labels.
 #'
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
@@ -59,6 +62,14 @@ labels.ped = function(object, ...) {
   object$ID
 }
 
+#' @rdname relabel
+#' @export
+labels.list = function(object, ...) {
+  if(is.pedList(object))
+    lapply(object, labels.ped)
+  else
+    labels.default(object)
+}
 
 #' Get or modify pedigree genders
 #'
@@ -67,6 +78,7 @@ labels.ped = function(object, ...) {
 #'
 #' @param x A `ped` object or a list of such.
 #' @param ids A character vector (or coercible to one) containing ID labels.
+#' @param named A logical: return a named vector or not.
 #' @param verbose A logical: Verbose output or not.
 #'
 #' @seealso [ped()]
@@ -85,6 +97,7 @@ labels.ped = function(object, ...) {
 #'
 #' swapSex(x, 3)
 #'
+#' @importFrom stats setNames
 #' @export
 getSex = function(x, ids, named = FALSE) {
   if(is.pedList(x)) {
@@ -134,7 +147,6 @@ getSex_OLD = function(x, ids = labels(x)) {
 
   x$SEX[internalID(x, ids)]
 }
-
 
 #' @rdname getSex
 #' @export

@@ -358,7 +358,7 @@ getComponent = function(x, ids, checkUnique = FALSE) {
     stop2("Input is not a (list of) ped objects")
 
   # List labels of each component
-  labList = lapply(x, labels)
+  labList = labels(x)
 
   # A single vector with all labels
   labVec = unlist(labList)

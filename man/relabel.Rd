@@ -3,11 +3,14 @@
 \name{relabel}
 \alias{relabel}
 \alias{labels.ped}
+\alias{labels.list}
 \title{Get or modify pedigree labels}
 \usage{
 relabel(x, new, old = labels(x))
 
 \method{labels}{ped}(object, ...)
+
+\method{labels}{list}(object, ...)
 }
 \arguments{
 \item{x}{A \code{ped} object.}
@@ -21,8 +24,11 @@ length. ID labels in \code{old} are replaced by those in \code{new}.}
 }
 \value{
 \itemize{
-\item \code{labels()} returns a character vector containing the ID labels of all pedigree members.
-\item \code{relabel()} returns \code{ped} object similar to the input except for the labels.
+\item \code{labels()} returns a character vector containing the ID labels of all
+pedigree members. If the input is a list of ped objects, the output is a list
+of character vectors.
+\item \code{relabel()} returns \code{ped} object similar to the input except for the
+labels.
 }
 }
 \description{

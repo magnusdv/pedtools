@@ -57,7 +57,7 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
 
   if (is.ped(from) && is.pedList(to)) {
 
-    tolabels = unlist(lapply(to, labels))
+    tolabels = unlist(labels(to))
     if(is.null(ids))
       ids = intersect(labels(from), tolabels)
 
@@ -74,7 +74,7 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
 
   if (is.pedList(from) && is.ped(to)) {
 
-    fromlabels = unlist(lapply(from, labels))
+    fromlabels = unlist(labels(from))
     if(is.null(ids))
       ids = intersect(fromlabels, labels(to))
 

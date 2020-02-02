@@ -68,8 +68,8 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   if(is.pedList(x)) {
 
     # Check that all `ids` are known
-    if(!is.null(ids) && !all(ids %in% unlist(lapply(x, labels))))
-      stop2("Unknown ID label: ", setdiff(ids, unlist(lapply(x, labels))))
+    if(!is.null(ids) && !all(ids %in% unlist(labels(x))))
+      stop2("Unknown ID label: ", setdiff(ids, unlist(labels(x))))
 
     # Check equality of marker counts and names
     mNames = lapply(x, function(comp) name(comp, markers = seq_along(nMarkers(comp))))
