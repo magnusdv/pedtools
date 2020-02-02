@@ -101,16 +101,17 @@ labels.list = function(object, ...) {
 #' @export
 getSex = function(x, ids, named = FALSE) {
   if(is.pedList(x)) {
-    sexVec = unlist(lapply(x, function(comp) setNames(comp$SEX, comp$ID)),
-                    recursive = FALSE, use.names = TRUE)
+    sexVec = unlist(lapply(x, function(comp) comp$SEX), recursive = FALSE, use.names = FALSE)
+    nms = unlist(labels(x), recursive = FALSE, use.names = FALSE)
 
     # Check for duplicates
-    nms = names(sexVec)
     if(anyDuplicated.default(nms)) {
       dups = intersect(ids, nms[duplicated.default(nms)])
       if(length(dups))
         stop2("Duplicated ID label: ", dups)
     }
+
+    names(sexVec) = nms
   }
   else
     sexVec = setNames(x$SEX, x$ID)
