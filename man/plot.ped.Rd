@@ -39,6 +39,7 @@
   starred = NULL,
   fouInb = "autosomal",
   margins = c(8, 0, 0, 0),
+  yadj = 0,
   ...
 )
 
@@ -104,6 +105,9 @@ additional annotation.}
 
 \item{\dots}{arguments passed on to \code{plot.pedigree} in the \code{kinship2}
 package. In particular \code{symbolsize} and \code{cex} can be useful.}
+
+\item{yadj}{A tiny adjustment sometimes needed to fix the appearence of
+singletons.}
 }
 \description{
 This is the main function for pedigree plotting, with many options for

@@ -50,6 +50,8 @@
 #' @param keep.par A logical (default = FALSE). If TRUE, the graphical
 #'   parameters are not reset after plotting, which may be useful for adding
 #'   additional annotation.
+#' @param yadj A tiny adjustment sometimes needed to fix the appearence of
+#'   singletons.
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
 #' @author Magnus Dehli Vigeland
@@ -211,7 +213,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 #' @export
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                           id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
-                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), ...) {
+                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0, ...) {
   if(length(id.labels) > 1)
     stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
 
@@ -273,7 +275,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
                starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = T, ...)
 
   usr = par("usr")
-  rect(usr[1] - 0.1, pdat$y[3], usr[2] + 0.1, usr[4], border = NA, col = "white")
+  rect(usr[1] - 0.1, pdat$y[3] - yadj, usr[2] + 0.1, usr[4], border = NA, col = "white")
 
   # Add title
   if (!is.null(title)) title(title, line = -2.8)
