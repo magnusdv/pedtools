@@ -86,7 +86,38 @@ labels.ped = function(object, ...) {
 #' swapSex(x, 3)
 #'
 #' @export
-getSex = function(x, ids = labels(x)) {
+getSex = function(x, ids, named = FALSE) {
+  if(is.pedList(x)) {
+    sexVec = unlist(lapply(x, function(comp) setNames(comp$SEX, comp$ID)),
+                    recursive = FALSE, use.names = TRUE)
+
+    # Check for duplicates
+    nms = names(sexVec)
+    if(anyDuplicated.default(nms)) {
+      dups = intersect(ids, nms[duplicated.default(nms)])
+      if(length(dups))
+        stop2("Duplicated ID label: ", dups)
+    }
+  }
+  else
+    sexVec = setNames(x$SEX, x$ID)
+
+  if(missing(ids))
+    ids = names(sexVec)
+  else
+    ids = as.character(ids)
+
+  res = sexVec[ids]
+
+  if(named)
+    storage.mode(res) = "integer"
+  else
+    res = as.integer(res)
+
+  res
+}
+
+getSex_OLD = function(x, ids = labels(x)) {
   if(is.pedList(x)) {
     comps = getComponent(x, ids, checkUnique = T)
     res = vapply(seq_along(ids), function(i) {

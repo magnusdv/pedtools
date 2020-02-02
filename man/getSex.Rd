@@ -5,7 +5,7 @@
 \alias{swapSex}
 \title{Get or modify pedigree genders}
 \usage{
-getSex(x, ids = labels(x))
+getSex(x, ids, named = FALSE)
 
 swapSex(x, ids, verbose = TRUE)
 }
@@ -13,6 +13,8 @@ swapSex(x, ids, verbose = TRUE)
 \item{x}{A \code{ped} object or a list of such.}
 
 \item{ids}{A character vector (or coercible to one) containing ID labels.}
+
+\item{named}{A logical: return a named vector or not.}
 
 \item{verbose}{A logical: Verbose output or not.}
 }
