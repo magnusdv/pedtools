@@ -42,8 +42,6 @@ parents precede their children.}
 the pedigree.}
 
 \item{verbose}{a logical.}
-
-\item{...}{further arguments}
 }
 \value{
 A \code{ped} object, which is essentially a list with the following

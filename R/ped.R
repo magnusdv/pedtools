@@ -29,7 +29,6 @@
 #' @param validate a logical. If TRUE, [validatePed()] is run before returning
 #'   the pedigree.
 #' @param verbose a logical.
-#' @param ... further arguments
 #'
 #' @return A `ped` object, which is essentially a list with the following
 #'   entries:
