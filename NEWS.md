@@ -1,3 +1,13 @@
+# pedtools 0.9.2
+
+## New features
+
+* The `labels()` function now also works for ped lists (returning a list of vectors).
+
+## Bug fixes
+
+* The previous version of `getSex()` was buggy; this has been rewritten and made more efficient.
+
 # pedtools 0.9.1
 
 ## New features
