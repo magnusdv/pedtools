@@ -94,7 +94,7 @@ mendelianCheck = function(x, remove = FALSE, verbose = !remove) {
         new_errs = chromX[error_markers[error_males_int == i]]
         errorlist[[i]] = c(errorlist[[i]], new_errs)
         if (verbose)
-          message(sprintf("Male `%s` heterozygous at markers: ", labels(x)[i], toString(new_errs)))
+          message(sprintf("Male `%s` is heterozygous at markers: %s", labels(x)[i], toString(new_errs)))
       }
     }
 
