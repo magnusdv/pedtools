@@ -3,6 +3,14 @@
 
 # pedtools <img src="man/figures/logo.png" align="right" height=140/>
 
+<!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/pedtools)](https://CRAN.R-project.org/package=pedtools)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/pedtools?color=yellow)](https://cran.r-project.org/package=pedtools)
+[![](https://cranlogs.r-pkg.org/badges/last-month/pedtools?color=yellow)](https://cran.r-project.org/package=pedtools)
+<!-- badges: end -->
+
 ## Introduction
 
 The goal of pedtools is to provide a lightweight, but comprehensive tool
