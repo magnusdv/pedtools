@@ -37,7 +37,7 @@ test_that("X-linked mendelian errors are caught", {
   expect_message(simpleMend(x, m2), "Female `ch2` incompatible with parents")
 
   m3 = marker(x, 'fa'=1:2, chrom=23)
-  expect_message(simpleMend(x, m3), "Male `fa` heterozygous")
+  expect_message(simpleMend(x, m3), "Male `fa` is heterozygous")
 
   skip("TODO: Mendelian check for X sibships")
   m4 = marker(x, 'ch1'=1, 'ch2'=3:4, 'ch3'=5, chrom=23)
