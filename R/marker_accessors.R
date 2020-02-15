@@ -337,7 +337,7 @@ name.ped = function(x, markers, ...) {
 #' @rdname marker_getset
 #' @export
 name.list = function(x, markers, ...) {
-  comp_wise = lapply(x, name.ped, markers = markers)
+  comp_wise = lapply(x, name, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `name()` differs between pedigree components")
   comp_wise[[1]]
@@ -389,7 +389,7 @@ name.list = function(x, markers, ...) {
 #' @rdname marker_getset
 #' @export
 `name<-.list` = function(x, markers, ..., value) {
-  lapply(x, function(cmp) `name<-.ped`(cmp, markers = markers, value = value))
+  lapply(x, function(cmp) `name<-`(cmp, markers = markers, value = value))
 }
 
 
@@ -415,7 +415,7 @@ chrom.ped = function(x, markers, ...) {
 #' @rdname marker_getset
 #' @export
 chrom.list = function(x, markers, ...) {
-  comp_wise = lapply(x, chrom.ped, markers = markers)
+  comp_wise = lapply(x, chrom, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `chrom()` differs between pedigree components")
   comp_wise[[1]]
@@ -464,7 +464,7 @@ chrom.list = function(x, markers, ...) {
 #' @rdname marker_getset
 #' @export
 `chrom<-.list` = function(x, markers, ..., value) {
-  lapply(x, function(cmp) `chrom<-.ped`(cmp, markers = markers, value = value))
+  lapply(x, function(cmp) `chrom<-`(cmp, markers = markers, value = value))
 }
 
 #' @rdname marker_getset
