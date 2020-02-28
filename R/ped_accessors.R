@@ -28,7 +28,8 @@
 #'
 #' @export
 relabel = function(x, new, old = labels(x)) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(is.list(old))
+    old = unlist(old, use.names = FALSE)
 
   if(length(new) != length(old))
     stop2("Arguments `new` and `old` must have the same length")
@@ -36,7 +37,20 @@ relabel = function(x, new, old = labels(x)) {
   if(anyDuplicated.default(old) > 0)
     stop2("Duplicated entry in argument `old`: ", unique(old[duplicated(old)]))
 
-  # Relabel
+  if(is.pedList(x)) {
+    res = lapply(x, function(comp) {
+      idx = old %in% labels(comp)
+      if(!any(idx))
+        comp
+      else
+        relabel(comp, new[idx], old[idx])
+    })
+    return(res)
+  }
+  else if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
+  # Build new ID vector
   id = labels.ped(x)
   old_int = internalID(x, old)
   id[old_int] = new

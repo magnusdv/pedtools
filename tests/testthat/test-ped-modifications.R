@@ -221,3 +221,12 @@ test_that("relabelling is passed on to markers", {
                    c('1','mother','3'))
 })
 
+test_that("relabel() works in pedlist", {
+  x = list(nuclearPed(1), singleton(4))
+  expect_identical(relabel(x, old=1, new="FA"),
+                   list(nuclearPed(fa="FA", 1), singleton(4)))
+  expect_identical(relabel(x, old=4, new="S"),
+                   list(nuclearPed(1), singleton("S")))
+  expect_identical(relabel(x, new=letters[1:4]),
+                   list(nuclearPed(fa="a", mo = "b", ch = "c"), singleton("d")))
+})
