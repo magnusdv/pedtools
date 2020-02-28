@@ -76,10 +76,16 @@ test_that("loop breaking commutes with relabelling", {
   x_b = break_silent(x)
   x_b_r = relabel(x_b, old=1:8, new=letters[1:8])
 
-  skip("TODO: fix loop_breakers when relabelling...in relabel()")
   expect_identical(x_r_b, x_b_r)
 })
 
+test_that("it is possible to relabel a loop breaker copy individual", {
+  x = break_silent(fullSibMating(1), 3)
+  x_r = relabel(x, old="=3", new="copy of 3")
+
+  lab = c(1:3, "copy of 3", 4:6)
+  expect_identical(labels(x_r), lab)
+})
 
 # TODO: other looped peds
 

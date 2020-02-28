@@ -40,6 +40,17 @@ relabel = function(x, new, old = labels(x)) {
   id = labels.ped(x)
   old_int = internalID(x, old)
   id[old_int] = new
+
+  # Loop breakers
+  if(!is.null(lb <- x$LOOP_BREAKERS)) {
+    # Are any of the copies already changed by user?
+    j = lb[, 'copy'] %in% old_int
+
+    copy = lb[!j, 'copy']
+    orig = lb[!j, 'orig']
+    id[copy] = paste0("=", id[orig])
+  }
+
   x$ID = id
 
   # Duplicated IDs after relabelling?
