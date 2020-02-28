@@ -131,23 +131,6 @@ getSex = function(x, ids, named = FALSE) {
   res
 }
 
-getSex_OLD = function(x, ids = labels(x)) {
-  if(is.pedList(x)) {
-    comps = getComponent(x, ids, checkUnique = T)
-    res = vapply(seq_along(ids), function(i) {
-      if(is.na(co <- comps[i]))
-        stop2("Unknown ID label: ", ids[i])
-      getSex(x[[comps[i]]], ids[i])
-    }, FUN.VALUE = 1L)
-
-    return(res)
-  }
-
-  if(!is.ped(x))
-    stop2("Input is not a `ped` object or a list of such")
-
-  x$SEX[internalID(x, ids)]
-}
 
 #' @rdname getSex
 #' @export
