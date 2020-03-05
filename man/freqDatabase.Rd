@@ -4,45 +4,71 @@
 \alias{freqDatabase}
 \alias{getFrequencyDatabase}
 \alias{setFrequencyDatabase}
+\alias{readFrequencyDatabase}
 \title{Allele frequency database}
 \usage{
-getFrequencyDatabase(x, markers = NULL)
+getFrequencyDatabase(x, markers = NULL, format = c("list", "ladder"))
 
-setFrequencyDatabase(x, database, ...)
+setFrequencyDatabase(x, database, format = c("list", "ladder"), ...)
+
+readFrequencyDatabase(filename, format = c("list", "ladder"), ...)
 }
 \arguments{
-\item{x}{A \code{ped} object, or a list of such}
+\item{x}{A ped object, or a list of such.}
 
 \item{markers}{A character vector (with marker names) or a numeric vector
-(with marker indices)}
+(with marker indices).}
 
-\item{database}{Either a data.frame or a character file path. See details.}
+\item{format}{Either "list" or "ladder".}
 
-\item{...}{Optional arguments passed on to \code{\link[=read.table]{read.table()}}}
+\item{database}{Either a list or matrix/data frame with allele frequencies,
+or a file path (to be passed on to \code{readFrequencyDatabase()}).}
+
+\item{...}{Optional arguments passed on to \code{\link[=read.table]{read.table()}}.}
+
+\item{filename}{The path to a text file containing allele frequencies either
+in "list" or "allelic ladder" format.}
 }
 \value{
 \itemize{
-\item \code{getFrequencyDatabase} : a data.frame with allele labels as row names, and
-marker labels as column names
-\item \code{getFrequencyDatabase}: a modified version of \code{x}
+\item \code{getFrequencyDatabase}: either a list (if \code{format = "list"}) or a data
+frame (if \code{format = "ladder"})
+\item \code{readFrequencyDatabase}: a list (also if \code{format = "ladder"}) of named
+numeric vectors
+\item \code{setFrequencyDatabase}: a modified version of \code{x}
 }
 }
 \description{
-Extract or set marker allele frequencies using the 'allelic ladder' format
+Functions for reading, setting and extracting allele frequency databases, in
+either "list" format or "allelic ladder" format.
 }
 \details{
-These functions are essentially special cases of \code{\link[=getLocusAttributes]{getLocusAttributes()}} and
-\code{\link[=setLocusAttributes]{setLocusAttributes()}}.
+A frequency database in "list" format is a list of numeric vectors; each
+vector named with the allele labels, and the list itself named with the
+marker names.
 
-If \code{database} is a data.frame, it must have the allele labels as row names
-and marker names as column names.
+Text files containing frequencies in "list" format should look as follows,
+where "marker1" and "marker2" are marker names, and "a1","a2",... are allele
+labels (which may be characters or numeric, but will always be converted to
+characters):
+\preformatted{
+marker1
+a1 0.2
+a2 0.5
+a3 0.3
 
-If \code{database} is a file path, it is read with the command
-\code{read.table(database, header = T, row.names = 1, as.is = T, check.names = F, ...)}
+marker2
+a1 0.9
+a2 0.1
+}
+
+A database in "allelic ladder" format is rectangular, i.e., a numeric matrix
+(or data frame), with allele labels as row names and markers as column
+names. \code{NA} entries correspond to unobserved alleles.
 }
 \examples{
-loc1 = list(name = "m1", alleles = 3:4, afreq = c(.1, .9))
-loc2 = list(name = "m2", alleles = c("1", "10.2", "3"))
+loc1 = list(name = "m1", afreq = c(a = .1, b = .9))
+loc2 = list(name = "m2", afreq = c("1" = .2, "10.2" = .3, "3" = .5))
 x = setMarkers(singleton(1), locus = list(loc1, loc2))
 db = getFrequencyDatabase(x)
 db
@@ -52,7 +78,7 @@ stopifnot(identical(x, y))
 
 # The database can also be read directly from file
 tmp = tempfile()
-write.table(db, tmp, row.names = TRUE, col.names = TRUE)
+write("m1\na 0.1\nb 0.9\n\nm2\n1 0.2\n3 0.5\n10.2 0.3", tmp)
 
 z = setFrequencyDatabase(x, database = tmp)
 stopifnot(all.equal(x, z))
