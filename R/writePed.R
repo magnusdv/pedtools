@@ -4,13 +4,11 @@
 #' @param prefix A character string giving the prefix of the files. For
 #'   instance, if `prefix = "myped"` and `what = c("ped", "map")`, the output
 #'   files are "myped.ped" and "myped.map" in the current directory. Paths to
-#'   other folder may be included, e.g. `prefix = "path-to-my-dir/myped"`. By
-#'   default, the family identifier `famid(x)` is used. Note that if this is
-#'   empty, the files become ".ped" and so on.
-#' @param what A subset of the character vector c("ped", "map", "dat" and
-#'   "freq"), indicating which files should be created. All files are written in
-#'   MERLIN style (but see the `merlin` parameter below!) By default all files
-#'   are created.
+#'   other folder may be included, e.g. `prefix = "path-to-my-dir/myped"`.
+#' @param what A subset of the character vector `c("ped", "map", "dat",
+#'   "freq")`, indicating which files should be created. All files are written
+#'   in MERLIN style (but see the `merlin` parameter below!) By default all
+#'   files are created.
 #' @param merlin A logical. If TRUE, the marker alleles are relabelled to
 #'   1,2,..., making sure that the generated files are readable by MERLIN (which
 #'   does not accept non-numerical allele labels in the frequency file.) If
@@ -28,16 +26,33 @@
 #'
 #' @importFrom utils write.table
 #' @export
-writePed = function(x, prefix = famid(x), what = c("ped", "map", "dat", "freq"),
+writePed = function(x, prefix, what = c("ped", "map", "dat", "freq"),
                     merlin = FALSE, verbose = TRUE) {
   generated.files = character(0)
 
   if (merlin) {
-    pedmatr = cbind(1, as.matrix(x, FALSE)) # 1 is FAMID
+    if(is.pedList(x)) {
+      pedmatr = do.call(rbind, lapply(seq_along(x), function(i)
+        cbind(i, as.matrix(x[[i]], include.attrs = FALSE))))
+      x = x[[1]]
+    }
+    else {
+      pedmatr = cbind(1, as.matrix(x, include.attrs = FALSE))
+    }
   }
   else { #TODO: avoid actual data.frame here. Slow! (Paramlink original ok...)
-    famid = if(x$FAMID == "") 1 else x$FAMID
-    pedmatr = cbind(famid = famid, as.data.frame(x))
+    if(is.pedList(x)) {
+      # single fam? If all comp names are "comp<i>" or "", and no duplicated labels
+      famids = unlist(lapply(x, famid))
+      singleFam = (all(famids == "") || all(grepl("comp", famids))) && !anyDuplicated(labels(x))
+      famids = if(singleFam) rep(1, length(x)) else 1:length(x)
+      pedmatr = do.call(rbind, lapply(seq_along(x), function(i) cbind(i, as.data.frame(x[[1]]))))
+      x = x[[1]]
+    }
+    else {
+      famid = if(x$FAMID == "") 1 else x$FAMID
+      pedmatr = cbind(famid = famid, as.data.frame(x))
+    }
   }
 
   if ("ped" %in% what) {

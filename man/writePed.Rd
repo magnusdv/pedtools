@@ -6,7 +6,7 @@
 \usage{
 writePed(
   x,
-  prefix = famid(x),
+  prefix,
   what = c("ped", "map", "dat", "freq"),
   merlin = FALSE,
   verbose = TRUE
@@ -18,14 +18,11 @@ writePed(
 \item{prefix}{A character string giving the prefix of the files. For
 instance, if \code{prefix = "myped"} and \code{what = c("ped", "map")}, the output
 files are "myped.ped" and "myped.map" in the current directory. Paths to
-other folder may be included, e.g. \code{prefix = "path-to-my-dir/myped"}. By
-default, the family identifier \code{famid(x)} is used. Note that if this is
-empty, the files become ".ped" and so on.}
+other folder may be included, e.g. \code{prefix = "path-to-my-dir/myped"}.}
 
-\item{what}{A subset of the character vector c("ped", "map", "dat" and
-"freq"), indicating which files should be created. All files are written in
-MERLIN style (but see the \code{merlin} parameter below!) By default all files
-are created.}
+\item{what}{A subset of the character vector \code{c("ped", "map", "dat", "freq")}, indicating which files should be created. All files are written
+in MERLIN style (but see the \code{merlin} parameter below!) By default all
+files are created.}
 
 \item{merlin}{A logical. If TRUE, the marker alleles are relabelled to
 1,2,..., making sure that the generated files are readable by MERLIN (which
