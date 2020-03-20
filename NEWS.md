@@ -1,3 +1,21 @@
+# pedtools 0.9.3
+
+## New features
+
+* New function `readFrequencyDatabase()` reads databases. Both list formats and
+allelic ladders are supported.
+
+* Marker attributes "chrom" and "name" are now easier to get/set in ped lists.
+
+* The `relabel()` function now also works for ped lists.
+
+## Bug fixes
+
+* `relabel()` now works correctly in pedigrees with broken loops
+
+* `mendelianCheck()` didn't always print as intended
+
+
 # pedtools 0.9.2
 
 ## New features
@@ -7,6 +25,7 @@
 ## Bug fixes
 
 * The previous version of `getSex()` was buggy; this has been rewritten and made more efficient.
+
 
 # pedtools 0.9.1
 
