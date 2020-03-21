@@ -100,7 +100,7 @@ plot(trio, deceased = "fa", starred = "mo", shaded = "girl",
      col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,1.5,1))
 ```
 
-See Section 2.2 for how to add, and control the appearence of, marker genotypes to pedgree plots.
+See Section 2.2 for how to add, and control the appearance of, marker genotypes to pedigree plots.
 
 ## Built-in pedigree structures {#builtin}
 Rather than using the `ped()` function directly, it is usually quicker and safer to build pedigrees step by step, applying the arsenal of utility functions offered by `pedtools`. A typical workflow is as follows:
