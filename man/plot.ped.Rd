@@ -106,7 +106,7 @@ additional annotation.}
 \item{\dots}{arguments passed on to \code{plot.pedigree} in the \code{kinship2}
 package. In particular \code{symbolsize} and \code{cex} can be useful.}
 
-\item{yadj}{A tiny adjustment sometimes needed to fix the appearence of
+\item{yadj}{A tiny adjustment sometimes needed to fix the appearance of
 singletons.}
 }
 \description{

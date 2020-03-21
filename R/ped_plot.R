@@ -50,7 +50,7 @@
 #' @param keep.par A logical (default = FALSE). If TRUE, the graphical
 #'   parameters are not reset after plotting, which may be useful for adding
 #'   additional annotation.
-#' @param yadj A tiny adjustment sometimes needed to fix the appearence of
+#' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
