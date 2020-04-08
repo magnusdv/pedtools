@@ -11,8 +11,8 @@
 #'   non-NULL, then `...` must be empty.
 #' @param alleles a character (or coercible to character) containing allele
 #'   names. If not given, and `afreq` is named, `names(afreq)` is used. The
-#'   default action is to take the sorted vector of distinct alleles occurring in
-#'   `allelematrix` or `...`.
+#'   default action is to take the sorted vector of distinct alleles occurring
+#'   in `allelematrix` or `...`.
 #' @param afreq a numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
 #'   don't sum to 1 after rounding to 3 decimals. If the vector is named, and
@@ -25,6 +25,8 @@
 #' @param posCm a nonnegative real number: the centiMorgan position of the
 #'   marker. Default: NA.
 #' @param name a character string: the name of the marker. Default: NA.
+#' @param NAstrings A character vector containing strings to be treated as
+#'   missing alleles. Default: `c("", "0", NA, "-")`.
 #' @param mutmod,rate mutation model parameters. These are passed directly to
 #'   [pedmut::mutationModel()]; see there for details. Note: `mutmod`
 #'   corresponds to the `model` parameter. Default: NULL (no mutation model).
@@ -68,11 +70,9 @@
 #'
 #' @export
 marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
-                  chrom = NA, posMb = NA, posCm = NA, name = NA, mutmod = NULL,
-                  rate = NULL, validate = TRUE) {
-
-  # Symbols treated as NA
-  NA_allele_ = c(0, "", NA, "-")
+                  chrom = NA, posMb = NA, posCm = NA, name = NA,
+                  NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
+                  validate = TRUE) {
 
   # Some parameters cannot have length 0 or be ""
   if(length(chrom) == 0) chrom = NA
@@ -109,14 +109,14 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
     if(!is.null(afreq) && !is.null(names(afreq)))
        alleles = names(afreq)
     else {
-      alleles = .mysetdiff(m, NA_allele_)
+      alleles = .mysetdiff(m, NAstrings)
       if (length(alleles) == 0)
         alleles = 1:2 # NEW
     }
   }
-  else if(!all(m %in% c(NA_allele_, alleles))) {
+  else if(!all(m %in% c(NAstrings, alleles))) {
       mtxt = if(is.na(name)) "this marker: " else sprintf("marker `%s`: ", name)
-      stop2("Invalid allele for ", mtxt, setdiff(m, c(NA_allele_, alleles)))
+      stop2("Invalid allele for ", mtxt, setdiff(m, c(NAstrings, alleles)))
   }
 
   ### Frequencies
@@ -185,7 +185,7 @@ validateMarker = function(x) {
 
   ## alleles
   alleles = attrs$alleles
-  NA_allele_ = c(0, "", NA, "-")
+  NA_allele_ = c(0, "", NA)
   if(any(alleles %in% NA_allele_))
     stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
 

@@ -14,6 +14,7 @@ marker(
   posMb = NA,
   posCm = NA,
   name = NA,
+  NAstrings = c(0, "", NA, "-"),
   mutmod = NULL,
   rate = NULL,
   validate = TRUE
@@ -31,8 +32,8 @@ non-NULL, then \code{...} must be empty.}
 
 \item{alleles}{a character (or coercible to character) containing allele
 names. If not given, and \code{afreq} is named, \code{names(afreq)} is used. The
-default action is to take the sorted vector of distinct alleles occurring in
-\code{allelematrix} or \code{...}.}
+default action is to take the sorted vector of distinct alleles occurring
+in \code{allelematrix} or \code{...}.}
 
 \item{afreq}{a numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
@@ -49,6 +50,9 @@ in megabases. Default: NA.}
 marker. Default: NA.}
 
 \item{name}{a character string: the name of the marker. Default: NA.}
+
+\item{NAstrings}{A character vector containing strings to be treated as
+missing alleles. Default: \code{c("", "0", NA, "-")}.}
 
 \item{mutmod, rate}{mutation model parameters. These are passed directly to
 \code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}; see there for details. Note: \code{mutmod}
