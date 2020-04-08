@@ -11,11 +11,11 @@
 #' `reorderPed()` which allows any permutation of the members.
 #'
 #' It should be noted that [ped()] by default calls `parentsBeforeChildren()`
-#' whenever a pedigree is created, unless explicitly avoided with
-#' `reorder = FALSE`.
+#' whenever a pedigree is created, unless explicitly avoided with `reorder =
+#' FALSE`.
 #'
-#' `hasParentsBeforeChildren()` can be used as a quick test to decide if it
-#' is necessary to call `parentsBeforeChildren()`.
+#' `hasParentsBeforeChildren()` can be used as a quick test to decide if it is
+#' necessary to call `parentsBeforeChildren()`.
 #'
 #' The utility `internalID()` converts ID labels to indices in the internal
 #' ordering.
@@ -24,6 +24,9 @@
 #' @param neworder A permutation of `labels(x)` or of vector `1:pedsize(x)`. By
 #'   default, the sorting order of the ID labels is used.
 #' @param ids A character vector (or coercible to one) of original ID labels.
+#' @param errorIfUnknown A logical. If TRUE (default), `internalID(x, ids)` results
+#'   in an error if not all elements of `ids` are recognised as names of members
+#'   in `x`.
 #'
 #'
 #' @seealso [ped()]
@@ -109,10 +112,10 @@ hasParentsBeforeChildren = function(x) {
 
 #' @rdname ped_internal
 #' @export
-internalID = function(x, ids) {
+internalID = function(x, ids, errorIfUnknown = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   int_ids = match(ids, labels(x))
-  if (anyNA(int_ids))
+  if (anyNA(int_ids) && errorIfUnknown)
     stop2("Unknown ID label: ", ids[is.na(int_ids)])
   int_ids
 }

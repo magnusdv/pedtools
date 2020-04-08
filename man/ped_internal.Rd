@@ -14,7 +14,7 @@ parentsBeforeChildren(x)
 
 hasParentsBeforeChildren(x)
 
-internalID(x, ids)
+internalID(x, ids, errorIfUnknown = TRUE)
 }
 \arguments{
 \item{x}{A \code{ped} object}
@@ -23,6 +23,10 @@ internalID(x, ids)
 default, the sorting order of the ID labels is used.}
 
 \item{ids}{A character vector (or coercible to one) of original ID labels.}
+
+\item{errorIfUnknown}{A logical. If TRUE (default), \code{internalID(x, ids)} results
+in an error if not all elements of \code{ids} are recognised as names of members
+in \code{x}.}
 }
 \description{
 These functions give access to - and enable modifications of - the order in
@@ -37,11 +41,10 @@ provided for this purpose. This is a wrapper of the more general
 \code{reorderPed()} which allows any permutation of the members.
 
 It should be noted that \code{\link[=ped]{ped()}} by default calls \code{parentsBeforeChildren()}
-whenever a pedigree is created, unless explicitly avoided with
-\code{reorder = FALSE}.
+whenever a pedigree is created, unless explicitly avoided with \code{reorder = FALSE}.
 
-\code{hasParentsBeforeChildren()} can be used as a quick test to decide if it
-is necessary to call \code{parentsBeforeChildren()}.
+\code{hasParentsBeforeChildren()} can be used as a quick test to decide if it is
+necessary to call \code{parentsBeforeChildren()}.
 
 The utility \code{internalID()} converts ID labels to indices in the internal
 ordering.
