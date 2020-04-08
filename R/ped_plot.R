@@ -130,7 +130,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   # Add stars to labels
   if(is.function(starred))
     starred = starred(x)
-  starred = internalID(x, starred)
+  starred = internalID(x, starred, errorIfUnknown = FALSE)
+  starred = starred[!is.na(starred)]
   text[starred] = paste0(text[starred], "*")
 
   # Marker genotypes
