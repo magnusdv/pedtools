@@ -266,7 +266,7 @@ commonAncestors = function(x, ids, inclusive = FALSE, internal = FALSE) {
     anc = .myintersect(anc, newanc)
   }
 
-  sort.default(unique.default(anc))
+  anc
 }
 
 #' @rdname ped_subgroups
@@ -301,6 +301,6 @@ commonDescendants = function(x, ids, inclusive = FALSE, internal = FALSE) {
     desc = .myintersect(desc, newdesc)
   }
 
-  sort.default(unique.default(desc))
+  desc
 }
 
