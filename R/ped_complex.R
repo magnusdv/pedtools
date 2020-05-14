@@ -55,24 +55,29 @@ NULL
 
 #' @rdname ped_complex
 #' @export
-doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = FALSE, half2 = FALSE, child = FALSE) {
+doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0,
+                         half1 = FALSE, half2 = FALSE, child = FALSE) {
   if(!is_count(degree1, minimum = 0)) stop2("`degree1` must be a nonnegative integer: ", degree1)
   if(!is_count(degree2, minimum = 0)) stop2("`degree2` must be a nonnegative integer: ", degree2)
   if(!is_count(removal1, minimum = 0)) stop2("`removal1` must be a nonnegative integer: ", removal1)
   if(!is_count(removal2, minimum = 0)) stop2("`removal2` must be a nonnegative integer: ", removal2)
 
-  # edge case: "paternal and maternal full 0th cousins". Interpreting this as full sibs for now. Review!
-  if(degree1 + removal1 + half1 + degree2 + removal2 + half2 == 0) {
-    x = nuclearPed(2, sex = 1:2)
-    if (child)
-      x = addChildren(x, father = 3, mother = 4, nch = 1)
-    return(x)
-  }
-
   # Ensure paternal path is longest (otherwise swap)
   if(degree2*2+removal2 > degree1*2 + removal1) {
     tmp = degree2; degree2 = degree1; degree1 = tmp
     tmp = removal2; removal2 = removal1; removal1 = tmp
+  }
+
+  # Corner case: Paternal and maternal 0th cousins.
+  if(degree1 + removal1 + degree2 + removal2 == 0) {
+    if(half1 == half2) {
+      x = nuclearPed(2, sex = 1:2)
+      if (child)
+        x = addChildren(x, father = 3, mother = 4, nch = 1)
+      return(x)
+    }
+    else
+      stop2("Paternal and maternal lines are incompatible.")
   }
 
   # Paternal part
@@ -85,10 +90,12 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
 
   # Maternal part
   if(degree2 + removal2 == 0) {
-    if(half2) stop2("Full 0th cousins = full sibs, but this is incosistent with the other line")
+    if(!half2)
+      stop2("Paternal and maternal lines are incompatible.\n",
+            "Maternal full 0th cousins => full siblings => fathers are identical.")
     fath2 = father(x1, offs[2])
     moth1 = mother(x1, offs[1])
-    x1 = removeIndividuals(x1, offs[2])
+    x1 = removeIndividuals(x1, offs[2],verbose = FALSE)
 
     x = addChildren(x1, father = fath2, mother = moth1, nch = 1, sex = 2, ids = offs[2])
   }
@@ -97,8 +104,9 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
       x2 = halfCousinPed(degree2, removal = removal2)
     else
       x2 = cousinPed(degree2, removal = removal2)
-    x2 = swapSex(x2, labels(x2))
-    x2 = swapSex(x2, leaves(x2))
+
+    # Change sex for everyone except the cousins
+    x2 = swapSex(x2, .mysetdiff(labels(x2), leaves(x2)))
     x2 = relabel(x2, seq(from = pedsize(x1) + 1, length.out = pedsize(x2)))
     x2 = relabel(x2, old = leaves(x2), new = offs)
 
@@ -106,6 +114,9 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0, half1 = F
     x2 = relabel(x2, old = parents(x2, offs[2]), new = parents(x1, offs[2]))
     x = mergePed(x1, x2)
   }
+
+  # Relabel according to numeric order (just to tidy up a bit)
+  x = relabel(x, 1:pedsize(x))
 
   if (child) {
     x = swapSex(x, offs[2])
