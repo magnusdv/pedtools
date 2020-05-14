@@ -61,3 +61,11 @@ test_that("internal = TRUE results in integer output", {
   expect_type(unrelated(x, 1, internal = T), "integer")
 })
 
+test_that("commonAncestors() are properly detected", {
+  x = nuclearPed(3)
+  expect_equal(commonAncestors(x, leaves(x)), as.character(1:2))
+  expect_equal(commonAncestors(x, leaves(x), inclusive = T), as.character(1:2))
+  expect_equal(commonAncestors(x, 2:3), character(0))
+  expect_equal(commonAncestors(x, 2:3, inclusive = T), "2")
+  expect_equal(commonAncestors(x, 3:1, inclusive = T), character(0))
+})

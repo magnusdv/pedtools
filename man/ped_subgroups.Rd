@@ -21,6 +21,7 @@
 \alias{cousins}
 \alias{nephews_nieces}
 \alias{ancestors}
+\alias{commonAncestors}
 \alias{descendants}
 \title{Pedigree subgroups}
 \usage{
@@ -62,15 +63,18 @@ nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
 
 ancestors(x, id, inclusive = FALSE, internal = FALSE)
 
+commonAncestors(x, ids, inclusive = FALSE, internal = FALSE)
+
 descendants(x, id, inclusive = FALSE, internal = FALSE)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
 
-\item{internal}{A logical indicating whether 'id' refers to the internal
-order.}
+\item{internal}{A logical indicating whether \code{id} (or \code{ids}) refers to the
+internal order.}
 
-\item{id}{A single ID label (coercible to character).}
+\item{id, ids}{A character (or coercible to such) with one or several ID
+labels.}
 
 \item{degree, removal}{Non-negative integers.}
 
@@ -86,6 +90,9 @@ For \code{ancestors(x, id)}, a vector containing the IDs of all ancestors
 of the individual \code{id}.  For \code{descendants(x, id)}, a vector containing the
 IDs of all descendants (i.e. children, grandchildren, a.s.o.) of individual
 \code{id}.
+
+For \code{commonAncestors(x, ids)}, a vector containing the IDs of common
+ancestors to all of \code{ids}.
 
 The functions \code{founders}, \code{nonfounders}, \code{males}, \code{females}, \code{leaves} each
 return a vector containing the IDs of all pedigree members with the wanted
