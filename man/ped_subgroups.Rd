@@ -23,6 +23,7 @@
 \alias{ancestors}
 \alias{commonAncestors}
 \alias{descendants}
+\alias{commonDescendants}
 \title{Pedigree subgroups}
 \usage{
 founders(x, internal = FALSE)
@@ -66,6 +67,8 @@ ancestors(x, id, inclusive = FALSE, internal = FALSE)
 commonAncestors(x, ids, inclusive = FALSE, internal = FALSE)
 
 descendants(x, id, inclusive = FALSE, internal = FALSE)
+
+commonDescendants(x, ids, inclusive = FALSE, internal = FALSE)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
@@ -86,13 +89,13 @@ included.}
 among his or her own ancestors/descendants}
 }
 \value{
-For \code{ancestors(x, id)}, a vector containing the IDs of all ancestors
-of the individual \code{id}.  For \code{descendants(x, id)}, a vector containing the
-IDs of all descendants (i.e. children, grandchildren, a.s.o.) of individual
-\code{id}.
+The functions \code{ancestors(x, id)} and \code{descendants(x, id)} return a
+vector containing the IDs of all ancestors (resp. descendants) of the
+individual \code{id} within the pedigree \code{x}. If \code{inclusive = TRUE}, \code{id} is
+included in the output.
 
-For \code{commonAncestors(x, ids)}, a vector containing the IDs of common
-ancestors to all of \code{ids}.
+For \code{commonAncestors(x, ids)} and \code{commonDescendants(x, ids)}, a vector
+containing the IDs of common ancestors to all of \code{ids}.
 
 The functions \code{founders}, \code{nonfounders}, \code{males}, \code{females}, \code{leaves} each
 return a vector containing the IDs of all pedigree members with the wanted

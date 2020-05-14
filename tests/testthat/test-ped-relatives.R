@@ -61,11 +61,30 @@ test_that("internal = TRUE results in integer output", {
   expect_type(unrelated(x, 1, internal = T), "integer")
 })
 
-test_that("commonAncestors() are properly detected", {
-  x = nuclearPed(3)
+test_that("common ancestors are properly detected", {
+  x = nuclearPed(2)
   expect_equal(commonAncestors(x, leaves(x)), as.character(1:2))
   expect_equal(commonAncestors(x, leaves(x), inclusive = T), as.character(1:2))
   expect_equal(commonAncestors(x, 2:3), character(0))
   expect_equal(commonAncestors(x, 2:3, inclusive = T), "2")
-  expect_equal(commonAncestors(x, 3:1, inclusive = T), character(0))
+  expect_equal(commonAncestors(x, 1:4, inclusive = T), character(0))
+})
+
+test_that("common descendants are properly detected", {
+  x = nuclearPed(2)
+  expect_equal(commonDescendants(x, founders(x)), as.character(3:4))
+  expect_equal(commonDescendants(x, founders(x), inclusive = T), as.character(3:4))
+  expect_equal(commonDescendants(x, 2:3), character(0))
+  expect_equal(commonDescendants(x, 2:3, inclusive = T), "3")
+  expect_equal(commonDescendants(x, 1:4, inclusive = T), character(0))
+})
+
+test_that("common ancestors/descendants are detected in selfing ped", {
+  x = selfingPed(3)
+  expect_equal(commonAncestors(x, 1:4), character(0))
+  expect_equal(commonAncestors(x, 1:4, inclusive = T), "1")
+  expect_equal(commonAncestors(x, 2:4), "1")
+  expect_equal(commonDescendants(x, 1:4), character(0))
+  expect_equal(commonDescendants(x, 1:4, inclusive = T), "4")
+  expect_equal(commonDescendants(x, 1:3), "4")
 })

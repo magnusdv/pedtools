@@ -15,13 +15,13 @@
 #'   siblings/cousins/nephews/nieces are returned. If NA, both categories are
 #'   included.
 #'
-#' @return For `ancestors(x, id)`, a vector containing the IDs of all ancestors
-#'   of the individual `id`.  For `descendants(x, id)`, a vector containing the
-#'   IDs of all descendants (i.e. children, grandchildren, a.s.o.) of individual
-#'   `id`.
+#' @return The functions `ancestors(x, id)` and `descendants(x, id)` return a
+#'   vector containing the IDs of all ancestors (resp. descendants) of the
+#'   individual `id` within the pedigree `x`. If `inclusive = TRUE`, `id` is
+#'   included in the output.
 #'
-#'   For `commonAncestors(x, ids)`, a vector containing the IDs of common
-#'   ancestors to all of `ids`.
+#'   For `commonAncestors(x, ids)` and `commonDescendants(x, ids)`, a vector
+#'   containing the IDs of common ancestors to all of `ids`.
 #'
 #'   The functions `founders`, `nonfounders`, `males`, `females`, `leaves` each
 #'   return a vector containing the IDs of all pedigree members with the wanted
@@ -285,5 +285,22 @@ descendants = function(x, id, inclusive = FALSE, internal = FALSE) {
   }
   desc = .mysortInt(unique.default(desc))
   if (internal) desc else labels.ped(x)[desc]
+}
+
+#' @rdname ped_subgroups
+#' @export
+commonDescendants = function(x, ids, inclusive = FALSE, internal = FALSE) {
+  if(length(ids) < 2)
+    stop2("Argument `ids` must have length at least 2")
+
+  desc = descendants(x, ids[1], inclusive = inclusive, internal = internal)
+  for(id in ids[-1]) {
+    if(length(desc) == 0)
+      break
+    newdesc = descendants(x, id, inclusive = inclusive, internal = internal)
+    desc = .myintersect(desc, newdesc)
+  }
+
+  sort.default(unique.default(desc))
 }
 
