@@ -1,9 +1,12 @@
 #' Pedigree subgroups
 #'
-#' A collection of utility functions for identifying pedigree members with certain properties.
+#' A collection of utility functions for identifying pedigree members with
+#' certain properties.
 #'
 #' @param x A [ped()] object.
 #' @param id A single ID label (coercible to character).
+#' @param inclusive A logical indicating whether an individual should be counted
+#'   among his or her own ancestors/descendants
 #' @param internal A logical indicating whether 'id' refers to the internal
 #'   order.
 #' @param degree,removal Non-negative integers.
@@ -11,10 +14,10 @@
 #'   siblings/cousins/nephews/nieces are returned. If NA, both categories are
 #'   included.
 #'
-#' @return For `ancestors(x,id)`, a vector containing the IDs of all ancestors
-#'   of the individual `id`.  For `descendants(x,id)`, a vector containing the
-#'   IDs of all descendants (i.e. children, grandchildren, a.s.o.) of
-#'   individual `id`.
+#' @return For `ancestors(x, id)`, a vector containing the IDs of all ancestors
+#'   of the individual `id`.  For `descendants(x, id)`, a vector containing the
+#'   IDs of all descendants (i.e. children, grandchildren, a.s.o.) of individual
+#'   `id`.
 #'
 #'   The functions `founders`, `nonfounders`, `males`, `females`, `leaves` each
 #'   return a vector containing the IDs of all pedigree members with the wanted
@@ -226,34 +229,35 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
-ancestors = function(x, id, internal = FALSE) {
+ancestors = function(x, id, inclusive = FALSE, internal = FALSE) {
   # climbs upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
   if (!internal)  id = internalID(x, id)
 
   FIDX = x$FIDX
   MIDX = x$MIDX
-  ancest = integer(0)
+  ancest = if(inclusive) id else integer(0)
 
   up1 = c(FIDX[id], MIDX[id])
   up1 = up1[up1 > 0]
   while (length(up1)) {
     ancest = c(ancest, up1)
     up1 = c(FIDX[up1], MIDX[up1])
-    up1 = up1[up1>0]
+    up1 = up1[up1 > 0]
   }
   ancest = .mysortInt(unique.default(ancest))
   if (internal) ancest else labels.ped(x)[ancest]
 }
 
 
+
 #' @rdname ped_subgroups
 #' @export
-descendants = function(x, id, internal = FALSE) {
+descendants = function(x, id, inclusive = FALSE, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
 
   FIDX = x$FIDX
   MIDX = x$MIDX
-  desc = integer()
+  desc = if(inclusive) id else integer()
 
   nextoffs = id
   while(length(nextoffs)) {

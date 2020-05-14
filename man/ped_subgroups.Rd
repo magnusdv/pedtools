@@ -60,9 +60,9 @@ cousins(x, id, degree = 1, removal = 0, half = NA, internal = FALSE)
 
 nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
 
-ancestors(x, id, internal = FALSE)
+ancestors(x, id, inclusive = FALSE, internal = FALSE)
 
-descendants(x, id, internal = FALSE)
+descendants(x, id, inclusive = FALSE, internal = FALSE)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
@@ -77,12 +77,15 @@ order.}
 \item{half}{a logical or NA. If TRUE (resp FALSE), only half (resp. full)
 siblings/cousins/nephews/nieces are returned. If NA, both categories are
 included.}
+
+\item{inclusive}{A logical indicating whether an individual should be counted
+among his or her own ancestors/descendants}
 }
 \value{
-For \code{ancestors(x,id)}, a vector containing the IDs of all ancestors
-of the individual \code{id}.  For \code{descendants(x,id)}, a vector containing the
-IDs of all descendants (i.e. children, grandchildren, a.s.o.) of
-individual \code{id}.
+For \code{ancestors(x, id)}, a vector containing the IDs of all ancestors
+of the individual \code{id}.  For \code{descendants(x, id)}, a vector containing the
+IDs of all descendants (i.e. children, grandchildren, a.s.o.) of individual
+\code{id}.
 
 The functions \code{founders}, \code{nonfounders}, \code{males}, \code{females}, \code{leaves} each
 return a vector containing the IDs of all pedigree members with the wanted
@@ -95,7 +98,8 @@ The functions \code{father}, \code{mother}, \code{cousins}, \code{grandparents},
 members having the specified relationship with \code{id}.
 }
 \description{
-A collection of utility functions for identifying pedigree members with certain properties.
+A collection of utility functions for identifying pedigree members with
+certain properties.
 }
 \examples{
 
