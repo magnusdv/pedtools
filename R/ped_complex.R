@@ -119,8 +119,9 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0,
   x = relabel(x, 1:pedsize(x))
 
   if (child) {
-    x = swapSex(x, offs[2])
-    x = addChildren(x, father = offs[1], mother = offs[2], nch = 1)
+    pars = leaves(x)
+    x = swapSex(x, pars[2])
+    x = addChildren(x, father = pars[1], mother = pars[2], nch = 1)
   }
 
   x
