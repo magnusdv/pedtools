@@ -81,10 +81,23 @@ Creating a marker object associated with a pedigree
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "child")
 
-# A rare SNP marker for which the child is heterozygous
-m = marker(x, child = 1:2, alleles = 1:2, afreq = c(0.01, 0.99))
+# An empty SNP with alleles "A" and "B"
+marker(x, alleles = c("A", "B"))
 
-# Sometimes it is useful to attach the marker to the pedigree
+# Alleles/frequencies can be given jointly or separately
+stopifnot(identical(
+  marker(x, afreq = c(A = 0.01, B = 0.99)),
+  marker(x, alleles = c("A", "B"), afreq = c(0.01, 0.99)),
+  ))
+
+# Genotypes can be assigned using different formats
+marker(x, fa = c(1,2), mo = "1/2")
+
+# For homozygous genotypes, three formats are possible
+marker(x, fa = 1, mo = c(1,1), child = "1/1")
+
+# Attaching a marker to the pedigree
+m = marker(x) # By default a SNP with alleles 1,2
 x = setMarkers(x, m)
 
 # A marker with a "proportional" mutation model,
