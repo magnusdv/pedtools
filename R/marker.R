@@ -80,23 +80,40 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
   if(length(posCm) == 0) posCm = NA
   if(length(name) == 0 || identical(name, "")) name = NA
 
+  pedN = pedsize(x)
+
   if (is.null(allelematrix)) {
     # Initalize empty allele matrix
-    m = matrix(0, ncol = 2, nrow = pedsize(x))
+    m = matrix(0, ncol = 2, nrow = pedN)
 
     # Capture genotypes given in dots
     dots = eval(substitute(alist(...)))
-    if(length(dots) > 0 && is.null(names(dots)))
-      stop2("Genotype assignments in `...` must be named. See ?marker")
+    if((ld <- length(dots)) > pedN)
+      stop2("Too many genotype assignments")
 
-    ids_int = internalID(x, names(dots))
-
+    # Genotypes (may be empty)
     genos = lapply(dots, eval.parent)
 
-    for(i in seq_along(dots)) {
+    # Internal ID of each genotype
+    # (If no names, take pedigree members in sequence)
+    dotnames = names(dots)
+    if(is.null(dotnames))
+      ids_int = seq_len(ld)
+    else
+      ids_int = internalID(x, dotnames)
+
+    for(i in seq_len(ld)) {
       g = genos[[i]]
-      if(!is.vector(g) || !length(g) %in% 1:2)
+      lg = length(g)
+
+      if(!is.vector(g) || !lg %in% 1:2)
         stop2("Genotype must be a vector of length 1 or 2: ", deparse(g))
+
+      # Split compound genotypes, e.g., "a/b"
+      if(lg == 1 && is.character(g))
+        g = strsplit(g, "/")[[1]]
+
+      # Insert in `m`
       m[ids_int[i], ] = g
     }
   }

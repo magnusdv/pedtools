@@ -1,11 +1,10 @@
 context("marker creation")
 
-test_that("paramlink syntax raises error", {
+test_that("marker() catches invalid genotype assignments", {
   x = nuclearPed(1)
-  ERR = "Genotype assignments in `...` must be named."
-  expect_error(marker(x, 0), ERR)
-  expect_error(marker(x, 1, 'A'), ERR)
-  expect_error(marker(x, '1', 1, '2', 1:2, alleles=1:2), ERR)
+  expect_error(marker(x, 1:3), "Genotype must be a vector of length 1 or 2")
+  expect_error(marker(x, 1,2,3,4), "Too many genotype assignments")
+  expect_error(marker(x, 3:4, alleles = 1:2), "Invalid allele for this marker")
 })
 
 
