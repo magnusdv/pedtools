@@ -85,11 +85,9 @@ whichMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos 
   if(is.null(markers) && is.null(chroms) && is.null(fromPos) && is.null(toPos))
     return(integer(0))
 
-  nMark = nMarkers(x)
-  if(nMark == 0)
-    return(integer(0))
-
   stopifnotSimpleVector(markers, "markers")
+
+  nMark = nMarkers(x)
 
   if (is.logical(markers)) {
     if(length(markers) != nMark)
