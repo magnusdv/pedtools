@@ -60,11 +60,11 @@
 #' @examples
 #'
 #' x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-#' m = marker(x, fa = 1, boy = 1:2, name = "SNP")
+#' m = marker(x, fa = "1/1", boy = "1/2", name = "SNP")
 #'
 #' plot(x, marker = m)
 #'
-#' # Alternative syntax if the marker is attached to x
+#' # Markers attached to `x` may be called by name
 #' x = setMarkers(x, m)
 #' plot(x, marker = "SNP")
 #'
@@ -79,7 +79,7 @@
 #' plot(x, id.labels = c(FATHER = "fa", "boy"))
 #'
 #' # Colours
-#' plot(x, col = list(red = "fa", green = "boy"))
+#' plot(x, col = list(red = "fa", green = "boy"), shaded = "boy")
 #'
 #' # Founder inbreeding is shown by default
 #' founderInbreeding(x, "mo") = 0.1
