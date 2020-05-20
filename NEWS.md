@@ -6,6 +6,18 @@
 
 Another change is that if `labs` is a function, it is now applied to the pedigree `x`, not to `labels(x)`. This makes it very easy to apply standard pedigree functions like `females()`, `nonfounders()` and `typedMembers()`, since they can be referred to simply by name: `plot(x, labs = females)`.
 
+* The implementation of `doubleCousins()` is improved, and some edge cases smoothed out, but the final ordering of individuals may be different in some cases now.
+
+## New features
+
+* Genotype assignment in `marker()` is more user-friendly now, allowing inputs like `marker(singleton("s"), s = "A/B")`. Previously, heterozygous genotypes had to be provided allele-wise, as `marker(singleton("s"), s = c("A", "B"))`. The character "/" must be used as allele separator and will always be interepreted as such. 
+
+Given the simplicity of the new syntax I recommend that homozygous genotypes are also written out fully, e.g. `s = "B/B"` instead of the previous (and still functional) `s = "B"`.
+
+* New functions `commonAncestors()` and `commonDescendants()` for finding common ancestors/descendants of members in a pedigree.
+
+* The functions `ancestors()` and `descendants()` have a new logical argument, `inclusive`, indicating if the person itselt should be included.
+
 # pedtools 0.9.3
 
 ## New features
