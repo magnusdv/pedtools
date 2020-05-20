@@ -13,7 +13,7 @@
   sep = "/",
   missing = "-",
   skip.empty.genotypes = FALSE,
-  id.labels = labels(x),
+  labs = labels(x),
   title = NULL,
   col = 1,
   shaded = NULL,
@@ -22,6 +22,7 @@
   fouInb = "autosomal",
   margins = c(0.6, 1, 4.1, 1),
   keep.par = FALSE,
+  id.labels = NULL,
   ...
 )
 
@@ -31,7 +32,7 @@
   sep = "/",
   missing = "-",
   skip.empty.genotypes = FALSE,
-  id.labels = labels(x),
+  labs = labels(x),
   title = NULL,
   col = 1,
   shaded = NULL,
@@ -40,6 +41,7 @@
   fouInb = "autosomal",
   margins = c(8, 0, 0, 0),
   yadj = 0,
+  id.labels = NULL,
   ...
 )
 
@@ -64,16 +66,18 @@ plotted.}
 \item{skip.empty.genotypes}{a logical. If TRUE, and \code{marker} is non-NULL,
 empty genotypes (which by default looks like '-/-') are not printed.}
 
-\item{id.labels}{a vector with labels for each pedigree member. This defaults
-to \code{labels(x)}. Alternative forms:
+\item{labs}{a vector or function controlling the individual labels included
+in the plot. Alternative forms:
 \itemize{
-\item If \code{id.labels} is NULL or the empty character "", then no labels are
-drawn.
-\item If \code{id.labels} is the word "num", then all individuals are numerically
+\item If \code{labs} is a vector with nonempty intersection with \code{labels(x)}, these
+individuals will be labelled. If the vector is named, then the (non-empty)
+names are used instead of the ID label. (See Examples.)
+\item If \code{labs} is NULL, or has nonempty intersection with \code{labels(x)}, then no
+labels are drawn.
+\item If \code{labs} is the word "num", then all individuals are numerically
 labelled following the internal ordering.
-\item If \code{id.labels} is a subset of \code{labels(x)}, then only this subset will be
-labelled. If the vector is named, then the (non-empty) names are used
-instead of the ID label. See Examples.
+\item If \code{labs} is a function, it will be replaced with \code{labs(x)} and handled
+as above. (See Examples.)
 }}
 
 \item{title}{the plot title. If NULL or '', no title is added to the plot.}
@@ -102,6 +106,8 @@ singletons only the first element (the 'bottom' margin) is used.}
 \item{keep.par}{A logical (default = FALSE). If TRUE, the graphical
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
+
+\item{id.labels}{Deprecated; use \code{labs} instead}
 
 \item{\dots}{arguments passed on to \code{plot.pedigree} in the \code{kinship2}
 package. In particular \code{symbolsize} and \code{cex} can be useful.}
@@ -133,11 +139,14 @@ plot(x, marker = "SNP")
 plot(x, marker = "SNP", shaded = typedMembers(x),
      starred = "fa", deceased = "mo")
 
-# Labelling only some members
-plot(x, id.labels = c("fa", "boy"))
+# Label only some members
+plot(x, labs = c("fa", "boy"))
 
-# Labelling only some members, and renaming the father
-plot(x, id.labels = c(FATHER = "fa", "boy"))
+# Label only some members; rename the father
+plot(x, labs = c(FATHER = "fa", "boy"))
+
+# Label males only
+plot(x, labs = males)
 
 # Colours
 plot(x, col = list(red = "fa", green = "boy"), shaded = "boy")

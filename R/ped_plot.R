@@ -18,18 +18,21 @@
 #' @param missing the symbol (integer or character) for missing alleles.
 #' @param skip.empty.genotypes a logical. If TRUE, and `marker` is non-NULL,
 #'   empty genotypes (which by default looks like '-/-') are not printed.
-#' @param id.labels a vector with labels for each pedigree member. This defaults
-#'   to `labels(x)`. Alternative forms:
+#' @param labs a vector or function controlling the individual labels included
+#'   in the plot. Alternative forms:
 #'
-#'   * If `id.labels` is NULL or the empty character "", then no labels are
-#'   drawn.
+#'   * If `labs` is a vector with nonempty intersection with `labels(x)`, these
+#'   individuals will be labelled. If the vector is named, then the (non-empty)
+#'   names are used instead of the ID label. (See Examples.)
 #'
-#'   * If `id.labels` is the word "num", then all individuals are numerically
+#'   * If `labs` is NULL, or has nonempty intersection with `labels(x)`, then no
+#'   labels are drawn.
+#'
+#'   * If `labs` is the word "num", then all individuals are numerically
 #'   labelled following the internal ordering.
 #'
-#'   * If `id.labels` is a subset of `labels(x)`, then only this subset will be
-#'   labelled. If the vector is named, then the (non-empty) names are used
-#'   instead of the ID label. See Examples.
+#'   * If `labs` is a function, it will be replaced with `labs(x)` and handled
+#'   as above. (See Examples.)
 #'
 #' @param title the plot title. If NULL or '', no title is added to the plot.
 #' @param col a vector of colours for the pedigree members, recycled if
@@ -52,6 +55,7 @@
 #'   additional annotation.
 #' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
+#' @param id.labels Deprecated; use `labs` instead
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
 #' @author Magnus Dehli Vigeland
@@ -72,11 +76,14 @@
 #' plot(x, marker = "SNP", shaded = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
 #'
-#' # Labelling only some members
-#' plot(x, id.labels = c("fa", "boy"))
+#' # Label only some members
+#' plot(x, labs = c("fa", "boy"))
 #'
-#' # Labelling only some members, and renaming the father
-#' plot(x, id.labels = c(FATHER = "fa", "boy"))
+#' # Label only some members; rename the father
+#' plot(x, labs = c(FATHER = "fa", "boy"))
+#'
+#' # Label males only
+#' plot(x, labs = males)
 #'
 #' # Colours
 #' plot(x, col = list(red = "fa", green = "boy"), shaded = "boy")
@@ -91,9 +98,16 @@
 #' @importFrom graphics text
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                    id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                    labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
-                    keep.par = FALSE, ...) {
+                    keep.par = FALSE, id.labels = NULL, ...) {
+
+  if(!is.null(id.labels)) {
+    message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
+    if(length(id.labels) == pedsize(x) && is.null(names(id.labels))) # special case
+      labs = setNames(labels(x), id.labels)
+    else labs = id.labels
+  }
 
   if(hasSelfing(x))
     stop2("Plotting of pedigrees with selfing is not yet supported")
@@ -101,31 +115,25 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
   nInd = pedsize(x)
 
   # Labels
-  if(is.function(id.labels))
-    id.labels = id.labels(labels(x))
+  if(is.function(labs))
+    labs = labs(x)
 
-  nms = names(id.labels)
-  if (is.null(id.labels) || identical(id.labels, ""))
-    id.labels = rep("", nInd)
-  else if(identical(id.labels, "num"))
-    id.labels = as.character(1:nInd)
-  else if(length(id.labels) < nInd && is.null(nms)) {
-    labs = rep("", nInd)
-    labs[internalID(x, id.labels)] = id.labels
-    id.labels = labs
-  }
-  else if(!is.null(nms)) {
-    labs = rep("", nInd)
-    int_ids = internalID(x, id.labels)
-    labs[int_ids] = id.labels
-    # Replace with names where non-trivial
-    hasName = (nms != "") & (!is.na(nms))
-    labs[int_ids[hasName]] = nms[hasName]
-    id.labels = labs
-  }
-  id.labels[is.na(id.labels)] = ""
+  if(identical(labs, "num"))
+    labs = setNames(labels(x), 1:nInd)
 
-  text = id.labels
+  text = rep("", nInd) # Initialise
+
+  mtch = match(labels(x), labs, nomatch = 0L)
+  showIdx = mtch > 0
+  showLabs = labs[mtch]
+
+  if(!is.null(nms <- names(labs))) { # use names(labs) if present
+    newnames = nms[mtch]
+    goodIdx = newnames != "" & !is.na(newnames)
+    showLabs[goodIdx] = newnames[goodIdx]
+  }
+
+  text[showIdx] = showLabs
 
   # Add stars to labels
   if(is.function(starred))
@@ -213,10 +221,16 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 #' @rdname plot.ped
 #' @export
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
-                          id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
-                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0, ...) {
-  if(length(id.labels) > 1)
-    stop2("Argument `id.labels` must have length 1 in singleton plot: ", id.labels)
+                          labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0,
+                          id.labels = NULL, ...) {
+
+  if(!is.null(id.labels)) {
+    message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
+    if(length(id.labels) == pedsize(x) && is.null(names(id.labels))) # special case
+      labs = setNames(labels(x), id.labels)
+    else labs = id.labels
+  }
 
   if(length(marker) == 0) {
     marker = x$MARKERS = NULL
@@ -228,7 +242,8 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   else
     finb = NULL
 
-  y = suppressMessages(addParents(x, labels(x)[1], verbose = FALSE))
+  y = suppressMessages(addParents(x, labels(x)[1], father = "__FA__", mother = "__MO__",
+                                  verbose = FALSE))
 
     # Marker genotypes
   if (!is.null(marker)) {
@@ -249,21 +264,12 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     y = transferMarkers(setMarkers(x, mlist), y)
   }
 
-  # Tweak id.labels if necessary. After addParents, internal index is 3!
-  if(is.function(id.labels))
-    id.labels = id.labels(labels(x))
+  # Tweak labels if necessary. After addParents, internal index is 3!
+  if(is.function(labs))
+    labs = labs(x)
 
-  if(length(id.labels) == 0 || id.labels == "")
-    id = NULL
-  else if(identical(id.labels, "num"))
-    id = c(`1` = labels(x))
-  else if(is.null(names(id.labels))) {
-    id = labels(x)
-    names(id) = id.labels
-  }
-  else if(!is.null(names(id.labels))) {
-    id = id.labels
-  }
+  if(identical(labs, "num"))
+    labs = c(`1` = labels(x))
 
   if(is.function(shaded))
     shaded = shaded(x)
@@ -271,7 +277,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     starred = starred(x)
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
-               skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
+               skip.empty.genotypes = skip.empty.genotypes, labs = labs,
                title = title, col = col, shaded = shaded, deceased = deceased,
                starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 
@@ -377,10 +383,10 @@ plot.pedList = function(x, ...) {
 #' # To give *the same* parameter to all plots, it can just be added at the end:
 #' margins = c(2, 4, 2, 4)
 #' title = 'Same title'
-#' id.labels = ''
+#' labs = ''
 #' symbolsize = 1.5
 #' plotPedList(peds, widths = widths, frames = frames, margins = margins,
-#'             title = title, id.labels = id.labels, symbolsize = symbolsize,
+#'             title = title, labs = labs, symbolsize = symbolsize,
 #'             newdev = TRUE)
 #'
 #' # COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS

@@ -144,11 +144,11 @@ The following functions modify various attributes of a `ped` object. See `?ped_m
 As our first example we will recreate the `trio` pedigree without using the `ped()` constructor. To give a hint of the flexibility, we show 3 alternative ways to code this.
 
 **Alternative A**  
-The obvious starting point is `nuclearPed()`, with `nch=1` to indicate 1 child. By default, this creates a trio with numeric labels (father=1; mother=2; child=3) and a male child. Hence we fix the gender with `swapSex()`, and edit the labels with `relabel()`:
+The obvious starting point is `nuclearPed()`, with `nch = 1` to indicate 1 child. By default, this creates a trio with numeric labels (father=1; mother=2; child=3) and a male child. Hence we fix the gender with `swapSex()`, and edit the labels with `relabel()`:
 
 ```{r}
 trio2 = nuclearPed(nch = 1)
-trio2 = swapSex(trio2, id = 3)
+trio2 = swapSex(trio2, ids = 3)
 trio2 = relabel(trio2, new = c("fa", "mo", "girl"))
 ```
 
@@ -224,7 +224,7 @@ y2 = linearPed(2, sex = 2) # female line
 y2 = relabel(y2, c(11:14, 6)) # relabel to match only for ID = 6
 
 y = mergePed(y1, y2)
-plot(y, id=NULL, margins=c(0,1,1,1), symbolsize=0.9)
+plot(y, labs = NULL, margins = c(0,1,1,1), symbolsize = 0.9)
 ```
 
 We _could_ do this by starting with the bottom trio, followed by a series of calls to `addParents()`. Instead we will use it as a showcase for the `mergePed()` function. This powerful function is based on a simple idea: Given two pedigrees, "glue together" members with matching ID labels, and check that the result is a valid pedigree. 

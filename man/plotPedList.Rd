@@ -82,10 +82,10 @@ plotPedList(peds, widths = widths, frames = frames,
 # To give *the same* parameter to all plots, it can just be added at the end:
 margins = c(2, 4, 2, 4)
 title = 'Same title'
-id.labels = ''
+labs = ''
 symbolsize = 1.5
 plotPedList(peds, widths = widths, frames = frames, margins = margins,
-            title = title, id.labels = id.labels, symbolsize = symbolsize,
+            title = title, labs = labs, symbolsize = symbolsize,
             newdev = TRUE)
 
 # COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS
