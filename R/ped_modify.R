@@ -260,7 +260,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   # The redundancy in 'desc' does not matter.
   desc = numeric(0)
   for (id in ids_int) {
-    dd = descendants(x, id, internal = T)
+    dd = descendants(x, id, internal = TRUE)
     desc = c(desc, dd)
 
     if (verbose) {
@@ -276,7 +276,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
   parents_of_remain = c(x$FIDX[-c(ids_int, desc)], x$MIDX[-c(ids_int, desc)])
 
   # But remove founders that are NOT among the above
-  FOU = founders(x, internal = T)
+  FOU = founders(x, internal = TRUE)
   leftover_spouses = setdiff(FOU, c(ids_int, parents_of_remain))
 
   if (verbose && length(leftover_spouses))
@@ -287,7 +287,7 @@ removeIndividuals = function(x, ids, verbose = TRUE) {
 
   # The actual reduction. Using the as.matrix trick anticipating marker data a.s.o.
   xmatr = as.matrix(x)
-  new = xmatr[-remov, , drop = F]
+  new = xmatr[-remov, , drop = FALSE]
 
   if(nrow(new) == 0) {
     if(verbose) message("Remaining pedigree is empty!")
@@ -346,7 +346,7 @@ subset.ped = function(x, subset, ...) {
     stop2("Duplicated ID label: ", unique(subset[duplicated(subset)]))
 
   pedm = as.matrix(x)
-  subped = pedm[sub_idx, , drop = F]
+  subped = pedm[sub_idx, , drop = FALSE]
 
   # set FID = 0 if father is not in subset
   subped[!(subped[, 2] %in% sub_idx), 2] = 0L

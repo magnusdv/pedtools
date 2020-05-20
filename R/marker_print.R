@@ -19,7 +19,7 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
 print.marker = function(x, sep = "/", missing = "-", ...) {
   pedlabels = attr(x, 'pedmembers')
   gt = format(x, sep = sep, missing = missing)
-  df = data.frame(pedlabels, gt, stringsAsFactors = F)
+  df = data.frame(pedlabels, gt, stringsAsFactors = FALSE)
 
   # Use marker name as column header, or "<NA>"
   mname = name(x)
@@ -51,7 +51,7 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   # Allele freqs - use hack to get one space indentation
   cat("Allele frequencies:\n")
   afr = afreq(x)
-  print(data.frame(as.list(afr), check.names = F), row.names = F)
+  print(data.frame(as.list(afr), check.names = FALSE), row.names = FALSE)
 }
 
 

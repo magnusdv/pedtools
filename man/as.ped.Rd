@@ -47,7 +47,7 @@ the remaining as unknown.}
 \item{marker_col}{Index vector indicating columns with marker alleles. If NA,
 all columns to the right of all pedigree columns are used. If \code{sep}
 (see below) is non-NULL, each column is interpreted as a genotype column
-and split into separate alleles with \code{strsplit(..., split = sep, fixed = T)}.}
+and split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}.}
 
 \item{locusAttributes}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 

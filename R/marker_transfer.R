@@ -91,7 +91,7 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
       ids_comp = intersect(ids, labels(comp))
       if (!length(ids_comp))
         next
-      to = .transferMarkersSimple(comp, to, ids = ids_comp, erase = F, matchNames = F)
+      to = .transferMarkersSimple(comp, to, ids = ids_comp, erase = FALSE, matchNames = FALSE)
     }
     return(to)
   }

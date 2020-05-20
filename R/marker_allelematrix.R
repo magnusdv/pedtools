@@ -87,7 +87,7 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
 
     # Sort rows according to input `ids`
     if(!is.null(ids))
-      res = res[as.character(ids), , drop = F]
+      res = res[as.character(ids), , drop = FALSE]
 
     return(res)
   }
@@ -112,7 +112,7 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   am = markerlist2allelematrix(mlist)
 
   # Subset and set rownames
-  amSubset = am[internalID(x, ids), , drop = F]
+  amSubset = am[internalID(x, ids), , drop = FALSE]
   rownames(amSubset) = ids
 
   # Return
@@ -135,7 +135,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
       stop2("Unknown ID label: ", setdiff(ids, rownames(completeAlleleMatrix)))
   }
 
-  oldAlleles = completeAlleleMatrix[ids, , drop = F]
+  oldAlleles = completeAlleleMatrix[ids, , drop = FALSE]
   if(is.null(oldAlleles))
     return(x)
 
@@ -161,7 +161,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
   setAllelesComponent = function(comp) {
     ids_comp = intersect(ids, labels(comp))
 
-    am = completeAlleleMatrix[labels(comp), , drop = F]
+    am = completeAlleleMatrix[labels(comp), , drop = FALSE]
     am[ids_comp, ] = alleles[ids_comp, ]
 
     # Locus attributes
@@ -328,7 +328,7 @@ split_genotype_cols = function(m, sep, missing) {
 
   nc = ncol(m)
   nr = nrow(m)
-  splitvec = unlist(strsplit(m, sep, fixed = T))
+  splitvec = unlist(strsplit(m, sep, fixed = TRUE))
   msplit = matrix(0, ncol = 2 * nc, nrow = nr)
   msplit[, 2 * seq_len(nc) - 1] = splitvec[2 * seq_len(nc * nr) - 1]
   msplit[, 2 * seq_len(nc)] = splitvec[2 * seq_len(nc * nr)]

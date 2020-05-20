@@ -17,7 +17,7 @@ setLocusAttributes(
   markers = NULL,
   locusAttributes,
   matchNames = NA,
-  erase = F
+  erase = FALSE
 )
 }
 \arguments{
@@ -92,7 +92,7 @@ locs = list(list(name = "m1", alleles = 1:10),
 w = setLocusAttributes(x, loc = locs)
 getMarkers(w, 1:2)
 
-# If `erase = T` attributes not explicitly given are erased
+# If `erase = TRUE` attributes not explicitly given are erased
 w2 = setLocusAttributes(x, loc = locs, erase = TRUE)
 chrom(w2, 2) # not "X" anymore
 

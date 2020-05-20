@@ -128,7 +128,7 @@ halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
           fid = c(0, 0, 0, rep.int(1, nch1 + nch2)),
           mid = c(0, 0, 0, rep.int(2, nch1), rep.int(3, nch2)),
           sex = c(1, 2, 2, sex1, sex2),
-          verbose = F)
+          verbose = FALSE)
   x
 }
 
@@ -150,7 +150,7 @@ linearPed = function(n, sex = 1) {
   mid[child_idx] = 2*(1:n)
   sex0 = rep_len(1:2, nInd)
 
-  x = ped(id, fid, mid, sex0, validate = F,verbose = F, reorder = F)
+  x = ped(id, fid, mid, sex0, validate = FALSE,verbose = FALSE, reorder = FALSE)
 
   # swap genders if needed
   if(any(sex == 2)) {
@@ -187,8 +187,8 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FAL
 
   if (child) {
     parents = leaves(z)
-    z = swapSex(z, parents[2], verbose = F)
-    z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = F)
+    z = swapSex(z, parents[2], verbose = FALSE)
+    z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = FALSE)
   }
   z
 }
@@ -219,8 +219,8 @@ halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child =
 
   if (child) {
     parents = leaves(z)
-    z = swapSex(z, parents[2], verbose = F)
-    z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = F)
+    z = swapSex(z, parents[2], verbose = FALSE)
+    z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = FALSE)
   }
   z
 }

@@ -76,10 +76,10 @@ readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = 
     first = tolower(scan(pedfile, what = "", nlines = 1, quiet = TRUE, ...))
 
     # Interpret as header line if 1) first element contains "id" and 2) "sex" is an entry
-    header = grepl("id", first[1], fixed = T) && "sex" %in% first
+    header = grepl("id", first[1], fixed = TRUE) && "sex" %in% first
   }
 
-  ped.df = read.table(pedfile, header = header, colClasses = "character", check.names = F, ...)
+  ped.df = read.table(pedfile, header = header, colClasses = "character", check.names = FALSE, ...)
 
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,

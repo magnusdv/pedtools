@@ -171,8 +171,8 @@ halfSibStack = function(n) {
             sex = c(1, 1, 2, 1, 1), verbose = FALSE)
     for (g in seq_len(n)[-1]) {
         m = 3 * g
-        x = addChildren(x, father = m - 2, mother = m, nch = 1, verbose = F)
-        x = addChildren(x, father = m - 1, mother = m, nch = 1, verbose = F)
+        x = addChildren(x, father = m - 2, mother = m, nch = 1, verbose = FALSE)
+        x = addChildren(x, father = m - 1, mother = m, nch = 1, verbose = FALSE)
     }
     x
 }

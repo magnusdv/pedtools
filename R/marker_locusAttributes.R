@@ -71,7 +71,7 @@
 #' w = setLocusAttributes(x, loc = locs)
 #' getMarkers(w, 1:2)
 #'
-#' # If `erase = T` attributes not explicitly given are erased
+#' # If `erase = TRUE` attributes not explicitly given are erased
 #' w2 = setLocusAttributes(x, loc = locs, erase = TRUE)
 #' chrom(w2, 2) # not "X" anymore
 #'
@@ -98,7 +98,7 @@ getLocusAttributes = function(x, markers = NULL,
   if(is.null(markers))
     markers = seq_len(nMarkers(x))
 
-  attribs = match.arg(attribs, several.ok = T)
+  attribs = match.arg(attribs, several.ok = TRUE)
 
   mlist = getMarkers(x, markers)
   lapply(mlist, function(m) {
@@ -112,7 +112,7 @@ getLocusAttributes = function(x, markers = NULL,
 #' @importFrom utils modifyList
 #' @export
 setLocusAttributes = function(x, markers = NULL, locusAttributes,
-                              matchNames = NA, erase = F) {
+                              matchNames = NA, erase = FALSE) {
 
   # If pedlist input, recurse over components
   if(is.pedList(x)) {
@@ -144,7 +144,7 @@ setLocusAttributes = function(x, markers = NULL, locusAttributes,
     if(is.na(matchNames) || isTRUE(matchNames)) {
 
       # Check if attributes include marker names
-      hasNames = all(vapply(locusAttributes, function(a) 'name' %in% names(a), FUN.VALUE = F))
+      hasNames = all(vapply(locusAttributes, function(a) 'name' %in% names(a), FUN.VALUE = FALSE))
       if(hasNames)
         nms = vapply(locusAttributes, function(a) a[['name']], FUN.VALUE = "")
       else

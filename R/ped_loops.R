@@ -132,7 +132,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   # Convert to internal IDs and sort (don't skip this)
   loop_breakers = .mysortInt(internalID(x, loop_breakers))
 
-  FOU = founders(x, internal = T)
+  FOU = founders(x, internal = TRUE)
   FOU_LB = intersect(loop_breakers, FOU)
   if (length(FOU_LB) > 0) {
     mess = "Breaking loops at founders is not implemented"
@@ -147,7 +147,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
     cat("Loop breakers:", toString(LABS[loop_breakers]), "\n")
 
   ### Old ped data
-  oldpedm = as.matrix(x)  #data.frame(x, famid=T, missing=0)
+  oldpedm = as.matrix(x)
   n = pedsize(x)
 
   ### New ped matrix
@@ -181,7 +181,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
     old_lb_matr[] = match(old_lb_matr, pedm[, 1])
 
   # New rows. (Remember internal numbering, i.e. indices.)
-  new_lb_matr = cbind(orig = which(new_rows)-1, copy = which(new_rows))
+  new_lb_matr = cbind(orig = which(new_rows) - 1, copy = which(new_rows))
 
   # Append the new lb matrix to the old
   attrs$LOOP_BREAKERS = rbind(old_lb_matr, new_lb_matr)
@@ -263,13 +263,13 @@ findLoopBreakers2 = function(x, errorIfFail = TRUE) {
     rbind(edge.marriage_F, edge.marriage_M, edge.children)
   }
 
-  NONFOU = nonfounders(x, internal = T)
+  NONFOU = nonfounders(x, internal = TRUE)
   id = NONFOU
   fid = x$FIDX[NONFOU]
   mid = x$MIDX[NONFOU]
   nonf = as.character(NONFOU)
 
-  while (T) {
+  while (TRUE) {
     g = igraph::graph_from_edgelist(ped2edge(id, fid, mid))
     loop = igraph::girth(g)$circle
     if (length(loop) == 0)

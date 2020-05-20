@@ -193,7 +193,7 @@ readFrequencyDatabase = function(filename, format = c("list", "ladder"), ...) {
 
     # Read entire data frame
     database = read.table(filename, header = TRUE, row.names = 1,
-                          as.is = TRUE, check.names = F, ...)
+                          as.is = TRUE, check.names = FALSE, ...)
     als = rownames(database)
     nms = colnames(database)
 

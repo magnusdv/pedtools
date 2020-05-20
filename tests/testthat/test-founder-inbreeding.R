@@ -4,13 +4,13 @@ test_that("setting/getting founder inbreeding works properly", {
   x = addSon(nuclearPed(1), 3, id="boy", verbose=F)
 
   expect_equal(founderInbreeding(x), c(0, 0, 0))
-  expect_equal(founderInbreeding(x, named=TRUE), c('1'=0, '2'=0, '4'=0))
+  expect_equal(founderInbreeding(x, named=T), c('1'=0, '2'=0, '4'=0))
 
   founderInbreeding(x, '4') = 1
   expect_equal(founderInbreeding(x, 4), 1)
 
   founderInbreeding(x) = c('1' = 0.5)
-  expect_equal(founderInbreeding(x, named=TRUE), c('1'=0.5, '2'=0, '4'=1))
+  expect_equal(founderInbreeding(x, named=T), c('1'=0.5, '2'=0, '4'=1))
   expect_equal(founderInbreeding(x, c(4,1)), c(1, 0.5))
 })
 

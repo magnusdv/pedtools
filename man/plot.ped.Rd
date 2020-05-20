@@ -21,7 +21,7 @@
   starred = NULL,
   fouInb = "autosomal",
   margins = c(0.6, 1, 4.1, 1),
-  keep.par = F,
+  keep.par = FALSE,
   ...
 )
 

@@ -63,13 +63,13 @@ writePed = function(x, prefix, what = c("ped", "map", "dat", "freq"),
   }
 
   if (any(c("map", "dat", "freq") %in% what)) {
-    mapmatr = getMap(x, na.action = 1, verbose = F)
+    mapmatr = getMap(x, na.action = 1, verbose = FALSE)
     markerdata = x$MARKERS
   }
 
   if ("map" %in% what) {
     mapname = paste(prefix, "map", sep = ".")
-    write.table(mapmatr, mapname, col.names = F, row.names = F, quote = F)
+    write.table(mapmatr, mapname, col.names = FALSE, row.names = FALSE, quote = FALSE)
     generated.files = c(generated.files, mapname)
     if(verbose) message("File written: ", mapname)
   }
@@ -78,7 +78,7 @@ writePed = function(x, prefix, what = c("ped", "map", "dat", "freq"),
     datname = paste(prefix, "dat", sep = ".")
     #datmatr = cbind(code = c("A", rep("M", nrow(mapmatr))), value = c("my_disease", mapmatr$MARKER))
     datmatr = cbind("M", mapmatr$MARKER)
-    write.table(datmatr, datname, col.names = F, row.names = F, quote = F)
+    write.table(datmatr, datname, col.names = FALSE, row.names = FALSE, quote = FALSE)
     generated.files = c(generated.files, datname)
     if(verbose) message("File written: ", datname)
   }
@@ -106,10 +106,10 @@ writePed = function(x, prefix, what = c("ped", "map", "dat", "freq"),
 
     col3 = character(L)
     allfreqs = unlist(lapply(markerdata, afreq))
-    col3[-cum] = format(allfreqs, scientifit = F, digits = 6)
+    col3[-cum] = format(allfreqs, scientifit = FALSE, digits = 6)
 
     freqmatr = cbind(col1, col2, col3)
-    write.table(freqmatr, freqname, col.names = F, row.names = F, quote = F)
+    write.table(freqmatr, freqname, col.names = FALSE, row.names = FALSE, quote = FALSE)
     generated.files = c(generated.files, freqname)
     if(verbose) message("File written: ", freqname)
   }

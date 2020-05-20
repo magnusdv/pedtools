@@ -7,10 +7,10 @@
 plotPedList(
   plot.arg.list,
   widths = NA,
-  frames = T,
+  frames = TRUE,
   frametitles = NULL,
   fmar = NA,
-  newdev = F,
+  newdev = FALSE,
   dev.height = NA,
   dev.width = NA,
   ...
@@ -68,7 +68,7 @@ widths = c(2, 3, 1, 2)
 plotPedList(peds, widths = widths)
 
 # In most cases the guessed dimensions are ok but not perfect.
-# Resize plot window manually, and then plot again with `newdev = F` (default)
+# Resize plot window manually and re-plot with `newdev = FALSE` (default)
 # plotPedList(peds, widths = widths)
 
 ## Remove frames

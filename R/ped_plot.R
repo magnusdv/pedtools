@@ -93,7 +93,7 @@
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
                     id.labels = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
-                    keep.par = F, ...) {
+                    keep.par = FALSE, ...) {
 
   if(hasSelfing(x))
     stop2("Plotting of pedigrees with selfing is not yet supported")
@@ -197,14 +197,14 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 
   # Add founder inbreeding coefficients
   if(!is.null(fouInb) && hasInbredFounders(x)) {
-    finb = founderInbreeding(x, chromType = fouInb, named = T)
+    finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
     finb = finb[finb > 0]
     idx = internalID(x, names(finb))
     finb.txt = sprintf("f = %.4g", finb)
-    cex = match.call(expand.dots = F)$`...`$cex # NULL is ok!
+    cex = match.call(expand.dots = FALSE)$`...`$cex # NULL is ok!
 
     text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
-         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
+         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
   }
 
   invisible(pdat)
@@ -273,7 +273,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, id.labels = id,
                title = title, col = col, shaded = shaded, deceased = deceased,
-               starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = T, ...)
+               starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 
   usr = par("usr")
   rect(usr[1] - 0.1, pdat$y[3] - yadj, usr[2] + 0.1, usr[4], border = NA, col = "white")
@@ -284,11 +284,11 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   # Add founder inbreeding coefficients
   if(!is.null(finb)) {
     finb.txt = sprintf("f = %.4g", finb)
-    cex = match.call(expand.dots = F)$`...`$cex # NULL is ok!
+    cex = match.call(expand.dots = FALSE)$`...`$cex # NULL is ok!
     idx = 3 # the "child"
 
     text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
-         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = T)
+         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
   }
 
   invisible(pdat)
@@ -312,7 +312,7 @@ as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL) {
 #' @rdname plot.ped
 #' @export
 plot.pedList = function(x, ...) {
-  plotPedList(x, frames = F, ...)
+  plotPedList(x, frames = FALSE, ...)
 }
 
 #' Plot a collection of pedigrees.
@@ -363,7 +363,7 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = widths)
 #'
 #' # In most cases the guessed dimensions are ok but not perfect.
-#' # Resize plot window manually, and then plot again with `newdev = F` (default)
+#' # Resize plot window manually and re-plot with `newdev = FALSE` (default)
 #' # plotPedList(peds, widths = widths)
 #'
 #' ## Remove frames
@@ -421,8 +421,9 @@ plot.pedList = function(x, ...) {
 #' @importFrom grDevices dev.new dev.size
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot
 #' @export
-plotPedList = function(plot.arg.list, widths = NA, frames = T, frametitles = NULL, fmar = NA,
-                       newdev = F, dev.height = NA, dev.width = NA, ...) {
+plotPedList = function(plot.arg.list, widths = NA, frames = TRUE,
+                       frametitles = NULL, fmar = NA, newdev = FALSE,
+                       dev.height = NA, dev.width = NA, ...) {
 
   plot.list.flattened = list()
   if (deduceFrames <- isTRUE(frames)) {

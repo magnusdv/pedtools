@@ -31,7 +31,7 @@ randomPed = function(g, founders = rpois(1,3)+1, selfing = FALSE, seed = NULL) {
 
   foundersM = ceiling(founders/2)
   foundersF = founders - foundersM
-  sex = c(rep(1:2, c(foundersM, foundersF)), sample.int(2, size = g, replace = T))
+  sex = c(rep(1:2, c(foundersM, foundersF)), sample.int(2, size = g, replace = TRUE))
   males = (sex == 1)
   females = (sex == 2)
 
