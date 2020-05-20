@@ -1,3 +1,11 @@
+# Development version
+
+## Breaking change
+
+* The `plot.ped()` argument `id.labels` is now deprecated in favor of the new `labs`. This works *almost* as before, with some exceptions documented here. The `labs` argument should be thought of as *who should be labelled* rather than *what are the labels*. For example, in previous versions, `plot(singleton(1), id.labels = "2")` would rename the singleton to "2". In contrast, `plot(singleton(1), labs = "2")` will not show any label. In general `intersect(labs, labels(x))` determines who gets a label.
+
+Another change is that if `labs` is a function, it is now applied to the pedigree `x`, not to `labels(x)`. This makes it very easy to apply standard pedigree functions like `females()`, `nonfounders()` and `typedMembers()`, since they can be referred to simply by name: `plot(x, labs = females)`.
+
 # pedtools 0.9.3
 
 ## New features
