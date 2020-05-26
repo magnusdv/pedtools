@@ -16,7 +16,8 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.align = "center"
 )
 library(kableExtra)
 ```
@@ -120,6 +121,8 @@ The following pedigree structures serve as starting points for pedigree construc
 * `linearPed()`, a straight line of successors
 * `cousinPed()`, cousins of specified degree/removal
 * `halfCousinPed()`, half cousins of specified degree/removal
+* `ancestralPed()`, a family tree containing the ancestors of a single person
+* `selfingPed()`, a series of consecutive self-matings
 
 There are also more specialized structures, including double cousins and breeding schemes like consecutive matings between full siblings. Look them up in `?ped_complex` if you are interested.
 
@@ -135,6 +138,7 @@ The functions below are used to modify an existing `ped` object by adding/removi
 **Edit labels and attributes**  
 The following functions modify various attributes of a `ped` object. See `?ped_modify` for parameters and details. 
 
+* `setSex()`
 * `swapSex()`
 * `relabel()`
 * `setFamid()` 
@@ -214,31 +218,31 @@ x2 = reorderPed(x2)
 identical(x1, x2)
 ```
 
-### Example 3: A family tree
-For our final example we consider the family tree of a single person going back 3 generations:
+### Example 3: A complex family tree
+For our final example we consider a complicated family tree extending both upwards and downwards from a single person.
 
-```{r echo = FALSE, fig.width = 2.5, fig.width = 4}
-y1 = linearPed(3, sex = 1) # male line 
-y2 = linearPed(2, sex = 2) # female line
+```{r merge-example, echo = FALSE, message = F}
+# Top part
+x = ancestralPed(g = 2) # bottom person is `7`
 
-y2 = relabel(y2, c(11:14, 6)) # relabel to match only for ID = 6
+# Bottom part
+y = halfCousinPed(degree = 1) 
+y = swapSex(y, 4)
+y = relabel(y, new = 7:15) # top person becomes `7`
 
-y = mergePed(y1, y2)
-plot(y, labs = NULL, margins = c(0,1,1,1), symbolsize = 0.9)
+# Merge
+z = mergePed(x, y)
 ```
 
-We _could_ do this by starting with the bottom trio, followed by a series of calls to `addParents()`. Instead we will use it as a showcase for the `mergePed()` function. This powerful function is based on a simple idea: Given two pedigrees, "glue together" members with matching ID labels, and check that the result is a valid pedigree. 
+```{r merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7}
+plot(z, margins = c(1,1,1,1))
+```
 
-When creating the parts that are to be merged, it is usually best to keep the overlap minimal. In our code below we chose the mother to be the single point of contact. To understand the relabelling, plot `y1` and `y2` after each command.
+We will use this example to demonstrate the `mergePed()` function. When this function is given two pedigrees, it "glues together" members with matching ID labels, and checks that the result is a valid pedigree. 
 
-```{r eval=FALSE}
-y1 = linearPed(3, sex = 1) # male line 
-y2 = linearPed(2, sex = 2) # female line
+The hardest part of using `mergePed()` is to get the labelling right; this will almost always involve the `relabel()` function. To keep track of the labels, you should plot after each new line of code. Here is how the pedigree was created:
 
-y2 = relabel(y2, c(11:14, 6)) # relabel to match at ID = 6
-
-y = mergePed(y1, y2)
-plot(y)
+```{r, label = "merge-example"}
 ```
 
 ## Pedigree subsets
@@ -275,7 +279,7 @@ The functions below take as input a `ped` object and the label of a single membe
 
 # Markers
 
-The other main theme of the `pedtools` package (_pedigrees_ being the first) are marker genotypes. 
+The other main theme of the `pedtools` package (pedigrees being the first) are marker genotypes. 
 
 ## Creating marker objects
 Marker objects created with the `marker()` function. For example, the following command makes an empty marker  associated with the `trio` pedigree:
