@@ -96,7 +96,7 @@ labels.list = function(object, ...) {
     labels.default(object)
 }
 
-#' Get or modify pedigree genders
+#' Get or set the sex of pedigree members
 #'
 #' Functions for retrieving or changing the gender codes of specified pedigree
 #' members.
@@ -104,23 +104,48 @@ labels.list = function(object, ...) {
 #' @param x A `ped` object or a list of such.
 #' @param ids A character vector (or coercible to one) containing ID labels.
 #' @param named A logical: return a named vector or not.
+#' @param sex A numeric vector with entries 1 (= male), 2 (= female) or 0 (=
+#'   unknown). If `ids` is NULL, `sex` must be named with ID labels. If `sex` is
+#'   unnamed and shorter than `ids` it is recycled to `length(ids)`.
 #' @param verbose A logical: Verbose output or not.
 #'
 #' @seealso [ped()]
 #'
 #' @return
 #'
-#' * `getSex()` returns an integer vector of the same length as `ids`, with
-#' entries 0 (unknown), 1 (male) or 2 (female).
+#' * `getSex(x, ids)` returns an integer vector of the same length as `ids`,
+#' with entries 0 (unknown), 1 (male) or 2 (female).
 #'
-#' * `swapSex()` returns a `ped` object similar to the input, but where the
+#' * `setSex(x, ids, sex)` returns a ped object identical to `x`, but where the
+#' sex of `ids` is set according to the entries of `sex`
+#'
+#' * `swapSex(x, ids)` returns a ped object identical to `x`, but where the
 #' gender codes of `ids` (and their spouses) are swapped (1 <-> 2).
 #'
 #' @examples
-#' x = nuclearPed(1)
-#' stopifnot(all(getSex(x) == c(1,2,1)))
+#' x = nuclearPed(father = "fa", mother = "mo", children = "ch")
 #'
-#' swapSex(x, 3)
+#' stopifnot(all.equal(
+#'   getSex(x, named = TRUE),
+#'   c(fa = 1, mo = 2, ch = 1)
+#' ))
+#'
+#' # Make child female
+#' setSex(x, ids = "ch", sex = 2)
+#'
+#' # Same, using a named vector
+#' setSex(x, sex = c(ch = 2))
+#'
+#' # Swapping sex is sometimes easier,
+#' # since spouses are dealt with automatically
+#' swapSex(x, ids = "fa")
+#'
+#' # setting/getting sex in a pedlist
+#' y = list(singleton(1, sex = 2), singleton(2), singleton(3))
+#' sx = getSex(y, named = TRUE)
+#' y2 = setSex(y, sex = sx)
+#'
+#' stopifnot(identical(y, y2))
 #'
 #' @importFrom stats setNames
 #' @export
@@ -159,13 +184,55 @@ getSex = function(x, ids, named = FALSE) {
 
 #' @rdname getSex
 #' @export
+setSex = function(x, ids = NULL, sex) {
+  if(!is.ped(x) && !is.pedList(x))
+    stop2("Input is not a `ped` object or a list of such")
+
+  if(is.null(ids))
+    ids = names(sex)
+
+  if(is.null(ids))
+    stop2("If `ids` is NULL, then `sex` must be named")
+
+  sex = as.integer(sex) # strips names, but ok since ids is already defined
+
+  idsL = length(ids)
+  sexL = length(sex)
+  if(sexL < idsL)
+    sex = rep(sex, length.out = idsL)
+  else if(sexL > idsL)
+    stop2("Argument `sex` is longer than `ids`")
+
+  if(is.pedList(x)) {
+    y = lapply(x, function(comp) {
+      idsInt = internalID(comp, ids, errorIfUnknown = FALSE)
+      notNA = !is.na(idsInt)
+      comp$SEX[idsInt[notNA]] = sex[notNA]
+      validatePed(comp)
+      comp
+    })
+    return(y)
+  }
+
+  x$SEX[internalID(x, ids)] = sex
+
+  validatePed(x)
+  x
+}
+
+
+
+#' @rdname getSex
+#' @export
 swapSex = function(x, ids, verbose = TRUE) { #TODO add tests with sex=0
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object")
 
   # Ignore individuals with unknown gender
   ids = ids[getSex(x, ids) != 0]
 
-  if(!length(ids)) return(x)
+  if(!length(ids))
+    return(x)
   ids = internalID(x, ids)
   labs = labels.ped(x)
   FIDX = x$FIDX

@@ -2,10 +2,13 @@
 % Please edit documentation in R/ped_accessors.R
 \name{getSex}
 \alias{getSex}
+\alias{setSex}
 \alias{swapSex}
-\title{Get or modify pedigree genders}
+\title{Get or set the sex of pedigree members}
 \usage{
 getSex(x, ids, named = FALSE)
+
+setSex(x, ids = NULL, sex)
 
 swapSex(x, ids, verbose = TRUE)
 }
@@ -16,13 +19,19 @@ swapSex(x, ids, verbose = TRUE)
 
 \item{named}{A logical: return a named vector or not.}
 
+\item{sex}{A numeric vector with entries 1 (= male), 2 (= female) or 0 (=
+unknown). If \code{ids} is NULL, \code{sex} must be named with ID labels. If \code{sex} is
+unnamed and shorter than \code{ids} it is recycled to \code{length(ids)}.}
+
 \item{verbose}{A logical: Verbose output or not.}
 }
 \value{
 \itemize{
-\item \code{getSex()} returns an integer vector of the same length as \code{ids}, with
-entries 0 (unknown), 1 (male) or 2 (female).
-\item \code{swapSex()} returns a \code{ped} object similar to the input, but where the
+\item \code{getSex(x, ids)} returns an integer vector of the same length as \code{ids},
+with entries 0 (unknown), 1 (male) or 2 (female).
+\item \code{setSex(x, ids, sex)} returns a ped object identical to \code{x}, but where the
+sex of \code{ids} is set according to the entries of \code{sex}
+\item \code{swapSex(x, ids)} returns a ped object identical to \code{x}, but where the
 gender codes of \code{ids} (and their spouses) are swapped (1 <-> 2).
 }
 }
@@ -31,10 +40,29 @@ Functions for retrieving or changing the gender codes of specified pedigree
 members.
 }
 \examples{
-x = nuclearPed(1)
-stopifnot(all(getSex(x) == c(1,2,1)))
+x = nuclearPed(father = "fa", mother = "mo", children = "ch")
 
-swapSex(x, 3)
+stopifnot(all.equal(
+  getSex(x, named = TRUE),
+  c(fa = 1, mo = 2, ch = 1)
+))
+
+# Make child female
+setSex(x, ids = "ch", sex = 2)
+
+# Same, using a named vector
+setSex(x, sex = c(ch = 2))
+
+# Swapping sex is sometimes easier,
+# since spouses are dealt with automatically
+swapSex(x, ids = "fa")
+
+# setting/getting sex in a pedlist
+y = list(singleton(1, sex = 2), singleton(2), singleton(3))
+sx = getSex(y, named = TRUE)
+y2 = setSex(y, sex = sx)
+
+stopifnot(identical(y, y2))
 
 }
 \seealso{

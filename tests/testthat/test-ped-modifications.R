@@ -14,6 +14,30 @@ test_that("trivial reorder has no effect", {
   expect_identical(x, y)
 })
 
+test_that("setSex() reverses getSex()", {
+  x = singleton(1)
+  expect_identical(x, setSex(x, 1, getSex(x, 1)))
+  expect_identical(x, setSex(x, sex = getSex(x, 1, named = T)))
+
+  y = nuclearPed(fa="fa", child = "ch")
+  expect_identical(y, setSex(y, labels(y), getSex(y)))
+  expect_identical(y, setSex(y, sex = getSex(y, named = T)))
+
+  z = list(singleton(4), nuclearPed(1))
+  expect_identical(z, setSex(z, sex = getSex(z, named = T)))
+})
+
+test_that("setSex() recycles sex", {
+  x.male = list(singleton(1), singleton(2))
+  x.female = list(singleton(1, sex=2), singleton(2, sex=2))
+  expect_identical(setSex(x.male, ids = 1:2, sex = 2), x.female)
+
+  y = nuclearPed(nch = 4)
+  y2 = nuclearPed(nch = 4, sex = c(2,1,2,1))
+  expect_identical(setSex(y, ids = 3:6, sex = 2:1), y2)
+})
+
+
 test_that("swapSex() works with trivial labels", {
   x = swapSex(nuclearPed(1, sex=1), 3)
   expect_equal(x$SEX[3], 2)

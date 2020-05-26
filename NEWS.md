@@ -18,6 +18,11 @@ Given the simplicity of the new syntax I recommend that homozygous genotypes are
 
 * The functions `ancestors()` and `descendants()` have a new logical argument, `inclusive`, indicating if the person itselt should be included.
 
+* New function `setSex()`. This is inverse to `getSex()` in the sense that `setSex(x, sex = getSex(x, named = T))` is identical to `x`, whether `x` is a single `ped` object or a list of such (with unique ID labels).
+
+The long-existing `swapSex()` is often more conventient in practise, since it automatically deals with spouses. One situation where `setSex()` is the only option, is when one wants to assign unknown sex (`sex = 0`) to someone.
+
+
 # pedtools 0.9.3
 
 ## New features
