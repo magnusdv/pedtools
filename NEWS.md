@@ -8,6 +8,10 @@ Another change is that if `labs` is a function, it is now applied to the pedigre
 
 * The implementation of `doubleCousins()` is improved, and some edge cases smoothed out, but the final ordering of individuals may be different in some cases now.
 
+* `writePed()` has been partially rewritten, to make it more similar to `readPed()`. By default, only the "ped" file is written. New logical arguments "famid" and "header" provide further control of this file. 
+
+Writing files in merlin format (indicated by `merlin = TRUE`) is internally now done in a separate function. This option is rarely needed by end users, but is called by e.g. `pedprobr::likelihoodMerlin()`.
+
 ## New features
 
 * Genotype assignment in `marker()` is more user-friendly now, allowing inputs like `marker(singleton("s"), s = "A/B")`. Previously, heterozygous genotypes had to be provided allele-wise, as `marker(singleton("s"), s = c("A", "B"))`. The character "/" must be used as allele separator and will always be interepreted as such. 
