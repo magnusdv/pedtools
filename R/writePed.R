@@ -6,115 +6,95 @@
 #'   files are "myped.ped" and "myped.map" in the current directory. Paths to
 #'   other folder may be included, e.g. `prefix = "path-to-my-dir/myped"`.
 #' @param what A subset of the character vector `c("ped", "map", "dat",
-#'   "freq")`, indicating which files should be created. All files are written
-#'   in MERLIN style (but see the `merlin` parameter below!) By default all
-#'   files are created.
-#' @param merlin A logical. If TRUE, the marker alleles are relabelled to
-#'   1,2,..., making sure that the generated files are readable by MERLIN (which
-#'   does not accept non-numerical allele labels in the frequency file.) If
-#'   FALSE (the default) the allele labels are unchanged. In this case, `x`
-#'   should be exactly reproducible from the files (see examples).
+#'   "freq")`, indicating which files should be created. By default only the
+#'   "ped" file is created. This option is ignored if `merlin = TRUE`.
+#' @param famid A logical indicating if family ID should be included as the
+#'   first column in the ped file. The family ID is taken from `famid(x)`. If
+#'   `x` is a pedlist, the family IDs are taken from `names(x)`, or if this is
+#'   NULL, the component-wise `famid()` values. Missing values are replaced by
+#'   natural numbers. This option is ignored if `merlin = TRUE`.
+#' @param header A logical indicating if column names should be included in the
+#'   ped file. This option is ignored if `merlin = TRUE`.
+#' @param merlin A logical. If TRUE, "ped", "map", "dat" and "freq" files are
+#'   written in a format readable by the MERLIN software. In particular MERLIN
+#'   requires non-numerical allele labels in the frequency file.
 #' @param verbose A logical.
 #'
 #' @return A character vector with the file names.
 #' @examples
 #'
-#' tmpdir = tempdir()
 #' x = nuclearPed(1)
-#' x = setMarkers(x, marker(x, '3' = 1:2))
-#' writePed(x, prefix = file.path(tmpdir, "myped"))
+#' x = setMarkers(x, marker(x, "3" = "a/b", name = "m1"))
+#'
+#' # Write to file
+#' fn = writePed(x, prefix = tempfile("test"))
+#'
+#' # Remember `sep = "/"` when reading the file
+#' # (since `writePed()` writes genotypes as "a/b")
+#' y = readPed(fn, sep = "/")
+#'
+#' stopifnot(identical(x, y))
 #'
 #' @importFrom utils write.table
 #' @export
-writePed = function(x, prefix, what = c("ped", "map", "dat", "freq"),
-                    merlin = FALSE, verbose = TRUE) {
-  generated.files = character(0)
+writePed = function(x, prefix, what = "ped", famid = is.pedList(x), header = TRUE, merlin = FALSE, verbose = TRUE) {
 
-  if (merlin) {
-    if(is.pedList(x)) {
-      pedmatr = do.call(rbind, lapply(seq_along(x), function(i)
-        cbind(i, as.matrix(x[[i]], include.attrs = FALSE))))
-      x = x[[1]]
+  if(merlin)
+    return(writePed_merlin(x, prefix = prefix, verbose = verbose))
+
+  fnames = setNames(paste(prefix, what, sep = "."), what)
+
+  if(is.pedList(x)) {
+    pedmatr = do.call(rbind, lapply(x, as.data.frame.ped))
+
+    if(famid) {
+      famids = names(x) %||% unlist(lapply(x, famid))
+      if(any(miss <- famids == "" | is.na(famids)))
+        famids[miss] = seq_along(which(miss))
+      famvec = rep(famids, pedsize(x))
+      pedmatr = cbind(famid = famvec, pedmatr)
     }
-    else {
-      pedmatr = cbind(1, as.matrix(x, include.attrs = FALSE))
-    }
+
+    x = x[[1]] # for later use
   }
-  else { #TODO: avoid actual data.frame here. Slow! (Paramlink original ok...)
-    if(is.pedList(x)) {
-      # single fam? If all comp names are "comp<i>" or "", and no duplicated labels
-      famids = unlist(lapply(x, famid))
-      singleFam = (all(famids == "") || all(grepl("comp", famids))) && !anyDuplicated(labels(x))
-      famids = if(singleFam) rep(1, length(x)) else 1:length(x)
-      pedmatr = do.call(rbind, lapply(seq_along(x), function(i) cbind(i, as.data.frame(x[[1]]))))
-      x = x[[1]]
-    }
-    else {
-      famid = if(x$FAMID == "") 1 else x$FAMID
-      pedmatr = cbind(famid = famid, as.data.frame(x))
+  else {
+    pedmatr = as.data.frame(x)
+    if(famid) {
+      fam = if(x$FAMID == "") "1" else x$FAMID
+      pedmatr = cbind(famid = fam, pedmatr)
     }
   }
 
   if ("ped" %in% what) {
-    pedname = paste(prefix, "ped", sep = ".")
-    write(t(pedmatr), pedname, ncolumns = ncol(pedmatr))
-    generated.files = c(generated.files, pedname)
-    if(verbose) message("File written: ", pedname)
-  }
+    # TODO: This is slow; should use matrix objects.
+    write.table(pedmatr, file = fnames[["ped"]], sep = "\t", col.names = header, row.names = FALSE, quote = FALSE)
+    if(verbose) message("File written: ", fnames[["ped"]])
 
-  if (any(c("map", "dat", "freq") %in% what)) {
-    mapmatr = getMap(x, na.action = 1, verbose = FALSE)
-    markerdata = x$MARKERS
-  }
-
-  if ("map" %in% what) {
-    mapname = paste(prefix, "map", sep = ".")
-    write.table(mapmatr, mapname, col.names = FALSE, row.names = FALSE, quote = FALSE)
-    generated.files = c(generated.files, mapname)
-    if(verbose) message("File written: ", mapname)
-  }
-
-  if ("dat" %in% what) {
-    datname = paste(prefix, "dat", sep = ".")
-    #datmatr = cbind(code = c("A", rep("M", nrow(mapmatr))), value = c("my_disease", mapmatr$MARKER))
-    datmatr = cbind("M", mapmatr$MARKER)
-    write.table(datmatr, datname, col.names = FALSE, row.names = FALSE, quote = FALSE)
-    generated.files = c(generated.files, datname)
-    if(verbose) message("File written: ", datname)
+    # Faster, but excludes column names
+    # write(t.default(pedmatr), fnames[["ped"]], ncolumns = ncol(pedmatr))
   }
 
   if ("freq" %in% what) {
-    freqname = paste(prefix, "freq", sep = ".")
-
-    nalls = vapply(markerdata, nAlleles, 1)
-    L = sum(nalls) + length(nalls)
-    cum = cumsum(c(1, nalls + 1))
-    length(cum) = length(nalls)  #remove last
-
-    col1 = rep("A", L)
-    col1[cum] = "M"
-
-    col2 = character(L)
-    col2[cum] = mapmatr$MARKER
-
-    if (merlin)
-      allalleles = unlist(lapply(nalls, seq_len))
-    else
-      allalleles = unlist(lapply(markerdata, alleles))
-
-    col2[-cum] = allalleles
-
-    col3 = character(L)
-    allfreqs = unlist(lapply(markerdata, afreq))
-    col3[-cum] = format(allfreqs, scientifit = FALSE, digits = 6)
-
-    freqmatr = cbind(col1, col2, col3)
-    write.table(freqmatr, freqname, col.names = FALSE, row.names = FALSE, quote = FALSE)
-    generated.files = c(generated.files, freqname)
-    if(verbose) message("File written: ", freqname)
+    writeFrequencyDatabase(x, filename = fnames[["freq"]], format = "list")
+    if(verbose) message("File written: ", fnames[["freq"]])
   }
 
-  invisible(generated.files)
+  if (any(c("map", "dat") %in% what)) {
+    mapmatr = getMap(x, na.action = 1, verbose = FALSE)
+  }
+
+  if ("map" %in% what) {
+    write.table(mapmatr, fnames[["map"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+    if(verbose) message("File written: ", fnames[["map"]])
+  }
+
+  if ("dat" %in% what) {
+    datmatr = cbind("M", mapmatr$MARKER)
+    write.table(datmatr, fnames[["dat"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+    if(verbose) message("File written: ", fnames[["dat"]])
+  }
+
+  invisible(unname(fnames))
 }
 
 
@@ -172,3 +152,4 @@ writePed_merlin = function(x, prefix, verbose = TRUE) {
 
   invisible(unname(fnames))
 }
+

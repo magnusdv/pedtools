@@ -7,7 +7,9 @@
 writePed(
   x,
   prefix,
-  what = c("ped", "map", "dat", "freq"),
+  what = "ped",
+  famid = is.pedList(x),
+  header = TRUE,
   merlin = FALSE,
   verbose = TRUE
 )
@@ -20,15 +22,21 @@ instance, if \code{prefix = "myped"} and \code{what = c("ped", "map")}, the outp
 files are "myped.ped" and "myped.map" in the current directory. Paths to
 other folder may be included, e.g. \code{prefix = "path-to-my-dir/myped"}.}
 
-\item{what}{A subset of the character vector \code{c("ped", "map", "dat", "freq")}, indicating which files should be created. All files are written
-in MERLIN style (but see the \code{merlin} parameter below!) By default all
-files are created.}
+\item{what}{A subset of the character vector \code{c("ped", "map", "dat", "freq")}, indicating which files should be created. By default only the
+"ped" file is created. This option is ignored if \code{merlin = TRUE}.}
 
-\item{merlin}{A logical. If TRUE, the marker alleles are relabelled to
-1,2,..., making sure that the generated files are readable by MERLIN (which
-does not accept non-numerical allele labels in the frequency file.) If
-FALSE (the default) the allele labels are unchanged. In this case, \code{x}
-should be exactly reproducible from the files (see examples).}
+\item{famid}{A logical indicating if family ID should be included as the
+first column in the ped file. The family ID is taken from \code{famid(x)}. If
+\code{x} is a pedlist, the family IDs are taken from \code{names(x)}, or if this is
+NULL, the component-wise \code{famid()} values. Missing values are replaced by
+natural numbers. This option is ignored if \code{merlin = TRUE}.}
+
+\item{header}{A logical indicating if column names should be included in the
+ped file. This option is ignored if \code{merlin = TRUE}.}
+
+\item{merlin}{A logical. If TRUE, "ped", "map", "dat" and "freq" files are
+written in a format readable by the MERLIN software. In particular MERLIN
+requires non-numerical allele labels in the frequency file.}
 
 \item{verbose}{A logical.}
 }
@@ -40,9 +48,16 @@ Write a pedigree to file
 }
 \examples{
 
-tmpdir = tempdir()
 x = nuclearPed(1)
-x = setMarkers(x, marker(x, '3' = 1:2))
-writePed(x, prefix = file.path(tmpdir, "myped"))
+x = setMarkers(x, marker(x, "3" = "a/b", name = "m1"))
+
+# Write to file
+fn = writePed(x, prefix = tempfile("test"))
+
+# Remember `sep = "/"` when reading the file
+# (since `writePed()` writes genotypes as "a/b")
+y = readPed(fn, sep = "/")
+
+stopifnot(identical(x, y))
 
 }
