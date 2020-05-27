@@ -208,3 +208,27 @@ readFrequencyDatabase = function(filename, format = c("list", "ladder"), ...) {
   names(res) = nms
   res
 }
+
+#' @rdname freqDatabase
+#' @export
+writeFrequencyDatabase = function(x, filename, markers = NULL, format = c("list", "ladder")) {
+  if(is.ped(x) || is.pedList(x))
+    db = getFrequencyDatabase(x, markers, format = "list")
+  else
+    db = x
+
+  format = match.arg(format)
+  if(format == "ladder")
+    stop2("Ladder format not implemented yet")
+
+  N = length(db)
+  for(i in seq_len(N)) {
+    write(names(db)[[i]], file = filename, append = i > 1)
+    m = db[[i]]
+    write.table(cbind(names(m), unname(m)), file = filename, sep = "\t",
+                row.names = FALSE, col.names = FALSE, quote = FALSE, append = TRUE)
+    if(i < N)
+      write("", file = filename, append = TRUE)
+  }
+}
+

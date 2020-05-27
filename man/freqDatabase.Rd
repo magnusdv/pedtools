@@ -5,6 +5,7 @@
 \alias{getFrequencyDatabase}
 \alias{setFrequencyDatabase}
 \alias{readFrequencyDatabase}
+\alias{writeFrequencyDatabase}
 \title{Allele frequency database}
 \usage{
 getFrequencyDatabase(x, markers = NULL, format = c("list", "ladder"))
@@ -12,6 +13,13 @@ getFrequencyDatabase(x, markers = NULL, format = c("list", "ladder"))
 setFrequencyDatabase(x, database, format = c("list", "ladder"), ...)
 
 readFrequencyDatabase(filename, format = c("list", "ladder"), ...)
+
+writeFrequencyDatabase(
+  x,
+  filename,
+  markers = NULL,
+  format = c("list", "ladder")
+)
 }
 \arguments{
 \item{x}{A ped object, or a list of such.}
