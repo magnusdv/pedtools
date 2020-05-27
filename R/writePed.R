@@ -117,3 +117,58 @@ writePed = function(x, prefix, what = c("ped", "map", "dat", "freq"),
   invisible(generated.files)
 }
 
+
+
+#' @importFrom utils write.table
+writePed_merlin = function(x, prefix, verbose = TRUE) {
+
+  what = c("ped", "map", "dat", "freq")
+  fnames = setNames(paste(prefix, what, sep = "."), what)
+
+  # ped file
+  if(is.pedList(x)) {
+    pedmatr = do.call(rbind, lapply(x, as.matrix.ped, include.attrs = FALSE))
+    pedmatr = cbind(rep.int(seq_along(x), pedsize(x)), pedmatr)
+    x = x[[1]]
+  } else {
+    pedmatr = cbind(1, as.matrix(x, include.attrs = FALSE))
+  }
+
+  write(t.default(pedmatr), file = fnames[["ped"]], ncolumns = ncol(pedmatr))
+  if(verbose) message("File written: ", fnames[["ped"]])
+
+  # map file
+  mapmatr = getMap(x, na.action = 1, verbose = FALSE)
+  write.table(mapmatr, file = fnames[["map"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+  if(verbose) message("File written: ", fnames[["map"]])
+
+  # dat file
+  datmatr = cbind("M", mapmatr$MARKER)
+  write.table(datmatr, file = fnames[["dat"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+  if(verbose) message("File written: ", fnames[["dat"]])
+
+  # freq file
+  nalls = nAlleles(x)
+  L = sum(nalls) + length(nalls)
+  cum = cumsum(c(1, nalls + 1))
+  length(cum) = length(nalls)  #remove last
+
+  col1 = rep("A", L)
+  col1[cum] = "M"
+
+  col2 = character(L)
+  col2[cum] = mapmatr$MARKER
+
+  allalleles = unlist(lapply(nalls, seq_len)) # numerical allele names for merlin!
+  col2[-cum] = allalleles
+
+  col3 = character(L)
+  allfreqs = unlist(lapply(x$MARKERS, afreq))
+  col3[-cum] = format(allfreqs, scientifit = FALSE, digits = 6)
+
+  freqmatr = cbind(col1, col2, col3)
+  write.table(freqmatr, file = fnames[["freq"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+  if(verbose) message("File written: ", fnames[["freq"]])
+
+  invisible(unname(fnames))
+}
