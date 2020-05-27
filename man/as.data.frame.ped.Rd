@@ -26,7 +26,7 @@ Note that the output of \code{\link[=as.data.frame.ped]{as.data.frame.ped()}} is
 \code{\link[=as.matrix.ped]{as.matrix.ped()}}. This reflects the fact that these functions have different
 purposes.
 
-Conversion to data.frame is primarily intended for pretty printing. It uses
+Conversion to a data frame is primarily intended for pretty printing. It uses
 correct labels for pedigree members and marker alleles, and pastes alleles to
 form nice-looking genotypes.
 

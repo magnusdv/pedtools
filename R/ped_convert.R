@@ -145,7 +145,7 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
 #' [as.matrix.ped()]. This reflects the fact that these functions have different
 #' purposes.
 #'
-#' Conversion to data.frame is primarily intended for pretty printing. It uses
+#' Conversion to a data frame is primarily intended for pretty printing. It uses
 #' correct labels for pedigree members and marker alleles, and pastes alleles to
 #' form nice-looking genotypes.
 #'
