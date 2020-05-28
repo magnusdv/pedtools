@@ -232,10 +232,6 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
     else labs = id.labels
   }
 
-  if(length(marker) == 0) {
-    marker = x$MARKERS = NULL
-  }
-
   # Founder inbreeding (this must be extracted before addParents())
   if(!is.null(fouInb) && hasInbredFounders(x))
     finb = founderInbreeding(x, chromType = fouInb) #names unneccesary
@@ -246,7 +242,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
                                   verbose = FALSE))
 
     # Marker genotypes
-  if (!is.null(marker)) {
+  if (length(marker) > 0) {
     if (is.marker(marker))
       mlist = list(marker)
     else if (is.markerList(marker))
