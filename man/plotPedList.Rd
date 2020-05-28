@@ -8,11 +8,11 @@ plotPedList(
   plot.arg.list,
   widths = NA,
   frames = TRUE,
-  frametitles = NULL,
+  frametitles = names(plot.arg.list),
   fmar = NA,
-  newdev = FALSE,
   dev.height = NA,
   dev.width = NA,
+  newdev = !is.na(dev.height) || !is.na(dev.width),
   ...
 )
 }
@@ -37,11 +37,10 @@ non-NULL, titles for individuals subplots are ignored.}
 \item{fmar}{A single number in the interval \eqn{[0,0.5)} controlling the
 position of the frames.}
 
-\item{newdev}{A logical, indicating if a new plot window should be opened.}
+\item{dev.height, dev.width}{The dimensions of the new plot window. If these
+are NA suitable values are guessed from the pedigree sizes.}
 
-\item{dev.height, dev.width}{The dimensions of the new device (only relevant
-if \code{newdev} is TRUE). If these are NA suitable values are guessed from the
-pedigree sizes.}
+\item{newdev}{A logical, indicating if a new plot window should be opened.}
 
 \item{\dots}{Further arguments passed on to each call to \code{\link[=plot.ped]{plot.ped()}}.}
 }
@@ -79,7 +78,7 @@ frames = list(1, 2:3)
 plotPedList(peds, widths = widths, frames = frames,
             frametitles = c('First', 'Second'))
 
-# To give *the same* parameter to all plots, it can just be added at the end:
+# Parameters common to all plots can be added in the main call:
 margins = c(2, 4, 2, 4)
 title = 'Same title'
 labs = ''
@@ -120,7 +119,7 @@ plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
 # Different example:
 plotPedList(list(halfCousinPed(4), cousinPed(7)),
             title = c('Many generations', 'Very many generations'),
-            newdev = TRUE, dev.height = 9, dev.width = 9)
+            dev.height = 9, dev.width = 9)
 
 
 }

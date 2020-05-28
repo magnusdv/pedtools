@@ -345,9 +345,8 @@ plot.pedList = function(x, ...) {
 #' @param fmar A single number in the interval \eqn{[0,0.5)} controlling the
 #'   position of the frames.
 #' @param newdev A logical, indicating if a new plot window should be opened.
-#' @param dev.height,dev.width The dimensions of the new device (only relevant
-#'   if `newdev` is TRUE). If these are NA suitable values are guessed from the
-#'   pedigree sizes.
+#' @param dev.height,dev.width The dimensions of the new plot window. If these
+#'   are NA suitable values are guessed from the pedigree sizes.
 #' @param \dots Further arguments passed on to each call to [plot.ped()].
 #'
 #' @author Magnus Dehli Vigeland
@@ -376,7 +375,7 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = widths, frames = frames,
 #'             frametitles = c('First', 'Second'))
 #'
-#' # To give *the same* parameter to all plots, it can just be added at the end:
+#' # Parameters common to all plots can be added in the main call:
 #' margins = c(2, 4, 2, 4)
 #' title = 'Same title'
 #' labs = ''
@@ -417,17 +416,19 @@ plot.pedList = function(x, ...) {
 #' # Different example:
 #' plotPedList(list(halfCousinPed(4), cousinPed(7)),
 #'             title = c('Many generations', 'Very many generations'),
-#'             newdev = TRUE, dev.height = 9, dev.width = 9)
+#'             dev.height = 9, dev.width = 9)
 #'
 #'
 #' @importFrom grDevices dev.new dev.size
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot
 #' @export
 plotPedList = function(plot.arg.list, widths = NA, frames = TRUE,
-                       frametitles = NULL, fmar = NA, newdev = FALSE,
-                       dev.height = NA, dev.width = NA, ...) {
+                       frametitles = names(plot.arg.list), fmar = NA,
+                       dev.height = NA, dev.width = NA,
+                       newdev = !is.na(dev.height) || !is.na(dev.width),
+                       ...) {
 
-  plot.list.flattened = list()
+  plotlist.flattened = list()
   if (deduceFrames <- isTRUE(frames)) {
     frames = list()
     k = 0
@@ -436,27 +437,27 @@ plotPedList = function(plot.arg.list, widths = NA, frames = TRUE,
     if (is.ped(p))
       p = list(p)  # will now be included in next line
     if (is.pedList(p)) {
-      plot.list.flattened = c(plot.list.flattened, lapply(p, list))
+      plotlist.flattened = c(plotlist.flattened, lapply(p, list))
     }
     else {
         # if list of ped with plot arguments
         if (!is.ped(p[[1]]))
           stop2("First element must be a `ped` object", p[[1]])
         p = list(p)
-        plot.list.flattened = append(plot.list.flattened, p)
+        plotlist.flattened = append(plotlist.flattened, p)
       }
     if (deduceFrames) {
       group = (k + 1):(k <- k + length(p))
       frames = append(frames, list(group))
     }
   }
-  plot.arg.list = plot.list.flattened
-  N = length(plot.arg.list)
+
+  N = length(plotlist.flattened)
   if (identical(widths, NA))
-    widths = vapply(plot.arg.list, function(p) ifelse(is.singleton(p[[1]]), 1, 2.5), 1)
+    widths = vapply(plotlist.flattened, function(p) ifelse(is.singleton(p[[1]]), 1, 2.5), 1)
   else
     widths = rep_len(widths, N)
-  maxGen = max(vapply(plot.arg.list, function(arglist) .generations(arglist[[1]]), 1))
+  maxGen = max(vapply(plotlist.flattened, function(arglist) .generations(arglist[[1]]), 1))
 
   if (hasframetitles <- !is.null(frametitles))
     if(length(frametitles) != length(frames))
@@ -470,7 +471,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = TRUE,
   defaultmargins = if (N > 2)
     c(0, 4, 0, 4) else c(0, 2, 0, 2)
 
-  plot.arg.list = lapply(plot.arg.list, function(arglist) {
+  plotlist.flattened = lapply(plotlist.flattened, function(arglist) {
     names(arglist)[1] = "x"
     g = .generations(arglist$x)
     addMargin = 2 * (maxGen - g + 1)
@@ -484,8 +485,8 @@ plotPedList = function(plot.arg.list, widths = NA, frames = TRUE,
   })
 
   # title: this must be treated specially (in outer margins)
-  titles = sapply(plot.arg.list, "[[", "title")
-  plot.arg.list = lapply(plot.arg.list, function(arglist) {
+  titles = sapply(plotlist.flattened, "[[", "title")
+  plotlist.flattened = lapply(plotlist.flattened, function(arglist) {
     arglist$title = ""
     arglist
   })
@@ -516,7 +517,7 @@ plotPedList = function(plot.arg.list, widths = NA, frames = TRUE,
   on.exit(par(opar))
 
   layout(rbind(1:N), widths = widths)
-  for (arglist in plot.arg.list)
+  for (arglist in plotlist.flattened)
     do.call(plot, arglist)
 
   # leftmost coordinate of each plot region (converted to value in [0,1]).
