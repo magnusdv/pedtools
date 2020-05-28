@@ -238,10 +238,25 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   else
     finb = NULL
 
+  # Tweak labels if necessary. After addParents, internal index is 3!
+  if(is.function(labs))
+    labs = labs(x)
+
+  if(identical(labs, "num"))
+    labs = c(`1` = labels(x))
+
+  if(is.function(shaded))
+    shaded = shaded(x)
+
+  if(is.function(starred))
+    starred = starred(x)
+
+
+  # Add parents!
   y = suppressMessages(addParents(x, labels(x)[1], father = "__FA__", mother = "__MO__",
                                   verbose = FALSE))
 
-    # Marker genotypes
+  # Marker genotypes
   if (length(marker) > 0) {
     if (is.marker(marker))
       mlist = list(marker)
@@ -259,18 +274,9 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
 
     y = transferMarkers(setMarkers(x, mlist), y)
   }
-
-  # Tweak labels if necessary. After addParents, internal index is 3!
-  if(is.function(labs))
-    labs = labs(x)
-
-  if(identical(labs, "num"))
-    labs = c(`1` = labels(x))
-
-  if(is.function(shaded))
-    shaded = shaded(x)
-  if(is.function(starred))
-    starred = starred(x)
+  else {
+    y$MARKERS = NULL
+  }
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, labs = labs,
