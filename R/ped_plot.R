@@ -251,32 +251,26 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
   if(is.function(starred))
     starred = starred(x)
 
+  # Markers: Must be attached to `x` before addParents
+  if (length(marker) == 0)
+    mlist = NULL
+  else if (is.marker(marker))
+    mlist = list(marker)
+  else if (is.markerList(marker))
+    mlist = marker
+  else if (is.numeric(marker) || is.character(marker))
+    mlist = getMarkers(x, markers = marker)
+  else
+    stop2("Argument `marker` must be either:\n",
+         "  * an object of class `marker`\n",
+         "  * a list of `marker` objects\n",
+         "  * a character vector (names of attached markers)\n",
+         "  * an integer vector (indices of attached markers)")
+  x = setMarkers(x, mlist)
 
   # Add parents!
   y = suppressMessages(addParents(x, labels(x)[1], father = "__FA__", mother = "__MO__",
                                   verbose = FALSE))
-
-  # Marker genotypes
-  if (length(marker) > 0) {
-    if (is.marker(marker))
-      mlist = list(marker)
-    else if (is.markerList(marker))
-      mlist = marker
-    else if (is.numeric(marker) || is.character(marker))
-      mlist = getMarkers(x, markers = marker)
-    else
-      stop2("Argument `marker` must be either:\n",
-           "  * an object of class `marker`\n",
-           "  * a list of `marker` objects\n",
-           "  * a character vector (names of attached markers)\n",
-           "  * an integer vector (indices of attached markers)")
-    checkConsistency(x, mlist)
-
-    y = transferMarkers(setMarkers(x, mlist), y)
-  }
-  else {
-    y$MARKERS = NULL
-  }
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skip.empty.genotypes = skip.empty.genotypes, labs = labs,
