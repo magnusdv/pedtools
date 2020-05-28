@@ -12,8 +12,7 @@ setMarkers(
   alleleMatrix = NULL,
   locusAttributes = NULL,
   missing = 0,
-  sep = NULL,
-  ...
+  sep = NULL
 )
 
 addMarkers(
@@ -22,8 +21,7 @@ addMarkers(
   alleleMatrix = NULL,
   locusAttributes = NULL,
   missing = 0,
-  sep = NULL,
-  ...
+  sep = NULL
 )
 }
 \arguments{
@@ -45,8 +43,6 @@ for missing alleles.}
 \item{sep}{If this is a single string, each entry of \code{alleleMatrix} is
 interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = TRUE)}. For example, if the entries are formatted as
 "A/B", put \code{sep = "/"}. Default: NULL.}
-
-\item{...}{Further arguments}
 }
 \value{
 A \code{ped} object.

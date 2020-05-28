@@ -57,19 +57,6 @@ readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = 
                    locusAttributes = NULL, missing = 0,
                    sep = NULL, validate = TRUE, ...) {
 
-  # Check for deprecated arguments
-  dots = list(...)
-  for(arg in names(dots)) {
-    if(!is.na(pmatch(arg, "locus_annotations"))) {
-      warning("Argument `locus_annotations` is deprecated; use `locusAttributes` instead")
-      locusAttributes = dots[[arg]]
-    }
-    if(!is.na(pmatch(arg, "allele_sep"))) {
-      warning("Argument `allele_sep` is deprecated; use `sep` instead")
-      sep = dots[[arg]]
-    }
-  }
-
   # If header = NA, check first line
   if(is.na(header)) {
     # Read first line

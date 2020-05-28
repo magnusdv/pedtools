@@ -50,7 +50,6 @@
 #'   interpreted as a genotype, and will be split by calling `strsplit(...,
 #'   split = sep, fixed = TRUE)`. For example, if the entries are formatted as
 #'   "A/B", put `sep = "/"`. Default: NULL.
-#' @param ... Further arguments
 #'
 #' @return A `ped` object.
 #' @examples
@@ -72,24 +71,7 @@ NULL
 #' @rdname marker_attach
 #' @export
 setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
-                      sep = NULL, ...) {
-
-  # Check for deprecated arguments (hackish)
-  dots = list(...)
-  for(arg in names(dots)) {
-    if(!is.na(pmatch(arg, "allele_matrix"))) {
-      warning("Argument `allele_matrix` is deprecated; use `alleleMatrix` instead")
-      alleleMatrix = dots[[arg]]
-    }
-    if(!is.na(pmatch(arg, "locus_annotations"))) {
-      warning("Argument `locus_annotations` is deprecated; use `locusAttributes` instead")
-      locusAttributes = dots[[arg]]
-    }
-    if(!is.na(pmatch(arg, "allele_sep"))) {
-      warning("Argument `allele_sep` is deprecated; use `sep` instead")
-      sep = dots[[arg]]
-    }
-  }
+                      sep = NULL) {
 
   # If pedlist input, recurse over components
   if(is.pedList(x)) {
@@ -133,24 +115,7 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 #' @rdname marker_attach
 #' @export
 addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
-                      sep = NULL, ...) {
-
-  # Check for deprecated arguments (hackish)
-  dots = list(...)
-  for(arg in names(dots)) {
-    if(!is.na(pmatch(arg, "allele_matrix"))) {
-      warning("Argument `allele_matrix` is deprecated; use `alleleMatrix` instead")
-      alleleMatrix = dots[[arg]]
-    }
-    if(!is.na(pmatch(arg, "locus_annotations"))) {
-      warning("Argument `locus_annotations` is deprecated; use `locusAttributes` instead")
-      locusAttributes = dots[[arg]]
-    }
-    if(!is.na(pmatch(arg, "allele_sep"))) {
-      warning("Argument `allele_sep` is deprecated; use `sep` instead")
-      sep = dots[[arg]]
-    }
-  }
+                      sep = NULL) {
 
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 

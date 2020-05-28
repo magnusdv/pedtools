@@ -329,19 +329,6 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
                              locusAttributes = NULL, missing = 0,
                              sep = NULL, validate = TRUE, ...) {
 
-  # Check for deprecated arguments
-  dots = list(...)
-  for(arg in names(dots)) {
-    if(!is.na(pmatch(arg, "locus_annotations"))) {
-      warning("Argument `locus_annotations` is deprecated; use `locusAttributes` instead")
-      locusAttributes = dots[[arg]]
-    }
-    if(!is.na(pmatch(arg, "allele_sep"))) {
-      warning("Argument `allele_sep` is deprecated; use `sep` instead")
-      sep = dots[[arg]]
-    }
-  }
-
   # Identify `famid` column and check for multiple pedigrees
   colnames = tolower(names(x))
   if(is.na(famid_col))
