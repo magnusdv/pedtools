@@ -535,10 +535,13 @@ posCm.ped = function(x, markers, ...) {
 `posCm<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
-  if(length(value) != length(markers))
-    stop2("Length of replacement vector must equal the number of markers")
-  if(anyDuplicated.default(value))
-    stop2("Replacement values must be unique")
+
+  nm = length(markers)
+  nv = length(value)
+  if(nv > nm)
+    stop2("Replacement vector is longer than the number of markers")
+  else if(nv < nm)
+    value = rep(value, length.out = nm)
 
   idx = whichMarkers(x, markers = markers)
 
@@ -576,10 +579,13 @@ posCm.ped = function(x, markers, ...) {
 `posMb<-.ped` = function(x, markers, ..., value) {
   if(missing(markers) || length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
-  if(length(value) != length(markers))
-    stop2("Length of replacement vector must equal the number of markers")
-  if(anyDuplicated.default(value))
-    stop2("Replacement values must be unique")
+
+  nm = length(markers)
+  nv = length(value)
+  if(nv > nm)
+    stop2("Replacement vector is longer than the number of markers")
+  else if(nv < nm)
+    value = rep(value, length.out = nm)
 
   idx = whichMarkers(x, markers = markers)
 
