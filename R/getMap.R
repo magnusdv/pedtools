@@ -39,3 +39,25 @@ getMap = function(x, markers = seq_len(nMarkers(x)), pos = c("cm", "mb"), na.act
   }
   map
 }
+
+
+
+#' @importFrom utils read.table
+setMap = function(x, map) {
+  if(is.character(map))
+    map = read.table(map, header = TRUE)
+
+  chroms = map[[1]]
+  mnames = map[[2]]
+  chrom(x, mnames) = chroms
+
+  MBcol = grep("mb", names(map), value = TRUE, ignore.case = TRUE)
+  CMcol = grep("cm", names(map), value = TRUE, ignore.case = TRUE)
+
+  if(length(MBcol))
+    posMb(x, mnames) = map[[MBcol[1]]]
+  if(length(CMcol))
+    posCm(x, mnames) = map[[CMcol[1]]]
+
+  x
+}
