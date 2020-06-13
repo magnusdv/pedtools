@@ -20,8 +20,7 @@ whichMarkers(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos = NULL)
 \item{x}{A \code{ped} object, or a list of such}
 
 \item{markers}{Either a character vector (with marker names), a numeric
-vector (with marker indices), a logical (of the same length as the number
-of markers attached to \code{x}), or NULL}
+vector (with marker indices), a logical (of length \code{nMarkers(x)}), or NULL.}
 
 \item{chroms}{A vector of chromosome names, or NULL}
 
@@ -46,6 +45,10 @@ markers. If \code{x} is a list of pedigrees an error is raised unless
 }
 \description{
 Functions for manipulating markers attached to \code{ped} objects.
+}
+\details{
+If \code{markers} consists of negative integers, it will be converted to its
+complement within \code{1:nMarkers(x)}.
 }
 \seealso{
 \code{\link[=setMarkers]{setMarkers()}}

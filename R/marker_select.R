@@ -2,10 +2,12 @@
 #'
 #' Functions for manipulating markers attached to `ped` objects.
 #'
+#' If `markers` consists of negative integers, it will be converted to its
+#' complement within `1:nMarkers(x)`.
+#'
 #' @param x A `ped` object, or a list of such
 #' @param markers Either a character vector (with marker names), a numeric
-#'   vector (with marker indices), a logical (of the same length as the number
-#'   of markers attached to `x`), or NULL
+#'   vector (with marker indices), a logical (of length `nMarkers(x)`), or NULL.
 #' @param chroms A vector of chromosome names, or NULL
 #' @param fromPos A single number or NULL
 #' @param toPos A single number or NULL
@@ -100,6 +102,13 @@ whichMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos 
 
     if(any(markers != idx))
       stop2("Marker index must be integer: ", markers[markers != idx])
+
+    # Negative indices: Remove these
+    if(any(idx < 0)) {
+      if(any(idx > 0))
+        stop2("Cannot mix positive and negative marker indices: ", markers)
+      idx = seq_len(nMark)[idx]
+    }
 
     outside = idx < 1 | idx > nMark
     if(any(outside))
