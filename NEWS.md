@@ -1,8 +1,8 @@
-# Development version
+# pedtools 0.9.4
 
-## Breaking change
+## Breaking changes
 
-* The `plot.ped()` argument `id.labels` is now deprecated in favor of the new `labs`. This works *almost* as before, with some exceptions documented here. The `labs` argument should be thought of as *who should be labelled* rather than *what are the labels*. For example, in previous versions, `plot(singleton(1), id.labels = "2")` would rename the singleton to "2". In contrast, `plot(singleton(1), labs = "2")` will not show any label. In general `intersect(labs, labels(x))` determines who gets a label.
+* The `plot.ped()` argument `id.labels` is now deprecated in favour of the new `labs`. This works *almost* as before, with some exceptions documented here. The `labs` argument should be thought of as *who should be labelled* rather than *what are the labels*. For example, with `x = singleton(1)`, the previous `plot(x, id.labels = "2")` would rename the singleton to "2". In contrast, `plot(x, labs = "2")` will not show any label (since `x` doesn't have a member named "2"). In general `intersect(labs, labels(x))` determines who gets a label.
 
 Another change is that if `labs` is a function, it is now applied to the pedigree `x`, not to `labels(x)`. This makes it very easy to apply standard pedigree functions like `females()`, `nonfounders()` and `typedMembers()`, since they can be referred to simply by name: `plot(x, labs = females)`.
 
@@ -14,17 +14,19 @@ Writing files in merlin format (indicated by `merlin = TRUE`) is internally now 
 
 ## New features
 
-* Genotype assignment in `marker()` is more user-friendly now, allowing inputs like `marker(singleton("s"), s = "A/B")`. Previously, heterozygous genotypes had to be provided allele-wise, as `marker(singleton("s"), s = c("A", "B"))`. The character "/" must be used as allele separator and will always be interepreted as such. 
+* Genotype assignment in `marker()` is more user-friendly now, allowing inputs like `marker(singleton("s"), s = "A/B")`. Previously, heterozygous genotypes had to be provided allele-wise, e.g., `marker(singleton("s"), s = c("A", "B"))`. The character "/" must be used as allele separator and will always be interpreted as such. 
 
-Given the simplicity of the new syntax I recommend that homozygous genotypes are also written out fully, e.g. `s = "B/B"` instead of the previous (and still functional) `s = "B"`.
+Given the simplicity of the new syntax I recommend that homozygous genotypes are also written out fully, e.g. `s = "B/B"` instead of the previous (but still functional) `s = "B"`.
 
 * New functions `commonAncestors()` and `commonDescendants()` for finding common ancestors/descendants of members in a pedigree.
 
-* The functions `ancestors()` and `descendants()` have a new logical argument, `inclusive`, indicating if the person itselt should be included.
+* The functions `ancestors()` and `descendants()` have a new logical argument, `inclusive`, indicating if the person itself should be included.
 
 * New function `setSex()`. This is inverse to `getSex()` in the sense that `setSex(x, sex = getSex(x, named = T))` is identical to `x`, whether `x` is a single `ped` object or a list of such (with unique ID labels).
 
-The long-existing `swapSex()` is often more conventient in practise, since it automatically deals with spouses. One situation where `setSex()` is the only option, is when one wants to assign unknown sex (`sex = 0`) to someone.
+The old `swapSex()` is often more convenient in practise, since it automatically deals with spouses. One situation where `setSex()` is the only option, is when one wants to assign unknown sex (`sex = 0`) to someone.
+
+* New function `setMap()`, which can be used for assigning chromosome and position attributes to marker objects.
 
 
 # pedtools 0.9.3
