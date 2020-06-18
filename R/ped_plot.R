@@ -12,11 +12,11 @@
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
 #'   the format determined by `sep` and `missing`. See also
-#'   `skip.empty.genotypes` below. If NULL (the default), no genotypes are
+#'   `skipEmptyGenotypes` below. If NULL (the default), no genotypes are
 #'   plotted.
 #' @param sep a character of length 1 separating alleles for diploid markers.
 #' @param missing the symbol (integer or character) for missing alleles.
-#' @param skip.empty.genotypes a logical. If TRUE, and `marker` is non-NULL,
+#' @param skipEmptyGenotypes a logical. If TRUE, and `marker` is non-NULL,
 #'   empty genotypes (which by default looks like '-/-') are not printed.
 #' @param labs a vector or function controlling the individual labels included
 #'   in the plot. Alternative forms:
@@ -55,6 +55,7 @@
 #'   additional annotation.
 #' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
+#' @param skip.empty.genotypes Deprecated; use `skipEmptyGenotype` instead.
 #' @param id.labels Deprecated; use `labs` instead
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
@@ -97,16 +98,21 @@
 #'
 #' @importFrom graphics text
 #' @export
-plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
+plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = FALSE,
                     labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
-                    keep.par = FALSE, id.labels = NULL, ...) {
+                    keep.par = FALSE, skip.empty.genotypes = NULL, id.labels = NULL, ...) {
 
   if(!is.null(id.labels)) {
     message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
     if(length(id.labels) == pedsize(x) && is.null(names(id.labels))) # special case
       labs = setNames(labels(x), id.labels)
     else labs = id.labels
+  }
+
+  if(!is.null(skip.empty.genotypes)) {
+    message("The `skip.empty.genotypes` argument has been renamed to `skipEmptyGenotypes`, and will be removed in a future version")
+    skipEmptyGenotypes = skip.empty.genotypes
   }
 
   if(hasSelfing(x))
@@ -161,7 +167,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
-    if (skip.empty.genotypes)
+    if (skipEmptyGenotypes)
       geno[rowSums(do.call(cbind, mlist)) == 0] = ""
 
     text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
@@ -220,7 +226,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genot
 
 #' @rdname plot.ped
 #' @export
-plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty.genotypes = FALSE,
+plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = FALSE,
                           labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                           starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0,
                           id.labels = NULL, ...) {
@@ -273,7 +279,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skip.empty
                                   verbose = FALSE))
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
-               skip.empty.genotypes = skip.empty.genotypes, labs = labs,
+               skipEmptyGenotypes = skipEmptyGenotypes, labs = labs,
                title = title, col = col, shaded = shaded, deceased = deceased,
                starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 
@@ -398,7 +404,7 @@ plot.pedList = function(x, ...) {
 #' genotype(m2, leaves(x2)) = "A"
 #' marg2 = c(3, 4, 2, 4)
 #' plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2", symbolsize = 1.2,
-#'              skip.empty.genotypes = TRUE, id = NULL)
+#'              skipEmptyGenotypes = TRUE, id = NULL)
 #'
 #' x3 = singleton("Mr. X")
 #' marg3 = c(10, 0, 0, 0)

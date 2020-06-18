@@ -101,7 +101,7 @@ m2 = marker(x2, alleles = "A")
 genotype(m2, leaves(x2)) = "A"
 marg2 = c(3, 4, 2, 4)
 plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2", symbolsize = 1.2,
-             skip.empty.genotypes = TRUE, id = NULL)
+             skipEmptyGenotypes = TRUE, id = NULL)
 
 x3 = singleton("Mr. X")
 marg3 = c(10, 0, 0, 0)

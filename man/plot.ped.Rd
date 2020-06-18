@@ -12,7 +12,7 @@
   marker = NULL,
   sep = "/",
   missing = "-",
-  skip.empty.genotypes = FALSE,
+  skipEmptyGenotypes = FALSE,
   labs = labels(x),
   title = NULL,
   col = 1,
@@ -22,6 +22,7 @@
   fouInb = "autosomal",
   margins = c(0.6, 1, 4.1, 1),
   keep.par = FALSE,
+  skip.empty.genotypes = NULL,
   id.labels = NULL,
   ...
 )
@@ -31,7 +32,7 @@
   marker = NULL,
   sep = "/",
   missing = "-",
-  skip.empty.genotypes = FALSE,
+  skipEmptyGenotypes = FALSE,
   labs = labels(x),
   title = NULL,
   col = 1,
@@ -56,14 +57,14 @@ as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 attached to \code{x}, a \code{marker} object, or a list of such. The genotypes for
 the chosen markers are written below each individual in the pedigree, in
 the format determined by \code{sep} and \code{missing}. See also
-\code{skip.empty.genotypes} below. If NULL (the default), no genotypes are
+\code{skipEmptyGenotypes} below. If NULL (the default), no genotypes are
 plotted.}
 
 \item{sep}{a character of length 1 separating alleles for diploid markers.}
 
 \item{missing}{the symbol (integer or character) for missing alleles.}
 
-\item{skip.empty.genotypes}{a logical. If TRUE, and \code{marker} is non-NULL,
+\item{skipEmptyGenotypes}{a logical. If TRUE, and \code{marker} is non-NULL,
 empty genotypes (which by default looks like '-/-') are not printed.}
 
 \item{labs}{a vector or function controlling the individual labels included
@@ -106,6 +107,8 @@ singletons only the first element (the 'bottom' margin) is used.}
 \item{keep.par}{A logical (default = FALSE). If TRUE, the graphical
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
+
+\item{skip.empty.genotypes}{Deprecated; use \code{skipEmptyGenotype} instead.}
 
 \item{id.labels}{Deprecated; use \code{labs} instead}
 
