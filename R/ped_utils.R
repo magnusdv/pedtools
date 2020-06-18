@@ -308,31 +308,6 @@ nextNN = function(labs) { # labs a character vector
   })
 }
 
-#KAN KASTES:
-.descentPaths2 = function(x, ids, internal = FALSE) {
-  if (!internal) ids = internalID(x, ids)
-
-  offs = lapply(1:pedsize(x), function(y) children(x, y, internal = TRUE))
-  lapply(ids, function(id) {
-    res = list(id)
-    while (TRUE) {
-      newoffs = offs[vapply(res, function(path) path[length(path)], 1)]
-      if (length(unlist(newoffs)) == 0)
-        break
-      nextstep = lapply(1:length(res), function(r)
-        if (length(newoffs[[r]]) == 0) res[r]
-        else lapply(newoffs[[r]], function(kid) c(res[[r]], kid)))
-      res = unlist(nextstep, recursive = FALSE)
-    }
-    if (!internal) {
-      labs = labels(x)
-      res = lapply(res, function(int_ids) labs[int_ids])
-    }
-    res
-  })
-}
-
-
 
 #' Pedigree component
 #'
