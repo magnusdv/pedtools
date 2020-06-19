@@ -16,8 +16,8 @@
 #'   plotted.
 #' @param sep a character of length 1 separating alleles for diploid markers.
 #' @param missing the symbol (integer or character) for missing alleles.
-#' @param skipEmptyGenotypes a logical. If TRUE, and `marker` is non-NULL,
-#'   empty genotypes (which by default looks like '-/-') are not printed.
+#' @param skipEmptyGenotypes a logical. If TRUE (default), and `marker` is non-NULL,
+#'   empty genotypes are not printed.
 #' @param labs a vector or function controlling the individual labels included
 #'   in the plot. Alternative forms:
 #'
@@ -98,7 +98,7 @@
 #'
 #' @importFrom graphics text
 #' @export
-plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = FALSE,
+plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = TRUE,
                     labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                     starred = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
                     keep.par = FALSE, skip.empty.genotypes = NULL, id.labels = NULL, ...) {
@@ -226,7 +226,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotyp
 
 #' @rdname plot.ped
 #' @export
-plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = FALSE,
+plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = TRUE,
                           labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
                           starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0,
                           id.labels = NULL, ...) {
@@ -403,8 +403,8 @@ plot.pedList = function(x, ...) {
 #' m2 = marker(x2, alleles = "A")
 #' genotype(m2, leaves(x2)) = "A"
 #' marg2 = c(3, 4, 2, 4)
-#' plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2", symbolsize = 1.2,
-#'              skipEmptyGenotypes = TRUE, id = NULL)
+#' plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2",
+#'              symbolsize = 1.2, labs = NULL)
 #'
 #' x3 = singleton("Mr. X")
 #' marg3 = c(10, 0, 0, 0)

@@ -12,7 +12,7 @@
   marker = NULL,
   sep = "/",
   missing = "-",
-  skipEmptyGenotypes = FALSE,
+  skipEmptyGenotypes = TRUE,
   labs = labels(x),
   title = NULL,
   col = 1,
@@ -32,7 +32,7 @@
   marker = NULL,
   sep = "/",
   missing = "-",
-  skipEmptyGenotypes = FALSE,
+  skipEmptyGenotypes = TRUE,
   labs = labels(x),
   title = NULL,
   col = 1,
@@ -64,8 +64,8 @@ plotted.}
 
 \item{missing}{the symbol (integer or character) for missing alleles.}
 
-\item{skipEmptyGenotypes}{a logical. If TRUE, and \code{marker} is non-NULL,
-empty genotypes (which by default looks like '-/-') are not printed.}
+\item{skipEmptyGenotypes}{a logical. If TRUE (default), and \code{marker} is non-NULL,
+empty genotypes are not printed.}
 
 \item{labs}{a vector or function controlling the individual labels included
 in the plot. Alternative forms:
