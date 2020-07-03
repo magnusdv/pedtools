@@ -69,7 +69,7 @@ NULL
 #' @export
 addChildren = function(x, father = NULL, mother = NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
-  if(!is_count(nch)) stop2("Argument `nch` must be a positive integer: ", nch)
+  if(!isCount(nch)) stop2("Argument `nch` must be a positive integer: ", nch)
 
   # These variables will change as new members are created
   n = pedsize(x)

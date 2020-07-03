@@ -57,10 +57,10 @@ NULL
 #' @export
 doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0,
                          half1 = FALSE, half2 = FALSE, child = FALSE) {
-  if(!is_count(degree1, minimum = 0)) stop2("`degree1` must be a nonnegative integer: ", degree1)
-  if(!is_count(degree2, minimum = 0)) stop2("`degree2` must be a nonnegative integer: ", degree2)
-  if(!is_count(removal1, minimum = 0)) stop2("`removal1` must be a nonnegative integer: ", removal1)
-  if(!is_count(removal2, minimum = 0)) stop2("`removal2` must be a nonnegative integer: ", removal2)
+  if(!isCount(degree1, minimum = 0)) stop2("`degree1` must be a nonnegative integer: ", degree1)
+  if(!isCount(degree2, minimum = 0)) stop2("`degree2` must be a nonnegative integer: ", degree2)
+  if(!isCount(removal1, minimum = 0)) stop2("`removal1` must be a nonnegative integer: ", removal1)
+  if(!isCount(removal2, minimum = 0)) stop2("`removal2` must be a nonnegative integer: ", removal2)
 
   # Ensure paternal path is longest (otherwise swap)
   if(degree2*2+removal2 > degree1*2 + removal1) {
@@ -146,7 +146,7 @@ quadHalfFirstCousins = function() {
 #' @rdname ped_complex
 #' @export
 fullSibMating = function(n) {
-  if(!is_count(n, minimum = 0))
+  if(!isCount(n, minimum = 0))
     stop2("`n` must be a nonnegative integer")
 
   id = seq_len(2*(n + 2))
@@ -166,7 +166,7 @@ halfSibStack = function(n) {
     # Creates pedigree resulting from a breeding scheme where each generation adds two half
     # brothers and a female founder.  These become the parents of the half brothers in the next
     # layer.
-    if(!is_count(n)) stop2("`generations` must be a positive integer")
+    if(!isCount(n)) stop2("`generations` must be a positive integer")
     x = ped(id = 1:5, fid = c(0, 0, 0, 1, 2), mid = c(0, 0, 0, 3, 3),
             sex = c(1, 1, 2, 1, 1), verbose = FALSE)
     for (g in seq_len(n)[-1]) {

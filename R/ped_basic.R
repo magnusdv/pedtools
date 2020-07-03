@@ -89,7 +89,7 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
                       children = as.character(seq.int(3, length.out = nch))) {
   if(missing(nch))
     nch = length(children)
-  if(!is_count(nch))
+  if(!isCount(nch))
     stop2("`nch` must be a positive integer: ", nch)
   if(length(children) != nch)
     stop2("`children` must have length `nch`")
@@ -117,9 +117,9 @@ nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
 #' @rdname ped_basic
 #' @export
 halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
-  if(!is_count(nch1))
+  if(!isCount(nch1))
     stop2("`nch1` must be a positive integer: ", nch1)
-  if(!is_count(nch2))
+  if(!isCount(nch2))
     stop2("`nch2` must be a positive integer: ", nch2)
   sex1 = validate_sex(sex1, nInd = nch1)
   sex2 = validate_sex(sex2, nInd = nch2)
@@ -135,7 +135,7 @@ halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
 #' @rdname ped_basic
 #' @export
 linearPed = function(n, sex = 1) {
-  if(!is_count(n, minimum = 0))
+  if(!isCount(n, minimum = 0))
     stop2("`n` must be a nonnegative integer: ", n)
 
   sex = validate_sex(sex, nInd = n)
@@ -164,9 +164,9 @@ linearPed = function(n, sex = 1) {
 #' @rdname ped_basic
 #' @export
 cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
-  if(!is_count(degree, minimum = 0))
+  if(!isCount(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum = 0))
+  if(!isCount(removal, minimum = 0))
     stop2("`removal` must be a nonnegative integer: ", removal)
 
   deg_right = deg_left = degree
@@ -197,9 +197,9 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FAL
 #' @rdname ped_basic
 #' @export
 halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
-  if(!is_count(degree, minimum = 0))
+  if(!isCount(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
-  if(!is_count(removal, minimum = 0))
+  if(!isCount(removal, minimum = 0))
     stop2("`removal` must be a nonnegative integer: ", removal)
 
   deg_right = deg_left = degree
@@ -228,7 +228,7 @@ halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child =
 #' @rdname ped_basic
 #' @export
 ancestralPed = function(g) {
-  if(!is_count(g, minimum = 0))
+  if(!isCount(g, minimum = 0))
     stop2("`g` must be a nonnegative integer: ", g)
 
   if(g == 0)
@@ -248,7 +248,7 @@ ancestralPed = function(g) {
 #' @rdname ped_basic
 #' @export
 selfingPed = function(s, sex = 1) {
-  if(!is_count(s, minimum = 0))
+  if(!isCount(s, minimum = 0))
     stop2("`s` must be a nonnegative integer: ", s)
 
   if(s == 0)
