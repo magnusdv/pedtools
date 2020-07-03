@@ -95,16 +95,17 @@ typedMembers = function(x, internal = FALSE) {
     return(unlist(lapply(x, typedMembers)))
 
   nMark = nMarkers(x)
+  labs = x$ID
   if (nMark == 0)
     return(if(internal) integer(0) else character(0))
 
   allelematrix = unlist(x$MARKERS)
-  untyped = .rowSums(allelematrix, m = pedsize(x), n = 2*nMark) == 0
+  typed = .rowSums(allelematrix, m = length(labs), n = 2*nMark) > 0
 
   # dim(allelematrix) = c(pedsize(x), 2*nMark)
-  # untyped = rowSums(allelematrix) == 0
+  # typed = rowSums(allelematrix) > 0
 
-  if(internal) which(!untyped) else labels.ped(x)[!untyped]
+  if(internal) which(typed) else labs[typed]
 }
 
 
@@ -115,16 +116,17 @@ untypedMembers = function(x, internal = FALSE) {
     return(unlist(lapply(x, untypedMembers)))
 
   nMark = nMarkers(x)
+  labs = x$ID
   if (nMark == 0)
-    return(if(internal) integer(0) else character(0))
+    return(if(internal) seq_along(labs) else labs)
 
   allelematrix = unlist(x$MARKERS)
-  untyped = .rowSums(allelematrix, m = pedsize(x), n = 2*nMark) == 0
+  untyped = .rowSums(allelematrix, m = length(labs), n = 2*nMark) == 0
 
   # dim(allelematrix) = c(pedsize(x), 2*nMark)
   # untyped = rowSums(allelematrix) == 0
 
-  if(internal) which(untyped) else labels.ped(x)[untyped]
+  if(internal) which(untyped) else labs[untyped]
 }
 
 #' @rdname ped_subgroups
