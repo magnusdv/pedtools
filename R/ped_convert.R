@@ -57,27 +57,22 @@
 #'
 #' @export
 as.matrix.ped = function(x, include.attrs = TRUE, ...) {
-  m = cbind(1:pedsize(x), x$FIDX, x$MIDX, x$SEX)
-  if(hasMarkers(x)) {
-    markermatr = do.call(cbind, x$MARKERS)
-    m = cbind(m, markermatr)
-  }
+  m = c(seq_along(x$ID), x$FIDX, x$MIDX, x$SEX, unlist(x$MARKERS))
+  attrs = list(dim = c(length(x$ID), 4 + 2*length(x$MARKERS)))
   if (include.attrs) {
-    attr(m, "FAMID") = famid(x)
-    attr(m, "LABELS") = labels(x)
-    attr(m, "UNBROKEN_LOOPS") = hasUnbrokenLoops(x)
-    attr(m, "LOOP_BREAKERS") = x$LOOP_BREAKERS
-    attr(m, "FOUNDER_INBREEDING") =
+    attrs$FAMID = famid(x)
+    attrs$LABELS = labels(x)
+    attrs$UNBROKEN_LOOPS = hasUnbrokenLoops(x)
+    attrs$LOOP_BREAKERS = x$LOOP_BREAKERS
+    attrs$FOUNDER_INBREEDING =
       if(is.null(x$FOUNDER_INBREEDING)) NULL
-      else list(autosomal = founderInbreeding(x, named = TRUE, chromType = "autosomal"),
-                x = founderInbreeding(x, named = TRUE, chromType = "x"))
-    if(hasMarkers(x)) {
-      attr(m, "markerattr") = lapply(x$MARKERS, attributes)
-    }
+    else list(autosomal = founderInbreeding(x, named = TRUE, chromType = "autosomal"),
+              x = founderInbreeding(x, named = TRUE, chromType = "x"))
+    attrs$markerattr = lapply(x$MARKERS, attributes)
   }
+  attributes(m) = attrs
   m
 }
-
 
 #' @rdname as.matrix.ped
 #' @export

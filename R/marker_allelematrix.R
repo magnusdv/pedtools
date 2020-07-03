@@ -337,21 +337,21 @@ split_genotype_cols = function(m, sep, missing) {
 
 # For internal use
 markerlist2allelematrix = function(mlist, missing = NA) {
-  # List of 2-col character matrices
-  alist = lapply(mlist, function(m) {
-    a = c(missing, alleles(m))[m + 1]
-    dim(a) = dim(m)
-    a
-  })
 
-  # Bind
-  amat = do.call(cbind, alist)
+  # List of vectors, each of length 2*pedsize
+  allelelist = lapply(mlist, function(m) c(missing, alleles.marker(m))[m + 1])
+
+  # Transform to matrix (faster than cbind)
+  amat = unlist(allelelist)
+  nMark = length(mlist)
+  nInd = length(amat)/(2*nMark)
+  dim(amat) = c(nInd, 2*nMark)
 
   # Column namse
   mnames = sapply(mlist, name)
   if(any(naname <- is.na(mnames)))
     mnames[naname] = paste0("na", 1:sum(naname))
-  colnames(amat) = sprintf("%s.%d", rep(mnames, each = 2), 1:2)
+  colnames(amat) = paste0(rep(mnames, each = 2), c(".1", ".2"))
 
   # Return character matrix
   amat
