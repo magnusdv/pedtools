@@ -38,8 +38,7 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   # Chromosome - position
   chr = chrom(x)
   mb = posMb(x)
-  cm = posCm(x)
-  cat(sprintf("Chrom %s: %s (Mb), %s (cM)\n", chr, mb, cm))
+  cat(sprintf("Chrom %s: %s (Mb)\n", chr, mb))
 
   # Mutations
   mut = attr(x, "mutmod")

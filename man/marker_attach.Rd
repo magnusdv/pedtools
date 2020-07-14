@@ -64,7 +64,6 @@ values in parenthesis):
 where \code{L = length(alleles)})
 \item \code{chrom} : chromosome number (NA)
 \item \code{posMb} : physical location in megabases (NA)
-\item \code{posCm} : position in centiMorgan (NA)
 \item \code{name} : marker name (NA)
 \item \code{mutmod} : mutation model, or model name (NULL)
 \item \code{rate} : mutation model parameter (NULL)

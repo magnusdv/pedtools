@@ -13,7 +13,6 @@ marker(
   afreq = NULL,
   chrom = NA,
   posMb = NA,
-  posCm = NA,
   name = NA,
   NAstrings = c(0, "", NA, "-"),
   mutmod = NULL,
@@ -50,9 +49,6 @@ equal frequencies.}
 \item{posMb}{a nonnegative real number: the physical position of the marker,
 in megabases. Default: NA.}
 
-\item{posCm}{a nonnegative real number: the centiMorgan position of the
-marker. Default: NA.}
-
 \item{name}{a character string: the name of the marker. Default: NA.}
 
 \item{NAstrings}{A character vector containing strings to be treated as
@@ -73,7 +69,6 @@ and one row per individual, and the following attributes:
 \item \code{afreq} (allele frequencies; default \code{rep.int(1/length(alleles),   length(alleles))})
 \item \code{chrom} (chromosome number; default = NA)
 \item \code{posMb} (physical location in megabases; default = NA)
-\item \code{posCm} (position in centiMorgan; default = NA)
 \item \code{name} (marker identifier; default = NA)
 \item \code{mutmod} (a list of two (male and female) mutation matrices; default =
 NULL)

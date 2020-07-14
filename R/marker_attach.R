@@ -19,8 +19,6 @@
 #'
 #' * `posMb` : physical location in megabases (NA)
 #'
-#' * `posCm` : position in centiMorgan (NA)
-#'
 #' * `name` : marker name (NA)
 #'
 #' * `mutmod` : mutation model, or model name (NULL)
@@ -153,7 +151,7 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 checkLocusAttribs = function(a) {
   if(length(a) == 0) return(a)
 
-  attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "posCm", "mutmod", "rate")
+  attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")
 
   # Format 1: List of lists
   if(is.list(a) && all(sapply(a, is.list))) {

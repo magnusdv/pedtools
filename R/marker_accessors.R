@@ -310,7 +310,6 @@ afreq.ped = function(x, marker, ...) {
 # * name()
 # * chrom()
 # * posMb()
-# * posCm()
 ######################
 
 
@@ -486,72 +485,6 @@ posMb.ped = function(x, markers, ...) {
   vapply(mlist, posMb, numeric(1))
 }
 
-#' @rdname marker_getset
-#' @export
-posCm = function(x, ...) {
-  UseMethod("posCm")
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.marker = function(x, ...) {
-  as.numeric(attr(x, 'posCm'))
-}
-
-#' @rdname marker_getset
-#' @export
-posCm.ped = function(x, markers, ...) {
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, posCm, numeric(1))
-}
-
-
-
-
-### posCm setter
-
-#' @rdname marker_getset
-#' @export
-`posCm<-` = function(x, ..., value) {
-  UseMethod("posCm<-")
-}
-
-#' @rdname marker_getset
-#' @export
-`posCm<-.marker` = function(x, ..., value) {
-  pos = suppressWarnings(as.numeric(value))
-
-  if((!is.na(value) && is.na(pos)) || length(pos) != 1)
-    stop2("`posCm` replacement must be a single number: ", value)
-  if(pos < 0)
-    stop2("`posCm` replacement must be nonnegative: ", value)
-
-  attr(x, 'posCm') = pos
-  x
-}
-
-#' @rdname marker_getset
-#' @export
-`posCm<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
-    stop2("Argument `markers` cannot be empty")
-
-  nm = length(markers)
-  nv = length(value)
-  if(nv > nm)
-    stop2("Replacement vector is longer than the number of markers")
-  else if(nv < nm)
-    value = rep(value, length.out = nm)
-
-  idx = whichMarkers(x, markers = markers)
-
-  x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
-    m = x$MARKERS[[idx[i]]]
-    posCm(m) = value[i]
-    m
-  })
-  x
-}
 
 ### posMb setter
 #' @rdname marker_getset

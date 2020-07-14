@@ -44,12 +44,6 @@
 \alias{posMb}
 \alias{posMb.marker}
 \alias{posMb.ped}
-\alias{posCm}
-\alias{posCm.marker}
-\alias{posCm.ped}
-\alias{posCm<-}
-\alias{posCm<-.marker}
-\alias{posCm<-.ped}
 \alias{posMb<-}
 \alias{posMb<-.marker}
 \alias{posMb<-.ped}
@@ -138,18 +132,6 @@ posMb(x, ...)
 \method{posMb}{marker}(x, ...)
 
 \method{posMb}{ped}(x, markers, ...)
-
-posCm(x, ...)
-
-\method{posCm}{marker}(x, ...)
-
-\method{posCm}{ped}(x, markers, ...)
-
-posCm(x, ...) <- value
-
-\method{posCm}{marker}(x, ...) <- value
-
-\method{posCm}{ped}(x, markers, ...) <- value
 
 posMb(x, ...) <- value
 

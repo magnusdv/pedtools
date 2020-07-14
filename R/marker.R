@@ -24,8 +24,6 @@
 #' @param chrom a single integer: the chromosome number. Default: NA.
 #' @param posMb a nonnegative real number: the physical position of the marker,
 #'   in megabases. Default: NA.
-#' @param posCm a nonnegative real number: the centiMorgan position of the
-#'   marker. Default: NA.
 #' @param name a character string: the name of the marker. Default: NA.
 #' @param NAstrings A character vector containing strings to be treated as
 #'   missing alleles. Default: `c("", "0", NA, "-")`.
@@ -46,8 +44,6 @@
 #'   * `chrom` (chromosome number; default = NA)
 #'
 #'   * `posMb` (physical location in megabases; default = NA)
-#'
-#'   * `posCm` (position in centiMorgan; default = NA)
 #'
 #'   * `name` (marker identifier; default = NA)
 #'
@@ -88,14 +84,13 @@
 #'
 #' @export
 marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afreq = NULL,
-                  chrom = NA, posMb = NA, posCm = NA, name = NA,
+                  chrom = NA, posMb = NA, name = NA,
                   NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
                   validate = TRUE) {
 
   # Some parameters cannot have length 0 or be ""
   if(length(chrom) == 0) chrom = NA
   if(length(posMb) == 0) posMb = NA
-  if(length(posCm) == 0) posCm = NA
   if(length(name) == 0 || identical(name, "")) name = NA
 
   pedN = pedsize(x)
@@ -194,8 +189,8 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afr
 
   ma = newMarker(m_int, alleles = alleles, afreq = unname(afreq),
             name = as.character(name), chrom = as.character(chrom),
-            posMb = as.numeric(posMb), posCm = as.numeric(posCm),
-            mutmod = mutmod, pedmembers = labels(x), sex = x$SEX)
+            posMb = as.numeric(posMb), mutmod = mutmod,
+            pedmembers = labels(x), sex = x$SEX)
 
   if(validate) validateMarker(ma)
 
@@ -204,7 +199,7 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afr
 
 
 newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
-                     chrom = NA_character_, posMb = NA_real_, posCm = NA_real_,
+                     chrom = NA_character_, posMb = NA_real_,
                      mutmod = NULL, pedmembers, sex) {
   stopifnot2(is.matrix(allelematrix_int),
             ncol(allelematrix_int) == 2,
@@ -214,13 +209,12 @@ newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
             is.character(name),
             is.character(chrom),
             is.numeric(posMb),
-            is.numeric(posCm),
             is.null(mutmod) || is.list(mutmod),
             is.character(pedmembers),
             is.integer(sex))
 
   structure(allelematrix_int, alleles = alleles, afreq = afreq, name = name,
-            chrom = chrom, posMb = posMb, posCm = posCm, mutmod = mutmod,
+            chrom = chrom, posMb = posMb, mutmod = mutmod,
             pedmembers = pedmembers, sex = sex, class = "marker")
 }
 

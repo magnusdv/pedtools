@@ -25,8 +25,6 @@
 #'
 #' * `posMb` : physical location in megabases (NA)
 #'
-#' * `posCm` : position in centiMorgan (NA)
-#'
 #' * `mutmod` : mutation model, or model name (NULL)
 #'
 #' * `rate` : mutation model parameter (NULL)
@@ -36,7 +34,7 @@
 #'   (with marker indices). If NULL (default), the behaviour depends on
 #'   `matchNames`, see Details.
 #' @param attribs A subset of the character vector `c("alleles", "afreq", "name"
-#'   ,"chrom" ,"posMb","posCm", "mutmod", "rate")`.
+#'   ,"chrom" ,"posMb", "mutmod", "rate")`.
 #' @param locusAttributes A list of lists, with attributes for each marker.
 #' @param matchNames A logical, only relevant if `markers = NULL`. If TRUE, then
 #'   the markers to be modified are identified by the 'name' component of each
@@ -87,7 +85,7 @@ NULL
 #' @export
 getLocusAttributes = function(x, markers = NULL,
                               attribs = c("alleles", "afreq", "name", "chrom",
-                                          "posMb", "posCm", "mutmod")) {
+                                          "posMb", "mutmod")) {
 
   if(is.pedList(x))
     x = x[[1]]

@@ -26,7 +26,7 @@ test_that("setMarkers() attaches a list of markers", {
 
 test_that("getMap() produces a data.frame", {
   m1 = marker(x)
-  m2 = marker(x, chrom=1, posCm=1)
+  m2 = marker(x, chrom=1, posMb=1)
   x1 = setMarkers(x, list(m1,m2))
   expect_is(getMap(x1, na=0, verbose=F), "data.frame")
   expect_is(getMap(x1, na=1, verbose=F), "data.frame")

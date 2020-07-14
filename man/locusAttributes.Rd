@@ -9,7 +9,7 @@
 getLocusAttributes(
   x,
   markers = NULL,
-  attribs = c("alleles", "afreq", "name", "chrom", "posMb", "posCm", "mutmod")
+  attribs = c("alleles", "afreq", "name", "chrom", "posMb", "mutmod")
 )
 
 setLocusAttributes(
@@ -27,7 +27,7 @@ setLocusAttributes(
 (with marker indices). If NULL (default), the behaviour depends on
 \code{matchNames}, see Details.}
 
-\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb","posCm", "mutmod", "rate")}.}
+\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")}.}
 
 \item{locusAttributes}{A list of lists, with attributes for each marker.}
 
@@ -68,7 +68,6 @@ where \code{L = length(alleles)})
 \item \code{name} : marker name (NA)
 \item \code{chrom} : chromosome number (NA)
 \item \code{posMb} : physical location in megabases (NA)
-\item \code{posCm} : position in centiMorgan (NA)
 \item \code{mutmod} : mutation model, or model name (NULL)
 \item \code{rate} : mutation model parameter (NULL)
 }

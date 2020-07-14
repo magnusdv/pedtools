@@ -37,7 +37,8 @@
 #'
 #' @importFrom utils write.table
 #' @export
-writePed = function(x, prefix, what = "ped", famid = is.pedList(x), header = TRUE, merlin = FALSE, verbose = TRUE) {
+writePed = function(x, prefix, what = "ped", famid = is.pedList(x),
+                    header = TRUE, merlin = FALSE, verbose = TRUE) {
 
   if(merlin)
     return(writePed_merlin(x, prefix = prefix, verbose = verbose))

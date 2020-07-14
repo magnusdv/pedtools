@@ -16,10 +16,6 @@ test_that("simple marker getters work", {
   expect_equal(posMb(m), 1e7)
   expect_equal(posMb(x, markers=1), 1e7)
   expect_equal(posMb(x, markers="m1"), 1e7)
-
-  expect_equal(posCm(m), NA_real_)
-  expect_equal(posCm(x, markers=1), NA_real_)
-  expect_equal(posCm(x, markers="m1"), NA_real_)
 })
 
 
