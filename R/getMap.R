@@ -1,47 +1,99 @@
-
 #' Tabulate marker positions
 #'
-#' @param x An object of class `ped`.
-#' @param markers A numeric of indices.
-#' @param pos Which unit should be used? Either "cm" (centiMorgan) or "mb" (megabytes).
-#' @param na.action Either 0 (default), 1 or 2.
+#' Return a map of the markers attached to a pedigree.
+#'
+#' The `na.action` argument controls how missing values are dealt with:
+#'
+#' * `na.action` = 0: Return map unmodified
+#'
+#' * `na.action` = 1: Replace missing values with dummy values. In the `CHROM`
+#' column, missing values are set to 0. Missing entries in `MARKER` are replaced
+#' with their index (row number). If the `POS` column contain any missing data,
+#' the entire column is replaced by 1,2,... .
+#'
+#' * `na.action` = 2: Remove markers with missing data.
+#'
+#' In `setMap()`, the `map` argument should be a data frame (or file) with the
+#' following columns in order: 1) chromosome, 2) marker name, 3) position in megabases.
+#' Column names are ignored, as are any columns after the first three.
+#'
+#' @param x An object of class `ped` or a list of such.
+#' @param markers A vector of names or indices referring to markers attached to
+#'   `x`. By default, all markers are included.
+#' @param na.action Either 0 (default), 1 or 2. (See Details.)
 #' @param verbose A logical.
+#' @param map Either a data frame or the path to a map file.
+#' @param matchNames A logical; if TRUE, pre-existing marker names of `x` will
+#'   be used to assign chromosome labels and positions from `map`.
+#' @param ... ARguments passed to `read.table()`.
 #'
-#' @return A `data.frame`.
+#' @return `getMap()` returns a data frame with columns `CHROM`, `MARKER` and
+#'   `MB`.
+#'
+#'   `setMap()` returns `x` with modified marker attributes.
+#'
+#' @examples
+#' x = singleton(1)
+#' m1 = marker(x, chrom = 1, posMb = 10, name = "m1")
+#' m2 = marker(x, chrom = 1, posMb = 11)
+#' m3 = marker(x, chrom = 1)
+#' x = setMarkers(x, list(m1, m2, m3))
+#'
+#' # Compare effect of `na.action`
+#' getMap(x, na.action = 0)
+#' getMap(x, na.action = 1)
+#' getMap(x, na.action = 2)
+#'
+#' # Getting and setting map are inverses
+#' y = setMap(x, getMap(x))
+#' identical(x,y)
+#'
 #' @export
-#'
-getMap = function(x, markers = seq_len(nMarkers(x)), pos = c("cm", "mb"), na.action = 0, verbose = TRUE) {
-  # TODO review this function
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
-  if(!hasMarkers(x)) return(NULL)
-  m = getMarkers(x, markers)
-  chrom = unlist(lapply(m, attr, "chrom"))
+getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
+  if(is.pedList(x)) {
+    if(verbose) message("Input is a list of pedigrees; extracting map from first component")
+    x = x[[1]]
+  }
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
+  if(!hasMarkers(x)) {
+    if(verbose) message("No markers found")
+    return(NULL)
+  }
+
+  if(is.null(markers))
+    m = x$MARKERS
+  else
+    m = getMarkers(x, markers)
+
+  chrom  = unlist(lapply(m, attr, "chrom"))
   marker = unlist(lapply(m, attr, "name"))
-  pos = switch(match.arg(pos),
-               cm = unlist(lapply(m, attr, "posCm")),
-               mb = unlist(lapply(m, attr, "posMb")))
-  map = data.frame(CHR = chrom, MARKER = marker, POS = pos, stringsAsFactors = FALSE)
-  if (na.action > 0) {
-    na_pos = (is.na(chrom) | is.na(pos))
-    na_name = is.na(marker)
-    map$MARKER[na_name] = paste0("M", markers[na_name])
+  mb     = unlist(lapply(m, attr, "posMb"))
+
+  if (na.action == 1) {
+    if (verbose)
+      message("Warning: Missing map entries. Inserting dummy values.")
+    chrom[is.na(chrom)] = "0"
+    marker[is.na(marker)] = seq_along(marker)[is.na(marker)]
+    if(anyNA(mb))
+      mb = seq_along(mb)
   }
-  if (na.action == 1 && all(na_pos)) {
-    if (verbose) message("Warning: No map info given. Creating dummy map.")
-    map$CHR = rep_len(1, nrow(map))
-    map$POS = seq_len(nrow(map))
-  }
-  if(na.action == 2 && any(na_pos)) {
+  else if(na.action == 2) {
     if(verbose)
-      message('Warning: Deleting ', sum(na_pos),
-              ' markers with missing map coordinates.')
-    map = map[!na_pos, , drop = FALSE]
+      message("Warning: Missing map entries. Deleting markers with missing data.")
+    miss = is.na(chrom) | is.na(marker) | is.na(mb)
+    chrom = chrom[!miss]
+    marker = marker[!miss]
+    mb = mb[!miss]
   }
-  map
+
+  data.frame(CHROM = chrom, MARKER = marker, MB = mb, stringsAsFactors = FALSE)
 }
 
 
 
+#' @rdname getMap
 #' @importFrom utils read.table
 #' @export
 setMap = function(x, map, matchNames = NA, ...) {
