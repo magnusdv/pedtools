@@ -7,6 +7,7 @@
 marker(
   x,
   ...,
+  geno = NULL,
   allelematrix = NULL,
   alleles = NULL,
   afreq = NULL,
@@ -27,13 +28,16 @@ marker(
 the ID label of a member of \code{x}, and \code{genotype} is a numeric or character
 vector of length 1 or 2 (see Examples).}
 
+\item{geno}{a character vector of length \code{pedsize(x)}, with genotypes
+written in the format "a/b".}
+
 \item{allelematrix}{a matrix with 2 columns and \code{pedsize(x)} rows. If this is
 non-NULL, then \code{...} must be empty.}
 
 \item{alleles}{a character (or coercible to character) containing allele
 names. If not given, and \code{afreq} is named, \code{names(afreq)} is used. The
 default action is to take the sorted vector of distinct alleles occurring
-in \code{allelematrix} or \code{...}.}
+in \code{allelematrix}, \code{geno} or \code{...}.}
 
 \item{afreq}{a numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
@@ -76,7 +80,7 @@ NULL)
 }
 }
 \description{
-Creating a marker object associated with a pedigree
+Creating a marker object associated with a pedigree.
 }
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "child")
@@ -90,11 +94,14 @@ stopifnot(identical(
   marker(x, alleles = c("A", "B"), afreq = c(0.01, 0.99)),
   ))
 
-# Genotypes can be assigned using different formats
-marker(x, fa = c(1,2), mo = "1/2")
+# Genotypes can be assigned individually ...
+marker(x, fa = "1/1", mo = "1/2")
 
-# For homozygous genotypes, three formats are possible
-marker(x, fa = 1, mo = c(1,1), child = "1/1")
+# ... or using the `geno` vector (all members in order)
+marker(x, geno = c("1/1", "1/2", NA))
+
+# For homozygous genotypes, a single allele suffices
+marker(x, fa = 1)
 
 # Attaching a marker to the pedigree
 m = marker(x) # By default a SNP with alleles 1,2

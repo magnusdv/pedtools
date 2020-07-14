@@ -1,18 +1,20 @@
 #' Marker objects
 #'
-#' Creating a marker object associated with a pedigree
+#' Creating a marker object associated with a pedigree.
 #'
 #'
 #' @param x a [`ped`] object
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
 #'   the ID label of a member of `x`, and `genotype` is a numeric or character
 #'   vector of length 1 or 2 (see Examples).
+#' @param geno a character vector of length `pedsize(x)`, with genotypes
+#'   written in the format "a/b".
 #' @param allelematrix a matrix with 2 columns and `pedsize(x)` rows. If this is
 #'   non-NULL, then `...` must be empty.
 #' @param alleles a character (or coercible to character) containing allele
 #'   names. If not given, and `afreq` is named, `names(afreq)` is used. The
 #'   default action is to take the sorted vector of distinct alleles occurring
-#'   in `allelematrix` or `...`.
+#'   in `allelematrix`, `geno` or `...`.
 #' @param afreq a numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
 #'   don't sum to 1 after rounding to 3 decimals. If the vector is named, and
@@ -66,11 +68,14 @@
 #'   marker(x, alleles = c("A", "B"), afreq = c(0.01, 0.99)),
 #'   ))
 #'
-#' # Genotypes can be assigned using different formats
-#' marker(x, fa = c(1,2), mo = "1/2")
+#' # Genotypes can be assigned individually ...
+#' marker(x, fa = "1/1", mo = "1/2")
 #'
-#' # For homozygous genotypes, three formats are possible
-#' marker(x, fa = 1, mo = c(1,1), child = "1/1")
+#' # ... or using the `geno` vector (all members in order)
+#' marker(x, geno = c("1/1", "1/2", NA))
+#'
+#' # For homozygous genotypes, a single allele suffices
+#' marker(x, fa = 1)
 #'
 #' # Attaching a marker to the pedigree
 #' m = marker(x) # By default a SNP with alleles 1,2
@@ -82,7 +87,7 @@
 #' marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
 #'
 #' @export
-marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
+marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afreq = NULL,
                   chrom = NA, posMb = NA, posCm = NA, name = NA,
                   NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
                   validate = TRUE) {
@@ -95,7 +100,7 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
 
   pedN = pedsize(x)
 
-  if (is.null(allelematrix)) {
+  if (is.null(geno) && is.null(allelematrix)) {
     # Initalize empty allele matrix
     m = matrix(0, ncol = 2, nrow = pedN)
 
@@ -130,9 +135,19 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
       m[ids_int[i], ] = g
     }
   }
-  else {
-    m = allelematrix
+  else if(!is.null(geno)) {
+    if(!is.null(allelematrix))
+      stop2("At least one of `geno` and `allelematrix` must be NULL")
+    geno = as.character(geno)
+    if(length(geno) != pedN)
+      stop2("`geno` incompatible with pedigree")
+    s = strsplit(geno, "/")
+    s[lengths(s) < 2] = lapply(s[lengths(s) < 2], rep, length.out = 2)
+    m = matrix(unlist(s), ncol = 2, byrow = TRUE)
   }
+  else
+    m = allelematrix
+
 
   # If alleles are NULL, take from afreq names, otherwise from supplied genos
   if (is.null(alleles)) {
@@ -145,8 +160,8 @@ marker = function(x, ...,  allelematrix = NULL, alleles = NULL, afreq = NULL,
     }
   }
   else if(!all(m %in% c(NAstrings, alleles))) {
-      mtxt = if(is.na(name)) "this marker: " else sprintf("marker `%s`: ", name)
-      stop2("Invalid allele for ", mtxt, setdiff(m, c(NAstrings, alleles)))
+    mtxt = if(is.na(name)) "this marker: " else sprintf("marker `%s`: ", name)
+    stop2("Invalid allele for ", mtxt, setdiff(m, c(NAstrings, alleles)))
   }
 
   ### Frequencies
