@@ -84,7 +84,7 @@ allowsMutations(x, ...)
 
 \item{...}{Not used.}
 
-\item{markers}{A vector of names of indices of markers attached to \code{x}, in
+\item{markers}{A vector of names or indices of markers attached to \code{x}, in
 the case that \code{x} is a \code{ped} object or a list of such. By default all
 attached markers are selected.}
 }

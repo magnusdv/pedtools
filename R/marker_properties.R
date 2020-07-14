@@ -20,7 +20,7 @@
 #' non-NULL and differs from the identity matrix.
 #'
 #' @param x A single `marker` object or a `ped` object (or a list of such)
-#' @param markers A vector of names of indices of markers attached to `x`, in
+#' @param markers A vector of names or indices of markers attached to `x`, in
 #'   the case that `x` is a `ped` object or a list of such. By default all
 #'   attached markers are selected.
 #' @param ... Not used.
