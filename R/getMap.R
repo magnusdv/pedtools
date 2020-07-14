@@ -43,21 +43,42 @@ getMap = function(x, markers = seq_len(nMarkers(x)), pos = c("cm", "mb"), na.act
 
 
 #' @importFrom utils read.table
-setMap = function(x, map) {
-  if(is.character(map))
-    map = read.table(map, header = TRUE)
+#' @export
+setMap = function(x, map, matchNames = NA, ...) {
+  if(!is.ped(x) || is.pedList(x))
+    stop2("Input must be a `ped` object or a list of such")
 
-  chroms = map[[1]]
-  mnames = map[[2]]
-  chrom(x, mnames) = chroms
+  N = nMarkers(x)
+  if(N == 0)
+    stop2("The pedigree has no attached markers")
 
-  MBcol = grep("mb", names(map), value = TRUE, ignore.case = TRUE)
-  CMcol = grep("cm", names(map), value = TRUE, ignore.case = TRUE)
+  if(is.character(map) && length(map) == 1)
+    map = read.table(map, header = TRUE, as.is = TRUE, ...)
 
-  if(length(MBcol))
-    posMb(x, mnames) = map[[MBcol[1]]]
-  if(length(CMcol))
-    posCm(x, mnames) = map[[CMcol[1]]]
+  if(!is.data.frame(map))
+    stop2("`map` must be a data frame or file path")
+
+  mapNames = map[[2]]
+  xNames = name(x, 1:N)
+
+  # Match names if either i) mismatch in number, or ii) names actually match in some order
+  if(is.na(matchNames))
+    matchNames = (nrow(map) != N) || setequal(mapNames, xNames)
+
+  if(matchNames) {
+    mIdx = match(xNames, mapNames, nomatch = NA)
+    mIdx = mIdx[!is.na(mIdx)]
+
+    chrom(x, mIdx) = map[[1]][mIdx]
+    posMb(x, mIdx) = map[[3]][mIdx]
+  }
+  else {
+    if(nrow(map) != N)
+      stop2("`map` incompatible with `x` (with `matchNames = F`)")
+    chrom(x, N) = map[[1]]
+    name(x, N) = map[[3]]
+    posMb(x, mIdx) = map[[3]]
+  }
 
   x
 }
