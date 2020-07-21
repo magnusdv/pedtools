@@ -8,7 +8,7 @@
 \alias{internalID}
 \title{Internal ordering of pedigree members}
 \usage{
-reorderPed(x, neworder = order(labels(x)))
+reorderPed(x, neworder = NULL)
 
 parentsBeforeChildren(x)
 

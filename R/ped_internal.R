@@ -49,10 +49,17 @@ NULL
 
 #' @rdname ped_internal
 #' @export
-reorderPed = function(x, neworder = order(labels(x))) {
+reorderPed = function(x, neworder = NULL) {
   if(!is.ped(x)) stop2("Input is not a `ped` object")
   if(is.singleton(x))
     return(x)
+
+  if(is.null(neworder)) {
+    if(hasNumLabs(x))
+      neworder = order(as.numeric(labels(x)))
+    else
+      neworder = order(labels(x))
+  }
 
   N = pedsize(x)
   if(length(neworder) != N)
@@ -78,6 +85,7 @@ reorderPed = function(x, neworder = order(labels(x))) {
   # Restore
   restorePed(xmatr[neworder, ], attrs = attr)
 }
+
 
 #' @rdname ped_internal
 #' @export
