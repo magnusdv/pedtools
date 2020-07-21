@@ -6,17 +6,20 @@
 \alias{labels.list}
 \title{Get or modify pedigree labels}
 \usage{
-relabel(x, new, old = labels(x))
+relabel(x, new, old = labels(x), reorder = FALSE)
 
 \method{labels}{ped}(object, ...)
 
 \method{labels}{list}(object, ...)
 }
 \arguments{
-\item{x}{A \code{ped} object.}
+\item{x}{A \code{ped} object or a list of such.}
 
 \item{new, old}{Character vectors (or coercible to character) of the same
 length. ID labels in \code{old} are replaced by those in \code{new}.}
+
+\item{reorder}{A logical. If TRUE, \code{\link[=reorderPed]{reorderPed()}} is called on \code{x} after
+relabelling. Default: FALSE.}
 
 \item{object}{A \code{ped} object}
 
