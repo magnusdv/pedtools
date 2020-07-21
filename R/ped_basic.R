@@ -17,8 +17,8 @@
 #'
 #' `selfingPed(s)` returns a line of `s` consecutive selfings.
 
-#' @param nch The number of children. If NULL, it is taken to be the
-#'   `length(children)`
+#' @param nch The number of children, by default 1. If `children` is not NULL,
+#'   `nch` is set to `length(children)`
 #' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).
 #'   In `nuclearPed()`, it contains the genders of the children and is recycled
 #'   (if necessary) to length `nch`. In `linearPed()` it also contains the
@@ -26,9 +26,10 @@
 #'   most `n` (recycled if shorter than this). In `selfingPed()` it should be a
 #'   single number, indicating the gender of the last individual (the others
 #'   must necessarily have gender code 0.)
-#' @param father The label of the father.
-#' @param mother The label of the mother.
-#' @param children A character of length `nch`, with labels of the children.
+#' @param father The label of the father. Default: "1".
+#' @param mother The label of the mother. Default: "2".
+#' @param children A character with labels of the children. Default: "3", "4",
+#'   ...
 #' @param nch1,nch2 The number of children in each sibship.
 #' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
 #'   Recycled (if necessary) to lengths `nch1` and `nch2` respectively.
@@ -85,14 +86,16 @@ NULL
 
 #' @rdname ped_basic
 #' @export
-nuclearPed = function(nch, sex = 1, father = '1', mother = '2',
-                      children = as.character(seq.int(3, length.out = nch))) {
-  if(missing(nch))
+nuclearPed = function(nch = 1, sex = 1, father = '1', mother = '2',
+                      children = NULL) {
+
+  if(is.null(children)) {
+    if(!isCount(nch))
+      stop2("`nch` must be a positive integer: ", nch)
+    children = as.character(2 + seq_len(nch))
+  }
+  else
     nch = length(children)
-  if(!isCount(nch))
-    stop2("`nch` must be a positive integer: ", nch)
-  if(length(children) != nch)
-    stop2("`children` must have length `nch`")
   if(length(father) != 1)
     stop2("`father` must have length 1")
   if(length(mother) != 1)

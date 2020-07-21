@@ -8,25 +8,23 @@ test_that("nuclearPed() direct labelling works", {
 })
 
 test_that("nuclearPed() catches errors", {
-  expect_error(nuclearPed(), 'argument "nch" is missing')
   expect_error(nuclearPed(0), '`nch` must be a positive integer: 0')
   expect_error(nuclearPed(nch = 1:2), "`nch` must be a positive integer")
-  expect_error(nuclearPed(nch = 2, child = 3), "`children` must have length `nch`")
 
-  expect_error(nuclearPed(fa = 1:2, nch = 1), "`father` must have length 1")
-  expect_error(nuclearPed(mo = 1:2, nch = 1), "`mother` must have length 1")
+  expect_error(nuclearPed(fa = 1:2), "`father` must have length 1")
+  expect_error(nuclearPed(mo = 1:2), "`mother` must have length 1")
 
-  expect_error(nuclearPed(nch = 1, sex='a'), "Illegal gender code: a")
-  expect_error(nuclearPed(nch = 1, sex=1:2), "`sex` is longer than the number of individuals")
-  expect_error(nuclearPed(nch = 1, sex=integer(0)), "`sex` cannot be empty")
+  expect_error(nuclearPed(sex='a'), "Illegal gender code: a")
+  expect_error(nuclearPed(sex=1:2), "`sex` is longer than the number of individuals")
+  expect_error(nuclearPed(sex=integer(0)), "`sex` cannot be empty")
 
   expect_error(nuclearPed(fa = 'a', child = 'a'), "Duplicated ID label: a")
   expect_error(nuclearPed(child = c("b", "b")), "Duplicated ID label: b")
 
   expect_error(nuclearPed(child = 1), "please specify a different label for the father")
-  expect_error(nuclearPed(mo = 1, nch = 1), "please specify a different label for the father")
+  expect_error(nuclearPed(mo = 1), "please specify a different label for the father")
   expect_error(nuclearPed(child = 2), "please specify a different label for the mother")
-  expect_error(nuclearPed(fa = 2, nch = 1), "please specify a different label for the mother")
+  expect_error(nuclearPed(fa = 2), "please specify a different label for the mother")
 
 })
 
