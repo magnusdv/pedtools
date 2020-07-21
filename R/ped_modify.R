@@ -95,7 +95,7 @@ addChildren = function(x, father = NULL, mother = NULL, nch = 1, sex = 1, ids = 
 
   # Utility for creating new labels, depending on existing labels being numeric
   nextlabs = function(labs, len) {
-    if(has_numlabs(x)) {
+    if(hasNumLabs(x)) {
       mx = max(as.numeric(labs))
       seq.int(mx + 1, length.out = len)
     }
@@ -196,7 +196,7 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
 
   # If no labels are given, create them
   if (is.null(father) || is.null(mother)) {
-    if(has_numlabs(x)) {
+    if(hasNumLabs(x)) {
       mx = max(as.numeric(labs))
       if (is.null(father)) {father = mx + 1; mx = mx + 1}
       if (is.null(mother)) {mother = mx + 1}

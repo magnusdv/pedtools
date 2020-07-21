@@ -258,7 +258,7 @@ print.nucleus = function(x, ...) {
 }
 
 
-has_numlabs = function(x) {
+hasNumLabs = function(x) {
   # Returns TRUE if the labels of x are coercible to integers
   labs = labels(x)
   numlabs = suppressWarnings(as.character(as.integer(labs)))
