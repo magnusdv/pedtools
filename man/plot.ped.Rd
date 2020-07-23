@@ -16,6 +16,7 @@
   labs = labels(x),
   title = NULL,
   col = 1,
+  aff = NULL,
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
@@ -37,6 +38,7 @@
   labs = labels(x),
   title = NULL,
   col = 1,
+  aff = NULL,
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
@@ -47,7 +49,7 @@
   ...
 )
 
-as_kinship2_pedigree(x, deceased = NULL, shaded = NULL, hints = NULL)
+as_kinship2_pedigree(x, deceased = NULL, aff = NULL, hints = NULL)
 
 \method{plot}{pedList}(x, ...)
 }
@@ -89,8 +91,11 @@ members. For example if \code{col = list(red = "a", blue = c("b", "c"))} then
 individual "a" will be red, "b" and "c" blue, and everyone else black. By
 default everyone is drawn black.}
 
+\item{aff}{a vector of ID labels indicating pedigree members whose plot
+symbols should be filled.}
+
 \item{shaded}{a vector of ID labels indicating pedigree members whose plot
-symbols should appear shaded.}
+symbols should be hatched.}
 
 \item{deceased}{a vector of ID labels indicating deceased pedigree members.}
 
@@ -124,7 +129,7 @@ singletons.}
 \description{
 This is the main function for pedigree plotting, with many options for
 controlling the appearance of pedigree symbols and accompanying labels. Most
-of the work is done by the plotting functionality in the 'kinship2' package.
+of the work is done by the plotting functionality in the \code{kinship2} package.
 }
 \details{
 \code{plot.ped} is in essence an elaborate wrapper for
@@ -144,6 +149,9 @@ plot(x, marker = "SNP")
 # Other options
 plot(x, marker = "SNP", shaded = typedMembers(x),
      starred = "fa", deceased = "mo")
+
+# Filled symbols
+plot(x, aff = males(x))
 
 # Label only some members
 plot(x, labs = c("fa", "boy"))

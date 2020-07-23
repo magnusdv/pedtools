@@ -2,7 +2,7 @@
 #'
 #' This is the main function for pedigree plotting, with many options for
 #' controlling the appearance of pedigree symbols and accompanying labels. Most
-#' of the work is done by the plotting functionality in the 'kinship2' package.
+#' of the work is done by the plotting functionality in the `kinship2` package.
 #'
 #' `plot.ped` is in essence an elaborate wrapper for
 #' [kinship2::plot.pedigree()].
@@ -39,8 +39,10 @@
 #'   members. For example if `col = list(red = "a", blue = c("b", "c"))` then
 #'   individual "a" will be red, "b" and "c" blue, and everyone else black. By
 #'   default everyone is drawn black.
+#' @param aff a vector of ID labels indicating pedigree members whose plot
+#'   symbols should be filled.
 #' @param shaded a vector of ID labels indicating pedigree members whose plot
-#'   symbols should appear shaded.
+#'   symbols should be hatched.
 #' @param deceased a vector of ID labels indicating deceased pedigree members.
 #' @param starred a vector of ID labels indicating pedigree members that should
 #'   be marked with a star in the pedigree plot.
@@ -77,6 +79,9 @@
 #' # Other options
 #' plot(x, marker = "SNP", shaded = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
+#'
+#' # Filled symbols
+#' plot(x, aff = males(x))
 #'
 #' # Label only some members
 #' plot(x, labs = c("fa", "boy"))
@@ -115,7 +120,7 @@
 #' @importFrom graphics text
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = TRUE,
-                    labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
+                    labs = labels(x), title = NULL, col = 1, aff = NULL, shaded = NULL, deceased = NULL,
                     starred = NULL, hints = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
                     keep.par = FALSE, skip.empty.genotypes = NULL, id.labels = NULL, ...) {
 
@@ -207,18 +212,27 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotyp
      cols = rep(col, length = nInd)
   }
 
-  # Shading
+  # Affected/hatched individuals
+  if(is.function(aff))
+    aff = aff(x)
   if(is.function(shaded))
     shaded = shaded(x)
-  if (!is.null(shaded)) {
+  if(!is.null(aff) && !is.null(shaded))
+    stop2("Both `aff` and `shaded` cannot both be used")
+
+  if(!is.null(aff)) {
+    density = -1
+    angle = 90
+  }
+  else if(!is.null(shaded)) {
+    aff = shaded
     density = 25
     angle = 45
   } else {
-    density = NULL
-    angle = NULL
+    density = angle = NULL
   }
 
-  pedigree = as_kinship2_pedigree(x, deceased = deceased, shaded = shaded, hints = hints)
+  pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff, hints = hints)
   pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
                                  density = density, angle = angle, keep.par = keep.par, ...)
 
@@ -243,9 +257,9 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotyp
 #' @rdname plot.ped
 #' @export
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = TRUE,
-                          labs = labels(x), title = NULL, col = 1, shaded = NULL, deceased = NULL,
-                          starred = NULL, fouInb = "autosomal", margins = c(8, 0, 0, 0), yadj = 0,
-                          id.labels = NULL, ...) {
+                          labs = labels(x), title = NULL, col = 1, aff = NULL, shaded = NULL,
+                          deceased = NULL, starred = NULL, fouInb = "autosomal",
+                          margins = c(8, 0, 0, 0), yadj = 0, id.labels = NULL, ...) {
 
   if(!is.null(id.labels)) {
     message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
@@ -266,6 +280,9 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyG
 
   if(identical(labs, "num"))
     labs = c(`1` = labels(x))
+
+  if(is.function(aff))
+    aff = aff(x)
 
   if(is.function(shaded))
     shaded = shaded(x)
@@ -296,7 +313,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyG
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                skipEmptyGenotypes = skipEmptyGenotypes, labs = labs,
-               title = title, col = col, shaded = shaded, deceased = deceased,
+               title = title, col = col, aff = aff, shaded = shaded, deceased = deceased,
                starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 
   usr = par("usr")
@@ -320,11 +337,11 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyG
 
 #' @rdname plot.ped
 #' @export
-as_kinship2_pedigree = function(x, deceased = NULL, shaded = NULL, hints = NULL) {
+as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, hints = NULL) {
     ped = as.data.frame(x)  # not as.matrix()
     ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
 
-    affected = ifelse(ped$id %in% shaded, 1, 0) # shaded=NULL => affected=c(0,0,..)
+    affected = ifelse(ped$id %in% aff, 1, 0) # NULL => affected01 = c(0,0,..)
     status = ifelse(ped$id %in% deceased, 1, 0)
 
     kinped = suppressWarnings( # Avoid kinship2 warning about missing genders a.s.o.
