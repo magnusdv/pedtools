@@ -19,6 +19,7 @@
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
+  hints = NULL,
   fouInb = "autosomal",
   margins = c(0.6, 1, 4.1, 1),
   keep.par = FALSE,
@@ -46,7 +47,7 @@
   ...
 )
 
-as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
+as_kinship2_pedigree(x, deceased = NULL, shaded = NULL, hints = NULL)
 
 \method{plot}{pedList}(x, ...)
 }
@@ -56,16 +57,15 @@ as_kinship2_pedigree(x, deceased = NULL, shaded = NULL)
 \item{marker}{either a vector of names or indices referring to markers
 attached to \code{x}, a \code{marker} object, or a list of such. The genotypes for
 the chosen markers are written below each individual in the pedigree, in
-the format determined by \code{sep} and \code{missing}. See also
-\code{skipEmptyGenotypes} below. If NULL (the default), no genotypes are
-plotted.}
+the format determined by \code{sep} and \code{missing}. See also \code{skipEmptyGenotypes}
+below. If NULL (the default), no genotypes are plotted.}
 
 \item{sep}{a character of length 1 separating alleles for diploid markers.}
 
 \item{missing}{the symbol (integer or character) for missing alleles.}
 
-\item{skipEmptyGenotypes}{a logical. If TRUE (default), and \code{marker} is non-NULL,
-empty genotypes are not printed.}
+\item{skipEmptyGenotypes}{a logical. If TRUE (default), and \code{marker} is
+non-NULL, empty genotypes are not printed.}
 
 \item{labs}{a vector or function controlling the individual labels included
 in the plot. Alternative forms:
@@ -96,6 +96,9 @@ symbols should appear shaded.}
 
 \item{starred}{a vector of ID labels indicating pedigree members that should
 be marked with a star in the pedigree plot.}
+
+\item{hints}{a list with alignment hints passed on to
+\code{kinship2::align.pedigree()}. Usually not necessary.}
 
 \item{fouInb}{either "autosomal" (default), "x" or NULL. If "autosomal" or
 "x", inbreeding coefficients are added to the plot above the inbred
@@ -160,6 +163,21 @@ plot(x)
 
 # ... but can be suppressed
 plot(x, fouInb = NULL)
+
+
+#-----------------------------
+# In some cases, the plotting machinery of `kinship2` needs a hint
+# (see ?kinship2::align.pedigree)
+
+# Example with 3/4-siblings
+y = nuclearPed(2)
+y = addChildren(y, 3, mother = 5, nch = 1)
+y = addChildren(y, 4, mother = 5, nch = 1)
+
+plot(y) # bad
+
+hints = list(order = 1:7, spouse = rbind(c(3,5,0), c(5,4,0)))
+plot(y, hints = hints) # good
 
 }
 \seealso{
