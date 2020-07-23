@@ -39,7 +39,7 @@ Functions for getting or changing the ID labels of pedigree members.
 }
 \examples{
 
-x = nuclearPed(1)
+x = nuclearPed()
 x
 labels(x)
 

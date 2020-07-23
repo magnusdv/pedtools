@@ -22,7 +22,7 @@
 #'
 #' @examples
 #'
-#' x = nuclearPed(1)
+#' x = nuclearPed()
 #' x
 #' labels(x)
 #'
