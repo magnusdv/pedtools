@@ -422,14 +422,23 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
 #'             shaded = leaves, symbolsize = 1.3, col = list(red = 1))
 #'
+#' dev.off()
+#'
+#' #' #################################
+#' # Example of automatic grouping #
+#' #################################
+#' H1 = nuclearPed()
+#' H2 = list(singleton(1), singleton(2)) # grouped!
+#' plotPedList(list(H1 = H1, H2 = H2), newdev = TRUE)
+#'
+#' dev.off()
+#'
 #' ############################################################
 #' # Complex example with individual parameters for each plot #
 #' ############################################################
 #'
 #' # For more control of individual plots, each plot and all
 #' # its parameters can be specified in its own list.
-#'
-#' dev.off() # remove previous window
 #'
 #' x1 = nuclearPed(nch = 3)
 #' m1 = marker(x1, `3` = 1:2)
@@ -459,6 +468,7 @@ plot.pedList = function(x, ...) {
 #' plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
 #'             groups = list(1, 2:3, 4), newdev = TRUE)
 #'
+#' dev.off()
 #'
 #' ################################
 #' # Example with large pedigrees #
@@ -470,6 +480,7 @@ plot.pedList = function(x, ...) {
 #'             titles = c("Large", "Very large"),
 #'             dev.height = 8, dev.width = 5)
 #'
+#' dev.off()
 #'
 #' @importFrom grDevices dev.new dev.size
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot
@@ -501,7 +512,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     if (is.ped(p))
       newpeds = list(list(p))
     else if (is.pedList(p))
-      newpeds = lapply(newpeds, list)
+      newpeds = lapply(p, list)
     else { # if list of ped with plot arguments
       if (!is.ped(p[[1]]))
         stop2("First element must be a `ped` object", p[[1]])

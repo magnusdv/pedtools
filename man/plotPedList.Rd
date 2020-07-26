@@ -85,14 +85,23 @@ plotPedList(peds, widths = w, groups = list(1, 2:3), titles = 1:2)
 plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
             shaded = leaves, symbolsize = 1.3, col = list(red = 1))
 
+dev.off()
+
+#' #################################
+# Example of automatic grouping #
+#################################
+H1 = nuclearPed()
+H2 = list(singleton(1), singleton(2)) # grouped!
+plotPedList(list(H1 = H1, H2 = H2), newdev = TRUE)
+
+dev.off()
+
 ############################################################
 # Complex example with individual parameters for each plot #
 ############################################################
 
 # For more control of individual plots, each plot and all
 # its parameters can be specified in its own list.
-
-dev.off() # remove previous window
 
 x1 = nuclearPed(nch = 3)
 m1 = marker(x1, `3` = 1:2)
@@ -122,6 +131,7 @@ plot4 = list(x4, margins = marg4, title = "Plot 4", cex = 1.3,
 plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
             groups = list(1, 2:3, 4), newdev = TRUE)
 
+dev.off()
 
 ################################
 # Example with large pedigrees #
@@ -133,6 +143,7 @@ plotPedList(list(halfCousinPed(4), cousinPed(7)),
             titles = c("Large", "Very large"),
             dev.height = 8, dev.width = 5)
 
+dev.off()
 
 }
 \seealso{
