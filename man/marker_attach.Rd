@@ -12,7 +12,8 @@ setMarkers(
   alleleMatrix = NULL,
   locusAttributes = NULL,
   missing = 0,
-  sep = NULL
+  sep = NULL,
+  checkCons = TRUE
 )
 
 addMarkers(
@@ -21,7 +22,8 @@ addMarkers(
   alleleMatrix = NULL,
   locusAttributes = NULL,
   missing = 0,
-  sep = NULL
+  sep = NULL,
+  checkCons = TRUE
 )
 }
 \arguments{
@@ -43,6 +45,9 @@ for missing alleles.}
 \item{sep}{If this is a single string, each entry of \code{alleleMatrix} is
 interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = TRUE)}. For example, if the entries are formatted as
 "A/B", put \code{sep = "/"}. Default: NULL.}
+
+\item{checkCons}{A logical. If TRUE (default), each marker is checked
+for consistency with \code{x}.}
 }
 \value{
 A \code{ped} object.

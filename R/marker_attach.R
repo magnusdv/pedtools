@@ -48,6 +48,8 @@
 #'   interpreted as a genotype, and will be split by calling `strsplit(...,
 #'   split = sep, fixed = TRUE)`. For example, if the entries are formatted as
 #'   "A/B", put `sep = "/"`. Default: NULL.
+#' @param checkCons A logical. If TRUE (default), each marker is checked for
+#'   consistency with `x`.
 #'
 #' @return A `ped` object.
 #' @examples
@@ -69,7 +71,7 @@ NULL
 #' @rdname marker_attach
 #' @export
 setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
-                      sep = NULL) {
+                      sep = NULL, checkCons = TRUE) {
 
   # If pedlist input, recurse over components
   if(is.pedList(x)) {
@@ -104,8 +106,11 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   else
     stop2("Argument `m` must be either a single `marker` object, a list of such, or NULL")
 
+  # Check consistency with `x`
+  if(checkCons)
+    checkConsistency(x, mlist)
+
   class(mlist) = "markerList"
-  checkConsistency(x, mlist)
   x$MARKERS = mlist
   x
 }
@@ -113,7 +118,7 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 #' @rdname marker_attach
 #' @export
 addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
-                      sep = NULL) {
+                      sep = NULL, checkCons = TRUE) {
 
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
@@ -139,8 +144,11 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   else
     stop2("Argument `m` must be either a single `marker` object, a list of such, or NULL")
 
+  # Check consistency with `x`
+  if(checkCons)
+    checkConsistency(x, mlist)
+
   # Append to x and return
-  checkConsistency(x, mlist)
   mlist = c(x$MARKERS, mlist)
   class(mlist) = "markerList"
   x$MARKERS = mlist
