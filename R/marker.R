@@ -83,9 +83,11 @@
 #' marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
 #'
 #' @export
-marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afreq = NULL,
+marker = function(x, ...,  geno = NULL, allelematrix = NULL,
+                  alleles = NULL, afreq = NULL,
                   chrom = NA, posMb = NA, name = NA,
-                  NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
+                  NAstrings = c(0, "", NA, "-"),
+                  mutmod = NULL, rate = NULL,
                   validate = TRUE) {
 
   # Some parameters cannot have length 0 or be ""
@@ -96,7 +98,7 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afr
   pedN = pedsize(x)
 
   if (is.null(geno) && is.null(allelematrix)) {
-    # Initalize empty allele matrix
+    # Initialise empty allele matrix
     m = matrix(0, ncol = 2, nrow = pedN)
 
     # Capture genotypes given in dots
@@ -143,57 +145,55 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afr
   else
     m = allelematrix
 
+  ### Alleles and frequencies
+  if(!is.null(alleles) && !is.null(names(afreq)))
+    stop2("Argument `alleles` should not be used when `afreq` has names")
+  if(is.null(alleles) && !is.null(afreq) && is.null(names(afreq)))
+    stop2("When `alleles` is NULL, `afreq` must be named")
+
 
   # If alleles are NULL, take from afreq names, otherwise from supplied genos
-  if (is.null(alleles)) {
-    if(!is.null(afreq) && !is.null(names(afreq)))
-       alleles = names(afreq)
-    else {
-      alleles = .mysetdiff(m, NAstrings)
-      if (length(alleles) == 0)
-        alleles = 1:2 # NEW
-    }
-  }
-  else if(!all(m %in% c(NAstrings, alleles))) {
-    mtxt = if(is.na(name)) "this marker: " else sprintf("marker `%s`: ", name)
-    stop2("Invalid allele for ", mtxt, setdiff(m, c(NAstrings, alleles)))
-  }
+  als = alleles %||% names(afreq) %||% .mysetdiff(m, NAstrings)
+  if(length(als) == 0)
+    als = 1:2
 
   ### Frequencies
-  if (is.null(afreq)) {
-    nall = length(alleles)
-    afreq = rep.int(1/nall, nall)
-  }
-  if (is.null(names(afreq)))
-    names(afreq) = alleles
+  afreq = afreq %||% {rep_len(1, length(als))/length(als)}
+  names(afreq) = names(afreq) %||% als
 
   # Sort alleles and frequencies (numerical sorting if appropriate)
-  if (!is.numeric(alleles) && !anyNA(suppressWarnings(as.numeric(alleles))))
-    ord = order(as.numeric(alleles))
+  if (!is.numeric(als) && !anyNA(suppressWarnings(as.numeric(als))))
+    ord = order(as.numeric(als))
   else
-    ord = order(alleles)
+    ord = order(als)
 
-  afreq = afreq[ord]
-  alleles = names(afreq)
+  # Final ordered objects
+  AFR = afreq[ord]
+  ALS = names(AFR)
 
   ### Mutation model
   if(!is.null(mutmod)) {
     if (!requireNamespace("pedmut", quietly = TRUE))
       stop2("Package `pedmut` must be installed in order to include mutation models")
-    mutmod = pedmut::mutationModel(mutmod, alleles = alleles, afreq = afreq, rate = rate)
+    mutmod = pedmut::mutationModel(mutmod, alleles = ALS, afreq = AFR, rate = rate)
   }
 
-  ### Create the internal allele matrix
-  m_int = match(m, alleles, nomatch = 0)
+  ### Internal allele matrix
+  if(!all(m %in% c(NAstrings, ALS)))
+    stop2("Invalid allele", if(!is.na(name)) sprintf(" for marker `%s`", name), ": ",
+          setdiff(m, c(NAstrings, ALS)))
+
+  m_int = match(m, ALS, nomatch = 0, incomparables = NAstrings)
   dim(m_int) = dim(m)
 
-  ma = newMarker(m_int, alleles = alleles, afreq = unname(afreq),
+  # Create marker object
+  ma = newMarker(m_int, alleles = ALS, afreq = unname(AFR),
             name = as.character(name), chrom = as.character(chrom),
             posMb = as.numeric(posMb), mutmod = mutmod,
             pedmembers = labels(x), sex = x$SEX)
 
-  if(validate) validateMarker(ma)
-
+  if(validate)
+    validateMarker(ma)
   ma
 }
 
@@ -201,6 +201,7 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL, alleles = NULL, afr
 newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
                      chrom = NA_character_, posMb = NA_real_,
                      mutmod = NULL, pedmembers, sex) {
+
   stopifnot2(is.matrix(allelematrix_int),
             ncol(allelematrix_int) == 2,
             is.integer(allelematrix_int),

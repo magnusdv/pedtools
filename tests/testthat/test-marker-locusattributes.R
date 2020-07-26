@@ -36,7 +36,7 @@ test_that("setLocusAttributes catches errors", {
   expect_error(sla(loc = list(m1 = list(), m1 = list())),
                "Duplicated marker name in attribute list: m1")
   expect_error(sla(marker = 2, loc = list(alleles = 1:2), erase = T),
-               "Invalid allele for this marker")
+               "Invalid allele")
   expect_error(sla(markers = 2, loc = list(alleles = 1:2), erase = F),
                "Invalid allele for marker `m2`")
   expect_error(sla(marker = 1, loc = list(alleles = 1, afreq = 2)),
