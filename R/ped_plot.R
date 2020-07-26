@@ -379,13 +379,19 @@ plot.pedList = function(x, ...) {
 #' @param widths A numeric vector of relative widths of the subplots. Recycled
 #'   to `length(plots)` if necessary, before passed on to [layout()]. Note that
 #'   the vector does not need to sum to 1.
-#' @param groups A list of vectors, each consisting of consecutive integers, indicating subplots to be grouped. By default
-#'   the grouping follows the list structure of `plots`.
-#' @param titles A character vector of titles for each group. Overrides titles given in individuals subplots.
+#' @param groups A list of vectors, each consisting of consecutive integers,
+#'   indicating subplots to be grouped. By default the grouping follows the list
+#'   structure of `plots`.
+#' @param titles A character vector of titles for each group. Overrides titles
+#'   given in individuals subplots.
 #' @param frames A logical indicating if groups should be framed.
 #' @param fmar A single number in the interval \eqn{[0,0.5)} controlling the
 #'   position of the frames.
 #' @param frametitles Deprecated; use `titles` instead.
+#' @param source NULL (default), or the name or index of an element of `plots`.
+#'   If given, marker data is temporarily transferred from this to all the other
+#'   pedigrees. This may save some typing when plotting the same genotypes on
+#'   several pedigrees.
 #' @param newdev A logical, indicating if a new plot window should be opened.
 #' @param dev.height,dev.width The dimensions of the new plot window. If these
 #'   are NA suitable values are guessed from the pedigree sizes.
@@ -430,7 +436,7 @@ plot.pedList = function(x, ...) {
 #' H1 = nuclearPed()
 #' H2 = list(singleton(1), singleton(3))  # grouped!
 #'
-#' plotPedList(list(H1, H2), dev.height = 2, dev.width = 2,
+#' plotPedList(list(H1, H2), dev.height = 2, dev.width = 4,
 #'             titles = c(expression(H[1]), expression(H[2])))
 #'
 #' dev.off()
@@ -489,7 +495,7 @@ plot.pedList = function(x, ...) {
 #' @export
 plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
                        frames = TRUE, fmar = NULL, frametitles = NULL,
-                       dev.height = NULL, dev.width = NULL,
+                       source = NULL, dev.height = NULL, dev.width = NULL,
                        newdev = !is.null(dev.height) || !is.null(dev.width),
                        ...) {
 
@@ -500,6 +506,16 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
   if(!(isTRUE(frames) || isFALSE(frames)))
     stop2("`frames` must be either TRUE or FALSE; use `groups` to specify framing groups")
+
+  # If explicit source given, transfer marker data to all
+  if(!is.null(source)) {
+    srcPed = plots[[source]]
+    if(is.null(srcPed))
+      stop2("Unknown source pedigree: ", source)
+    if(nMarkers(srcPed) == 0)
+      stop2("The source pedigree has no attached markers")
+    plots = lapply(plots, transferMarkers, from = srcPed)
+  }
 
   deduceGroups = is.null(groups)
   if (deduceGroups) {

@@ -12,6 +12,7 @@ plotPedList(
   frames = TRUE,
   fmar = NULL,
   frametitles = NULL,
+  source = NULL,
   dev.height = NULL,
   dev.width = NULL,
   newdev = !is.null(dev.height) || !is.null(dev.width),
@@ -27,10 +28,12 @@ first element is a pedigree, and the remaining elements are passed on to
 to \code{length(plots)} if necessary, before passed on to \code{\link[=layout]{layout()}}. Note that
 the vector does not need to sum to 1.}
 
-\item{groups}{A list of vectors, each consisting of consecutive integers, indicating subplots to be grouped. By default
-the grouping follows the list structure of \code{plots}.}
+\item{groups}{A list of vectors, each consisting of consecutive integers,
+indicating subplots to be grouped. By default the grouping follows the list
+structure of \code{plots}.}
 
-\item{titles}{A character vector of titles for each group. Overrides titles given in individuals subplots.}
+\item{titles}{A character vector of titles for each group. Overrides titles
+given in individuals subplots.}
 
 \item{frames}{A logical indicating if groups should be framed.}
 
@@ -38,6 +41,11 @@ the grouping follows the list structure of \code{plots}.}
 position of the frames.}
 
 \item{frametitles}{Deprecated; use \code{titles} instead.}
+
+\item{source}{NULL (default), or the name or index of an element of \code{plots}.
+If given, marker data is temporarily transferred from this to all the other
+pedigrees. This may save some typing when plotting the same genotypes on
+several pedigrees.}
 
 \item{dev.height, dev.width}{The dimensions of the new plot window. If these
 are NA suitable values are guessed from the pedigree sizes.}
@@ -93,7 +101,7 @@ dev.off()
 H1 = nuclearPed()
 H2 = list(singleton(1), singleton(3))  # grouped!
 
-plotPedList(list(H1, H2), dev.height = 2, dev.width = 2,
+plotPedList(list(H1, H2), dev.height = 2, dev.width = 4,
             titles = c(expression(H[1]), expression(H[2])))
 
 dev.off()
