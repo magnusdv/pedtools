@@ -33,8 +33,8 @@ test_that("validatePed() catches malformed pedigrees", {
   expect_error(ped(id, c(0,0,0), mid, sex), "Individual a has exactly 1 parent")
   expect_error(ped(id, fid, c(0,0,0), sex), "Individual a has exactly 1 parent")
 
-  expect_error(ped(id, fid, mid, c(1,3,-1)), "Illegal gender code: 3")
-  expect_error(ped(id, fid, mid, c(1,3,-1)), "Illegal gender code: -1")
+  expect_error(ped(id, fid, mid, c(1,3,-1)), "Illegal sex: 3")
+  expect_error(ped(id, fid, mid, c(1,3,-1)), "Illegal sex: -1")
 
   expect_error(ped(id, mid, fid, sex), "Individual c is female, but appear as the father of a")
   expect_error(ped(id, mid, fid, sex), "Individual b is male, but appear as the mother of a")
@@ -73,7 +73,5 @@ test_that("singleton creation works as expected", {
   x = singleton(1)
   expect_is(x, "ped")
   expect_is(x, "singleton")
-
-  expect_error(singleton(), 'argument "id" is missing')
 })
 

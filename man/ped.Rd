@@ -16,7 +16,7 @@ ped(
   verbose = FALSE
 )
 
-singleton(id, sex = 1, famid = "")
+singleton(id = 1, sex = 1, famid = "")
 }
 \arguments{
 \item{id}{a vector (numeric or character) of individual ID labels.}

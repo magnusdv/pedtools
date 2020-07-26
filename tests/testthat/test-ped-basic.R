@@ -14,7 +14,7 @@ test_that("nuclearPed() catches errors", {
   expect_error(nuclearPed(fa = 1:2), "`father` must have length 1")
   expect_error(nuclearPed(mo = 1:2), "`mother` must have length 1")
 
-  expect_error(nuclearPed(sex='a'), "Illegal gender code: a")
+  expect_error(nuclearPed(sex='a'), "Illegal sex: a")
   expect_error(nuclearPed(sex=1:2), "`sex` is longer than the number of individuals")
   expect_error(nuclearPed(sex=integer(0)), "`sex` cannot be empty")
 
@@ -42,7 +42,7 @@ test_that("halfSibPed() catches errors", {
   expect_error(halfSibPed(0), "`nch1` must be a positive integer")
   expect_error(halfSibPed(1, 0), "`nch2` must be a positive integer")
 
-  expect_error(halfSibPed(sex1 = 'a'), "Illegal gender code: a")
+  expect_error(halfSibPed(sex1 = 'a'), "Illegal sex: a")
   expect_error(halfSibPed(sex1 = 1:2), "`sex1` is longer than the number of individuals")
   expect_error(halfSibPed(sex1 = integer(0)), "`sex1` cannot be empty")
 })

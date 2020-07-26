@@ -175,9 +175,9 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
 
 #' @export
 #' @rdname ped
-singleton = function(id, sex = 1, famid = "") {
+singleton = function(id = 1, sex = 1, famid = "") {
   if (length(id) != 1)
-    stop2("Parameter `id` must have length 1")
+    stop2("`id` must have length 1")
   sex = validate_sex(sex, nInd = 1)
   ped(id = id, fid = 0, mid = 0, sex = sex, famid = famid)
 }
@@ -217,7 +217,7 @@ validatePed = function(x) {
 
   # Sex
   if (!all(SEX %in% 0:2))
-    errs = c(errs, paste("Illegal gender code:", unique(setdiff(SEX, 0:2))))
+    errs = c(errs, paste("Illegal sex:", unique(setdiff(SEX, 0:2))))
 
   # Self ancestry
   self_anc = any_self_ancestry(x)
