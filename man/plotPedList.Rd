@@ -5,37 +5,39 @@
 \title{Plot a collection of pedigrees.}
 \usage{
 plotPedList(
-  plot.arg.list,
-  widths = NA,
+  plots,
+  widths = NULL,
+  groups = NULL,
+  titles = NULL,
   frames = TRUE,
-  frametitles = names(plot.arg.list),
-  fmar = NA,
-  dev.height = NA,
-  dev.width = NA,
-  newdev = !is.na(dev.height) || !is.na(dev.width),
+  fmar = NULL,
+  frametitles = NULL,
+  dev.height = NULL,
+  dev.width = NULL,
+  newdev = !is.null(dev.height) || !is.null(dev.width),
   ...
 )
 }
 \arguments{
-\item{plot.arg.list}{A list of lists. Each element of \code{plot.arg.list} is a
-list, where the first element is the \code{\link[=ped]{ped()}} object to be plotted, and the
-remaining elements are passed on to \code{plot.ped}. These elements must be
-correctly named. See examples below.}
+\item{plots}{A list of lists. Each element of \code{plots} is a list, where the
+first element is a pedigree, and the remaining elements are passed on to
+\code{plot.ped}. These elements must be correctly named. See examples below.}
 
 \item{widths}{A numeric vector of relative widths of the subplots. Recycled
-to \code{length(plot.arg.list)} if necessary, before passed on to \code{\link[=layout]{layout()}}.
-Note that the vector does not need to sum to 1.}
+to \code{length(plots)} if necessary, before passed on to \code{\link[=layout]{layout()}}. Note that
+the vector does not need to sum to 1.}
 
-\item{frames}{Either a single logical (FALSE = no frames; TRUE = automatic
-framing) or a list of numeric vectors: Each vector must consist of
-consecutive integers, indicating subplots to be framed together. By default
-the framing follows the list structure of \code{plot.arg.list}.}
+\item{groups}{A list of vectors, each consisting of consecutive integers, indicating subplots to be grouped. By default
+the grouping follows the list structure of \code{plots}.}
 
-\item{frametitles}{A character vector of titles for each frame. If this is
-non-NULL, titles for individuals subplots are ignored.}
+\item{titles}{A character vector of titles for each group. Overrides titles given in individuals subplots.}
+
+\item{frames}{A logical indicating if groups should be framed.}
 
 \item{fmar}{A single number in the interval \eqn{[0,0.5)} controlling the
 position of the frames.}
+
+\item{frametitles}{Deprecated; use \code{titles} instead.}
 
 \item{dev.height, dev.width}{The dimensions of the new plot window. If these
 are NA suitable values are guessed from the pedigree sizes.}
@@ -57,39 +59,41 @@ Note that for tweaking dev.height and dev.width the function \code{\link[=dev.si
 useful to determine the size of the active device.
 }
 \examples{
-# Simplest use: Just give a list of ped objects.
-# To guess suitable plot window dimensions, use 'newdev = TRUE'
+##################
+# Basic examples #
+##################
+
+# Simples use: Just give a list of ped objects.
 peds = list(nuclearPed(3), cousinPed(2), singleton(12), halfSibPed())
 plotPedList(peds, newdev = TRUE)
 
 # Modify the relative widths (which are not guessed)
-widths = c(2, 3, 1, 2)
-plotPedList(peds, widths = widths)
+w = c(2, 3, 1, 2)
+plotPedList(peds, widths = w)
 
 # In most cases the guessed dimensions are ok but not perfect.
 # Resize plot window manually and re-plot with `newdev = FALSE` (default)
-# plotPedList(peds, widths = widths)
+# plotPedList(peds, widths = w)
 
 ## Remove frames
-plotPedList(peds, widths = widths, frames = FALSE)
+plotPedList(peds, widths = w, frames = FALSE)
 
-# Non-default frames
-frames = list(1, 2:3)
-plotPedList(peds, widths = widths, frames = frames,
-            frametitles = c('First', 'Second'))
+# Non-default grouping
+plotPedList(peds, widths = w, groups = list(1, 2:3), titles = 1:2)
 
-# Parameters common to all plots can be added in the main call:
-margins = c(2, 4, 2, 4)
-title = 'Same title'
-labs = ''
-symbolsize = 1.5
-plotPedList(peds, widths = widths, frames = frames, margins = margins,
-            title = title, labs = labs, symbolsize = symbolsize,
-            newdev = TRUE)
+# Parameters added in the main call are used in each sub-plot
+plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
+            shaded = leaves, symbolsize = 1.3, col = list(red = 1))
 
-# COMPLEX EXAMPLE WITH MARKER DATA AND VARIOUS OPTIONS
-# For more control of individual plots, each plot and all its parameters
-# can be specified in its own list:
+############################################################
+# Complex example with individual parameters for each plot #
+############################################################
+
+# For more control of individual plots, each plot and all
+# its parameters can be specified in its own list.
+
+dev.off() # remove previous window
+
 x1 = nuclearPed(nch = 3)
 m1 = marker(x1, `3` = 1:2)
 marg1 = c(7, 4, 7, 4)
@@ -105,21 +109,29 @@ plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2",
 
 x3 = singleton("Mr. X")
 marg3 = c(10, 0, 0, 0)
-plot3 = list(x3, margins = marg3, title = "Plot 3", symbolsize = 1, cex = 2)
+plot3 = list(x3, margins = marg3, title = "Plot 3",
+             symbolsize = 1, cex = 2)
 
 x4 = halfSibPed()
 shaded = 4:5
-col = c("black", "black", "black", "blue", "blue")
+col = list(red = founders(x4), blue = leaves(x4))
 marg4 = marg1
-plot4 = list(x4, margins = marg4, title = "Plot 4", shaded = shaded, col = col)
+plot4 = list(x4, margins = marg4, title = "Plot 4", cex = 1.3,
+             shaded = shaded, col = col)
 
 plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
-            frames = list(1, 2:3, 4), newdev = TRUE)
+            groups = list(1, 2:3, 4), newdev = TRUE)
 
-# Different example:
+
+################################
+# Example with large pedigrees #
+################################
+
+# Important to set device dimensions here
+
 plotPedList(list(halfCousinPed(4), cousinPed(7)),
-            title = c('Many generations', 'Very many generations'),
-            dev.height = 9, dev.width = 9)
+            titles = c("Large", "Very large"),
+            dev.height = 8, dev.width = 5)
 
 
 }
