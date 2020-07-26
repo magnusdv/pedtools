@@ -588,8 +588,8 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
   # Layout of plot regions
   if (newdev) {
-    dev.height = dev.height %||% max(3, 1 * maxGen) + 0.3 * as.numeric(hasTitles)
-    dev.width = dev.width %||% 3 * N
+    dev.height = dev.height %||% {max(3, 1 * maxGen) + 0.3 * as.numeric(hasTitles)}
+    dev.width = dev.width %||% {3 * N}
     dev.new(height = dev.height, width = dev.width, noRStudioGD = TRUE)
   }
 
