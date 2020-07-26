@@ -424,12 +424,14 @@ plot.pedList = function(x, ...) {
 #'
 #' dev.off()
 #'
-#' #' #################################
+#' #################################
 #' # Example of automatic grouping #
 #' #################################
 #' H1 = nuclearPed()
-#' H2 = list(singleton(1), singleton(2)) # grouped!
-#' plotPedList(list(H1 = H1, H2 = H2), newdev = TRUE)
+#' H2 = list(singleton(1), singleton(3))  # grouped!
+#'
+#' plotPedList(list(H1, H2), dev.height = 2, dev.width = 2,
+#'             titles = c(expression(H[1]), expression(H[2])))
 #'
 #' dev.off()
 #'
@@ -544,8 +546,8 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
                   length(grouptitles), NG))
 
   # If no group titles, use inner titles if present
-  titles = grouptitles %||% sapply(flatlist, function(p) p$title %||% "")
-  hasTitles = any(titles != "")
+  finalTitles = grouptitles %||% sapply(flatlist, function(p) p$title %||% "")
+  hasTitles = any(nchar(finalTitles) > 0)
 
   # Relative plot widths
   if (is.null(widths))
@@ -628,7 +630,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   if(hasTitles) {
     midpoints = if(!is.null(grouptitles)) (grStart + grStop)/2 else ratios[1:N] + diff(ratios)/2
     cex.title = extra.args$cex.main %||% NA
-    mtext(titles, outer = TRUE, at = midpoints, cex = cex.title)
+    mtext(finalTitles, outer = TRUE, at = midpoints, cex = cex.title)
   }
 }
 

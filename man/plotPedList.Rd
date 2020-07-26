@@ -87,12 +87,14 @@ plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
 
 dev.off()
 
-#' #################################
+#################################
 # Example of automatic grouping #
 #################################
 H1 = nuclearPed()
-H2 = list(singleton(1), singleton(2)) # grouped!
-plotPedList(list(H1 = H1, H2 = H2), newdev = TRUE)
+H2 = list(singleton(1), singleton(3))  # grouped!
+
+plotPedList(list(H1, H2), dev.height = 2, dev.width = 2,
+            titles = c(expression(H[1]), expression(H[2])))
 
 dev.off()
 
