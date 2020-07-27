@@ -118,6 +118,10 @@ getFrequencyDatabase = function(x, markers = NULL, format = c("list", "ladder"))
 #' @export
 setFrequencyDatabase = function(x, database, format = c("list", "ladder"), ...) {
 
+  if(!hasMarkers(x))
+    stop2("This function can only modify already attached markers.",
+          "\nUse `setMarkers() to attach new markers.")
+
   format = match.arg(format)
 
   # If file path, read database
@@ -127,7 +131,19 @@ setFrequencyDatabase = function(x, database, format = c("list", "ladder"), ...) 
   }
 
   loci = freqDb2attribList(database, format = format)
-  setLocusAttributes(x, locusAttributes = loci, matchNames = TRUE, erase = FALSE)
+
+  # Check matching
+  xMarkers = name(x, seq_len(nMarkers(x)))
+  dbMarkers = sapply(loci, '[[', "name")
+
+  mtch = match(xMarkers, dbMarkers, nomatch = 0L)
+  if(!any(mtch > 0))
+    stop2("No matching entries in database")
+  if(!all(mtch > 0))
+    message("Skipping marker not found in database: ", toString(xMarkers[mtch == 0]))
+
+  useLoci = loci[mtch]
+  setLocusAttributes(x, locusAttributes = useLoci, matchNames = TRUE, erase = FALSE)
 }
 
 
