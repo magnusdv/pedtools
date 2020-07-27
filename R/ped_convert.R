@@ -227,7 +227,7 @@ print.ped = function(x, ..., markers, verbose = TRUE) {
   print(datafr, row.names = FALSE, ...)
 
   if(showmess && verbose)
-    message("Only 5 (out of ", nm, ") markers are shown. See `?print.ped` for options.")
+    message("Only 5 (out of ", nm, ") markers are shown.")
 
   invisible(datafr)
 }
