@@ -22,9 +22,11 @@
 \alias{afreq}
 \alias{afreq.marker}
 \alias{afreq.ped}
+\alias{afreq.list}
 \alias{afreq<-}
 \alias{afreq<-.marker}
 \alias{afreq<-.ped}
+\alias{afreq<-.list}
 \alias{name}
 \alias{name.marker}
 \alias{name.ped}
@@ -89,11 +91,15 @@ afreq(x, ...)
 
 \method{afreq}{ped}(x, marker, ...)
 
+\method{afreq}{list}(x, marker, ...)
+
 afreq(x, ...) <- value
 
 \method{afreq}{marker}(x, ...) <- value
 
 \method{afreq}{ped}(x, marker, ...) <- value
+
+\method{afreq}{list}(x, marker, ...) <- value
 
 name(x, ...)
 

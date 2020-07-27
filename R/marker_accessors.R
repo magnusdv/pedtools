@@ -200,7 +200,6 @@ mutmod.list = function(x, marker, ...) {
 `mutmod<-.list` = function(x, marker, ..., value) {
   for(i in seq_along(x))
     mutmod(x[[i]], marker) = value
-
   x
 }
 
@@ -261,6 +260,15 @@ afreq.ped = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
+afreq.list = function(x, marker, ...) {
+  comp_wise = lapply(x, afreq, marker = marker)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `afreq()` differs between pedigree components")
+  comp_wise[[1]]
+}
+
+#' @rdname marker_getset
+#' @export
 `afreq<-` = function(x, ..., value) {
   UseMethod("afreq<-")
 }
@@ -302,6 +310,15 @@ afreq.ped = function(x, marker, ...) {
 
   idx = whichMarkers(x, markers = marker)
   afreq(x$MARKERS[[idx]]) = value
+  x
+}
+
+
+#' @rdname marker_getset
+#' @export
+`afreq<-.list` = function(x, marker, ..., value) {
+  for(i in seq_along(x))
+    afreq(x[[i]], marker) = value
   x
 }
 
