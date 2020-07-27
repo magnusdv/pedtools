@@ -16,6 +16,7 @@ plotPedList(
   dev.height = NULL,
   dev.width = NULL,
   newdev = !is.null(dev.height) || !is.null(dev.width),
+  verbose = FALSE,
   ...
 )
 }
@@ -51,6 +52,8 @@ several pedigrees.}
 are NA suitable values are guessed from the pedigree sizes.}
 
 \item{newdev}{A logical, indicating if a new plot window should be opened.}
+
+\item{verbose}{A logical.}
 
 \item{\dots}{Further arguments passed on to each call to \code{\link[=plot.ped]{plot.ped()}}.}
 }

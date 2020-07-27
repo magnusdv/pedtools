@@ -395,6 +395,7 @@ plot.pedList = function(x, ...) {
 #' @param newdev A logical, indicating if a new plot window should be opened.
 #' @param dev.height,dev.width The dimensions of the new plot window. If these
 #'   are NA suitable values are guessed from the pedigree sizes.
+#' @param verbose A logical.
 #' @param \dots Further arguments passed on to each call to [plot.ped()].
 #'
 #' @author Magnus Dehli Vigeland
@@ -497,7 +498,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
                        frames = TRUE, fmar = NULL, frametitles = NULL,
                        source = NULL, dev.height = NULL, dev.width = NULL,
                        newdev = !is.null(dev.height) || !is.null(dev.width),
-                       ...) {
+                       verbose = FALSE, ...) {
 
   if(!is.null(frametitles)) {
     message("Argument `frametitles` is deprecated; use `titles` instead")
@@ -612,6 +613,16 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   new.oma = if (hasTitles) c(0, 0, 3, 0) else c(0, 0, 0, 0)
   opar = par(oma = new.oma, xpd = NA)
   on.exit(par(opar))
+
+  if(verbose) {
+    message("Group structure: ", toString(groups))
+    message("Relative widths: ", toString(widths))
+    message("Default margins: ", toString(defaultmargins))
+    message("Indiv. margins:")
+    for(p in plotlist) message("  ", toString(p$margins))
+    message("Input width/height: ", toString(c(dev.width, dev.height)))
+    message("Actual dimensions: ", toString(round(dev.size(),3)))
+  }
 
   # Plot!
   layout(rbind(1:N), widths = widths)
