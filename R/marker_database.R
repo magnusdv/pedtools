@@ -30,20 +30,20 @@
 #' @param markers	A character vector (with marker names) or a numeric vector
 #'   (with marker indices).
 #' @param database Either a list or matrix/data frame with allele frequencies,
-#'   or a file path (to be passed on to `readFrequencyDatabase()`).
+#'   or a file path (to be passed on to `readFreqDatabase()`).
 #' @param format Either "list" or "ladder".
 #' @param filename The path to a text file containing allele frequencies either
 #'   in "list" or "allelic ladder" format.
 #' @param ... Optional arguments passed on to [read.table()].
 #' @return
 #'
-#' * `getFrequencyDatabase`: either a list (if `format = "list"`) or a data
+#' * `getFreqDatabase`: either a list (if `format = "list"`) or a data
 #' frame (if `format = "ladder"`)
 #'
-#' * `readFrequencyDatabase`: a list (also if `format = "ladder"`) of named
+#' * `readFreqDatabase`: a list (also if `format = "ladder"`) of named
 #' numeric vectors
 #'
-#' * `setFrequencyDatabase`: a modified version of `x`
+#' * `setFreqDatabase`: a modified version of `x`
 #'
 #' @seealso  [setLocusAttributes()], [setMarkers()], [setAlleles()]
 #'
@@ -51,17 +51,17 @@
 #' loc1 = list(name = "m1", afreq = c(a = .1, b = .9))
 #' loc2 = list(name = "m2", afreq = c("1" = .2, "10.2" = .3, "3" = .5))
 #' x = setMarkers(singleton(1), locus = list(loc1, loc2))
-#' db = getFrequencyDatabase(x)
+#' db = getFreqDatabase(x)
 #' db
 #'
-#' y = setFrequencyDatabase(x, database = db)
+#' y = setFreqDatabase(x, database = db)
 #' stopifnot(identical(x, y))
 #'
 #' # The database can also be read directly from file
 #' tmp = tempfile()
 #' write("m1\na 0.1\nb 0.9\n\nm2\n1 0.2\n3 0.5\n10.2 0.3", tmp)
 #'
-#' z = setFrequencyDatabase(x, database = tmp)
+#' z = setFreqDatabase(x, database = tmp)
 #' stopifnot(all.equal(x, z))
 #'
 #' @name freqDatabase
@@ -70,11 +70,11 @@ NULL
 
 #' @rdname freqDatabase
 #' @export
-getFrequencyDatabase = function(x, markers = NULL, format = c("list", "ladder")) {
+getFreqDatabase = function(x, markers = NULL, format = c("list", "ladder")) {
 
   # If list of pedigrees, use the first component
   if(is.pedList(x))
-    return(getFrequencyDatabase(x[[1]], markers = markers, format = format))
+    return(getFreqDatabase(x[[1]], markers = markers, format = format))
 
   if(!is.ped(x))
     stop2("Input must be a `ped` object or a list of such")
@@ -116,7 +116,7 @@ getFrequencyDatabase = function(x, markers = NULL, format = c("list", "ladder"))
 
 #' @rdname freqDatabase
 #' @export
-setFrequencyDatabase = function(x, database, format = c("list", "ladder"), ...) {
+setFreqDatabase = function(x, database, format = c("list", "ladder"), ...) {
 
   if(!hasMarkers(x))
     stop2("This function can only modify already attached markers.",
@@ -126,7 +126,7 @@ setFrequencyDatabase = function(x, database, format = c("list", "ladder"), ...) 
 
   # If file path, read database
   if(is.character(database) && length(database) == 1) {
-    database = readFrequencyDatabase(database, format = format, ...)
+    database = readFreqDatabase(database, format = format, ...)
     format = "list" # output is always in list format
   }
 
@@ -182,7 +182,7 @@ freqDb2attribList = function(database, format = c("list", "ladder")) {
 
 #' @rdname freqDatabase
 #' @export
-readFrequencyDatabase = function(filename, format = c("list", "ladder"), ...) {
+readFreqDatabase = function(filename, format = c("list", "ladder"), ...) {
 
   format = match.arg(format)
 
@@ -227,9 +227,9 @@ readFrequencyDatabase = function(filename, format = c("list", "ladder"), ...) {
 
 #' @rdname freqDatabase
 #' @export
-writeFrequencyDatabase = function(x, filename, markers = NULL, format = c("list", "ladder")) {
+writeFreqDatabase = function(x, filename, markers = NULL, format = c("list", "ladder")) {
   if(is.ped(x) || is.pedList(x))
-    db = getFrequencyDatabase(x, markers, format = "list")
+    db = getFreqDatabase(x, markers, format = "list")
   else
     db = x
 
@@ -248,3 +248,30 @@ writeFrequencyDatabase = function(x, filename, markers = NULL, format = c("list"
   }
 }
 
+#' @rdname freqDatabase
+#' @export
+setFrequencyDatabase = function(...) {
+  warning("The function `setFrequencyDatabase()` has been renamed to `setFreqDatabase()`")
+  setFreqDatabase(...)
+}
+
+#' @rdname freqDatabase
+#' @export
+getFrequencyDatabase = function(...) {
+  warning("The function `getFrequencyDatabase()` has been renamed to `getFreqDatabase()`")
+  getFreqDatabase(...)
+}
+
+#' @rdname freqDatabase
+#' @export
+readFrequencyDatabase = function(...) {
+  warning("The function `readFrequencyDatabase()` has been renamed to `readFreqDatabase()`")
+  readFreqDatabase(...)
+}
+
+#' @rdname freqDatabase
+#' @export
+writeFrequencyDatabase = function(...) {
+  warning("The function `writeFrequencyDatabase()` has been renamed to `writeFreqDatabase()`")
+  writeFreqDatabase(...)
+}

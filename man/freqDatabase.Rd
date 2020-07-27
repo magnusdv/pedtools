@@ -2,24 +2,31 @@
 % Please edit documentation in R/marker_database.R
 \name{freqDatabase}
 \alias{freqDatabase}
-\alias{getFrequencyDatabase}
+\alias{getFreqDatabase}
+\alias{setFreqDatabase}
+\alias{readFreqDatabase}
+\alias{writeFreqDatabase}
 \alias{setFrequencyDatabase}
+\alias{getFrequencyDatabase}
 \alias{readFrequencyDatabase}
 \alias{writeFrequencyDatabase}
 \title{Allele frequency database}
 \usage{
-getFrequencyDatabase(x, markers = NULL, format = c("list", "ladder"))
+getFreqDatabase(x, markers = NULL, format = c("list", "ladder"))
 
-setFrequencyDatabase(x, database, format = c("list", "ladder"), ...)
+setFreqDatabase(x, database, format = c("list", "ladder"), ...)
 
-readFrequencyDatabase(filename, format = c("list", "ladder"), ...)
+readFreqDatabase(filename, format = c("list", "ladder"), ...)
 
-writeFrequencyDatabase(
-  x,
-  filename,
-  markers = NULL,
-  format = c("list", "ladder")
-)
+writeFreqDatabase(x, filename, markers = NULL, format = c("list", "ladder"))
+
+setFrequencyDatabase(...)
+
+getFrequencyDatabase(...)
+
+readFrequencyDatabase(...)
+
+writeFrequencyDatabase(...)
 }
 \arguments{
 \item{x}{A ped object, or a list of such.}
@@ -30,7 +37,7 @@ writeFrequencyDatabase(
 \item{format}{Either "list" or "ladder".}
 
 \item{database}{Either a list or matrix/data frame with allele frequencies,
-or a file path (to be passed on to \code{readFrequencyDatabase()}).}
+or a file path (to be passed on to \code{readFreqDatabase()}).}
 
 \item{...}{Optional arguments passed on to \code{\link[=read.table]{read.table()}}.}
 
@@ -39,11 +46,11 @@ in "list" or "allelic ladder" format.}
 }
 \value{
 \itemize{
-\item \code{getFrequencyDatabase}: either a list (if \code{format = "list"}) or a data
+\item \code{getFreqDatabase}: either a list (if \code{format = "list"}) or a data
 frame (if \code{format = "ladder"})
-\item \code{readFrequencyDatabase}: a list (also if \code{format = "ladder"}) of named
+\item \code{readFreqDatabase}: a list (also if \code{format = "ladder"}) of named
 numeric vectors
-\item \code{setFrequencyDatabase}: a modified version of \code{x}
+\item \code{setFreqDatabase}: a modified version of \code{x}
 }
 }
 \description{
@@ -78,17 +85,17 @@ names. \code{NA} entries correspond to unobserved alleles.
 loc1 = list(name = "m1", afreq = c(a = .1, b = .9))
 loc2 = list(name = "m2", afreq = c("1" = .2, "10.2" = .3, "3" = .5))
 x = setMarkers(singleton(1), locus = list(loc1, loc2))
-db = getFrequencyDatabase(x)
+db = getFreqDatabase(x)
 db
 
-y = setFrequencyDatabase(x, database = db)
+y = setFreqDatabase(x, database = db)
 stopifnot(identical(x, y))
 
 # The database can also be read directly from file
 tmp = tempfile()
 write("m1\na 0.1\nb 0.9\n\nm2\n1 0.2\n3 0.5\n10.2 0.3", tmp)
 
-z = setFrequencyDatabase(x, database = tmp)
+z = setFreqDatabase(x, database = tmp)
 stopifnot(all.equal(x, z))
 
 }

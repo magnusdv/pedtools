@@ -76,7 +76,7 @@ writePed = function(x, prefix, what = "ped", famid = is.pedList(x),
   }
 
   if ("freq" %in% what) {
-    writeFrequencyDatabase(x, filename = fnames[["freq"]], format = "list")
+    writeFreqDatabase(x, filename = fnames[["freq"]], format = "list")
     if(verbose) message("File written: ", fnames[["freq"]])
   }
 
