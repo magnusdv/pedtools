@@ -43,8 +43,9 @@ Details for possible attributes.}
 for missing alleles.}
 
 \item{sep}{If this is a single string, each entry of \code{alleleMatrix} is
-interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = TRUE)}. For example, if the entries are formatted as
-"A/B", put \code{sep = "/"}. Default: NULL.}
+interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = TRUE)}. If \code{alleleMatrix} contains entries with "/",
+this will be taken as separator by default. (To override this behaviour,
+put \code{sep = FALSE}.)}
 
 \item{checkCons}{A logical. If TRUE (default), each marker is checked for
 consistency with \code{x}.}

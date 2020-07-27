@@ -433,6 +433,10 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   if(is.null(AM) && is.null(locusAttributes))
     return(p)
 
+  # If `sep` is not given, but AM contains entries with "/", use this
+  if(is.null(sep) && any(grepl("/", AM, fixed = TRUE)))
+    sep = "/"
+
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {
     p = lapply(p, function(comp) {

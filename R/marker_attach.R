@@ -46,8 +46,9 @@
 #'   for missing alleles.
 #' @param sep If this is a single string, each entry of `alleleMatrix` is
 #'   interpreted as a genotype, and will be split by calling `strsplit(...,
-#'   split = sep, fixed = TRUE)`. For example, if the entries are formatted as
-#'   "A/B", put `sep = "/"`. Default: NULL.
+#'   split = sep, fixed = TRUE)`. If `alleleMatrix` contains entries with "/",
+#'   this will be taken as separator by default. (To override this behaviour,
+#'   put `sep = FALSE`.)
 #' @param checkCons A logical. If TRUE (default), each marker is checked for
 #'   consistency with `x`.
 #'
@@ -72,6 +73,12 @@ NULL
 #' @export
 setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
                       sep = NULL, checkCons = TRUE) {
+
+  # If `sep` is not given, but AM contains entries with "/", use this
+  if(!is.null(alleleMatrix) && is.null(sep) && any(grepl("/", alleleMatrix, fixed = TRUE)))
+    sep = "/"
+  if(isFALSE(sep))
+    sep = NULL
 
   # If pedlist input, recurse over components
   if(is.pedList(x)) {
