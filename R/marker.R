@@ -126,7 +126,7 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
 
       # Split compound genotypes, e.g., "a/b"
       if(lg == 1 && is.character(g))
-        g = strsplit(g, "/")[[1]]
+        g = strsplit(g, "/", fixed = TRUE)[[1]]
 
       # Insert in `m`
       m[ids_int[i], ] = g

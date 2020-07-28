@@ -85,8 +85,11 @@ genotype.ped = function(x, markers = NULL, id, ...) {
   if (anyNA(id_int))
     stop2("Unknown ID label: ", setdiff(id, pedlabels))
 
+  if(length(value) == 1)
+    value = strsplit(as.character(value), "/", fixed = TRUE)[[1]]
+
   if (!length(value) %in% 1:2)
-    stop2("Length of genotype vector must be 1 or 2")
+    stop2("Number of alleles must be 1 or 2: ", value)
 
   if(length(value) == 1)
     value = rep(value, 2)
