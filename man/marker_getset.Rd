@@ -75,9 +75,9 @@ mutmod(x, ...) <- value
 
 \method{mutmod}{marker}(x, ...) <- value
 
-\method{mutmod}{ped}(x, marker, ...) <- value
+\method{mutmod}{ped}(x, marker = NULL, ...) <- value
 
-\method{mutmod}{list}(x, marker, ...) <- value
+\method{mutmod}{list}(x, marker = NULL, ...) <- value
 
 alleles(x, ...)
 

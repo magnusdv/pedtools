@@ -187,9 +187,9 @@ mutmod.list = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
-`mutmod<-.ped` = function(x, marker, ..., value) {
-  if(missing(marker) || length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
+`mutmod<-.ped` = function(x, marker = NULL, ..., value) {
+  if(is.null(marker))
+    marker = seq_len(nMarkers(x))
 
   idx = whichMarkers(x, markers = marker)
   for(i in idx)
@@ -200,7 +200,10 @@ mutmod.list = function(x, marker, ...) {
 
 #' @rdname marker_getset
 #' @export
-`mutmod<-.list` = function(x, marker, ..., value) {
+`mutmod<-.list` = function(x, marker = NULL, ..., value) {
+  if(is.null(marker))
+    marker = seq_len(nMarkers(x))
+
   for(i in seq_along(x))
     mutmod(x[[i]], marker) = value
   x
