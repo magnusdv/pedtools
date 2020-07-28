@@ -135,7 +135,7 @@ test_that("genotype replacement gives correct error messages", {
   expect_error({genotype(x, "m1", 100) = 3}, "Unknown ID label: 100")
   expect_error({genotype(x, "m1", "girl") = 3}, "Unknown ID label: girl")
   expect_error({genotype(x, "m1", 101) = 3}, "Unknown allele for this marker: 3")
-  expect_error({genotype(x, "m1", 101) = 1:3}, "Length of genotype vector must be 1 or 2")
+  expect_error({genotype(x, "m1", 101) = 1:3}, "Number of alleles must be 1 or 2")
 })
 
 test_that("genotype replacement works with partial genotypes", {
