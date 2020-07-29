@@ -120,7 +120,10 @@ commentAndRealign = function(df, i, pred, comment) {
     return(df)
 
   df[[i]] = paste0(df[[i]], ifelse(pred, comment, padding))
-  names(df)[i] = paste0(names(df)[i], padding)
+
+  if(!is.null(names(df)))
+    names(df)[i] = paste0(names(df)[i], padding)
+
   df
 }
 

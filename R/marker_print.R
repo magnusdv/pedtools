@@ -17,40 +17,47 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
 
 #' @export
 print.marker = function(x, sep = "/", missing = "-", ...) {
-  pedlabels = attr(x, 'pedmembers')
+  ids = attr(x, 'pedmembers')
   gt = format(x, sep = sep, missing = missing)
-  df = data.frame(pedlabels, gt, stringsAsFactors = FALSE)
 
-  # Use marker name as column header, or "<NA>"
+  df = data.frame(id = ids, gt = gt)
+
+  # Use marker name
   mname = name(x)
-  if(is.na(mname))
-    mname = "<NA>"
-  names(df) = c("", mname)
+  names(df)[2] = if(is.na(mname)) "<NA>" else mname
 
+  # Extra space between columns
+  df = commentAndRealign(df, 1, rep(TRUE, nrow(df)), " ")
+
+  # If X: add question mark for heterozygous males
   if(isXmarker(x)) {
     maleHet = attr(x, "sex") == 1 & !gt %in% c(alleles(x), missing)
     df = commentAndRealign(df, 2, maleHet, "?")
   }
+
   print(df, row.names = FALSE)
 
-  cat(strrep("-", max(nchar(pedlabels)) + max(4, nchar(mname)) +3), "\n")
+  ### Other attributes
 
-  # Chromosome - position
-  chr = chrom(x)
-  mb = posMb(x)
-  cat(sprintf("Chrom %s: %s (Mb)\n", chr, mb))
-
-  # Mutations
+  # Mutation model
   mut = attr(x, "mutmod")
-  if(!is.null(mut))
-    muttxt = if(trivialMut(mut)) "Yes (trivial)" else "Yes"
-  else muttxt = "No"
-  cat("Mutation model:", muttxt, "\n")
+  muttxt = if(is.null(mut)) "none" else toString(mut)
 
-  # Allele freqs - use hack to get one space indentation
-  cat("Allele frequencies:\n")
-  afr = afreq(x)
-  print(data.frame(as.list(afr), check.names = FALSE), row.names = FALSE)
+  # Position
+  chr = chrom(x)
+  pos = posMb(x)
+  postxt = if(is.na(chr) && is.na(pos)) NA else sprintf("chr = %s, Mb = %g", chr, pos)
+
+  # Print info
+  cat(strrep("* ", (max(nchar(ids)) + max(nchar(gt)) + 6)/2), "\n")
+  cat("Position:", postxt, "\n")
+  cat("Mutation:", muttxt, "\n")
+  cat("Alleles:\n")
+
+  # Hack to get one space indentation
+  print(data.frame(as.list(afreq(x)), check.names = FALSE), row.names = FALSE)
+
+  invisible(x)
 }
 
 
