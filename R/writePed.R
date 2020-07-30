@@ -29,9 +29,8 @@
 #' # Write to file
 #' fn = writePed(x, prefix = tempfile("test"))
 #'
-#' # Remember `sep = "/"` when reading the file
-#' # (since `writePed()` writes genotypes as "a/b")
-#' y = readPed(fn, sep = "/")
+#' # Read
+#' y = readPed(fn)
 #'
 #' stopifnot(identical(x, y))
 #'

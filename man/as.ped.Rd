@@ -80,7 +80,7 @@ as.ped(df1)
 # Disconnected example: Trio (1-3) + singleton (4)
 df2 = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0),
                 M = c("1/2", "1/1", "2/2", "3/4"))
-as.ped(df2, sep = "/")
+as.ped(df2)
 
 # Two singletons
 df3 = data.frame(id = 1:2, fid = 0, mid = 0, sex = 1)
