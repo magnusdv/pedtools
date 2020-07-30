@@ -127,6 +127,12 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
                       sep = NULL, checkCons = TRUE) {
 
+  # If `sep` is not given, but AM contains entries with "/", use this
+  if(!is.null(alleleMatrix) && is.null(sep) && any(grepl("/", alleleMatrix, fixed = TRUE)))
+    sep = "/"
+  if(isFALSE(sep))
+    sep = NULL
+
   if(!is.ped(x)) stop2("Input is not a `ped` object")
 
   # If no data, do nothing
