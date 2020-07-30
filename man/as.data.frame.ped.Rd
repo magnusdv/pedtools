@@ -4,15 +4,19 @@
 \alias{as.data.frame.ped}
 \title{Convert ped to data.frame}
 \usage{
-\method{as.data.frame}{ped}(x, ..., markers)
+\method{as.data.frame}{ped}(x, ..., markers, sep = "/", missing = "-")
 }
 \arguments{
 \item{x}{Object of class \code{ped}.}
 
 \item{...}{Further parameters}
 
-\item{markers}{(Optional) Vector of marker indices. By default, all markers
+\item{markers}{Vector of marker names or indices. By default, all markers
 are included.}
+
+\item{sep}{A single string to be used as allele separator in marker genotypes.}
+
+\item{missing}{A single string to be used for missing alleles.}
 }
 \value{
 A \code{data.frame} with \code{pedsize(x)} rows and \code{4 + nMarkers(x)} columns.

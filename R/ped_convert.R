@@ -153,13 +153,16 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
 #'
 #' @param x Object of class `ped`.
 #' @param ... Further parameters
-#' @param markers (Optional) Vector of marker indices. By default, all markers
+#' @param markers Vector of marker names or indices. By default, all markers
 #'   are included.
+#' @param sep A single string to be used as allele separator in marker genotypes.
+#' @param missing A single string to be used for missing alleles.
+#'
 #' @return A `data.frame` with `pedsize(x)` rows and `4 + nMarkers(x)` columns.
 #' @seealso [as.matrix.ped()]
 #'
 #' @export
-as.data.frame.ped = function(x, ..., markers) {
+as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
   lab = labels(x)
   fid = mid = rep("0", pedsize(x))
   fid[x$FIDX > 0] = lab[x$FIDX]
@@ -173,7 +176,8 @@ as.data.frame.ped = function(x, ..., markers) {
     else markers = whichMarkers(x, markers)
 
     mlist = getMarkers(x, markers)
-    geno = do.call(cbind, lapply(mlist, format))
+    geno = do.call(cbind,
+      lapply(mlist, function(m) format(m, sep = sep, missing = missing)))
 
     # Headers of genotype columns: name if present, otherwise <idx>
     nms = vapply(mlist, name.marker, character(1))
