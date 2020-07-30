@@ -193,8 +193,8 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The `h
 
 ```{r}
 x2 = halfCousinPed(0, child = T)
-x2 = addChildren(x2, father = 1, mother = 4, nch = 1)
-x2 = relabel(x2, old = c(4,3,7,6), new = c(3,4,6,7))
+x2 = addChildren(x2, father = 2, mother = 3, nch = 1)
+x2 = relabel(x2, old = c(7,6), new = c(6,7))
 ```
 
 **A note about the order of pedigree members**  
@@ -223,12 +223,13 @@ For our final example we consider a complicated family tree extending both upwar
 
 ```{r merge-example, echo = FALSE, message = F}
 # Top part
-x = ancestralPed(g = 2) # bottom person is `7`
+x = ancestralPed(g = 2) # bottom person is `7`; relabel to `8`
+x = relabel(x, old = 7, new = 8)
 
 # Bottom part
 y = halfCousinPed(degree = 1) 
 y = swapSex(y, 4)
-y = relabel(y, new = 7:15) # top person becomes `7`
+y = relabel(y, new = 7:15) # top person becomes `8`
 
 # Merge
 z = mergePed(x, y)

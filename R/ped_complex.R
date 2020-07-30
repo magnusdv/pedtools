@@ -36,7 +36,7 @@
 #'
 #' # Consecutive brother-sister matings.
 #' x = fullSibMating(2)
-#' # plot(X)
+#' # plot(x)
 #'
 #' # Simultaneous half siblings and half first cousins
 #' x = halfSibStack(2)
@@ -115,14 +115,14 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0,
     x = mergePed(x1, x2)
   }
 
-  # Relabel according to numeric order (just to tidy up a bit)
-  x = relabel(x, 1:pedsize(x))
-
   if (child) {
     pars = leaves(x)
     x = swapSex(x, pars[2])
     x = addChildren(x, father = pars[1], mother = pars[2], nch = 1)
   }
+
+  # Relabel according to plot order
+  x = relabel(x, "asPlot")
 
   x
 }

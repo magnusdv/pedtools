@@ -119,7 +119,7 @@ nuclearPed = function(nch = 1, sex = 1, father = '1', mother = '2',
 
 #' @rdname ped_basic
 #' @export
-halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
+halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1, type = c("paternal", "maternal")) {
   if(!isCount(nch1))
     stop2("`nch1` must be a positive integer: ", nch1)
   if(!isCount(nch2))
@@ -127,12 +127,21 @@ halfSibPed = function(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1) {
   sex1 = validate_sex(sex1, nInd = nch1)
   sex2 = validate_sex(sex2, nInd = nch2)
 
-  x = ped(id = seq_len(3 + nch1 + nch2),
-          fid = c(0, 0, 0, rep.int(1, nch1 + nch2)),
-          mid = c(0, 0, 0, rep.int(2, nch1), rep.int(3, nch2)),
-          sex = c(1, 2, 2, sex1, sex2),
-          verbose = FALSE)
-  x
+  switch(match.arg(type),
+  paternal = {
+    fid = c(0, 0, 0, rep.int(2, nch1 + nch2))
+    mid = c(0, 0, 0, rep.int(1, nch1), rep.int(3, nch2))
+    sex = c(2, 1, 2, sex1, sex2)
+  },
+  maternal = {
+    fid = c(0, 0, 0, rep.int(1, nch1), rep.int(3, nch2))
+    mid = c(0, 0, 0, rep.int(2, nch1 + nch2))
+    sex = c(1, 2, 1, sex1, sex2)
+  })
+
+  ped(id = seq_len(3 + nch1 + nch2),
+      fid = fid, mid = mid, sex = sex,
+      verbose = FALSE, validate = FALSE)
 }
 
 #' @rdname ped_basic
@@ -193,6 +202,10 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FAL
     z = swapSex(z, parents[2], verbose = FALSE)
     z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = FALSE)
   }
+
+  # Relabel
+  z = relabel(z, "asPlot")
+
   z
 }
 
@@ -225,6 +238,10 @@ halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child =
     z = swapSex(z, parents[2], verbose = FALSE)
     z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = FALSE)
   }
+
+  # Relabel
+  z = relabel(z, "asPlot")
+
   z
 }
 
