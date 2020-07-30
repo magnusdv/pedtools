@@ -52,7 +52,7 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   cat(strrep("* ", (max(nchar(ids)) + max(nchar(gt)) + 6)/2), "\n")
   cat("Position:", postxt, "\n")
   cat("Mutation:", muttxt, "\n")
-  cat("Alleles:\n")
+  cat("Frequencies:\n")
 
   # Hack to get one space indentation
   print(data.frame(as.list(afreq(x)), check.names = FALSE), row.names = FALSE)
