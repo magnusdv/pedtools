@@ -33,6 +33,7 @@
 #' @param nch1,nch2 The number of children in each sibship.
 #' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
 #'   Recycled (if necessary) to lengths `nch1` and `nch2` respectively.
+#' @param type Either "paternal" or "maternal".
 #' @param n The number of generations, not including the initial founders.
 #' @param degree A non-negative integer: 0=siblings, 1=first cousins; 2=second
 #'   cousins, a.s.o.

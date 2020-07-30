@@ -13,7 +13,13 @@
 \usage{
 nuclearPed(nch = 1, sex = 1, father = "1", mother = "2", children = NULL)
 
-halfSibPed(nch1 = 1, nch2 = 1, sex1 = 1, sex2 = 1)
+halfSibPed(
+  nch1 = 1,
+  nch2 = 1,
+  sex1 = 1,
+  sex2 = 1,
+  type = c("paternal", "maternal")
+)
 
 linearPed(n, sex = 1)
 
@@ -48,6 +54,8 @@ must necessarily have gender code 0.)}
 
 \item{sex1, sex2}{Vectors of gender codes for the children in each sibship.
 Recycled (if necessary) to lengths \code{nch1} and \code{nch2} respectively.}
+
+\item{type}{Either "paternal" or "maternal".}
 
 \item{n}{The number of generations, not including the initial founders.}
 
