@@ -105,45 +105,45 @@ name(x, ...)
 
 \method{name}{marker}(x, ...)
 
-\method{name}{ped}(x, markers, ...)
+\method{name}{ped}(x, markers = NULL, ...)
 
-\method{name}{list}(x, markers, ...)
+\method{name}{list}(x, markers = NULL, ...)
 
 name(x, ...) <- value
 
 \method{name}{marker}(x, ...) <- value
 
-\method{name}{ped}(x, markers, ...) <- value
+\method{name}{ped}(x, markers = NULL, ...) <- value
 
-\method{name}{list}(x, markers, ...) <- value
+\method{name}{list}(x, markers = NULL, ...) <- value
 
 chrom(x, ...)
 
 \method{chrom}{marker}(x, ...)
 
-\method{chrom}{ped}(x, markers, ...)
+\method{chrom}{ped}(x, markers = NULL, ...)
 
-\method{chrom}{list}(x, markers, ...)
+\method{chrom}{list}(x, markers = NULL, ...)
 
 chrom(x, ...) <- value
 
 \method{chrom}{marker}(x, ...) <- value
 
-\method{chrom}{ped}(x, markers, ...) <- value
+\method{chrom}{ped}(x, markers = NULL, ...) <- value
 
-\method{chrom}{list}(x, markers, ...) <- value
+\method{chrom}{list}(x, markers = NULL, ...) <- value
 
 posMb(x, ...)
 
 \method{posMb}{marker}(x, ...)
 
-\method{posMb}{ped}(x, markers, ...)
+\method{posMb}{ped}(x, markers = NULL, ...)
 
 posMb(x, ...) <- value
 
 \method{posMb}{marker}(x, ...) <- value
 
-\method{posMb}{ped}(x, markers, ...) <- value
+\method{posMb}{ped}(x, markers = NULL, ...) <- value
 }
 \arguments{
 \item{x}{A \link{ped} object or a \link{marker} object}

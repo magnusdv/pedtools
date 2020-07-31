@@ -349,14 +349,16 @@ name.marker = function(x, ...) {
 
 #' @rdname marker_getset
 #' @export
-name.ped = function(x, markers, ...) {
+name.ped = function(x, markers = NULL, ...) {
+  markers = markers %||% seq_markers(x)
+
   mlist = getMarkers(x, markers = markers)
   vapply(mlist, name.marker, character(1))
 }
 
 #' @rdname marker_getset
 #' @export
-name.list = function(x, markers, ...) {
+name.list = function(x, markers = NULL, ...) {
   comp_wise = lapply(x, name, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `name()` differs between pedigree components")
@@ -386,8 +388,9 @@ name.list = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`name<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
+`name<-.ped` = function(x, markers = NULL, ..., value) {
+  markers = markers %||% seq_markers(x)
+  if(length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
   if(length(value) != length(markers))
     stop2("Length of replacement vector must equal the number of markers")
@@ -408,7 +411,7 @@ name.list = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`name<-.list` = function(x, markers, ..., value) {
+`name<-.list` = function(x, markers = NULL, ..., value) {
   lapply(x, function(cmp) `name<-`(cmp, markers = markers, value = value))
 }
 
@@ -427,14 +430,16 @@ chrom.marker = function(x, ...) {
 
 #' @rdname marker_getset
 #' @export
-chrom.ped = function(x, markers, ...) {
+chrom.ped = function(x, markers = NULL, ...) {
+  markers = markers %||% seq_markers(x)
+
   mlist = getMarkers(x, markers = markers)
   vapply(mlist, chrom.marker, character(1))
 }
 
 #' @rdname marker_getset
 #' @export
-chrom.list = function(x, markers, ...) {
+chrom.list = function(x, markers = NULL, ...) {
   comp_wise = lapply(x, chrom, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `chrom()` differs between pedigree components")
@@ -462,8 +467,9 @@ chrom.list = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`chrom<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
+`chrom<-.ped` = function(x, markers = NULL, ..., value) {
+  markers = markers %||% seq_markers(x)
+  if(length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
   if(length(value) > length(markers))
     stop2("Replacement vector larger than the number of markers: ", value)
@@ -483,7 +489,7 @@ chrom.list = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`chrom<-.list` = function(x, markers, ..., value) {
+`chrom<-.list` = function(x, markers = NULL, ..., value) {
   lapply(x, function(cmp) `chrom<-`(cmp, markers = markers, value = value))
 }
 
@@ -501,7 +507,9 @@ posMb.marker = function(x, ...) {
 
 #' @rdname marker_getset
 #' @export
-posMb.ped = function(x, markers, ...) {
+posMb.ped = function(x, markers = NULL, ...) {
+  markers = markers %||% seq_markers(x)
+
   mlist = getMarkers(x, markers = markers)
   vapply(mlist, posMb, numeric(1))
 }
@@ -530,8 +538,10 @@ posMb.ped = function(x, markers, ...) {
 
 #' @rdname marker_getset
 #' @export
-`posMb<-.ped` = function(x, markers, ..., value) {
-  if(missing(markers) || length(markers) == 0)
+`posMb<-.ped` = function(x, markers = NULL, ..., value) {
+  markers = markers %||% seq_markers(x)
+
+  if(length(markers) == 0)
     stop2("Argument `markers` cannot be empty")
 
   nm = length(markers)
