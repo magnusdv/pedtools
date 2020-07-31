@@ -94,7 +94,7 @@ plotPedList(peds, widths = w, groups = list(1, 2:3), titles = 1:2)
 
 # Parameters added in the main call are used in each sub-plot
 plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
-            shaded = leaves, symbolsize = 1.3, col = list(red = 1))
+            hatched = leaves, symbolsize = 1.3, col = list(red = 1))
 
 dev.off()
 
@@ -135,11 +135,11 @@ plot3 = list(x3, margins = marg3, title = "Plot 3",
              symbolsize = 1, cex = 2)
 
 x4 = halfSibPed()
-shaded = 4:5
+hatched = 4:5
 col = list(red = founders(x4), blue = leaves(x4))
 marg4 = marg1
 plot4 = list(x4, margins = marg4, title = "Plot 4", cex = 1.3,
-             shaded = shaded, col = col)
+             hatched = hatched, col = col)
 
 plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
             groups = list(1, 2:3, 4), newdev = TRUE)

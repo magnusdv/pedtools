@@ -61,13 +61,13 @@
 #' # Pedigree with marriage loop: Double first cousins
 #' if(requireNamespace("igraph", quietly = TRUE)) {
 #'   y = doubleCousins(1, 1, child = TRUE)
-#'   findLoopBreakers(y) # --> 5
-#'   findLoopBreakers2(y) # --> 5 and 6
+#'   findLoopBreakers(y) # --> 9
+#'   findLoopBreakers2(y) # --> 7 and 9
 #'   y2 = breakLoops(y)
 #'   plot(y2)
 #'
 #'   # Or loop breakers chosen by user
-#'   y3 = breakLoops(y, c(3, 7))
+#'   y3 = breakLoops(y, 6:7)
 #'   plot(y3)
 #' }
 #'

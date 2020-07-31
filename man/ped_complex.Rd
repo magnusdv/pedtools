@@ -66,7 +66,7 @@ final generation are simultaneous half k'th cousins, for each \verb{k = 0,...,n-
 
 # Consecutive brother-sister matings.
 x = fullSibMating(2)
-# plot(X)
+# plot(x)
 
 # Simultaneous half siblings and half first cousins
 x = halfSibStack(2)

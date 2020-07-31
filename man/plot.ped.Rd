@@ -94,8 +94,10 @@ default everyone is drawn black.}
 \item{aff}{a vector of ID labels indicating pedigree members whose plot
 symbols should be filled.}
 
-\item{shaded}{a vector of ID labels indicating pedigree members whose plot
+\item{hatched}{a vector of ID labels indicating pedigree members whose plot
 symbols should be hatched.}
+
+\item{shaded}{(Deprecated) synonym of \code{hatched}}
 
 \item{deceased}{a vector of ID labels indicating deceased pedigree members.}
 
@@ -147,7 +149,7 @@ x = setMarkers(x, m)
 plot(x, marker = "SNP")
 
 # Other options
-plot(x, marker = "SNP", shaded = typedMembers(x),
+plot(x, marker = "SNP", hatched = typedMembers(x),
      starred = "fa", deceased = "mo")
 
 # Filled symbols
@@ -163,7 +165,7 @@ plot(x, labs = c(FATHER = "fa", "boy"))
 plot(x, labs = males)
 
 # Colours
-plot(x, col = list(red = "fa", green = "boy"), shaded = "boy")
+plot(x, col = list(red = "fa", green = "boy"), hatched = "boy")
 
 # Founder inbreeding is shown by default
 founderInbreeding(x, "mo") = 0.1
