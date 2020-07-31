@@ -11,12 +11,11 @@
 #' @param marker either a vector of names or indices referring to markers
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
-#'   the format determined by `sep` and `missing`. See also `skipEmptyGenotypes`
+#'   the format determined by `sep` and `missing`. See also `showEmpty`
 #'   below. If NULL (the default), no genotypes are plotted.
 #' @param sep a character of length 1 separating alleles for diploid markers.
 #' @param missing the symbol (integer or character) for missing alleles.
-#' @param skipEmptyGenotypes a logical. If TRUE (default), and `marker` is
-#'   non-NULL, empty genotypes are not printed.
+#' @param showEmpty a logical, indicating if empty genotypes should be included.
 #' @param labs a vector or function controlling the individual labels included
 #'   in the plot. Alternative forms:
 #'
@@ -41,8 +40,9 @@
 #'   default everyone is drawn black.
 #' @param aff a vector of ID labels indicating pedigree members whose plot
 #'   symbols should be filled.
-#' @param shaded a vector of ID labels indicating pedigree members whose plot
+#' @param hatched a vector of ID labels indicating pedigree members whose plot
 #'   symbols should be hatched.
+#' @param shaded (Deprecated) synonym of `hatched`
 #' @param deceased a vector of ID labels indicating deceased pedigree members.
 #' @param starred a vector of ID labels indicating pedigree members that should
 #'   be marked with a star in the pedigree plot.
@@ -58,7 +58,8 @@
 #'   additional annotation.
 #' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
-#' @param skip.empty.genotypes Deprecated; use `skipEmptyGenotype` instead.
+#' @param skipEmptyGenotypes Deprecated; use `showEmpty` instead.
+#' @param skip.empty.genotypes Deprecated; use `showEmpty` instead.
 #' @param id.labels Deprecated; use `labs` instead
 #' @param \dots arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
@@ -77,7 +78,7 @@
 #' plot(x, marker = "SNP")
 #'
 #' # Other options
-#' plot(x, marker = "SNP", shaded = typedMembers(x),
+#' plot(x, marker = "SNP", hatched = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
 #'
 #' # Filled symbols
@@ -93,7 +94,7 @@
 #' plot(x, labs = males)
 #'
 #' # Colours
-#' plot(x, col = list(red = "fa", green = "boy"), shaded = "boy")
+#' plot(x, col = list(red = "fa", green = "boy"), hatched = "boy")
 #'
 #' # Founder inbreeding is shown by default
 #' founderInbreeding(x, "mo") = 0.1
@@ -119,10 +120,13 @@
 #'
 #' @importFrom graphics text
 #' @export
-plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = TRUE,
-                    labs = labels(x), title = NULL, col = 1, aff = NULL, shaded = NULL, deceased = NULL,
-                    starred = NULL, hints = NULL, fouInb = "autosomal", margins = c(0.6, 1, 4.1, 1),
-                    keep.par = FALSE, skip.empty.genotypes = NULL, id.labels = NULL, ...) {
+plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
+                    labs = labels(x), title = NULL, col = 1, aff = NULL, hatched = NULL,
+                    shaded = NULL, deceased = NULL,
+                    starred = NULL, hints = NULL, fouInb = "autosomal",
+                    margins = c(0.6, 1, 4.1, 1),
+                    keep.par = FALSE, skipEmptyGenotypes = NULL,
+                    skip.empty.genotypes = NULL, id.labels = NULL, ...) {
 
   if(!is.null(id.labels)) {
     message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
@@ -132,8 +136,12 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotyp
   }
 
   if(!is.null(skip.empty.genotypes)) {
-    message("The `skip.empty.genotypes` argument has been renamed to `skipEmptyGenotypes`, and will be removed in a future version")
-    skipEmptyGenotypes = skip.empty.genotypes
+    message("The `skip.empty.genotypes` argument has been replaced by `showEmpty` and will be removed in a future version")
+    showEmpty = !skip.empty.genotypes
+  }
+  if(!is.null(skipEmptyGenotypes)) {
+    message("The `skipEmptyGenotypes` argument has been replaced by `showEmpty` and will be removed in a future version")
+    showEmpty = !skipEmptyGenotypes
   }
 
   if(hasSelfing(x))
@@ -188,7 +196,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotyp
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
-    if (skipEmptyGenotypes)
+    if (!showEmpty)
       geno[rowSums(do.call(cbind, mlist)) == 0] = ""
 
     text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
@@ -212,20 +220,26 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotyp
      cols = rep(col, length = nInd)
   }
 
+  # Very soft deprecation of `shaded`
+  if(!is.null(shaded)) {
+    hatched = shaded
+    shaded = NULL
+  }
+
   # Affected/hatched individuals
   if(is.function(aff))
     aff = aff(x)
-  if(is.function(shaded))
-    shaded = shaded(x)
-  if(!is.null(aff) && !is.null(shaded))
-    stop2("Both `aff` and `shaded` cannot both be used")
+  if(is.function(hatched))
+    hatched = hatched(x)
+  if(!is.null(aff) && !is.null(hatched))
+    stop2("Both `aff` and `hatched` cannot both be used")
 
   if(!is.null(aff)) {
     density = -1
     angle = 90
   }
-  else if(!is.null(shaded)) {
-    aff = shaded
+  else if(!is.null(hatched)) {
+    aff = hatched
     density = 25
     angle = 45
   } else {
@@ -256,8 +270,9 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotyp
 
 #' @rdname plot.ped
 #' @export
-plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyGenotypes = TRUE,
-                          labs = labels(x), title = NULL, col = 1, aff = NULL, shaded = NULL,
+plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
+                          labs = labels(x), title = NULL, col = 1, aff = NULL,
+                          hatched = NULL, shaded = NULL,
                           deceased = NULL, starred = NULL, fouInb = "autosomal",
                           margins = c(8, 0, 0, 0), yadj = 0, id.labels = NULL, ...) {
 
@@ -284,8 +299,13 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyG
   if(is.function(aff))
     aff = aff(x)
 
-  if(is.function(shaded))
-    shaded = shaded(x)
+  if(!is.null(shaded)) {
+    hatched = shaded
+    shaded = NULL
+    }
+
+  if(is.function(hatched))
+    hatched = hatched(x)
 
   if(is.function(starred))
     starred = starred(x)
@@ -312,8 +332,8 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", skipEmptyG
                                   verbose = FALSE))
 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
-               skipEmptyGenotypes = skipEmptyGenotypes, labs = labs,
-               title = title, col = col, aff = aff, shaded = shaded, deceased = deceased,
+               showEmpty = showEmpty, labs = labs,
+               title = title, col = col, aff = aff, hatched = hatched, shaded = shaded, deceased = deceased,
                starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 
   usr = par("usr")
@@ -427,7 +447,7 @@ plot.pedList = function(x, ...) {
 #'
 #' # Parameters added in the main call are used in each sub-plot
 #' plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
-#'             shaded = leaves, symbolsize = 1.3, col = list(red = 1))
+#'             hatched = leaves, symbolsize = 1.3, col = list(red = 1))
 #'
 #' dev.off()
 #'
@@ -468,11 +488,11 @@ plot.pedList = function(x, ...) {
 #'              symbolsize = 1, cex = 2)
 #'
 #' x4 = halfSibPed()
-#' shaded = 4:5
+#' hatched = 4:5
 #' col = list(red = founders(x4), blue = leaves(x4))
 #' marg4 = marg1
 #' plot4 = list(x4, margins = marg4, title = "Plot 4", cex = 1.3,
-#'              shaded = shaded, col = col)
+#'              hatched = hatched, col = col)
 #'
 #' plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
 #'             groups = list(1, 2:3, 4), newdev = TRUE)
@@ -505,8 +525,11 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     titles = frametitles
   }
 
-  if(!(isTRUE(frames) || isFALSE(frames)))
-    stop2("`frames` must be either TRUE or FALSE; use `groups` to specify framing groups")
+  if(!(isTRUE(frames) || isFALSE(frames))) {
+    message("`frames` must be either TRUE or FALSE; use `groups` to specify framing groups")
+    groups = frames
+    frames = TRUE
+  }
 
   # If explicit source given, transfer marker data to all
   if(!is.null(source)) {

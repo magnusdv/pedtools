@@ -12,11 +12,12 @@
   marker = NULL,
   sep = "/",
   missing = "-",
-  skipEmptyGenotypes = TRUE,
+  showEmpty = FALSE,
   labs = labels(x),
   title = NULL,
   col = 1,
   aff = NULL,
+  hatched = NULL,
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
@@ -24,6 +25,7 @@
   fouInb = "autosomal",
   margins = c(0.6, 1, 4.1, 1),
   keep.par = FALSE,
+  skipEmptyGenotypes = NULL,
   skip.empty.genotypes = NULL,
   id.labels = NULL,
   ...
@@ -34,11 +36,12 @@
   marker = NULL,
   sep = "/",
   missing = "-",
-  skipEmptyGenotypes = TRUE,
+  showEmpty = FALSE,
   labs = labels(x),
   title = NULL,
   col = 1,
   aff = NULL,
+  hatched = NULL,
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
@@ -59,15 +62,14 @@ as_kinship2_pedigree(x, deceased = NULL, aff = NULL, hints = NULL)
 \item{marker}{either a vector of names or indices referring to markers
 attached to \code{x}, a \code{marker} object, or a list of such. The genotypes for
 the chosen markers are written below each individual in the pedigree, in
-the format determined by \code{sep} and \code{missing}. See also \code{skipEmptyGenotypes}
+the format determined by \code{sep} and \code{missing}. See also \code{showEmpty}
 below. If NULL (the default), no genotypes are plotted.}
 
 \item{sep}{a character of length 1 separating alleles for diploid markers.}
 
 \item{missing}{the symbol (integer or character) for missing alleles.}
 
-\item{skipEmptyGenotypes}{a logical. If TRUE (default), and \code{marker} is
-non-NULL, empty genotypes are not printed.}
+\item{showEmpty}{a logical, indicating if empty genotypes should be included.}
 
 \item{labs}{a vector or function controlling the individual labels included
 in the plot. Alternative forms:
@@ -118,7 +120,9 @@ singletons only the first element (the 'bottom' margin) is used.}
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
 
-\item{skip.empty.genotypes}{Deprecated; use \code{skipEmptyGenotype} instead.}
+\item{skipEmptyGenotypes}{Deprecated; use \code{showEmpty} instead.}
+
+\item{skip.empty.genotypes}{Deprecated; use \code{showEmpty} instead.}
 
 \item{id.labels}{Deprecated; use \code{labs} instead}
 
