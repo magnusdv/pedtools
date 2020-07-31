@@ -38,6 +38,12 @@ isNumber = function(x, minimum = NA, maximum = NA) {
   if(is.null(x)) y else x
 }
 
+seq_ped = function(x)
+  seq_len(pedsize(x))
+
+seq_markers = function(x)
+  seq_len(nMarkers(x))
+
 # A safer version of base::sample
 safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 
