@@ -72,9 +72,7 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
       stop2("Unknown ID label: ", setdiff(ids, unlist(labels(x))))
 
     # Check equality of marker counts and names
-    mNames = lapply(x, function(comp) name(comp, markers = seq_along(nMarkers(comp))))
-    if(length(unique(mNames)) > 1)
-      stop2("Components cannot have different number of markers, or different marker names. Please file an issue if this is important to you.")
+    name(x)
 
     # Extract alleles from each component
     amList = lapply(x, function(comp) {
@@ -93,11 +91,8 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   }
 
   # Main body: x is now is single `ped` object
-  if(is.null(ids))
-    ids = labels(x)
-
-  if(is.null(markers))
-    markers = seq_len(nMarkers(x))
+  ids = ids %||% labels(x)
+  markers = markers %||% seq_markers(x)
 
   # If no `ids` or no `markers`, return empty (but properly formed) matrix
   if(length(ids) == 0 || length(markers) == 0) {
@@ -165,7 +160,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
     am[ids_comp, ] = alleles[ids_comp, ]
 
     # Locus attributes
-    if(is.null(markers)) markers = seq_len(nMarkers(comp))
+    markers = markers %||% seq_markers(comp)
     loci = getLocusAttributes(comp, markers = markers)
 
     # Convert back to marker list and replace the old ones

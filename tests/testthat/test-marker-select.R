@@ -2,7 +2,7 @@ context("marker selection")
 
 x = setMarkers(singleton(1), locusAttributes = list(list(name = "m1"),
                                                     list(name = "m2")))
-mnames = function(x) name(x, seq_len(nMarkers(x)))
+mnames = function(x) name(x, seq_markers(x))
 
 test_that("selectMarkers() works with marker names", {
   expect_equal(mnames(selectMarkers(x, "m1")), "m1")

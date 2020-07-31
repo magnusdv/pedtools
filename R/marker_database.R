@@ -133,7 +133,7 @@ setFreqDatabase = function(x, database, format = c("list", "ladder"), ...) {
   loci = freqDb2attribList(database, format = format)
 
   # Check matching
-  xMarkers = name(x, seq_len(nMarkers(x)))
+  xMarkers = name(x, seq_markers(x))
   dbMarkers = sapply(loci, '[[', "name")
 
   mtch = match(xMarkers, dbMarkers, nomatch = 0L)

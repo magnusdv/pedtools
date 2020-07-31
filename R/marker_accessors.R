@@ -188,8 +188,7 @@ mutmod.list = function(x, marker, ...) {
 #' @rdname marker_getset
 #' @export
 `mutmod<-.ped` = function(x, marker = NULL, ..., value) {
-  if(is.null(marker))
-    marker = seq_len(nMarkers(x))
+  marker = marker %||% seq_markers(x)
 
   idx = whichMarkers(x, markers = marker)
   for(i in idx)
@@ -201,8 +200,7 @@ mutmod.list = function(x, marker, ...) {
 #' @rdname marker_getset
 #' @export
 `mutmod<-.list` = function(x, marker = NULL, ..., value) {
-  if(is.null(marker))
-    marker = seq_len(nMarkers(x))
+  marker = marker %||% seq_markers(x)
 
   for(i in seq_along(x))
     mutmod(x[[i]], marker) = value

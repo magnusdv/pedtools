@@ -93,8 +93,7 @@ getLocusAttributes = function(x, markers = NULL,
   if(!is.ped(x))
     stop2("Input must be a `ped` object or a list of such")
 
-  if(is.null(markers))
-    markers = seq_len(nMarkers(x))
+  markers = markers %||% seq_markers(x)
 
   attribs = match.arg(attribs, several.ok = TRUE)
 
