@@ -169,7 +169,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
     midx = whichMarkers(comp, markers)
     comp$MARKERS[midx] = mlistNew
 
-    # Return modified ped oject
+    # Return modified ped
     comp
   }
 

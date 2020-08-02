@@ -94,3 +94,16 @@ test_that("setMarkers() deals with marker names and ordering", {
   expect_error(setMarkers(trio, alleleMatrix = am2_all, locusAttributes = locAttr[1]),
                "Marker name found in `allelematrix`, but not in `locusAttributes`: M2")
 })
+
+test_that("setMarkers() gives correct errors with duplicated marker names", {
+  x = singleton(1)
+  m1 = marker(x, name = "M")
+  expect_error(setMarkers(x, list(m1,m1)), "Duplicated marker name: M")
+
+  m2 = marker(x)
+  expect_silent(setMarkers(x, list(m2,m2)))
+
+  x = setMarkers(x, list(m1, m2))
+  expect_error({name(x, 2) <- "M" }, "Duplicated marker name: M")
+
+})

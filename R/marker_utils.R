@@ -55,8 +55,22 @@ hasMarkers = function(x) {
   nMarkers(x) > 0
 }
 
+checkDupNames = function(x) {
+  if(is.ped(x))
+    mlist = x$MARKERS
+  else if(is.pedList(x))
+    mlist = x[[1]]$MARKERS
+  else
+    mlist = x
+
+  mnames = unlist(lapply(mlist, attr, "name"))
+  if(dup <- anyDuplicated.default(mnames, incomparables = NA))
+    stop2("Duplicated marker name: ", mnames[dup])
+}
 
 checkConsistency = function(x, mlist) {
+  checkDupNames(mlist)
+
   wrongSize = unlist(lapply(mlist, nrow) != pedsize(x))
   if(any(wrongSize)) {
     erri = which(wrongSize)[1]

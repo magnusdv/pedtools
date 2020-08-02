@@ -396,16 +396,19 @@ name.list = function(x, markers = NULL, ...) {
     stop2("Length of replacement vector must equal the number of markers")
   if(!is.character(value))
     stop2("Replacement must be a character vector")
-  if(anyDuplicated.default(value))
-    stop2("Replacement values must be unique")
 
   idx = whichMarkers(x, markers = markers)
 
+  # Set names
   x$MARKERS[idx] = lapply(seq_along(idx), function(i) {
     m = x$MARKERS[[idx[i]]]
     name(m) = value[i]
     m
   })
+
+  # Check for duplicates
+  checkDupNames(x)
+
   x
 }
 
