@@ -229,6 +229,8 @@ validateMarker = function(x) {
   if(any(alleles %in% NA_allele_))
     stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
 
+  if(dup <- anyDuplicated(alleles))
+    stop2("Duplicated allele label: ", alleles[dup])
   ## afreq
   afreq = attrs$afreq
   if (length(afreq) != length(alleles))

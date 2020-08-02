@@ -46,7 +46,12 @@ test_that("alleles and freqs are sorted together", {
 
 test_that("marker() catces various errors", {
   x = nuclearPed(1)
-  expect_error(marker(x, afreq = c(.2,.3,.5)), "When `alleles` is NULL, `afreq` must be named")
+  expect_error(marker(x, alleles = c(1,1)),
+               "Duplicated allele label: 1")
+  expect_error(marker(x, afreq = c(a=.1, a=.9)),
+               "Duplicated allele label: a")
+  expect_error(marker(x, afreq = c(.2,.3,.5)),
+               "When `alleles` is NULL, `afreq` must be named")
   expect_error(marker(x, alleles = 1, afreq = c(a = 1)),
                "Argument `alleles` should not be used when `afreq` has names")
 })
