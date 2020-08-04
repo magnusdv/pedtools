@@ -338,11 +338,11 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   }
   else {
     famid = x[[famid_col]]
-    unique_fams = sort.default(unique.default(famid))
+    unique_fams = unique.default(famid)
     multiple_fams = length(unique_fams) > 1
   }
 
-  # If multiple families, treat each component separatly by recursion
+  # If multiple families, treat each component separately by recursion
   # NB: a single ped may still be disconnected; this is handled in ped()
   if(multiple_fams) {
     pedlist = lapply(unique_fams, function(fam) {

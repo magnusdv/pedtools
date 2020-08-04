@@ -19,7 +19,7 @@ test_that("data.frame with multiple singletons is converted to pedlist", {
   expect_identical(as.ped(df), ans)
 
   df_shuffled = rev(df)[2:1,]
-  expect_identical(as.ped(df_shuffled), ans)
+  expect_identical(as.ped(df_shuffled), ans[2:1])
 })
 
 test_that("data.frame with multiple peds is converted to pedlist", {
@@ -35,7 +35,7 @@ test_that("data.frame with multiple peds is converted to pedlist", {
 
   df_shuffled = rev(df)[6:1,]
   res = as.ped(df_shuffled)
-  expect_identical(lapply(res, reorderPed), ans)
+  expect_identical(lapply(res, reorderPed), ans[2:1])
 })
 
 test_that("as.ped() converts data.frame with marker columns", {
