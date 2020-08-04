@@ -28,10 +28,14 @@
 #' @seealso [transferMarkers()]
 #'
 #' @examples
+#' # Setup: Pedigree with two markers
 #' x = nuclearPed(1)
-#' m1 = marker(x, `2` = 1:2, alleles = 1:2, name = "m1")
-#' m2 = marker(x, `3` = 2, alleles = 1:2, name = "m2")
+#' m1 = marker(x, `2` = "1/2", alleles = 1:2, name = "m1")
+#' m2 = marker(x, `3` = "2/2", alleles = 1:2, name = "m2")
 #' x = setMarkers(x, list(m1, m2))
+#'
+#'
+#' # Extract allele matrix:
 #'
 #' mat1 = getAlleles(x)
 #' mat2 = getAlleles(x, ids = 2:3, markers = "m2")
@@ -47,6 +51,7 @@
 #' # Alternative: In-place modification with `genotype()`
 #' genotype(y, id = "1", marker = "m2") = 1:2
 #' stopifnot(identical(y,z))
+#'
 #'
 #' ### Manipulation of pedlist objects
 #' s = transferMarkers(x, singleton("s"))
@@ -164,7 +169,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
     loci = getLocusAttributes(comp, markers = markers)
 
     # Convert back to marker list and replace the old ones
-    mlistNew = allelematrix2markerlist(comp, am, locusAttributes = loci, missing = NA) # why NA?
+    mlistNew = allelematrix2markerlist(comp, am, locusAttributes = loci, missing = NA)
 
     midx = whichMarkers(comp, markers)
     comp$MARKERS[midx] = mlistNew
@@ -221,8 +226,13 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     # Marker names: Use odd numbered columns; delete from last period
     # e.g. M1.1, M1.2, M2.1, M2.2, ... --> M1, M2, ...
-    if(hasMatrixNames)
+    if(hasMatrixNames) {
       nms = sub("\\.[^.]*$", "", nms[seq(1, length(nms), by = 2)])
+
+      # Converts numerical names to NA
+      if (isTRUE(any(suppressWarnings(nms == as.integer(nms)))))
+        hasMatrixNames = FALSE
+    }
   }
 
   # Settle the number of markers
@@ -342,10 +352,10 @@ markerlist2allelematrix = function(mlist, missing = NA) {
   nInd = length(amat)/(2*nMark)
   dim(amat) = c(nInd, 2*nMark)
 
-  # Column namse
+  # Column names
   mnames = sapply(mlist, name)
   if(any(naname <- is.na(mnames)))
-    mnames[naname] = paste0("na", 1:sum(naname))
+    mnames[naname] = as.character(which(naname))
   colnames(amat) = paste0(rep(mnames, each = 2), c(".1", ".2"))
 
   # Return character matrix

@@ -42,10 +42,14 @@ example, setting \code{alleles = 0} gives a simple way of removing the genotypes
 of some or all individuals (while keeping the markers attached).
 }
 \examples{
+# Setup: Pedigree with two markers
 x = nuclearPed(1)
-m1 = marker(x, `2` = 1:2, alleles = 1:2, name = "m1")
-m2 = marker(x, `3` = 2, alleles = 1:2, name = "m2")
+m1 = marker(x, `2` = "1/2", alleles = 1:2, name = "m1")
+m2 = marker(x, `3` = "2/2", alleles = 1:2, name = "m2")
 x = setMarkers(x, list(m1, m2))
+
+
+# Extract allele matrix:
 
 mat1 = getAlleles(x)
 mat2 = getAlleles(x, ids = 2:3, markers = "m2")
@@ -61,6 +65,7 @@ z = setAlleles(y, ids = "1", marker = "m2", alleles = 1:2)
 # Alternative: In-place modification with `genotype()`
 genotype(y, id = "1", marker = "m2") = 1:2
 stopifnot(identical(y,z))
+
 
 ### Manipulation of pedlist objects
 s = transferMarkers(x, singleton("s"))
