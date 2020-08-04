@@ -1,7 +1,7 @@
 Package: pedtools
 Type: Package
 Title: Creating and Working with Pedigrees and Marker Data
-Version: 0.9.4.9000
+Version: 0.9.5
 Authors@R: person("Magnus Dehli", "Vigeland", email = "m.d.vigeland@medisin.uio.no", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9134-4962"))
 Description: A lightweight, but comprehensive collection of tools for creating, 
