@@ -25,7 +25,7 @@
 #' @param map Either a data frame or the path to a map file.
 #' @param matchNames A logical; if TRUE, pre-existing marker names of `x` will
 #'   be used to assign chromosome labels and positions from `map`.
-#' @param ... ARguments passed to `read.table()`.
+#' @param ... Further arguments passed to `read.table()`.
 #'
 #' @return `getMap()` returns a data frame with columns `CHROM`, `MARKER` and
 #'   `MB`.

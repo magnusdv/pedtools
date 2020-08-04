@@ -24,7 +24,7 @@ setMap(x, map, matchNames = NA, ...)
 \item{matchNames}{A logical; if TRUE, pre-existing marker names of \code{x} will
 be used to assign chromosome labels and positions from \code{map}.}
 
-\item{...}{ARguments passed to \code{read.table()}.}
+\item{...}{Further arguments passed to \code{read.table()}.}
 }
 \value{
 \code{getMap()} returns a data frame with columns \code{CHROM}, \code{MARKER} and
