@@ -93,11 +93,11 @@ plot(trio, margins = c(1,1,1,1))
 Under the hood, `pedtools::plot()` is an elaborate wrapper of the excellent plotting functionality of the `kinship2` package. Most of the possibilities provided by kinship2 are available from pedtools, and several features are added. An overview can be found in the documentation `?plot.ped`, but a quick example should get you started:
 
 ```{r eval=FALSE}
-plot(trio, deceased = "fa", starred = "mo", shaded = "girl", 
+plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
      col = c("green", "red", "blue"), title = "Trio 1")
 ```
 ```{r echo=FALSE, fig.dim = c(2,2)}
-plot(trio, deceased = "fa", starred = "mo", shaded = "girl", 
+plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
      col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,1.5,1))
 ```
 
@@ -122,9 +122,8 @@ The following pedigree structures serve as starting points for pedigree construc
 * `cousinPed()`, cousins of specified degree/removal
 * `halfCousinPed()`, half cousins of specified degree/removal
 * `ancestralPed()`, a family tree containing the ancestors of a single person
-* `selfingPed()`, a series of consecutive self-matings
 
-There are also more specialized structures, including double cousins and breeding schemes like consecutive matings between full siblings. Look them up in `?ped_complex` if you are interested.
+There are also more specialized structures, including double cousins, selfing pedigrees, and consecutive matings between full siblings. Look them up in `?ped_complex` if you are interested.
 
 **Add/remove/extract individuals**  
 The functions below are used to modify an existing `ped` object by adding/removing individuals, or extracting a sub-pedigree. For details, see `?ped_modify`.
@@ -141,7 +140,6 @@ The following functions modify various attributes of a `ped` object. See `?ped_m
 * `setSex()`
 * `swapSex()`
 * `relabel()`
-* `setFamid()` 
 
 ## Examples of pedigree construction
 ### Example 1: Trio {-}
@@ -287,23 +285,24 @@ Marker objects created with the `marker()` function. For example, the following 
 ```{r}
 marker(trio)
 ```
-As shown in the output, the marker is indeed empty: All pedigree members have missing genotypes, and there is no assigned name or chromosome/position. Furthermore, the last lines show that there is only one allele (named "1"), with frequency 1. For a more interesting example, let us make a SNP named "snp1", with alleles "A" and "B". The father is homozygous "A/A", while the mother is heterozygous. We store it in a variable `m1` for later use.
+As shown in the output, the marker is indeed empty: All pedigree members have missing genotypes, and there is no assigned name or position. By default, markers are diallelic, with alleles 1 and 2, with equal frequencies. For a more interesting example, let us make a SNP named "snp1", with alleles "A" and "B". The father is homozygous "A/A", while the mother is heterozygous. We store it in a variable `m1` for later use.
 ```{r}
-m1 = marker(trio, fa = "A", mo = c("A","B"), name = "snp1")
+m1 = marker(trio, fa = "A/A", mo = "A/B", name = "snp1")
 ```
-This illustrates several points. Firstly, individual genotypes are specified using the ID labels. For homozygous genotypes it suffices to write the allele once. Furthermore, the different alleles occurring in the genotypes is interpreted as the complete set of alleles for the marker. Finally, these are assigned equal frequencies. Of course, this behaviour can be overridden, by declaring alleles and frequencies explicitly:
+This illustrates several points. Firstly, individual genotypes may be specified using the ID labels. The different alleles occurring in the genotypes is interpreted as the complete set of alleles for the marker. Finally, these are assigned equal frequencies. Of course, this behaviour can be overridden, by declaring alleles frequencies explicitly:
 ```{r}
-marker(trio, fa = "A", mo = c("A","B"), alleles = c("A","B","C"), afreq = c(.2,.3,.5))
+marker(trio, fa = "A/A", mo = "A/B", afreq = c(A = .2, B = .3, C = .5))
 ```
-The markers chromosome can be declared using the `chrom` argument, and similarly its position by `posMb` (megabases) and/or `posCm` (centiMorgan). Markers with unknown chromosome are treated as autosomal. To define an X-linked marker, put `chrom=23`. the fact that males are hemizygous on X (i.e. they have only one allele) is reflected in the printout of such markers:
+The markers chromosome can be declared using the `chrom` argument, and similarly its position by `posMb` (megabases). Markers with unknown chromosome are treated as autosomal. To define an X-linked marker, put `chrom = "X"`. the fact that males are hemizygous on X (i.e. they have only one allele) is reflected in the printout of such markers:
 
 ```{r}
-m2 = marker(trio, fa = "A", mo = c("A","B"), chrom = 23, name = "snpX")
+m2 = marker(trio, fa = "A/A", mo = "A/B", chrom = "X", name = "snpX")
+m2
 ```
 
-A side note: It may come as a surprise that you don't need quotes around the ID labels (which are characters!) in the above commands. This is because `marker()` uses _non-standard evaluation (NSE)_, a peculiarity of the R language which often leads to less typing and more readable code.[^1] Unfortunately, this doesn't work with numerical ID labels. Thus to assign a genotype to someone labelled "1" you need quotes, as in `marker(trio, "1"="A")`.
+A side note: It may come as a surprise that you don't need quotes around the ID labels (which are characters!) in the above commands. This is because `marker()` uses _non-standard evaluation (NSE)_, a peculiarity of the R language which often leads to less typing and more readable code.[^1] Unfortunately, this doesn't work with numerical ID labels. Thus to assign a genotype to someone labelled "1" you need quotes, as in `marker(trio, "1" = "A/A")`.
 
-[^1]: You may have come across NSE before, for instance when using `subset()` on a data.frame. To learn more about NSE, I highly recommend this book chapter by Hadley Wickham:  
+[^1]: You may have come across NSE before, for instance when using `subset()` on a data.frame. To learn more about NSE, I recommend this book chapter by Hadley Wickham:  
 <http://adv-r.had.co.nz/Computing-on-the-language.html>
 
 
@@ -320,11 +319,11 @@ plot(trio, marker = m1, margins = c(1,1,1,1))
 
 The appearance of the genotypes can be tweaked in various ways, as documented in `?plot.ped`. Here's an example:
 ```{r, eval=FALSE}
-plot(trio, marker = m1, sep = "", skip.empty.genotypes = T)
+plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
 ```
 
 ```{r, echo=FALSE, fig.dim=c(2,2)}
-plot(trio, marker = m1, sep = "", skip.empty.genotypes = T, margins = c(1,1,1,1))
+plot(trio, marker = m1, sep = "", showEmpty = T, missing = "?", margins = c(1,1,1,1))
 ```
 
 ## Markers attached to `ped` objects
@@ -349,9 +348,9 @@ Four closely related functions functions are useful for manipulating markers att
 * `getMarkers()`, returns a list of the indicated markers
 * `whichMarkers()`, returns the indices of the indicated markers
 
-All of these have exactly the same arguments, described in more detail in `?marker_select`. Let us do a couple of examples here. Recall that by now, our `trio` has two attached markers; the first is called "snp1", and the other is on the X chromosome (`chrom = 23`).
+All of these have exactly the same arguments, described in more detail in `?marker_select`. Let us do a couple of examples here. Recall that by now, our `trio` has two attached markers; the first is called "snp1", and the other is on the X chromosome.
 ```{r}
-whichMarkers(trio, chrom = 23)
+whichMarkers(trio, chrom = "X")
 selectMarkers(trio, markers = "snp1")
 ```
 
@@ -363,7 +362,6 @@ Internally, a marker object is stored as a matrix with two columns (one for each
 * `name` : The marker name, which can be any character string not consisting solely of digits.
 * `chrom` : The chromosome name. This can be given as an integer, but is always converted to character. The special values "23" and "X" are recognized as the human X chromosome, which affects the way genotypes are printed.
 * `posMb` : Chromosomal position given in megabases.
-* `posCm` : Chromosomal position given in centiMorgan.
 
 In addition to those listed above, there are two more attributes: `pedmembers` and `sex`. They store the ID labels and genders of the pedigree associated with the marker, and are only used to empower the printing method of marker objects.
 
@@ -386,8 +384,13 @@ afreq(trio, marker = "snp1") = c(A = 0.9, B = 0.1)
 In addition to the functions getting and setting marker attributes, there is one more important marker accessor, namely `genotype()`. This returns the genotype of a specified individual, and can also be used to modify genotypes. As the others, it can be applied to marker objects directly, or to pedigrees with attached markers. Here we show a few examples of the latter type:
 
 ```{r}
+# Girl is not genotyped
 genotype(trio, "snpX", id = "girl")
-genotype(trio, "snpX", id = "girl") = "A"
+
+# Set genotype
+genotype(trio, "snpX", id = "girl") = "A/A"
+
+# Inspect the result
 trio
 ```
 
@@ -398,7 +401,7 @@ getters.df = rbind(
   c("`getAlleles(x)`", 
     "extract all alleles as a matrix.", 
     "do summary stats on the marker alleles"),
-  c("`getFrequencyDatabase(x)`", 
+  c("`getFreqDatabase(x)`", 
     "extract allele frequencies as a data.frame in *allelic ladder* format.", 
     "transfer to other objects, or write the database to a file"),
   c("`getMarkers(x)`", 
@@ -410,7 +413,7 @@ setters.df = rbind(
   c("`setAlleles(x, ...)`", 
     "replace the genotypes of `x` without changing the locus attributes.", 
     "erase all genotypes"),
-  c("`setFrequencyDatabase(x, db)`", 
+  c("`setFreqDatabase(x, db)`", 
     "replace all allele frequencies without changing the genotype data. The input is a data.frame in *allelic ladder* format. Conceptually equivalent to `setMarkers(x, alleleMatrix = getAlleles(x), locusAnnotations = db)`.", 
     "change the frequency database"),
   c("`setMarkers(x, ...)`", 
@@ -436,8 +439,8 @@ other.df = rbind(
 getset.df = rbind(getters.df, setters.df, conversions.df, other.df)
 tbl.getset = kable(getset.df, 
             col.names = c("Use ...", "When you want to ...", "For example to ..."))
-tbl.getset = column_spec(tbl.getset, 1, width = "5cm")
-tbl.getset = column_spec(tbl.getset, 2, width = "8cm")
+tbl.getset = column_spec(tbl.getset, 1, width = "4.5cm")
+tbl.getset = column_spec(tbl.getset, 2, width = "8.5cm")
 tbl.getset = pack_rows(tbl.getset, "Get", 1, 3, indent = F)
 tbl.getset = pack_rows(tbl.getset, "Set", 4, 6, indent = F)
 tbl.getset = pack_rows(tbl.getset, "Convert", 7, 8, indent = F)
