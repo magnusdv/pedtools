@@ -26,12 +26,12 @@
 #' y = relabel(y, c(101:108, 10))
 #' y = swapSex(y, 10)
 #'
-#' # Joining x and y at the common individuals (in this case: id = 10)
+#' # Joining x and y at the common individuals (in this case: `10`)
 #' z = mergePed(x, y)
 #'
 #' # Plot all three pedigrees
 #' opar = par(mfrow = c(1, 3))
-#' plot(x); plot(y); plot(z)
+#' plot(x); plot(y); plot(z, col = list(red = labels(y)))
 #'
 #' # Reset graphical parameters
 #' par(opar)

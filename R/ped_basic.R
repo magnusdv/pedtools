@@ -4,8 +4,7 @@
 #'
 #' `halfSibPed(nch1, nch2)` produces a pedigree containing two sibships (of
 #' sizes `nch1` and `nch2`) with the same father, but different mothers. If
-#' maternal halfsibs are wanted instead, use [swapSex()] afterwards. (See
-#' examples below.)
+#' maternal half sibs are wanted instead, add `type = "maternal"`.
 #'
 #' `cousinPed(degree = n, removal = k)` creates a pedigree with two `n`'th
 #' cousins, `k` times removed. By default, removals are added on the right side,
@@ -59,10 +58,10 @@
 #' linearPed(3, sex = 2)
 #'
 #' # Paternal half brothers
-#' x = halfSibPed()
+#' halfSibPed()
 #'
-#' # Change into maternal half brothers
-#' x = swapSex(x, 1)
+#' # Maternal half sisters
+#' halfSibPed(sex1 = 2, sex2 = 2, type = "maternal")
 #'
 #' # Larger half sibships: boy and girl on one side; 3 girls on the other
 #' halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)

@@ -84,8 +84,7 @@ Utility functions for creating some common pedigree structures.
 \details{
 \code{halfSibPed(nch1, nch2)} produces a pedigree containing two sibships (of
 sizes \code{nch1} and \code{nch2}) with the same father, but different mothers. If
-maternal halfsibs are wanted instead, use \code{\link[=swapSex]{swapSex()}} afterwards. (See
-examples below.)
+maternal half sibs are wanted instead, add \code{type = "maternal"}.
 
 \code{cousinPed(degree = n, removal = k)} creates a pedigree with two \code{n}'th
 cousins, \code{k} times removed. By default, removals are added on the right side,
@@ -106,10 +105,10 @@ nuclearPed(5, sex = c(1, 1, 2, 2, 2))
 linearPed(3, sex = 2)
 
 # Paternal half brothers
-x = halfSibPed()
+halfSibPed()
 
-# Change into maternal half brothers
-x = swapSex(x, 1)
+# Maternal half sisters
+halfSibPed(sex1 = 2, sex2 = 2, type = "maternal")
 
 # Larger half sibships: boy and girl on one side; 3 girls on the other
 halfSibPed(nch1 = 2, sex = 1:2, nch2 = 3, sex2 = 2)
