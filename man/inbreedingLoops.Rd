@@ -10,7 +10,13 @@
 \usage{
 inbreedingLoops(x)
 
-breakLoops(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRUE)
+breakLoops(
+  x,
+  loopBreakers = NULL,
+  verbose = TRUE,
+  errorIfFail = TRUE,
+  loop_breakers = NULL
+)
 
 tieLoops(x, verbose = TRUE)
 
@@ -21,7 +27,7 @@ findLoopBreakers2(x, errorIfFail = TRUE)
 \arguments{
 \item{x}{a \code{\link[=ped]{ped()}} object.}
 
-\item{loop_breakers}{either NULL (resulting in automatic selection of loop
+\item{loopBreakers}{either NULL (resulting in automatic selection of loop
 breakers) or a numeric containing IDs of individuals to be used as loop
 breakers.}
 
@@ -29,11 +35,13 @@ breakers.}
 
 \item{errorIfFail}{a logical: If TRUE an error is raised if the loop breaking
 is unsuccessful. If FALSE, the pedigree is returned unchanged.}
+
+\item{loop_breakers}{Deprecated; renamed to \code{loopBreakers}.}
 }
 \value{
 For \code{breakLoops}, a \code{ped} object in which the indicated loop breakers
 are duplicated. The returned object will also have a non-null
-\code{loop_breakers} entry, namely a matrix with the IDs of the original loop
+\code{loopBreakers} entry, namely a matrix with the IDs of the original loop
 breakers in the first column and the duplicates in the second. If loop
 breaking fails, then depending on \code{errorIfFail} either an error is raised,
 or the input pedigree is returned, still containing unbroken loops.

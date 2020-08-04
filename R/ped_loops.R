@@ -24,15 +24,17 @@
 #' `findLoopBreakers2` is called to break any marriage loops.
 #'
 #' @param x a [ped()] object.
-#' @param loop_breakers either NULL (resulting in automatic selection of loop
+#' @param loopBreakers either NULL (resulting in automatic selection of loop
 #'   breakers) or a numeric containing IDs of individuals to be used as loop
 #'   breakers.
 #' @param verbose a logical: Verbose output or not?
 #' @param errorIfFail a logical: If TRUE an error is raised if the loop breaking
 #'   is unsuccessful. If FALSE, the pedigree is returned unchanged.
+#' @param loop_breakers Deprecated; renamed to `loopBreakers`.
+#'
 #' @return For `breakLoops`, a `ped` object in which the indicated loop breakers
 #'   are duplicated. The returned object will also have a non-null
-#'   `loop_breakers` entry, namely a matrix with the IDs of the original loop
+#'   `loopBreakers` entry, namely a matrix with the IDs of the original loop
 #'   breakers in the first column and the duplicates in the second. If loop
 #'   breaking fails, then depending on `errorIfFail` either an error is raised,
 #'   or the input pedigree is returned, still containing unbroken loops.
@@ -100,7 +102,12 @@ inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedi
 
 #' @export
 #' @rdname inbreedingLoops
-breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRUE) {
+breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE, loop_breakers = NULL) {
+  if(!is.null(loop_breakers)) {
+    message("`loop_breakers` has been renamed to `loopBreakers` and will be removed in a future version")
+    loopBreakers = loop_breakers
+  }
+
   if (isFALSE(x$UNBROKEN_LOOPS) || is.singleton(x)) {
     if (verbose) {
       if(is.null(x$LOOP_BREAKERS)) message("No loops to break")
@@ -109,16 +116,16 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
     return(x)
   }
 
-  auto = is.null(loop_breakers)
+  auto = is.null(loopBreakers)
   if (auto) {
-    loop_breakers = findLoopBreakers(x)
-    if (length(loop_breakers) == 0) {
+    loopBreakers = findLoopBreakers(x)
+    if (length(loopBreakers) == 0) {
       if (verbose)
         message("Marriage loops detected, trying different selection method")
-      loop_breakers = findLoopBreakers2(x, errorIfFail = errorIfFail)
+      loopBreakers = findLoopBreakers2(x, errorIfFail = errorIfFail)
     }
   }
-  if (!length(loop_breakers)) {
+  if (!length(loopBreakers)) {
     mess = "Loop breaking unsuccessful"
     if(errorIfFail) stop2(mess)
     else {
@@ -130,10 +137,10 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   LABS = labels(x)
 
   # Convert to internal IDs and sort (don't skip this)
-  loop_breakers = .mysortInt(internalID(x, loop_breakers))
+  loopBreakers = .mysortInt(internalID(x, loopBreakers))
 
   FOU = founders(x, internal = TRUE)
-  FOU_LB = intersect(loop_breakers, FOU)
+  FOU_LB = intersect(loopBreakers, FOU)
   if (length(FOU_LB) > 0) {
     mess = "Breaking loops at founders is not implemented"
     if(errorIfFail) stop2(mess)
@@ -144,7 +151,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   }
 
   if (verbose)
-    cat("Loop breakers:", toString(LABS[loop_breakers]), "\n")
+    cat("Loop breakers:", toString(LABS[loopBreakers]), "\n")
 
   ### Old ped data
   oldpedm = as.matrix(x)
@@ -152,13 +159,13 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
 
   ### New ped matrix
   # Setup for creating pedm by replicating lb rows
-  all_rows = rep.int(1:n, times = 1 + (1:n %in% loop_breakers))
+  all_rows = rep.int(1:n, times = 1 + (1:n %in% loopBreakers))
   new_rows = duplicated.default(all_rows)
 
   # Dummy numerical IDs of the new duplicated indivs.
   # NB: These are inserted in 'new_rows' positions, hence disrupts 1,2,3,...
   # Therefore they will always be changed in restorePed().
-  dups = n + seq_along(loop_breakers)
+  dups = n + seq_along(loopBreakers)
 
   # Create it
   pedm = oldpedm[all_rows, ]
@@ -166,7 +173,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   pedm[new_rows, 2:3] = 0
 
   # Change original loop breakers occuring in FIDX and MIDX
-  wrong = match(pedm[, 2:3], loop_breakers, nomatch = 0)
+  wrong = match(pedm[, 2:3], loopBreakers, nomatch = 0)
   pedm[, 2:3][wrong > 0] = dups[wrong]
 
   ### Modify labels
@@ -176,7 +183,7 @@ breakLoops = function(x, loop_breakers = NULL, verbose = TRUE, errorIfFail = TRU
   attrs$LABELS = newlabs
 
   ### Loop breaker matrix.
-  # Previous loop_breakers must be fixed!
+  # Previous loopBreakers must be fixed!
   if(!is.null(old_lb_matr <- attrs$LOOP_BREAKERS))
     old_lb_matr[] = match(old_lb_matr, pedm[, 1])
 
