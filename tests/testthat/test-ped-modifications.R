@@ -70,6 +70,14 @@ test_that("swapSex() of all indivs", {
   expect_equal(parents(x, 3), c("2", "1"))
 })
 
+test_that("swapSex() ingores indivs of unknown sex", {
+  x = setSex(nuclearPed(1), ids = 3, sex = 0)
+  y1 = swapSex(x, 3)
+  expect_equal(getSex(y1, 3), 0)
+  y2 = swapSex(x, 1:3)
+  expect_equal(getSex(y2), c(2,1,0))
+})
+
 test_that("addChildren works with num labels", {
   # start with male singleton
   m = singleton(4)

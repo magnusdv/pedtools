@@ -246,7 +246,7 @@ setSex = function(x, ids = NULL, sex) {
 
 #' @rdname getSex
 #' @export
-swapSex = function(x, ids, verbose = TRUE) { #TODO add tests with sex=0
+swapSex = function(x, ids, verbose = TRUE) {
   if(!is.ped(x))
     stop2("Input is not a `ped` object")
 
