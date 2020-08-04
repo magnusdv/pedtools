@@ -13,21 +13,22 @@ status](https://www.r-pkg.org/badges/version/pedtools)](https://CRAN.R-project.o
 
 ## Introduction
 
-The goal of pedtools is to provide a lightweight, but comprehensive tool
-set for creating, manipulating and visualizing pedigrees with or without
-marker data. Common pedigree structures are quickly produced with
-tailor-made functions, while a range of utilities enable modifications
-like adding or removing individuals, extracting subsets, loop breaking,
-and merging pedigrees. The plotting functionality is imported from the
+The goal of **pedtools** is to provide a lightweight, but comprehensive
+tool set for creating, manipulating and visualizing pedigrees with or
+without marker data. Common pedigree structures are quickly produced
+with tailor-made functions, while a range of utilities enable
+modifications like adding or removing individuals, extracting subsets,
+loop breaking, and merging pedigrees. The plotting functionality is
+imported from the
 [kinship2](https://CRAN.R-project.org/package=kinship2) package.
 
-pedtools is a continuation of the
+**pedtools** is a continuation of the
 [paramlink](https://CRAN.R-project.org/package=paramlink) package, which
 is no longer actively developed.
 
 ## Installation
 
-To get pedtools, install from CRAN as follows:
+To get **pedtools**, install from CRAN as follows:
 
 ``` r
 install.packages("pedtools")
@@ -43,20 +44,27 @@ devtools::install_github("magnusdv/pedtools")
 
 ## Example
 
-We create a pedigree with a consanguineous mating between half siblings.
-The child has genotype A/B at a SNP marker.
+The following example illustrates how pedigrees and markers may be built
+from scratch.
 
 ``` r
 library(pedtools)
 
-x = halfSibPed(sex1 = 1, sex2 = 2)
-x = addChildren(x, father = 4, mother = 5, nch = 1)
+# Create pedigree
+x = cousinPed(degree = 0, removal = 2)
+x = addChildren(x, father = 3, nch = 2, sex = 2)
 
-m = marker(x, "6" = c("A", "B"))
-plot(x, m, skip.empty.genotypes = TRUE)
+# Relabel according to plot order
+x = relabel(x, "asPlot")
+
+# Create marker and attach to pedigree
+m = marker(x, "7" = "a/b", "11" = "b/b")
+
+# Plot pedigree with genotypes
+plot(x, marker = m, hatched = leaves(x))
 ```
 
-![](man/figures/README-example-1.png)<!-- -->
+<img src="man/figures/README-example-1.png" width="40%" />
 
-For details about what pedtools can do, and many other examples, the
+For details about what **pedtools** can do, and many other examples, the
 vignette is the recommended place to start.
