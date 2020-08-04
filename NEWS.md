@@ -1,6 +1,43 @@
-# Development version
+# pedtools 0.9.5
 
-* In `plot.ped()`, the default value of `skipEmptyGenotypes` has changed from FALSE to TRUE
+## Breaking changes
+* Built-in pedigree structures are now labelled according to default plotting order. In particular, this means that pedigrees made by `halfSibPed()`, `cousinPed()` and `halfCousinPed()` are ordered differently than before.
+
+* In `plot.ped()`,  the parameter `skipEmptyGenotypes` is replaced by `showEmpty`, with default value `FALSE`.
+
+* Function `xxxFrequencyDatabase()` have been renamed to `xxxFreqDatabase()`
+
+* The marker attribute `posCm` has been removed, to avoid confusion with the physical position.
+
+* `marker()` now checks for duplicated allele labels.
+
+* `setMarkers()` now checks for duplicated marker names (and allele labels, through `marker()`; see previous point).
+
+## New features
+* `readPed()` and friends now automatically recognises allele separator "/" when genotypes are written like "a/b". Other separators must be indicated with `sep` as before, e.g., `readPed(..., sep = ",")`.
+
+* New function `getGenotypes()`, which is similar to `getAlleles()`, but returns a matrix of genotypes written as "a/b".
+
+* More flexible conversion of pedigrees to data frames, with new arguments `sep` and `missing` in `as.data.frame.ped()`.
+
+* New function `setMap()`, facilitating setting chromosome and physical position attributes.
+
+* `marker()` has a new argument `geno`, allowing commands like `marker(nuclearPed(1), geno = c("a/a", NA, "a/b"))`.
+
+* `print.marker()` has been overhauled and gives a more coherent output.
+
+* `halfSibPed()` has a new argument `type`, either "paternal" (default) or "maternal".
+
+* `reorderPed()` by default orders by numerical value, if all labels are numeric.
+
+* `plot.ped()` has a new argument `hint`, which is forwarded to `kinship2::plot.pedigree()`. This is necessary in some cases where the automatic plotting fails to give a nice pedigree. An example is given in `?plot.ped`.
+
+* `plot.ped()` gains argument `hatched`, which will eventually replace `shaded`.
+
+* Added default values allows executing `singleton()` and `nuclearPed()` with no input.
+
+* Parts of `plotPedList()` have been restructured. In particular, the new argument `groups` makes it easier to control grouping and frames. Previous argument `frametitles` has been renamed to `titles`, because it also works without frames.
+
 
 
 # pedtools 0.9.4
@@ -8,13 +45,14 @@
 ## Breaking changes
 
 * The `plot.ped()` argument `id.labels` is now deprecated in favour of the new `labs`. This works *almost* as before, with some exceptions documented here. The `labs` argument should be thought of as *who should be labelled* rather than *what are the labels*. For example, with `x = singleton(1)`, the previous `plot(x, id.labels = "2")` would rename the singleton to "2". In contrast, `plot(x, labs = "2")` will not show any label (since `x` doesn't have a member named "2"). In general `intersect(labs, labels(x))` determines who gets a label.  
-Another change is that if `labs` is a function, it is now applied to the pedigree `x`, not to `labels(x)`. This makes it very easy to apply standard pedigree functions like `females()`, `nonfounders()` and `typedMembers()`, since they can be referred to simply by name: `plot(x, labs = females)`.
+
+  Another change is that if `labs` is a function, it is now applied to the pedigree `x`, not to `labels(x)`. This makes it very easy to apply standard pedigree functions like `females()`, `nonfounders()` and `typedMembers()`, since they can be referred to simply by name: `plot(x, labs = females)`.
 
 * The implementation of `doubleCousins()` is improved, and some edge cases smoothed out, but the final ordering of individuals may be different in some cases now.
 
 * `writePed()` has been partially rewritten, to make it more similar to `readPed()`. By default, only the "ped" file is written. New logical arguments "famid" and "header" provide further control of this file. 
 
-Writing files in merlin format (indicated by `merlin = TRUE`) is internally now done in a separate function. This option is rarely needed by end users, but is called by e.g. `pedprobr::likelihoodMerlin()`.
+  Writing files in merlin format (indicated by `merlin = TRUE`) is internally now done in a separate function. This option is rarely needed by end users, but is called by e.g. `pedprobr::likelihoodMerlin()`.
 
 ## New features
 
