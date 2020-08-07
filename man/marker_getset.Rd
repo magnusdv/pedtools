@@ -146,16 +146,16 @@ posMb(x, ...) <- value
 \method{posMb}{ped}(x, markers = NULL, ...) <- value
 }
 \arguments{
-\item{x}{A \link{ped} object or a \link{marker} object}
+\item{x}{Either a \code{marker} object, a \code{ped} object or a list of \code{ped} objects.}
 
-\item{...}{Further arguments, not used in most of these functions}
+\item{...}{Further arguments, not used in most of these functions.}
 
-\item{id}{The ID label of a single pedigree member}
+\item{id}{The ID label of a single pedigree member.}
 
-\item{value}{Replacement value(s)}
+\item{value}{Replacement value(s).}
 
 \item{marker, markers}{The index or name of a marker (or a vector indicating
-several markers) attached to \code{ped}. Used if \code{x} is a \code{ped} object}
+several markers) attached to \code{ped}. Used if \code{x} is a \code{ped} object.}
 }
 \value{
 The getters return the value of the query. The setters perform

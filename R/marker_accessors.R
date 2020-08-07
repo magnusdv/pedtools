@@ -4,12 +4,12 @@
 #' several markers. Each getter/setter can be used in two ways: Either directly
 #' on a `marker` object, or on a `ped` object which has markers attached to it.
 #'
-#' @param x A [ped] object or a [marker] object
+#' @param x Either a `marker` object, a `ped` object or a list of `ped` objects.
 #' @param marker,markers The index or name of a marker (or a vector indicating
-#'   several markers) attached to `ped`. Used if `x` is a `ped` object
-#' @param id The ID label of a single pedigree member
-#' @param ... Further arguments, not used in most of these functions
-#' @param value Replacement value(s)
+#'   several markers) attached to `ped`. Used if `x` is a `ped` object.
+#' @param id The ID label of a single pedigree member.
+#' @param ... Further arguments, not used in most of these functions.
+#' @param value Replacement value(s).
 #'
 #' @return The getters return the value of the query. The setters perform
 #'   in-place modification of the input.
@@ -206,6 +206,7 @@ mutmod.list = function(x, marker, ...) {
     mutmod(x[[i]], marker) = value
   x
 }
+
 
 ### alleles ###
 #' @rdname marker_getset
