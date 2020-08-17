@@ -127,9 +127,8 @@ setMap = function(x, map, matchNames = NA, ...) {
   else {
     if(nrow(map) != N)
       stop2("`map` incompatible with `x` (with `matchNames = F`)")
-    chrom(x, N) = map[[1]]
-    name(x, N) = map[[3]]
-    posMb(x, mIdx) = map[[3]]
+    chrom(x, 1:N) = map[[1]]
+    posMb(x, 1:N) = map[[3]]
   }
 
   x
