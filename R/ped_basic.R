@@ -168,6 +168,9 @@ linearPed = function(n, sex = 1) {
   if(any(sex == 2)) {
     swaps = child_idx[sex == 2]
     x = swapSex(x, swaps, verbose = FALSE)
+
+    # Relabel
+    x = relabel(x, "asPlot")
   }
 
   x
