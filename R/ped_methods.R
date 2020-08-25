@@ -75,15 +75,17 @@ questionMaleHetX = function(x, df) {
 #' @export
 summary.ped = function(object, ...) {
   x = object
-  cat(sprintf("Pedigree with %d members\n", pedsize(x)))
-  cat(nMarkers(x), "attached markers\n")
-  cat(length(typedMembers(x)), "typed members\n")
+  cat(sprintf("Pedigree with %d members.\n", pedsize(x)))
+  cat(nMarkers(x), "attached markers.\n")
+  cat(length(typedMembers(x)), "typed members.\n")
 }
 
 #' @export
 summary.singleton = function(object, ...) {
-  cat("Singleton\n")
-  cat(nMarkers(object), "attached markers\n")
+  x = object
+  SX = c("sex unknown", "male", "female")
+  cat(sprintf("Singleton (%s) labelled `%s`.\n", SX[x$SEX + 1], x$ID))
+  cat(nMarkers(object), "attached markers.\n")
 }
 
 #' @export
@@ -96,7 +98,12 @@ summary.list = function(object, ...) {
 
   # Special treatment if all singletons
   if (all(nInd == 1) && all(nMark == nMark[1])) {
-    cat(sprintf("List of %d singletons\n%d attached markers\n", length(x), nMark[[1]]))
+    ids = unlist(labels(x), use.names = FALSE)
+    sex = c("sex unknown", "male", "female")[getSex(x) + 1]
+    lbs = toString(sprintf("%s (%s)", ids, sex))
+    cat(sprintf("List of %d singletons.\n", length(x)))
+    cat(sprintf("Labels: %s.\n", lbs))
+    cat(nMark[1], "attached markers.\n")
     return(invisible(NULL))
   }
 
