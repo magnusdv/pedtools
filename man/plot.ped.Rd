@@ -17,6 +17,7 @@
   title = NULL,
   col = 1,
   aff = NULL,
+  carrier = NULL,
   hatched = NULL,
   shaded = NULL,
   deceased = NULL,
@@ -41,6 +42,7 @@
   title = NULL,
   col = 1,
   aff = NULL,
+  carrier = NULL,
   hatched = NULL,
   shaded = NULL,
   deceased = NULL,
@@ -57,21 +59,20 @@ as_kinship2_pedigree(x, deceased = NULL, aff = NULL, hints = NULL)
 \method{plot}{pedList}(x, ...)
 }
 \arguments{
-\item{x}{a \code{\link[=ped]{ped()}} object.}
+\item{x}{A \code{\link[=ped]{ped()}} object.}
 
-\item{marker}{either a vector of names or indices referring to markers
+\item{marker}{Either a vector of names or indices referring to markers
 attached to \code{x}, a \code{marker} object, or a list of such. The genotypes for
 the chosen markers are written below each individual in the pedigree, in
-the format determined by \code{sep} and \code{missing}. See also \code{showEmpty}
-below. If NULL (the default), no genotypes are plotted.}
+the format determined by \code{sep} and \code{missing}. See also \code{showEmpty}. If NULL (the default), no genotypes are plotted.}
 
-\item{sep}{a character of length 1 separating alleles for diploid markers.}
+\item{sep}{A character of length 1 separating alleles for diploid markers.}
 
-\item{missing}{the symbol (integer or character) for missing alleles.}
+\item{missing}{The symbol (integer or character) for missing alleles.}
 
-\item{showEmpty}{a logical, indicating if empty genotypes should be included.}
+\item{showEmpty}{A logical, indicating if empty genotypes should be included.}
 
-\item{labs}{a vector or function controlling the individual labels included
+\item{labs}{A vector or function controlling the individual labels included
 in the plot. Alternative forms:
 \itemize{
 \item If \code{labs} is a vector with nonempty intersection with \code{labels(x)}, these
@@ -85,35 +86,38 @@ labelled following the internal ordering.
 as above. (See Examples.)
 }}
 
-\item{title}{the plot title. If NULL or '', no title is added to the plot.}
+\item{title}{The plot title. If NULL (default) or '', no title is added to the plot.}
 
-\item{col}{a vector of colours for the pedigree members, recycled if
+\item{col}{A vector of colours for the pedigree members, recycled if
 necessary. Alternatively, \code{col} can be a list assigning colours to specific
 members. For example if \code{col = list(red = "a", blue = c("b", "c"))} then
 individual "a" will be red, "b" and "c" blue, and everyone else black. By
-default everyone is drawn black.}
+default everyone is black.}
 
-\item{aff}{a vector of ID labels indicating pedigree members whose plot
-symbols should be filled.}
+\item{aff}{A vector of labels identifying members whose plot
+symbols should be filled. (This is typically used in medical pedigrees to indicate affected members.)}
 
-\item{hatched}{a vector of ID labels indicating pedigree members whose plot
+\item{carrier}{A vector of labels identifying members whose plot
+symbols should be marked with a dot. (This is typically used in medical pedigrees to indicate unaffected carriers of the disease allele.)}
+
+\item{hatched}{A vector of labels identifying members whose plot
 symbols should be hatched.}
 
 \item{shaded}{(Deprecated) synonym of \code{hatched}}
 
-\item{deceased}{a vector of ID labels indicating deceased pedigree members.}
+\item{deceased}{A vector of labels indicating deceased pedigree members.}
 
-\item{starred}{a vector of ID labels indicating pedigree members that should
+\item{starred}{A vector of labels indicating pedigree members that should
 be marked with a star in the pedigree plot.}
 
-\item{hints}{a list with alignment hints passed on to
-\code{kinship2::align.pedigree()}. Usually not necessary.}
+\item{hints}{A list with alignment hints passed on to
+\code{kinship2::align.pedigree()}. Rarely necessary, but see Examples.}
 
-\item{fouInb}{either "autosomal" (default), "x" or NULL. If "autosomal" or
+\item{fouInb}{Either "autosomal" (default), "x" or NULL. If "autosomal" or
 "x", inbreeding coefficients are added to the plot above the inbred
 founders. If NULL, or if no founders are inbred, nothing is added.}
 
-\item{margins}{a numeric of length 4 indicating the plot margins. For
+\item{margins}{A numeric of length 4 indicating the plot margins. For
 singletons only the first element (the 'bottom' margin) is used.}
 
 \item{keep.par}{A logical (default = FALSE). If TRUE, the graphical
@@ -126,7 +130,7 @@ additional annotation.}
 
 \item{id.labels}{Deprecated; use \code{labs} instead}
 
-\item{\dots}{arguments passed on to \code{plot.pedigree} in the \code{kinship2}
+\item{\dots}{Arguments passed on to \code{plot.pedigree} in the \code{kinship2}
 package. In particular \code{symbolsize} and \code{cex} can be useful.}
 
 \item{yadj}{A tiny adjustment sometimes needed to fix the appearance of
