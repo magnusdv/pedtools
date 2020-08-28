@@ -26,9 +26,6 @@
   fouInb = "autosomal",
   margins = c(0.6, 1, 4.1, 1),
   keep.par = FALSE,
-  skipEmptyGenotypes = NULL,
-  skip.empty.genotypes = NULL,
-  id.labels = NULL,
   ...
 )
 
@@ -50,7 +47,6 @@
   fouInb = "autosomal",
   margins = c(8, 0, 0, 0),
   yadj = 0,
-  id.labels = NULL,
   ...
 )
 
@@ -123,12 +119,6 @@ singletons only the first element (the 'bottom' margin) is used.}
 \item{keep.par}{A logical (default = FALSE). If TRUE, the graphical
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
-
-\item{skipEmptyGenotypes}{Deprecated; use \code{showEmpty} instead.}
-
-\item{skip.empty.genotypes}{Deprecated; use \code{showEmpty} instead.}
-
-\item{id.labels}{Deprecated; use \code{labs} instead}
 
 \item{\dots}{Arguments passed on to \code{plot.pedigree} in the \code{kinship2}
 package. In particular \code{symbolsize} and \code{cex} can be useful.}

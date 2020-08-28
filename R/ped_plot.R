@@ -59,9 +59,6 @@
 #'   additional annotation.
 #' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
-#' @param skipEmptyGenotypes Deprecated; use `showEmpty` instead.
-#' @param skip.empty.genotypes Deprecated; use `showEmpty` instead.
-#' @param id.labels Deprecated; use `labs` instead
 #' @param \dots Arguments passed on to `plot.pedigree` in the `kinship2`
 #'   package. In particular `symbolsize` and `cex` can be useful.
 #'
@@ -126,25 +123,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
                     hatched = NULL, shaded = NULL, deceased = NULL,
                     starred = NULL, hints = NULL, fouInb = "autosomal",
-                    margins = c(0.6, 1, 4.1, 1),
-                    keep.par = FALSE, skipEmptyGenotypes = NULL,
-                    skip.empty.genotypes = NULL, id.labels = NULL, ...) {
-
-  if(!is.null(id.labels)) {
-    message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
-    if(length(id.labels) == pedsize(x) && is.null(names(id.labels))) # special case
-      labs = setNames(labels(x), id.labels)
-    else labs = id.labels
-  }
-
-  if(!is.null(skip.empty.genotypes)) {
-    message("The `skip.empty.genotypes` argument has been replaced by `showEmpty` and will be removed in a future version")
-    showEmpty = !skip.empty.genotypes
-  }
-  if(!is.null(skipEmptyGenotypes)) {
-    message("The `skipEmptyGenotypes` argument has been replaced by `showEmpty` and will be removed in a future version")
-    showEmpty = !skipEmptyGenotypes
-  }
+                    margins = c(0.6, 1, 4.1, 1), keep.par = FALSE, ...) {
 
   if(hasSelfing(x))
     stop2("Plotting of pedigrees with selfing is not yet supported")
@@ -282,14 +261,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
                           labs = labels(x), title = NULL, col = 1, aff = NULL,
                           carrier = NULL, hatched = NULL, shaded = NULL,
                           deceased = NULL, starred = NULL, fouInb = "autosomal",
-                          margins = c(8, 0, 0, 0), yadj = 0, id.labels = NULL, ...) {
-
-  if(!is.null(id.labels)) {
-    message("The `id.labels` argument is deprecated in favor of `labs`, and will be removed in a future version")
-    if(length(id.labels) == pedsize(x) && is.null(names(id.labels))) # special case
-      labs = setNames(labels(x), id.labels)
-    else labs = id.labels
-  }
+                          margins = c(8, 0, 0, 0), yadj = 0, ...) {
 
   # Founder inbreeding (this must be extracted before addParents())
   if(!is.null(fouInb) && hasInbredFounders(x))
