@@ -244,7 +244,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 
   # Add title
   if (!is.null(title))
-    title(title, cex.main = dotArgs$cex.main, col.main = dotArgs$col.main,
+    title(title, cex.main = dotArgs$cex.main %||% cex, col.main = dotArgs$col.main,
           font.main = dotArgs$font.main, fam = fam, xpd = NA)
 
   # Add carrier dots
@@ -362,7 +362,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
 
   # Add title
   if (!is.null(title))
-    title(title, cex.main = dotArgs$cex.main, col.main = dotArgs$col.main, line = -2.8,
+    title(title, cex.main = dotArgs$cex.main %||% cex, col.main = dotArgs$col.main, line = -2.8,
           font.main = dotArgs$font.main, family = fam, xpd = NA)
 
   # Text above pedigree symbols
