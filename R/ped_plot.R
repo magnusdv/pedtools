@@ -11,7 +11,8 @@
 #' @param marker Either a vector of names or indices referring to markers
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
-#'   the format determined by `sep` and `missing`. See also `showEmpty`. If NULL (the default), no genotypes are plotted.
+#'   the format determined by `sep` and `missing`. See also `showEmpty`. If NULL
+#'   (the default), no genotypes are plotted.
 #' @param sep A character of length 1 separating alleles for diploid markers.
 #' @param missing The symbol (integer or character) for missing alleles.
 #' @param showEmpty A logical, indicating if empty genotypes should be included.
@@ -31,27 +32,32 @@
 #'   * If `labs` is a function, it will be replaced with `labs(x)` and handled
 #'   as above. (See Examples.)
 #'
-#' @param title The plot title. If NULL (default) or '', no title is added to the plot.
+#' @param title The plot title. If NULL (default) or '', no title is added to
+#'   the plot.
 #' @param col A vector of colours for the pedigree members, recycled if
 #'   necessary. Alternatively, `col` can be a list assigning colours to specific
 #'   members. For example if `col = list(red = "a", blue = c("b", "c"))` then
 #'   individual "a" will be red, "b" and "c" blue, and everyone else black. By
 #'   default everyone is black.
-#' @param aff A vector of labels identifying members whose plot
-#'   symbols should be filled. (This is typically used in medical pedigrees to indicate affected members.)
-#' @param carrier A vector of labels identifying members whose plot
-#'   symbols should be marked with a dot. (This is typically used in medical pedigrees to indicate unaffected carriers of the disease allele.)
-#' @param hatched A vector of labels identifying members whose plot
-#'   symbols should be hatched.
+#' @param aff A vector of labels identifying members whose plot symbols should
+#'   be filled. (This is typically used in medical pedigrees to indicate
+#'   affected members.)
+#' @param carrier A vector of labels identifying members whose plot symbols
+#'   should be marked with a dot. (This is typically used in medical pedigrees
+#'   to indicate unaffected carriers of the disease allele.)
+#' @param hatched A vector of labels identifying members whose plot symbols
+#'   should be hatched.
 #' @param shaded (Deprecated) synonym of `hatched`
 #' @param deceased A vector of labels indicating deceased pedigree members.
-#' @param starred A vector of labels indicating pedigree members that should
-#'   be marked with a star in the pedigree plot.
+#' @param starred A vector of labels indicating pedigree members that should be
+#'   marked with a star in the pedigree plot.
 #' @param hints A list with alignment hints passed on to
 #'   `kinship2::align.pedigree()`. Rarely necessary, but see Examples.
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
+#' @param textInside,textAbove Character vectors of text to be printed inside or
+#'   above pedigree symbols.
 #' @param margins A numeric of length 4 indicating the plot margins. For
 #'   singletons only the first element (the 'bottom' margin) is used.
 #' @param keep.par A logical (default = FALSE). If TRUE, the graphical
@@ -122,7 +128,8 @@
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
                     hatched = NULL, shaded = NULL, deceased = NULL,
-                    starred = NULL, hints = NULL, fouInb = "autosomal",
+                    starred = NULL, textInside = NULL, textAbove = NULL,
+                    hints = NULL, fouInb = "autosomal",
                     margins = c(0.6, 1, 4.1, 1), keep.par = FALSE, ...) {
 
   if(hasSelfing(x))
@@ -190,9 +197,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 
   # Colours
   if(is.list(col)) {
-    colnames = names(col)
     cols = rep(1, nInd)
-    for(cc in colnames) {
+    for(cc in names(col)) {
       ids_col = intersect(labels(x), col[[cc]])
       cols[internalID(x, ids_col)] = cc
     }
@@ -231,25 +237,42 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
                                  density = density, angle = angle, keep.par = keep.par, ...)
 
+  # Expand dots (needed in some commands below)
+  dotArgs = match.call(expand.dots = FALSE)$`...`
+  cex = dotArgs[['cex']]
+  fam = dotArgs[['family']]
+
   # Add title
-  if (!is.null(title)) title(title)
+  if (!is.null(title))
+    title(title, cex.main = dotArgs$cex.main, col.main = dotArgs$col.main,
+          font.main = dotArgs$font.main, fam = fam, xpd = NA)
 
   # Add carrier dots
   if(is.function(carrier))
     carrier = carrier(x)
   carrier = internalID(x, carrier, errorIfUnknown = FALSE)
-  points(pdat$x[carrier], pdat$y[carrier] + pdat$boxh/2, pch = 16)
+  points(pdat$x[carrier], pdat$y[carrier] + pdat$boxh/2, pch = 16, cex = cex, col = cols[carrier])
 
-  # Add founder inbreeding coefficients
-  if(!is.null(fouInb) && hasInbredFounders(x)) {
+  # Text inside symbols
+  if(!is.null(textInside)) {
+    text(pdat$x, pdat$y + pdat$boxh/2, labels = textInside, cex = cex, col = cols,
+         font = dotArgs[['font']], fam = fam)
+  }
+
+  # Text above pedigree symbols
+  if(!is.null(textAbove)) {
+    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = cols,
+         font = dotArgs[['font']], fam = fam, adj = c(0.5, -0.5), xpd = TRUE)
+  }
+  else if(!is.null(fouInb) && hasInbredFounders(x)) {
+    # Add founder inbreeding coefficients
     finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
     finb = finb[finb > 0]
     idx = internalID(x, names(finb))
     finb.txt = sprintf("f = %.4g", finb)
-    cex = match.call(expand.dots = FALSE)$`...`$cex # NULL is ok!
 
-    text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
-         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
+    text(pdat$x[idx], pdat$y[idx], labels = finb.txt, cex = cex, font = 3,
+         fam = fam, adj = c(0.5, -0.5), xpd = TRUE)
   }
 
   invisible(pdat)
@@ -260,14 +283,9 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                           labs = labels(x), title = NULL, col = 1, aff = NULL,
                           carrier = NULL, hatched = NULL, shaded = NULL,
-                          deceased = NULL, starred = NULL, fouInb = "autosomal",
+                          deceased = NULL, starred = NULL,
+                          textInside = NULL, textAbove = NULL, fouInb = "autosomal",
                           margins = c(8, 0, 0, 0), yadj = 0, ...) {
-
-  # Founder inbreeding (this must be extracted before addParents())
-  if(!is.null(fouInb) && hasInbredFounders(x))
-    finb = founderInbreeding(x, chromType = fouInb) #names unneccesary
-  else
-    finb = NULL
 
   # Tweak labels if necessary. After addParents, internal index is 3!
   if(is.function(labs))
@@ -292,6 +310,18 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
 
   if(is.function(starred))
     starred = starred(x)
+
+  if(!is.null(textInside))
+    textInside = c("", "", textInside)
+
+  if(!is.null(textAbove))
+    textAbove = c("", "", textAbove)
+
+  # Founder inbreeding (this must be extracted before addParents())
+  if(!is.null(fouInb) && hasInbredFounders(x))
+    finb = founderInbreeding(x, chromType = fouInb) #names unneccesary
+  else
+    finb = NULL
 
   # Markers: Must be attached to `x` before addParents
   if (length(marker) == 0)
@@ -318,21 +348,33 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
                showEmpty = showEmpty, labs = labs,
                title = title, col = col, aff = aff, carrier = carrier,
                hatched = hatched, shaded = shaded, deceased = deceased,
-               starred = starred, margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
+               starred = starred, textInside = textInside, textAbove = textAbove,
+               margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 
   usr = par("usr")
   rect(usr[1] - 0.1, pdat$y[3] - yadj, usr[2] + 0.1, usr[4], border = NA, col = "white")
 
-  # Add title
-  if (!is.null(title)) title(title, line = -2.8)
 
-  # Add founder inbreeding coefficients
-  if(!is.null(finb)) {
+  # Expand dots (needed in some commands below)
+  dotArgs = match.call(expand.dots = FALSE)$`...`
+  cex = dotArgs[['cex']]
+  fam = dotArgs$family
+
+  # Add title
+  if (!is.null(title))
+    title(title, cex.main = dotArgs$cex.main, col.main = dotArgs$col.main, line = -2.8,
+          font.main = dotArgs$font.main, family = fam, xpd = NA)
+
+  # Text above pedigree symbols
+  if(!is.null(textAbove)) {
+    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = col,
+         font = dotArgs[['font']], family = fam, adj = c(0.5, -0.5), xpd = TRUE)
+  }
+  else if(!is.null(finb)) {
     finb.txt = sprintf("f = %.4g", finb)
-    cex = match.call(expand.dots = FALSE)$`...`$cex # NULL is ok!
     idx = 3 # the "child"
 
-    text(pdat$x[idx], pdat$y[idx], labels = finb.txt,
+    text(pdat$x[idx], pdat$y[idx], labels = finb.txt, family = fam,
          cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
   }
 

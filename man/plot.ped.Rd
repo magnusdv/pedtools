@@ -22,6 +22,8 @@
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
+  textInside = NULL,
+  textAbove = NULL,
   hints = NULL,
   fouInb = "autosomal",
   margins = c(0.6, 1, 4.1, 1),
@@ -44,6 +46,8 @@
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
+  textInside = NULL,
+  textAbove = NULL,
   fouInb = "autosomal",
   margins = c(8, 0, 0, 0),
   yadj = 0,
@@ -60,7 +64,8 @@ as_kinship2_pedigree(x, deceased = NULL, aff = NULL, hints = NULL)
 \item{marker}{Either a vector of names or indices referring to markers
 attached to \code{x}, a \code{marker} object, or a list of such. The genotypes for
 the chosen markers are written below each individual in the pedigree, in
-the format determined by \code{sep} and \code{missing}. See also \code{showEmpty}. If NULL (the default), no genotypes are plotted.}
+the format determined by \code{sep} and \code{missing}. See also \code{showEmpty}. If NULL
+(the default), no genotypes are plotted.}
 
 \item{sep}{A character of length 1 separating alleles for diploid markers.}
 
@@ -82,7 +87,8 @@ labelled following the internal ordering.
 as above. (See Examples.)
 }}
 
-\item{title}{The plot title. If NULL (default) or '', no title is added to the plot.}
+\item{title}{The plot title. If NULL (default) or '', no title is added to
+the plot.}
 
 \item{col}{A vector of colours for the pedigree members, recycled if
 necessary. Alternatively, \code{col} can be a list assigning colours to specific
@@ -90,21 +96,26 @@ members. For example if \code{col = list(red = "a", blue = c("b", "c"))} then
 individual "a" will be red, "b" and "c" blue, and everyone else black. By
 default everyone is black.}
 
-\item{aff}{A vector of labels identifying members whose plot
-symbols should be filled. (This is typically used in medical pedigrees to indicate affected members.)}
+\item{aff}{A vector of labels identifying members whose plot symbols should
+be filled. (This is typically used in medical pedigrees to indicate
+affected members.)}
 
-\item{carrier}{A vector of labels identifying members whose plot
-symbols should be marked with a dot. (This is typically used in medical pedigrees to indicate unaffected carriers of the disease allele.)}
+\item{carrier}{A vector of labels identifying members whose plot symbols
+should be marked with a dot. (This is typically used in medical pedigrees
+to indicate unaffected carriers of the disease allele.)}
 
-\item{hatched}{A vector of labels identifying members whose plot
-symbols should be hatched.}
+\item{hatched}{A vector of labels identifying members whose plot symbols
+should be hatched.}
 
 \item{shaded}{(Deprecated) synonym of \code{hatched}}
 
 \item{deceased}{A vector of labels indicating deceased pedigree members.}
 
-\item{starred}{A vector of labels indicating pedigree members that should
-be marked with a star in the pedigree plot.}
+\item{starred}{A vector of labels indicating pedigree members that should be
+marked with a star in the pedigree plot.}
+
+\item{textInside, textAbove}{Character vectors of text to be printed inside or
+above pedigree symbols.}
 
 \item{hints}{A list with alignment hints passed on to
 \code{kinship2::align.pedigree()}. Rarely necessary, but see Examples.}
