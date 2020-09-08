@@ -238,7 +238,8 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
                                  density = density, angle = angle, keep.par = keep.par, ...)
 
   # Expand dots (needed in some commands below)
-  dotArgs = match.call(expand.dots = FALSE)$`...`
+  dotArgs.uneval = match.call(expand.dots = FALSE)$`...`
+  dotArgs = lapply(dotArgs.uneval, eval.parent, n = 2L)
   cex = dotArgs[['cex']]
   fam = dotArgs[['family']]
 
