@@ -26,7 +26,9 @@
 #' * `rate` : mutation model parameter (NULL)
 #'
 #' If `locusAttributes` is just a single list of attributes (not a list of
-#' lists), then it is repeated to match the number of markers.
+#' lists), then it is repeated to match the number of markers. In particular,
+#' the shortcut `locusAttributes = "snp-12" sets all markers to be SNPs with
+#' alleles 1 and 2.`
 #'
 #' Two alternative format of `locusAttributes` are allowed: If a data.frame or
 #' matrix is given, an attempt is made to interpret it as a frequency database
@@ -171,6 +173,13 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 
 checkLocusAttribs = function(a) {
   if(length(a) == 0) return(a)
+
+  if(identical(a, "snp-12"))
+    a = list(alleles = 1:2)
+  else if(identical(a, "snp-ab"))
+    a = list(alleles = c('a','b'))
+  else if(identical(a, "snp-AB"))
+    a = list(alleles = c('A','B'))
 
   attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")
 
