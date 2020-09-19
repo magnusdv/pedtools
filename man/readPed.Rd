@@ -78,10 +78,10 @@ readPed(tf)
 # With marker data in one column
 trio.marker = cbind(trio, M = c("1/1", "2/2", "1/2"))
 write.table(trio.marker, file = tf, row.names = FALSE)
-readPed(tf, sep = "/")
+readPed(tf)
 
 # With marker data in two allele columns
-trio.marker2 = cbind(trio, A1 = c(1,2,1), A2 = c(1,2,2))
+trio.marker2 = cbind(trio, M.1 = c(1,2,1), M.2 = c(1,2,2))
 write.table(trio.marker2, file = tf, row.names = FALSE)
 readPed(tf)
 
@@ -90,7 +90,7 @@ singles = data.frame(id = c("S1", "S2"),
                      fid = c(0,0), mid = c(0,0), sex = c(2,1),
                      M = c("9/14.2", "9/9"))
 write.table(singles, file = tf, row.names = FALSE)
-readPed(tf, sep = "/")
+readPed(tf)
 
 ### Two trios in the same file
 trio2 = cbind(famid = rep(c("trio1", "trio2"), each = 3), rbind(trio, trio))
