@@ -531,10 +531,8 @@ posMb.ped = function(x, markers = NULL, ...) {
 `posMb<-.marker` = function(x, ..., value) {
   pos = suppressWarnings(as.numeric(value))
 
-  if((!is.na(value) && is.na(pos)) || length(pos) != 1)
-    stop2("`posMb` replacement must be a single number: ", value)
-  if(pos < 0)
-    stop2("`posMb` replacement must be nonnegative: ", value)
+  if(length(pos) != 1 || (!is.na(value) && is.na(pos)) || (!is.na(pos) && pos < 0))
+    stop2("`posMb` replacement must be a single nonnegative number, or NA: ", value)
 
   attr(x, 'posMb') = pos
   x
