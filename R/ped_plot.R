@@ -190,7 +190,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
     text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
   }
 
-  # Needed for centered title. Without, par() doesn't equal 'margins'...(why??)
+  # Needed for centred title. Without, par() doesn't equal 'margins'...(why??)
   opar = par(mar = margins)
   if(!keep.par)
     on.exit(par(opar))
@@ -199,8 +199,12 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   if(is.list(col)) {
     cols = rep(1, nInd)
     for(cc in names(col)) {
-      ids_col = intersect(labels(x), col[[cc]])
-      cols[internalID(x, ids_col)] = cc
+      thiscol = col[[cc]]
+      if(is.function(thiscol))
+        idscol = thiscol(x)
+      else
+        idscol = intersect(labels(x), thiscol)
+      cols[internalID(x, idscol)] = cc
     }
   }
   else {
