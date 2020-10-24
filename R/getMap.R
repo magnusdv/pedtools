@@ -85,6 +85,9 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
       if(sum(naPosX) > 10) stop2("More than 10 markers on X with unknown position")
       mb[naPosX] = (1:sum(naPosX)) * 400 + if(all(naPos)) -400 else max(mb, na.rm = TRUE)
     }
+
+    # NA names: make unique
+    marker[is.na(marker)] = paste0("NA_", seq_len(sum(is.na(marker))))
   }
   else if(na.action == 2) {
     if(verbose)
