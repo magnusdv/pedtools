@@ -6,10 +6,7 @@
 #'
 #' * `na.action` = 0: Return map unmodified
 #'
-#' * `na.action` = 1: Replace missing values with dummy values. In the `CHROM`
-#' column, missing values are set to 0. Missing entries in `MARKER` are replaced
-#' with their index (row number). If the `POS` column contain any missing data,
-#' the entire column is replaced by 1,2,... .
+#' * `na.action` = 1: Replace missing values with dummy values.
 #'
 #' * `na.action` = 2: Remove markers with missing data.
 #'
@@ -74,10 +71,20 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
   if (na.action == 1) {
     if (verbose)
       message("Warning: Missing map entries. Inserting dummy values.")
-    chrom[is.na(chrom)] = "0"
-    marker[is.na(marker)] = seq_along(marker)[is.na(marker)]
-    if(anyNA(mb))
-      mb = seq_along(mb)
+
+    naPos = is.na(mb) | is.na(chrom)
+
+    # Autosomal unknowns: Put each on separate chromosome
+    if(any(naPosAut <- naPos & !chrom %in% c("X", 23))) {
+      chrom[naPosAut] = 100 + 1:sum(naPosAut)
+      mb[naPosAut] = 0
+    }
+
+    # X unknowns: Separate by 400 cM
+    if(any(naPosX <- naPos & chrom %in% c("X", 23))) {
+      if(sum(naPosX) > 10) stop2("More than 10 markers on X with unknown position")
+      mb[naPosX] = (1:sum(naPosX)) * 400 + if(all(naPos)) -400 else max(mb, na.rm = TRUE)
+    }
   }
   else if(na.action == 2) {
     if(verbose)

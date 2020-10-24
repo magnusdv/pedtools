@@ -105,7 +105,7 @@ writePed_merlin = function(x, prefix, verbose = TRUE) {
   what = c("ped", "map", "dat", "freq")
   fnames = setNames(paste(prefix, what, sep = "."), what)
 
-  # ped file
+  ### ped file
   if(is.pedList(x)) {
     pedmatr = do.call(rbind, lapply(x, as.matrix.ped, include.attrs = FALSE))
     pedmatr = cbind(rep.int(seq_along(x), pedsize(x)), pedmatr)
@@ -117,17 +117,17 @@ writePed_merlin = function(x, prefix, verbose = TRUE) {
   write(t.default(pedmatr), file = fnames[["ped"]], ncolumns = ncol(pedmatr))
   if(verbose) message("File written: ", fnames[["ped"]])
 
-  # map file
+  ### map file
   mapmatr = getMap(x, na.action = 1, verbose = FALSE)
   write.table(mapmatr, file = fnames[["map"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
   if(verbose) message("File written: ", fnames[["map"]])
 
-  # dat file
+  ### dat file
   datmatr = cbind("M", mapmatr$MARKER)
   write.table(datmatr, file = fnames[["dat"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
   if(verbose) message("File written: ", fnames[["dat"]])
 
-  # freq file
+  ### freq file
   nalls = nAlleles(x)
   L = sum(nalls) + length(nalls)
   cum = cumsum(c(1, nalls + 1))

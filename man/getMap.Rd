@@ -39,10 +39,7 @@ Return a map of the markers attached to a pedigree.
 The \code{na.action} argument controls how missing values are dealt with:
 \itemize{
 \item \code{na.action} = 0: Return map unmodified
-\item \code{na.action} = 1: Replace missing values with dummy values. In the \code{CHROM}
-column, missing values are set to 0. Missing entries in \code{MARKER} are replaced
-with their index (row number). If the \code{POS} column contain any missing data,
-the entire column is replaced by 1,2,... .
+\item \code{na.action} = 1: Replace missing values with dummy values.
 \item \code{na.action} = 2: Remove markers with missing data.
 }
 
