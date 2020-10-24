@@ -107,7 +107,7 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
 #' @importFrom utils read.table
 #' @export
 setMap = function(x, map, matchNames = NA, ...) {
-  if(!is.ped(x) || is.pedList(x))
+  if(!is.ped(x) && !is.pedList(x))
     stop2("Input must be a `ped` object or a list of such")
 
   N = nMarkers(x)
@@ -119,6 +119,10 @@ setMap = function(x, map, matchNames = NA, ...) {
 
   if(!is.data.frame(map))
     stop2("`map` must be a data frame or file path")
+
+  if(is.pedList(x)) {
+    return(lapply(x, function(comp) setMap(comp, map = map, matchNames = matchNames)))
+  }
 
   mapNames = map[[2]]
   xNames = name(x, 1:N)
