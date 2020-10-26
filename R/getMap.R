@@ -129,7 +129,7 @@ setMap = function(x, map, matchNames = NA, ...) {
 
   # Match names if either i) mismatch in number, or ii) names actually match in some order
   if(is.na(matchNames))
-    matchNames = (nrow(map) != N) || setequal(mapNames, xNames)
+    matchNames = (nrow(map) != N) || (!all(is.na(mapNames)) && setequal(mapNames, xNames))
 
   if(matchNames) {
     mIdx = match(xNames, mapNames, nomatch = NA)
