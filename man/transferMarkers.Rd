@@ -4,28 +4,39 @@
 \alias{transferMarkers}
 \title{Transfer marker data}
 \usage{
-transferMarkers(from, to, ids = NULL, erase = TRUE, matchNames = TRUE)
+transferMarkers(
+  from,
+  to,
+  ids = NULL,
+  idsFrom = ids,
+  idsTo = ids,
+  erase = TRUE,
+  matchNames = TRUE
+)
 }
 \arguments{
-\item{from}{a \code{ped} or \code{singleton} object, or a list of such objects.}
+\item{from}{A \code{ped} or \code{singleton} object, or a list of such objects.}
 
-\item{to}{a \code{ped} or \code{singleton} object, or a list of such objects.}
+\item{to}{A \code{ped} or \code{singleton} object, or a list of such objects.}
 
-\item{ids}{a vector of ID labels. The indicated individuals must be present
-in both pedigrees. By default, genotypes are transferred between all shared
-individuals.}
+\item{ids}{A vector of ID labels. This should be used only if the
+individuals have the same name in both pedigrees; otherwise use \code{idsFrom}
+and \code{idsTo} instead.}
 
-\item{erase}{a logical. If \code{TRUE} (default), all markers attached to \code{to} are
+\item{idsFrom, idsTo}{Vectors of equal length, denoting source individuals (in
+the \code{from} pedigree) and target individuals (in the \code{to} pedigree),
+respectively.}
+
+\item{erase}{A logical. If \code{TRUE} (default), all markers attached to \code{to} are
 erased prior to transfer, and new marker objects are created with the same
 attributes as in \code{from}. If \code{FALSE} no new marker objects are attached to
 \code{to}. Only the genotypes of the \code{ids} individuals are modified, while
 genotypes for other pedigree members - and marker attributes - remain
 untouched.}
 
-\item{matchNames}{a logical, only relevant if \code{erase = FALSE}. If \code{matchNames = TRUE} (default) marker names are used to ensure genotypes are transferred
-into the right markers. The output will contain only the markers in \code{from},
-in the same order. (An error is raised if the markers are not named.) In
-this case}
+\item{matchNames}{A logical, only relevant if \code{erase = FALSE}. If \code{matchNames = TRUE} (default) marker names are used to ensure genotypes are transferred
+into the right markers, The output contains only markers present in \code{from},
+in the same order. (An error is raised if the markers are not named.)}
 }
 \value{
 A \code{ped} object (or a list of such) similar to \code{to}, but where all
@@ -35,6 +46,10 @@ previous marker data is erased.
 \description{
 Transfer marker data between pedigrees. Any markers attached to the target
 are overwritten.
+}
+\details{
+By default, genotypes are transferred between all individuals present in both
+pedigrees.
 }
 \examples{
 

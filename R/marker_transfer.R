@@ -3,22 +3,27 @@
 #' Transfer marker data between pedigrees. Any markers attached to the target
 #' are overwritten.
 #'
-#' @param from a `ped` or `singleton` object, or a list of such objects.
-#' @param to a `ped` or `singleton` object, or a list of such objects.
-#' @param ids a vector of ID labels. The indicated individuals must be present
-#'   in both pedigrees. By default, genotypes are transferred between all shared
-#'   individuals.
-#' @param erase a logical. If `TRUE` (default), all markers attached to `to` are
+#' By default, genotypes are transferred between all individuals present in both
+#' pedigrees.
+#'
+#' @param from A `ped` or `singleton` object, or a list of such objects.
+#' @param to A `ped` or `singleton` object, or a list of such objects.
+#' @param ids A vector of ID labels. This should be used only if the
+#'   individuals have the same name in both pedigrees; otherwise use `idsFrom`
+#'   and `idsTo` instead.
+#' @param idsFrom,idsTo Vectors of equal length, denoting source individuals (in
+#'   the `from` pedigree) and target individuals (in the `to` pedigree),
+#'   respectively.
+#' @param erase A logical. If `TRUE` (default), all markers attached to `to` are
 #'   erased prior to transfer, and new marker objects are created with the same
 #'   attributes as in `from`. If `FALSE` no new marker objects are attached to
 #'   `to`. Only the genotypes of the `ids` individuals are modified, while
 #'   genotypes for other pedigree members - and marker attributes - remain
 #'   untouched.
-#' @param matchNames a logical, only relevant if `erase = FALSE`. If `matchNames
+#' @param matchNames A logical, only relevant if `erase = FALSE`. If `matchNames
 #'   = TRUE` (default) marker names are used to ensure genotypes are transferred
-#'   into the right markers. The output will contain only the markers in `from`,
-#'   in the same order. (An error is raised if the markers are not named.) In
-#'   this case
+#'   into the right markers, The output contains only markers present in `from`,
+#'   in the same order. (An error is raised if the markers are not named.)
 #'
 #' @return A `ped` object (or a list of such) similar to `to`, but where all
 #'   individuals also present in `from` have marker genotypes copied over.  Any
@@ -49,64 +54,68 @@
 #' afreq(z2, 1)
 #'
 #' @export
-transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE) {
+transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
+                           erase = TRUE, matchNames = TRUE) {
+
+  allFrom = unlist(labels(from))
+  allTo = unlist(labels(to))
+
+  # If ids not given: use all shared individuals
+  if(is.null(idsFrom) && is.null(idsTo))
+    idsFrom = idsTo = intersect(allFrom, allTo)
+  else if(length(idsFrom) != length(idsTo))
+    stop2(sprintf("Mismatch in transfer individuals:\n `idsFrom` = %s\n `idsTo` = %s",
+                  toString(idsFrom), toString(idsTo)))
+
+  # Check for duplicates
+  if(dup <- anyDuplicated(allFrom[allFrom %in% idsFrom]))
+    stop2("Non-unique ID label in source ped: ", allFrom[dup])
+  if(dup <- anyDuplicated(allTo[allTo %in% idsTo]))
+    stop2("Non-unique ID label in target ped: ", allTo[dup])
 
   if (is.ped(from) && is.ped(to)) {
-    return(.transferMarkersSimple(from, to, ids = ids, erase = erase, matchNames = matchNames))
+    return(.transferSimple(from, to, idsFrom = idsFrom, idsTo = idsTo,
+                           erase = erase, matchNames = matchNames))
   }
 
   if (is.ped(from) && is.pedList(to)) {
 
-    tolabels = unlist(labels(to))
-    if(is.null(ids))
-      ids = intersect(labels(from), tolabels)
-
-    toids = tolabels[tolabels %in% ids]
-    if((dup <- anyDuplicated.default(toids)) > 0)
-      stop2("Non-unique ID label in target pedlist: ", toids[dup])
-
     to = lapply(to, function(comp) {
-      ids_comp = intersect(ids, labels(comp))
-      .transferMarkersSimple(from, comp, ids = ids_comp, erase = erase, matchNames = matchNames)
+      idx = which(idsTo %in% labels(comp))
+      .transferSimple(from, comp, idsFrom = idsFrom[idx], idsTo[idx],
+                      erase = erase, matchNames = matchNames)
     })
     return(to)
   }
 
   if (is.pedList(from) && is.ped(to)) {
 
-    fromlabels = unlist(labels(from))
-    if(is.null(ids))
-      ids = intersect(fromlabels, labels(to))
-
-    fromids = fromlabels[fromlabels %in% ids]
-    if((dup <- anyDuplicated.default(fromids)) > 0)
-      stop2("Non-unique ID label in source pedlist: ", fromids[dup])
-
     # Transfer from first component
-    ids1 = intersect(ids, labels(from[[1]]))
-    to = .transferMarkersSimple(from[[1]], to, ids = ids1, erase = erase, matchNames = matchNames)
+    idx1 = which(idsFrom %in% labels(from[[1]]))
+    to = .transferSimple(from[[1]], to, idsFrom = idsFrom[idx1], idsTo = idsTo[idx1],
+                         erase = erase, matchNames = matchNames)
 
     # Transfer from remaining comps, with erase = FALSE and matchNames = FALSE
     for (comp in from[-1]) {
-      ids_comp = intersect(ids, labels(comp))
-      if (!length(ids_comp))
-        next
-      to = .transferMarkersSimple(comp, to, ids = ids_comp, erase = FALSE, matchNames = FALSE)
+      idx = which(idsFrom %in% labels(comp))
+      to = .transferSimple(comp, to, idsFrom = idsFrom[idx], idsTo = idsTo[idx],
+                           erase = FALSE, matchNames = FALSE)
     }
     return(to)
   }
 
   if (is.pedList(from) && is.pedList(to)) {
     to = lapply(to, function(comp) {
-      ids_comp = if(is.null(ids)) NULL else intersect(ids, labels(comp))
-      transferMarkers(from, comp, ids = ids_comp, erase = erase, matchNames = matchNames)
+      idx = which(idsTo %in% labels(comp))
+      transferMarkers(from, comp, idsFrom = idsFrom[idx], idsTo[idx],
+                      erase = erase, matchNames = matchNames)
     })
     return(to)
   }
 }
 
-
-.transferMarkersSimple = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE) {
+# Transfer between single ped objects
+.transferSimple = function(from, to, idsFrom, idsTo, erase = TRUE, matchNames = TRUE) {
   stopifnot2(is.ped(from), is.ped(to))
   M = nMarkers(from)
 
@@ -115,14 +124,9 @@ transferMarkers = function(from, to, ids = NULL, erase = TRUE, matchNames = TRUE
     return(to)
   }
 
-  # If `ids` not given: use all shared individuals
-  if(is.null(ids)) {
-    ids = intersect(labels(from),  labels(to))
-  }
-
   # Internal indices (=matrix row numbers below); also catches wrong IDs!
-  idx_from = internalID(from, ids)
-  idx_to = internalID(to, ids)
+  idx_from = internalID(from, idsFrom)
+  idx_to = internalID(to, idsTo)
 
   # If "erase": remove all markers in `to`.
   # Otherwise: select all markers in `from`, in same order

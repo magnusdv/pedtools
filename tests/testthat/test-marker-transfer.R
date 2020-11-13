@@ -1,14 +1,14 @@
 
 test_that("single ped is unchaged after self-transfer of markers", {
   x = nuclearPed(1)
-  m = marker(x, '1'=1:2)
+  m = marker(x, '1' = "1/2")
   x = setMarkers(x, m)
 
   expect_identical(transferMarkers(x,x), x)
 })
 test_that("singleton is unchaged after self-transfer of markers", {
   x = singleton(1)
-  m = marker(x, '1'=1:2)
+  m = marker(x, '1' = "1/2")
   x = setMarkers(x, m)
 
   expect_identical(transferMarkers(x,x), x)
@@ -19,7 +19,7 @@ test_that("ped is unchanged after back-and-fourth transfer to singleton", {
   m = marker(x, '1'=1:2)
   x = setMarkers(x, m)
 
-  y = transferMarkers(x, singleton(id='1'))
+  y = transferMarkers(x, singleton(id = '1'))
   z = transferMarkers(y, x)
   expect_identical(x,z)
 
@@ -66,12 +66,29 @@ test_that("transfer of multiple markers works when erase = F", {
 
 test_that("transferMarkers checks for duplicated IDs", {
   x = singleton("a")
-  x = setMarkers(x, marker(x, a = 1:2, name = "M"))
+  x = setMarkers(x, marker(x, a = "1/2", name = "M"))
 
-  expect_error(transferMarkers(list(x,x), x), "Non-unique ID label in source pedlist: a")
-  expect_error(transferMarkers(list(x,x), x, ids = "a"), "Non-unique ID label in source pedlist: a")
+  expect_error(transferMarkers(list(x,x), x), "Non-unique ID label in source ped: a")
+  expect_error(transferMarkers(list(x,x), x, ids = "a"), "Non-unique ID label in source ped: a")
 
-  expect_error(transferMarkers(x, list(x,x)), "Non-unique ID label in target pedlist: a")
-  expect_error(transferMarkers(x, list(x,x), ids = "a"), "Non-unique ID label in target pedlist: a")
+  expect_error(transferMarkers(x, list(x,x)), "Non-unique ID label in target ped: a")
+  expect_error(transferMarkers(x, list(x,x), ids = "a"), "Non-unique ID label in target ped: a")
 
+})
+
+test_that("transferMarkers works with changing labels", {
+  x = singleton("a"); y = singleton("b")
+  x = setMarkers(x, marker(x, a = "1/2", name = "M"))
+
+  expect_equal(transferMarkers(x, y, idsFrom = "a", idsTo = "b"),
+               setMarkers(y, marker(y, b = "1/2", name = "M")))
+
+  # Roundtrip
+  x1 = nuclearPed()
+  x1 = setMarkers(x1, marker(x1, "1" = "1/2"))
+
+  x2 = transferMarkers(x1, x1, idsFrom=1, idsTo=2)
+  x3 = transferMarkers(x2, x2, idsFrom=2, idsTo=3)
+  y1 = transferMarkers(x3, x3, idsFrom=3, idsTo=1)
+  expect_equal(x1, y1)
 })
