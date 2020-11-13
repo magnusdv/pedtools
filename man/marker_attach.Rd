@@ -77,7 +77,8 @@ where \code{L = length(alleles)})
 
 If \code{locusAttributes} is just a single list of attributes (not a list of
 lists), then it is repeated to match the number of markers. In particular,
-the shortcut \verb{locusAttributes = "snp-12" sets all markers to be SNPs with alleles 1 and 2.}
+the shortcut \code{locusAttributes = "snp-12"} sets all markers to be SNPs with
+alleles 1 and 2.`
 
 Two alternative format of \code{locusAttributes} are allowed: If a data.frame or
 matrix is given, an attempt is made to interpret it as a frequency database

@@ -27,7 +27,7 @@
 #'
 #' If `locusAttributes` is just a single list of attributes (not a list of
 #' lists), then it is repeated to match the number of markers. In particular,
-#' the shortcut `locusAttributes = "snp-12" sets all markers to be SNPs with
+#' the shortcut `locusAttributes = "snp-12"` sets all markers to be SNPs with
 #' alleles 1 and 2.`
 #'
 #' Two alternative format of `locusAttributes` are allowed: If a data.frame or
