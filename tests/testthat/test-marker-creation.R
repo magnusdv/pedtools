@@ -1,4 +1,3 @@
-context("marker creation")
 
 test_that("marker() catches invalid genotype assignments", {
   x = nuclearPed(1)

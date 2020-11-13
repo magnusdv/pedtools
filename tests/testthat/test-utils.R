@@ -1,4 +1,3 @@
-context("various utils")
 
 test_that("nextNN works", {
   expect_equal(nextNN(c(1:5)), "NN_1")

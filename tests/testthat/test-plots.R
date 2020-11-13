@@ -1,4 +1,3 @@
-context("pedigree plots")
 
 test_that("singleton with marker plots without error", {
   s = singleton(1)

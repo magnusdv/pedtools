@@ -1,4 +1,3 @@
-context("marker attachment")
 
 test_that("setMarkers() creates empty markers with locusAttributes", {
   x = nuclearPed(1)

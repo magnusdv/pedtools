@@ -1,4 +1,3 @@
-context("ped parts")
 
 test_that("typedMembers() and untypedMembers() works", {
   x = nuclearPed(father="fa", mother="mo", child="ch")

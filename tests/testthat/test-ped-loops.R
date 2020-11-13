@@ -1,4 +1,3 @@
-context("ped loops")
 
 break_silent = function(...) breakLoops(..., verbose=F)
 tie_silent = function(...) tieLoops(..., verbose=F)

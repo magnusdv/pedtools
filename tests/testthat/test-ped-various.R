@@ -1,5 +1,3 @@
-context("ped various")
-
 
 test_that("ped -> matrix -> ped", {
   x = ped(id=1:3, fid=c(0,0,1), mid=c(0,0,2), sex=c(1,2,1))

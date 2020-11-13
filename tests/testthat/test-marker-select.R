@@ -1,4 +1,3 @@
-context("marker selection")
 
 x = setMarkers(singleton(1), locusAttributes = list(list(name = "m1"),
                                                     list(name = "m2")))

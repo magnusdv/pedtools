@@ -1,5 +1,3 @@
-context("marker accessors")
-
 
 test_that("simple marker getters work", {
   x = nuclearPed(1)

@@ -1,4 +1,3 @@
-context("pedigree utils")
 
 test_that("getSex() works with and without labels", {
   x = nuclearPed(1)

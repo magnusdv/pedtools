@@ -1,4 +1,3 @@
-context("ped from data.frame or from file")
 
 test_that("as.ped.data.frame identifies columns correctly", {
   A = singleton("A")

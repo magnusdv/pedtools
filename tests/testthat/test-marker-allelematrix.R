@@ -1,4 +1,3 @@
-context("get/set allele matrix")
 
 # Test case: singleton + trio, nonstandard labels.
 df = data.frame(id = 4:1, fid = c(0,0,0,3), mid = c(0,0,0,2), sex = c(1,1,2,1),

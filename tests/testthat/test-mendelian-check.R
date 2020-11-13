@@ -1,4 +1,3 @@
-context("mendelian errors")
 
 simpleMend = function(x, m) {
   x = setMarkers(x, m)

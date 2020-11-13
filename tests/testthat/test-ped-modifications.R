@@ -1,4 +1,3 @@
-context("ped modifications")
 
 test_that("labels are correct after reordering", {
   x = relabel(nuclearPed(1), letters[1:3])

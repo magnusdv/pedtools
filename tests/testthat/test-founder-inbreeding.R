@@ -1,4 +1,3 @@
-context("founder inbreeding")
 
 test_that("setting/getting founder inbreeding works properly", {
   x = addSon(nuclearPed(1), 3, id="boy", verbose=F)

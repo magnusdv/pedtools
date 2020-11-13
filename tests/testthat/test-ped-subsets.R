@@ -1,4 +1,3 @@
-context("ped modifications")
 
 test_that("full subset is identical to starting point", {
   s = singleton(1)

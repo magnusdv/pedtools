@@ -1,4 +1,3 @@
-context("get/set global locus attributes")
 
 # Test case 1: singleton + trivial markers
 x = singleton(1)

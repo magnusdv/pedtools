@@ -1,4 +1,3 @@
-context("marker utils")
 
 x = nuclearPed(1)
 

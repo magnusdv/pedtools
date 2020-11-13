@@ -1,4 +1,3 @@
-context("ped construction")
 
 test_that("ped() accepts any of ('', 0, NA) as missing parents", {
   s = singleton(1)

@@ -1,5 +1,3 @@
-context("marker transfers")
-
 
 test_that("single ped is unchaged after self-transfer of markers", {
   x = nuclearPed(1)

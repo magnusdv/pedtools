@@ -1,4 +1,3 @@
-context("writing ped data to file")
 
 wrped = function(x, ...)
   writePed(x, prefix = tempfile("test"), verbose = F, ...)

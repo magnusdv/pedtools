@@ -1,5 +1,3 @@
-context("ped relatives")
-
 
 test_that("father() and mother() works", {
   x = nuclearPed(father="fa", mother="mo", child="ch")

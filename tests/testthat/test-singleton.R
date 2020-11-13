@@ -1,4 +1,3 @@
-context("singletons")
 
 s = singleton(1)
 
