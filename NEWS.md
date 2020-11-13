@@ -1,3 +1,20 @@
+# pedtools 0.9.6
+
+## Breaking changes
+
+* `getMap(na.action = 1)` is re-implemented and now behaves slightly differently. This enables `pedprobr::merlin()` to handle linked markers better.
+
+* The order of individuals in `linearPed()` now always follows the "asPlot" pattern, as for the other basic pedigrees. (Missed this in the previous version.)
+
+## New features
+
+* `plot.ped()` gains arguments `textInside`, `textAbove` and `carrier`.
+
+* In `setMarkers()` and friends, the shortcut `locusAttributes = "snp-12" may be used to indicate that all supplied markers are SNPs with alleles 1 and 2. Other shortcuts are "snp-ab" and "snp-AB".
+
+* `setMap()` is extended to pedlists.
+
+
 # pedtools 0.9.5
 
 ## Breaking changes
