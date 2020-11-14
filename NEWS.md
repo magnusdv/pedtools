@@ -2,7 +2,7 @@
 
 ## Breaking changes
 
-* `getMap(na.action = 1)` is re-implemented and now behaves slightly differently. This enables `pedprobr::merlin()` to handle linked markers better.
+* `getMap(na.action = 1)` is re-implemented and now behaves slightly differently. (This was necessary to improve the handling of linked markers in `pedprobr::merlin()`.)
 
 * The order of individuals in `linearPed()` now always follows the "asPlot" pattern, as for the other basic pedigrees. (Missed this in the previous version.)
 
@@ -10,9 +10,11 @@
 
 * `plot.ped()` gains arguments `textInside`, `textAbove` and `carrier`.
 
-* In `setMarkers()` and friends, the shortcut `locusAttributes = "snp-12" may be used to indicate that all supplied markers are SNPs with alleles 1 and 2. Other shortcuts are "snp-ab" and "snp-AB".
+* `transferMarkers()` has new arguments `fromIds` and `toIds` enabling transfer between differently-named individuals.
 
-* `setMap()` is extended to pedlists.
+* In `setMarkers()` and friends, the shortcut `locusAttributes = "snp-12"` may be used to indicate that all supplied markers are SNPs with alleles 1 and 2. Further shortcuts are "snp-ab" and "snp-AB".
+
+* `setMap()` is extended to ped lists.
 
 
 # pedtools 0.9.5
