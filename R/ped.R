@@ -256,7 +256,7 @@ validatePed = function(x) {
     stop2(paste0(errs, collapse = "\n "))
   }
 
-  invisible()
+  invisible(NULL)
 }
 
 

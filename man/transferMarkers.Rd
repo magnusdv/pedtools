@@ -11,7 +11,8 @@ transferMarkers(
   idsFrom = ids,
   idsTo = ids,
   erase = TRUE,
-  matchNames = TRUE
+  matchNames = TRUE,
+  checkSex = FALSE
 )
 }
 \arguments{
@@ -19,9 +20,9 @@ transferMarkers(
 
 \item{to}{A \code{ped} or \code{singleton} object, or a list of such objects.}
 
-\item{ids}{A vector of ID labels. This should be used only if the
-individuals have the same name in both pedigrees; otherwise use \code{idsFrom}
-and \code{idsTo} instead.}
+\item{ids}{A vector of ID labels. This should be used only if the individuals
+have the same name in both pedigrees; otherwise use \code{idsFrom} and \code{idsTo}
+instead.}
 
 \item{idsFrom, idsTo}{Vectors of equal length, denoting source individuals (in
 the \code{from} pedigree) and target individuals (in the \code{to} pedigree),
@@ -37,6 +38,9 @@ untouched.}
 \item{matchNames}{A logical, only relevant if \code{erase = FALSE}. If \code{matchNames = TRUE} (default) marker names are used to ensure genotypes are transferred
 into the right markers, The output contains only markers present in \code{from},
 in the same order. (An error is raised if the markers are not named.)}
+
+\item{checkSex}{A logical. If TRUE, it is checked that \code{fromIds} and \code{toIds}
+have the same sex. Default: FALSE.}
 }
 \value{
 A \code{ped} object (or a list of such) similar to \code{to}, but where all

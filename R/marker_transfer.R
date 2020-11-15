@@ -8,9 +8,9 @@
 #'
 #' @param from A `ped` or `singleton` object, or a list of such objects.
 #' @param to A `ped` or `singleton` object, or a list of such objects.
-#' @param ids A vector of ID labels. This should be used only if the
-#'   individuals have the same name in both pedigrees; otherwise use `idsFrom`
-#'   and `idsTo` instead.
+#' @param ids A vector of ID labels. This should be used only if the individuals
+#'   have the same name in both pedigrees; otherwise use `idsFrom` and `idsTo`
+#'   instead.
 #' @param idsFrom,idsTo Vectors of equal length, denoting source individuals (in
 #'   the `from` pedigree) and target individuals (in the `to` pedigree),
 #'   respectively.
@@ -24,6 +24,8 @@
 #'   = TRUE` (default) marker names are used to ensure genotypes are transferred
 #'   into the right markers, The output contains only markers present in `from`,
 #'   in the same order. (An error is raised if the markers are not named.)
+#' @param checkSex A logical. If TRUE, it is checked that `fromIds` and `toIds`
+#'   have the same sex. Default: FALSE.
 #'
 #' @return A `ped` object (or a list of such) similar to `to`, but where all
 #'   individuals also present in `from` have marker genotypes copied over.  Any
@@ -55,7 +57,7 @@
 #'
 #' @export
 transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
-                           erase = TRUE, matchNames = TRUE) {
+                           erase = TRUE, matchNames = TRUE, checkSex = FALSE) {
 
   allFrom = unlist(labels(from))
   allTo = unlist(labels(to))
@@ -72,6 +74,17 @@ transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
     stop2("Non-unique ID label in source ped: ", allFrom[dup])
   if(dup <- anyDuplicated(allTo[allTo %in% idsTo]))
     stop2("Non-unique ID label in target ped: ", allTo[dup])
+
+  if(checkSex) {
+    sexFrom = getSex(from, idsFrom)
+    sexTo = getSex(to, idsTo)
+    if(any(bad <- sexFrom != sexTo)) {
+      ss = c("male", "female")
+      mess = sprintf(" '%s' (%s)  -->  '%s' (%s)",
+                     idsFrom[bad], ss[sexFrom[bad]], idsTo[bad], ss[sexTo[bad]])
+      stop2(paste0(c("Sex mismatch", mess), collapse = "\n"))
+    }
+  }
 
   if (is.ped(from) && is.ped(to)) {
     return(.transferSimple(from, to, idsFrom = idsFrom, idsTo = idsTo,
