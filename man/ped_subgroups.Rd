@@ -18,7 +18,6 @@
 \alias{parents}
 \alias{grandparents}
 \alias{siblings}
-\alias{cousins}
 \alias{nephews_nieces}
 \alias{ancestors}
 \alias{commonAncestors}
@@ -57,8 +56,6 @@ parents(x, id, internal = FALSE)
 grandparents(x, id, degree = 2, internal = FALSE)
 
 siblings(x, id, half = NA, internal = FALSE)
-
-cousins(x, id, degree = 1, removal = 0, half = NA, internal = FALSE)
 
 nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
 

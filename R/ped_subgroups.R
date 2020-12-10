@@ -231,8 +231,8 @@ siblings = function(x, id, half = NA, internal = FALSE) {
   if (internal) which(sib_int) else labels.ped(x)[sib_int]
 }
 
-#' @rdname ped_subgroups
-#' @export
+
+# TODO: Review this before re-export
 cousins = function(x, id, degree = 1, removal = 0, half = NA, internal = FALSE) {
   if (!internal)  id = internalID(x, id)
   gp = grandparents(x, id, degree = degree, internal = TRUE)

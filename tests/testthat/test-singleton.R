@@ -41,12 +41,13 @@ test_that("singleton relatives are all empty", {
   expect_identical(spouses(s, 1), character(0))
   expect_identical(children(s, 1), character(0))
   expect_identical(siblings(s, 1), character(0))
-  expect_identical(cousins(s, 1), character(0))
-  expect_identical(cousins(s, 1, half = T), character(0))
-  expect_identical(cousins(s, 1, deg = 0, removal = 1), character(0))
   expect_identical(unrelated(s, 1), character(0))
   expect_identical(ancestors(s, 1), character(0))
   expect_identical(descendants(s, 1), character(0))
+  # expect_identical(cousins(s, 1), character(0))
+  # expect_identical(cousins(s, 1, half = T), character(0))
+  # expect_identical(cousins(s, 1, deg = 0, removal = 1), character(0))
+
 })
 
 test_that("singleton subgroups are as expected", {
