@@ -55,6 +55,12 @@ test_that("siblings are correctly detected", {
   expect_equal(siblings(x, 4, half = F), "5")
 })
 
+test_that("unrelated ped members are correctly detected", {
+  x = halfCousinPed(0, removal = 1, child = T)
+  expect_equal(unrelated(x, 4), c("3", "6"))
+  expect_equal(unrelated(x, 8), character(0))
+})
+
 test_that("internal = TRUE results in integer output", {
   x = singleton(1)
   expect_type(father(x, 1, internal = T), "integer")

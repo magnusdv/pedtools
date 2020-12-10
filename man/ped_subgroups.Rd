@@ -121,12 +121,16 @@ x = ped(id = 2:9,
 spouses(x, id = 2) # 3, 8
 children(x, 2)     # 4, 9
 descendants(x, 2)  # 4, 6, 7, 9
-siblings(x, 4)     # 9 (includes both full and half)
+siblings(x, 4)     # 9 (full or half)
+unrelated(x, 4)    # 5, 8
+father(x, 4)       # 2
+mother(x, 4)       # 3
 
 siblings(x, 4, half = FALSE) # none
 siblings(x, 4, half = TRUE)  # 9
 
 leaves(x)          # 6, 7, 9
+founders(x)        # 2, 3, 5, 8
 
 }
 \author{

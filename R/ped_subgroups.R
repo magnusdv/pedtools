@@ -45,12 +45,16 @@
 #' spouses(x, id = 2) # 3, 8
 #' children(x, 2)     # 4, 9
 #' descendants(x, 2)  # 4, 6, 7, 9
-#' siblings(x, 4)     # 9 (includes both full and half)
+#' siblings(x, 4)     # 9 (full or half)
+#' unrelated(x, 4)    # 5, 8
+#' father(x, 4)       # 2
+#' mother(x, 4)       # 3
 #'
 #' siblings(x, 4, half = FALSE) # none
 #' siblings(x, 4, half = TRUE)  # 9
 #'
 #' leaves(x)          # 6, 7, 9
+#' founders(x)        # 2, 3, 5, 8
 #'
 #' @name ped_subgroups
 NULL
@@ -181,11 +185,11 @@ spouses = function(x, id, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 unrelated = function(x, id, internal = FALSE) {
-  if (!internal)  id = internalID(x, id)
-  ancs = c(id, ancestors(x, id))
-    rel = unique.default(unlist(lapply(ancs, function(a) c(a, descendants(x, a, internal = FALSE)))))
-    unrel = setdiff(labels.ped(x), rel)
-    if (internal) internalID(x, unrel) else unrel
+  if (!internal) id = internalID(x, id)
+  ancs = c(id, ancestors(x, id, internal = TRUE))
+  rel = lapply(ancs, function(a) c(a, descendants(x, a, internal = TRUE)))
+  unrel = setdiff(1:pedsize(x), unlist(rel))
+  if (internal) unrel else labels.ped(x)[unrel]
 }
 
 
