@@ -41,10 +41,16 @@
 #'          fid = c(0,0,2,0,4,4,0,2),
 #'          mid = c(0,0,3,0,5,5,0,8),
 #'          sex = c(1,2,1,2,1,2,2,2))
-#' stopifnot(setequal(spouses(x, 2), c(3,8)),
-#'           setequal(children(x, 2), c(4,9)),
-#'           setequal(descendants(x, 2), c(4,6,7,9)),
-#'           setequal(leaves(x), c(6,7,9)))
+#'
+#' spouses(x, id = 2) # 3, 8
+#' children(x, 2)     # 4, 9
+#' descendants(x, 2)  # 4, 6, 7, 9
+#' siblings(x, 4)     # 9 (includes both full and half)
+#'
+#' siblings(x, 4, half = FALSE) # none
+#' siblings(x, 4, half = TRUE)  # 9
+#'
+#' leaves(x)          # 6, 7, 9
 #'
 #' @name ped_subgroups
 NULL
@@ -212,10 +218,11 @@ siblings = function(x, id, half = NA, internal = FALSE) {
 
   samefather = x$FIDX == fa
   samemother = x$MIDX == mo
+
   sib_int =
-    if (isTRUE(half)) samefather | samemother
-    else if (isFALSE(half)) xor(samefather, samemother)
-    else if(is.na(half)) samefather & samemother
+    if (isTRUE(half)) xor(samefather, samemother)   # half only
+    else if (isFALSE(half)) samefather & samemother # full only
+    else if(is.na(half)) samefather | samemother    # either
   sib_int[id] = FALSE
   if (internal) which(sib_int) else labels.ped(x)[sib_int]
 }

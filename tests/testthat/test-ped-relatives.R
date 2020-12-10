@@ -47,6 +47,14 @@ test_that("spouses are correct after reorder", {
   expect_equal(spouses(x,3, internal=T), numeric(0))
 })
 
+test_that("siblings are correctly detected", {
+  x = halfSibPed(nch1 = 2, nch2 = 1)
+  expect_equal(siblings(x, 1), character(0))
+  expect_equal(siblings(x, 4), c("5", "6"))
+  expect_equal(siblings(x, 4, half = T), "6")
+  expect_equal(siblings(x, 4, half = F), "5")
+})
+
 test_that("internal = TRUE results in integer output", {
   x = singleton(1)
   expect_type(father(x, 1, internal = T), "integer")
