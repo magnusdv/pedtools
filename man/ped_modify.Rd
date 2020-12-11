@@ -15,7 +15,7 @@ addChildren(
   x,
   father = NULL,
   mother = NULL,
-  nch = 1,
+  nch = NULL,
   sex = 1,
   ids = NULL,
   verbose = TRUE

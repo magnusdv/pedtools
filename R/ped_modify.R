@@ -67,12 +67,15 @@ NULL
 
 #' @rdname ped_modify
 #' @export
-addChildren = function(x, father = NULL, mother = NULL, nch = 1, sex = 1, ids = NULL, verbose = TRUE) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
-  if(!isCount(nch)) stop2("Argument `nch` must be a positive integer: ", nch)
+addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids = NULL, verbose = TRUE) {
+  if(!is.ped(x) && !is.pedList(x))
+    stop2("Input is not a `ped` object or a list of such")
 
-  # These variables will change as new members are created
-  n = pedsize(x)
+  nch = nch %||% if(!is.null(ids)) length(ids) else length(sex)
+  if(!isCount(nch))
+    stop2("Argument `nch` must be a positive integer: ", nch)
+
+  # This variable will change as new members are created
   labs = labels(x)
 
   # Check input
@@ -87,6 +90,21 @@ addChildren = function(x, father = NULL, mother = NULL, nch = 1, sex = 1, ids = 
 
   # Recycle `sex` if needed
   sex = rep_len(sex, nch)
+
+  if(is.pedList(x)) {
+    comp = getComponent(x, c(father, mother), checkUnique = TRUE)
+    compSet = unique.default(comp[!is.na(comp)])
+    if(length(compSet) == 2)
+      y = .addChildrenAcrossComps(x, father, mother, nch = nch, sex = sex, ids = ids, verbose = verbose)
+    else if(length(compSet) == 1) {
+      co = x[[compSet]]
+      y = x
+      y[[compSet]] = addChildren(co, father, mother, nch = nch, sex = sex, ids = ids, verbose = verbose)
+    }
+    return(y)
+  }
+
+  n = pedsize(x)
 
   # Prepare manipulation of pedigree matrix
   p = as.matrix(x)
@@ -147,6 +165,9 @@ addChildren = function(x, father = NULL, mother = NULL, nch = 1, sex = 1, ids = 
   restorePed(p, attrs = attrs)
 }
 
+.addChildrenAcrossComps = function(x, father, mother, nch, sex, ids, verbose) {
+  stop2("Adding children across components is not implemented yet")
+}
 
 #' @rdname ped_modify
 #' @export
