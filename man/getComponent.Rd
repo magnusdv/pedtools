@@ -4,7 +4,7 @@
 \alias{getComponent}
 \title{Pedigree component}
 \usage{
-getComponent(x, ids, checkUnique = FALSE)
+getComponent(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE)
 }
 \arguments{
 \item{x}{A list of \code{ped} objects}
@@ -12,7 +12,11 @@ getComponent(x, ids, checkUnique = FALSE)
 \item{ids}{A vector of ID labels (coercible to character)}
 
 \item{checkUnique}{If TRUE an error is raised if any element of \code{ids} occurs
-more than once in \code{x}.}
+more than once in \code{x}. Default: FALSE.}
+
+\item{errorIfUnknown}{If TRUE, the function stops with an error if not all
+elements of \code{ids} are recognised as names of members in \code{x}. Default:
+FALSE.}
 }
 \value{
 An integer vector of the same length as \code{ids}, with NA entries where
@@ -24,6 +28,9 @@ ID labels, find the index of the component holding each individual.
 }
 \examples{
 x = list(nuclearPed(1), singleton(id = "A"))
-getComponent(x, c(3, "A")) # = c(1, 2)
+getComponent(x, c(3, "A"))
 
+}
+\seealso{
+\code{\link[=internalID]{internalID()}}
 }

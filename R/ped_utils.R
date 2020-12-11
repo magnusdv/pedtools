@@ -313,20 +313,26 @@ nextNN = function(labs) { # labs a character vector
 #'
 #' Given a list of `ped` objects (called pedigree components), and a vector of
 #' ID labels, find the index of the component holding each individual.
+#'
 #' @param x A list of `ped` objects
 #' @param ids A vector of ID labels (coercible to character)
 #' @param checkUnique If TRUE an error is raised if any element of `ids` occurs
-#'   more than once in `x`.
+#'   more than once in `x`. Default: FALSE.
+#' @param errorIfUnknown If TRUE, the function stops with an error if not all
+#'   elements of `ids` are recognised as names of members in `x`. Default:
+#'   FALSE.
 #'
 #' @return An integer vector of the same length as `ids`, with NA entries where
 #'   the corresponding label was not found in any of the components.
 #'
+#' @seealso [internalID()]
+#'
 #' @examples
 #' x = list(nuclearPed(1), singleton(id = "A"))
-#' getComponent(x, c(3, "A")) # = c(1, 2)
+#' getComponent(x, c(3, "A"))
 #'
 #' @export
-getComponent = function(x, ids, checkUnique = FALSE) {
+getComponent = function(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE) {
   if(is.ped(x))
     x = list(x)
   else if(!is.pedList(x))
@@ -350,6 +356,9 @@ getComponent = function(x, ids, checkUnique = FALSE) {
 
   # Match input ids against label vector
   idx = match(ids, labVec)
+
+  if(anyNA(idx) && errorIfUnknown)
+    stop2("Unknown ID label: ", ids[is.na(idx)])
 
   # Return comp idx of the input ids, including NA if not present
   compi[idx]
