@@ -21,24 +21,27 @@
 #' ordering. If `x` is a list of pedigrees, the output is a data frame
 #' containing both the component number and internal ID (within the component).
 #'
-#' @param x A `ped` object
+#' @param x A `ped` object. Most of these functions also accepts ped lists.
 #' @param neworder A permutation of `labels(x)` or of vector `1:pedsize(x)`. By
 #'   default, the sorting order of the ID labels is used.
 #' @param ids A character vector (or coercible to one) of original ID labels.
-#' @param errorIfUnknown A logical. If TRUE (default), `internalID(x, ids)` results
-#'   in an error if not all elements of `ids` are recognised as names of members
-#'   in `x`.
-#'
+#' @param errorIfUnknown A logical. If TRUE (default), the function stops with
+#'   an error if not all elements of `ids` are recognised as names of members in
+#'   `x`.
 #'
 #' @seealso [ped()]
+#'
 #' @examples
 #' x = ped(id = 3:1, fid = c(1,0,0), mid = c(2,0,0), sex = c(1,2,1), reorder = FALSE)
 #' x
 #'
-#' # The 'ids' argument is converted to character
+#' # The 'ids' argument is converted to character, hence these are equivalent:
 #' internalID(x, ids = 3)
 #' internalID(x, ids = "3")
 #'
+#' hasParentsBeforeChildren(x)
+#'
+#' # Fix the ordering
 #' y = parentsBeforeChildren(x)
 #' internalID(y, ids = 3)
 #'
@@ -51,7 +54,10 @@ NULL
 #' @rdname ped_internal
 #' @export
 reorderPed = function(x, neworder = NULL) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(is.pedList(x))
+    stop2("Input is a ped list; reordering can only be done for a single component")
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
   if(is.singleton(x))
     return(x)
 
@@ -91,7 +97,10 @@ reorderPed = function(x, neworder = NULL) {
 #' @rdname ped_internal
 #' @export
 parentsBeforeChildren = function(x) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(is.pedList(x))
+    return(lapply(x, parentsBeforeChildren))
+  else if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
   if(is.singleton(x) || hasParentsBeforeChildren(x))
     return(x)
 
@@ -111,7 +120,11 @@ parentsBeforeChildren = function(x) {
 #' @rdname ped_internal
 #' @export
 hasParentsBeforeChildren = function(x) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  if(is.pedList(x))
+    return(all(vapply(x, hasParentsBeforeChildren, FUN.VALUE = logical(1))))
+  else if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
   idx = 1:pedsize(x)
   father_before_child = x$FIDX < idx
   mother_before_child = x$MIDX < idx
