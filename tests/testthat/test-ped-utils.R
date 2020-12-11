@@ -70,6 +70,14 @@ test_that("internalID gives sensible error messages", {
   expect_error(internalID(y, 0), "Unknown ID label: 0")
 })
 
+test_that("internalID works in ped lists", {
+  y = list(nuclearPed(1), singleton("a"))
+  expect_equal(internalID(y, "a"), data.frame(id = "a", comp = 2L, int = 1L))
+  expect_error(internalID(y, "foo"), "Unknown ID label: foo")
+  expect_equal(internalID(y, "foo", errorIfUnknown = FALSE),
+               data.frame(id = "foo", comp = NA_integer_, int = NA_integer_))
+})
+
 test_that("mergePed() works in half sib example", {
   x = nuclearPed(1)
   y = relabel(x, c(4,2,5))

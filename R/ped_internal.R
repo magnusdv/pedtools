@@ -18,7 +18,8 @@
 #' necessary to call `parentsBeforeChildren()`.
 #'
 #' The utility `internalID()` converts ID labels to indices in the internal
-#' ordering.
+#' ordering. If `x` is a list of pedigrees, the output is a data frame
+#' containing both the component number and internal ID (within the component).
 #'
 #' @param x A `ped` object
 #' @param neworder A permutation of `labels(x)` or of vector `1:pedsize(x)`. By
@@ -121,9 +122,19 @@ hasParentsBeforeChildren = function(x) {
 #' @rdname ped_internal
 #' @export
 internalID = function(x, ids, errorIfUnknown = TRUE) {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
-  int_ids = match(ids, labels(x))
-  if (anyNA(int_ids) && errorIfUnknown)
-    stop2("Unknown ID label: ", ids[is.na(int_ids)])
-  int_ids
+  if(is.pedList(x)) {
+    comp = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = errorIfUnknown)
+    idsInt = vapply(seq_along(ids), function(i) {
+      if(is.na(comp[i])) NA_integer_ else internalID(x[[comp[i]]], ids[i])
+    },
+    FUN.VALUE = 1L)
+    return(data.frame(id = ids, comp = comp, int = idsInt))
+  }
+  else if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
+  idsInt = match(ids, labels(x))
+  if (anyNA(idsInt) && errorIfUnknown)
+    stop2("Unknown ID label: ", ids[is.na(idsInt)])
+  idsInt
 }

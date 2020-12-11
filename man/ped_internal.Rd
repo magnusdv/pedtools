@@ -47,7 +47,8 @@ whenever a pedigree is created, unless explicitly avoided with \code{reorder = F
 necessary to call \code{parentsBeforeChildren()}.
 
 The utility \code{internalID()} converts ID labels to indices in the internal
-ordering.
+ordering. If \code{x} is a list of pedigrees, the output is a data frame
+containing both the component number and internal ID (within the component).
 }
 \examples{
 x = ped(id = 3:1, fid = c(1,0,0), mid = c(2,0,0), sex = c(1,2,1), reorder = FALSE)
