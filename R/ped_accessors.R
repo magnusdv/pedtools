@@ -120,8 +120,7 @@ labels.list = function(object, ...) {
 
 #' Get or set the sex of pedigree members
 #'
-#' Functions for retrieving or changing the gender codes of specified pedigree
-#' members.
+#' Functions for retrieving or changing the sex of specified pedigree members.
 #'
 #' @param x A `ped` object or a list of such.
 #' @param ids A character vector (or coercible to one) containing ID labels.
@@ -141,8 +140,8 @@ labels.list = function(object, ...) {
 #' * `setSex(x, ids, sex)` returns a ped object identical to `x`, but where the
 #' sex of `ids` is set according to the entries of `sex`
 #'
-#' * `swapSex(x, ids)` returns a ped object identical to `x`, but where the
-#' gender codes of `ids` (and their spouses) are swapped (1 <-> 2).
+#' * `swapSex(x, ids)` returns a ped object identical to `x`, but where the sex
+#' of `ids` (and their spouses) are swapped (1 <-> 2).
 #'
 #' @examples
 #' x = nuclearPed(father = "fa", mother = "mo", children = "ch")
@@ -247,33 +246,41 @@ setSex = function(x, ids = NULL, sex) {
 #' @rdname getSex
 #' @export
 swapSex = function(x, ids, verbose = TRUE) {
-  if(!is.ped(x))
-    stop2("Input is not a `ped` object")
 
-  # Ignore individuals with unknown gender
+  if(is.pedList(x)) {
+    y = lapply(x, function(comp) {
+      idsComp = intersect(comp$ID, ids)
+      if(!length(idsComp))
+        comp
+      else swapSex(comp, idsComp, verbose = verbose)
+    })
+    return(y)
+  }
+  else if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
+  # Ignore individuals with unknown sex
   ids = ids[getSex(x, ids) != 0]
-
   if(!length(ids))
     return(x)
-  ids = internalID(x, ids)
-  labs = labels.ped(x)
+
+  idsInt = internalID(x, ids)
   FIDX = x$FIDX
   MIDX = x$MIDX
-  spouses = c(MIDX[FIDX %in% ids], FIDX[MIDX %in% ids])
+  spouses = c(MIDX[FIDX %in% idsInt], FIDX[MIDX %in% idsInt])
 
-  if (!all(spouses %in% ids)) {
-    if (verbose) {
-      extra = setdiff(spouses, ids)
-      message("Changing sex of spouses as well: ", toString(labs[extra]))
-    }
-    return(swapSex(x, labs[union(ids, spouses)], verbose = verbose))
+  if (!all(spouses %in% idsInt)) {
+    extra = x$ID[setdiff(spouses, idsInt)]
+    if (verbose)
+      message("Changing sex of spouses as well: ", toString(extra))
+    return(swapSex(x, union(ids, extra), verbose = verbose))
   }
 
   # Swap sex
-  x$SEX[ids] = 3L - x$SEX[ids]
+  x$SEX[idsInt] = 3L - x$SEX[idsInt]
 
   # # Swap parents wherever any of the 'ids' occur as parents
-  ids_as_parents = FIDX %in% ids # same with MIDX!
+  ids_as_parents = FIDX %in% idsInt # same with MIDX!
   FIDX[ids_as_parents] = x$MIDX[ids_as_parents]
   MIDX[ids_as_parents] = x$FIDX[ids_as_parents]
   x$FIDX = FIDX

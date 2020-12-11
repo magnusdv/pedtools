@@ -31,13 +31,12 @@ unnamed and shorter than \code{ids} it is recycled to \code{length(ids)}.}
 with entries 0 (unknown), 1 (male) or 2 (female).
 \item \code{setSex(x, ids, sex)} returns a ped object identical to \code{x}, but where the
 sex of \code{ids} is set according to the entries of \code{sex}
-\item \code{swapSex(x, ids)} returns a ped object identical to \code{x}, but where the
-gender codes of \code{ids} (and their spouses) are swapped (1 <-> 2).
+\item \code{swapSex(x, ids)} returns a ped object identical to \code{x}, but where the sex
+of \code{ids} (and their spouses) are swapped (1 <-> 2).
 }
 }
 \description{
-Functions for retrieving or changing the gender codes of specified pedigree
-members.
+Functions for retrieving or changing the sex of specified pedigree members.
 }
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "ch")
