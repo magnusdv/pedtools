@@ -5,6 +5,7 @@
 \alias{reorderPed}
 \alias{parentsBeforeChildren}
 \alias{hasParentsBeforeChildren}
+\alias{foundersFirst}
 \alias{internalID}
 \title{Internal ordering of pedigree members}
 \usage{
@@ -13,6 +14,8 @@ reorderPed(x, neworder = NULL)
 parentsBeforeChildren(x)
 
 hasParentsBeforeChildren(x)
+
+foundersFirst(x)
 
 internalID(x, ids, errorIfUnknown = TRUE)
 }
@@ -45,6 +48,9 @@ whenever a pedigree is created, unless explicitly avoided with \code{reorder = F
 
 \code{hasParentsBeforeChildren()} can be used as a quick test to decide if it is
 necessary to call \code{parentsBeforeChildren()}.
+
+The \code{foundersFirst()} function reorders the pedigree so that all the founders
+come first.
 
 The utility \code{internalID()} converts ID labels to indices in the internal
 ordering. If \code{x} is a list of pedigrees, the output is a data frame

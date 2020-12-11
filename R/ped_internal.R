@@ -17,6 +17,9 @@
 #' `hasParentsBeforeChildren()` can be used as a quick test to decide if it is
 #' necessary to call `parentsBeforeChildren()`.
 #'
+#' The `foundersFirst()` function reorders the pedigree so that all the founders
+#' come first.
+#'
 #' The utility `internalID()` converts ID labels to indices in the internal
 #' ordering. If `x` is a list of pedigrees, the output is a data frame
 #' containing both the component number and internal ID (within the component).
@@ -130,6 +133,27 @@ hasParentsBeforeChildren = function(x) {
   mother_before_child = x$MIDX < idx
   all(father_before_child & mother_before_child)
 }
+
+
+#' @rdname ped_internal
+#' @export
+foundersFirst = function(x) {
+  if(is.pedList(x))
+    return(lapply(x, foundersFirst))
+  else if(!is.ped(x))
+    stop2("Input is not a `ped` object or a list of such")
+
+  fou = founders(x, internal = TRUE)
+
+  # Check if all founders are already first
+  if(length(fou) == max(fou))
+    return(x)
+
+  nonfou = nonfounders(x, internal = TRUE)
+  reorderPed(x, neworder = c(fou, nonfou))
+}
+
+
 
 
 #' @rdname ped_internal
