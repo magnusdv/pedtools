@@ -8,7 +8,7 @@
 #'
 #' Selfing, i.e. the presence of pedigree members whose father and mother are
 #' the same individual, is allowed in `ped` objects. Any such "self-fertilizing"
-#' parent must have undecided gender (`sex = 0`).
+#' parent must have undecided sex (`sex = 0`).
 #'
 #' If the pedigree is disconnected, it is split into its connected components
 #' and returned as a list of `ped` objects.
@@ -28,6 +28,8 @@
 #'   parents precede their children.
 #' @param validate a logical. If TRUE, [validatePed()] is run before returning
 #'   the pedigree.
+#' @param isConnected a logical, by default FALSE. If it is known that the input
+#'   is connected, setting this to TRUE speeds up the processing.
 #' @param verbose a logical.
 #'
 #' @return A `ped` object, which is essentially a list with the following
@@ -55,9 +57,10 @@
 #'   their duplicates in the second column. All entries refer to the internal
 #'   IDs. This is usually set by [breakLoops()].
 #'
-#'   * `FOUNDER_INBREEDING` : A list of two potential entries, "autosomal" and "x"; both numeric vectors with the same length as
-#'   `founders(x)`. `FOUNDER_INBREEDING` is always NULL when a new `ped` is created.
-#'   See [founderInbreeding()].
+#'   * `FOUNDER_INBREEDING` : A list of two potential entries, "autosomal" and
+#'   "x"; both numeric vectors with the same length as `founders(x)`.
+#'   `FOUNDER_INBREEDING` is always NULL when a new `ped` is created. See
+#'   [founderInbreeding()].
 #'
 #'   * `MARKERS` : A list of `marker` objects, or NULL.
 #'
@@ -80,7 +83,7 @@
 #' stopifnot(is.pedList(w), length(w) == 2)
 #'
 #' @export
-ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, verbose = FALSE) {
+ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, isConnected = FALSE, verbose = FALSE) {
 
   # Check input
   n = length(id)
@@ -123,52 +126,35 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, v
   if(length(famid) != 1)
     stop2("`famid` must be a character string: ", famid)
 
-  # If disconnected components - return as list of peds.
-  comps = connectedComponents(id, fid, mid)
+  # Connected components
+  if(!isConnected) {
 
-  if(length(comps) > 1) {
-    pedlist = lapply(seq_along(comps), function(i) {
-      idx = match(comps[[i]], id)
-      ped(id = id[idx], fid = fid[idx], mid = mid[idx], sex = sex[idx],
-          famid = paste0(famid, "_comp", i), reorder = reorder,
-          validate = validate, verbose = verbose)
-    })
+    # Identify components
+    comps = connectedComponents(id, fidx = FIDX, midx = MIDX)
 
-    names(pedlist) = sapply(pedlist, function(p) famid(p))
-    class(pedlist) = "pedList"
-    return(pedlist)
+    if(length(comps) > 1) {
+      famids = paste0(famid, "_comp", seq_along(comps))
+
+      pedlist = lapply(seq_along(comps), function(i) {
+        idx = match(comps[[i]], id)
+        ped(id = id[idx], fid = fid[idx], mid = mid[idx],
+            sex = sex[idx], famid = famids[i], reorder = reorder,
+            validate = validate, isConnected = TRUE, verbose = verbose)
+      })
+
+      return(structure(pedlist, names = famids, class = "pedList"))
+    }
   }
 
   # Initialise ped object
-  x = list(ID = id,
-           FIDX = FIDX,
-           MIDX = MIDX,
-           SEX = sex,
-           FAMID = famid,
-           UNBROKEN_LOOPS = FALSE,
-           LOOP_BREAKERS = NULL,
-           FOUNDER_INBREEDING = NULL,
-           MARKERS = NULL)
+  x = newPed(id, FIDX, MIDX, sex, famid)
 
-  # Set class attribute
-  if(n == 1)
-    class(x) = c("singleton", "ped")
-  else
-    class(x) = "ped"
-
-  if (validate)
+  if(validate)
     validatePed(x)
 
-  if(is.singleton(x))
-    return(x)
-
-  # Detect loops (by trying to find a peeling order)
-  nucs = peelingOrder(x)
-  lastnuc_link = nucs[[length(nucs)]]$link
-  x$UNBROKEN_LOOPS = is.null(lastnuc_link)
-
   # reorder so that parents precede their children
-  if(reorder) x = parentsBeforeChildren(x)
+  if(reorder)
+    x = parentsBeforeChildren(x)
 
   x
 }
@@ -180,6 +166,62 @@ singleton = function(id = 1, sex = 1, famid = "") {
     stop2("`id` must have length 1")
   sex = validate_sex(sex, nInd = 1)
   ped(id = id, fid = 0, mid = 0, sex = sex, famid = famid)
+}
+
+
+
+#' Internal ped constructor
+#'
+#' This is the internal constructor of `ped` objects. It does not do any
+#' validation of input other than simple type checking. In particular it should
+#' only be used in programming scenarios where it is known that the input is a
+#' valid, connected pedigree. End users are recommended to use the regular
+#' constructor [ped()].
+#'
+#' See [ped()] for details about the input parameters.
+#'
+#' @param ID A character vector.
+#' @param FIDX An integer vector.
+#' @param MIDX An integer vector.
+#' @param SEX An integer vector.
+#' @param FAMID A string.
+#'
+#' @return A `ped` object.
+#'
+#' @examples
+#'
+#' newPed("a", 0L, 0L, 1L, "")
+#'
+#' @export
+newPed = function(ID, FIDX, MIDX, SEX, FAMID) {
+  if(!all(is.character(ID), is.integer(FIDX), is.integer(MIDX),
+          is.integer(SEX), is.character(FAMID)))
+    stop2("Type error in the creation of `ped` object")
+
+  # Initialise ped object
+  x = list(ID = ID,
+           FIDX = FIDX,
+           MIDX = MIDX,
+           SEX = SEX,
+           FAMID = FAMID,
+           UNBROKEN_LOOPS = FALSE,
+           LOOP_BREAKERS = NULL,
+           FOUNDER_INBREEDING = NULL,
+           MARKERS = NULL)
+
+  if(length(ID) == 1) {
+    class(x) = c("singleton", "ped")
+    return(x)
+  }
+
+  class(x) = "ped"
+
+  # Detect loops (by trying to find a peeling order)
+  nucs = peelingOrder(x)
+  lastnuc_link = nucs[[length(nucs)]]$link
+  x$UNBROKEN_LOOPS = is.null(lastnuc_link)
+
+  x
 }
 
 

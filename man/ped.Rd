@@ -13,6 +13,7 @@ ped(
   famid = "",
   reorder = TRUE,
   validate = TRUE,
+  isConnected = FALSE,
   verbose = FALSE
 )
 
@@ -41,6 +42,9 @@ parents precede their children.}
 \item{validate}{a logical. If TRUE, \code{\link[=validatePed]{validatePed()}} is run before returning
 the pedigree.}
 
+\item{isConnected}{a logical, by default FALSE. If it is known that the input
+is connected, setting this to TRUE speeds up the processing.}
+
 \item{verbose}{a logical.}
 }
 \value{
@@ -62,9 +66,10 @@ reordered, this equals \code{as.integer(sex)}.
 \item \code{LOOP_BREAKERS} : A matrix with loop breaker ID's in the first column and
 their duplicates in the second column. All entries refer to the internal
 IDs. This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
-\item \code{FOUNDER_INBREEDING} : A list of two potential entries, "autosomal" and "x"; both numeric vectors with the same length as
-\code{founders(x)}. \code{FOUNDER_INBREEDING} is always NULL when a new \code{ped} is created.
-See \code{\link[=founderInbreeding]{founderInbreeding()}}.
+\item \code{FOUNDER_INBREEDING} : A list of two potential entries, "autosomal" and
+"x"; both numeric vectors with the same length as \code{founders(x)}.
+\code{FOUNDER_INBREEDING} is always NULL when a new \code{ped} is created. See
+\code{\link[=founderInbreeding]{founderInbreeding()}}.
 \item \code{MARKERS} : A list of \code{marker} objects, or NULL.
 }
 }
@@ -78,7 +83,7 @@ The class attribute of a singleton is \code{c('singleton', 'ped')}.
 
 Selfing, i.e. the presence of pedigree members whose father and mother are
 the same individual, is allowed in \code{ped} objects. Any such "self-fertilizing"
-parent must have undecided gender (\code{sex = 0}).
+parent must have undecided sex (\code{sex = 0}).
 
 If the pedigree is disconnected, it is split into its connected components
 and returned as a list of \code{ped} objects.
