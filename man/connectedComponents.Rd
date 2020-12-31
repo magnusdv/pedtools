@@ -4,21 +4,21 @@
 \alias{connectedComponents}
 \title{Connected pedigree components}
 \usage{
-connectedComponents(id, fid, mid, fidx = NULL, midx = NULL)
+connectedComponents(id, fid = NULL, mid = NULL, fidx = NULL, midx = NULL)
 }
 \arguments{
-\item{id}{A vector of ID labels (character or numeric)}
+\item{id}{A vector of ID labels (character or numeric).}
 
-\item{fid}{The ID labels of the fathers (or "0" if missing)}
+\item{fid}{The ID labels of the fathers (or "0" if missing).}
 
-\item{mid}{The ID labels of the mothers (or "0" if missing)}
+\item{mid}{The ID labels of the mothers (or "0" if missing).}
 
-\item{fidx, midx}{(For internal use mostly) Integer vectors with paternal
-(resp maternal) indices. These may be given instead of \code{id}, \code{fid}, \code{mid}.}
+\item{fidx, midx}{(For internal use mostly.) Integer vectors with paternal
+(resp. maternal) indices. These may be given instead of \code{id}, \code{fid}, \code{mid}.}
 }
 \value{
 A list, where each element is a subset of \code{id} constituting a
-connected pedigree
+connected pedigree.
 }
 \description{
 Compute the connected parts of a pedigree. This is an important step when
@@ -26,6 +26,7 @@ converting pedigree data from other formats (where disconnected pedigrees may
 be allowed) to \code{pedtools} (which requires pedigrees to be connected).
 }
 \examples{
+
 # A trio (1-3) and a singleton (4)
 x = data.frame(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0))
 connectedComponents(x$id, x$fid, x$mid)

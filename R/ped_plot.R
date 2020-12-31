@@ -124,6 +124,7 @@
 #' plot(y, hints = hints) # good
 #'
 #' @importFrom graphics points text
+#' @importFrom kinship2 plot.pedigree
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
