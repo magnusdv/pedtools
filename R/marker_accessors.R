@@ -234,6 +234,14 @@ alleles.ped = function(x, marker, ...) {
   alleles(m)
 }
 
+#' @rdname marker_getset
+#' @export
+alleles.list = function(x, marker, ...) {
+  comp_wise = lapply(x, alleles, marker = marker)
+  if(!listIdentical(comp_wise))
+    stop2("The output of `alleles()` differs between pedigree components")
+  comp_wise[[1]]
+}
 
 ### afreq ###
 #' @rdname marker_getset

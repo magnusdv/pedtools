@@ -19,6 +19,7 @@
 \alias{alleles}
 \alias{alleles.marker}
 \alias{alleles.ped}
+\alias{alleles.list}
 \alias{afreq}
 \alias{afreq.marker}
 \alias{afreq.ped}
@@ -84,6 +85,8 @@ alleles(x, ...)
 \method{alleles}{marker}(x, ...)
 
 \method{alleles}{ped}(x, marker, ...)
+
+\method{alleles}{list}(x, marker, ...)
 
 afreq(x, ...)
 
