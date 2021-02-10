@@ -1,3 +1,31 @@
+# pedtools 0.9.7
+
+## Breaking changes
+
+* The rarely-used function `cousins()` (not to be confused with `cousinPed()`) is temporarily retracted, since it did not work as intended.
+
+## New features
+
+* New constructor `newPed()` (mainly for internal use).
+
+* New function `foundersFirst()`, moved from the **ribd** package.
+
+* In `addChildren()`, unspecified `nch` is now allowed, and defaults to `length(ids)` or `length(sex)`.
+
+* `transferMarkers()` has a new argument `checkSex()`, and has been made more efficient by skipping redundant validation steps. 
+
+* The functions `swapSex()`, `alleles()` and `internalID()` now work for lists of pedigrees.
+
+* `getComponent()` gained a new argument `errorIfUnknown()`.
+
+
+## Bug fixes
+
+* `unrelated()` and `siblings()` have been improved and cleaned of bugs.
+
+* Fixed an obscure bug in `plot.singleton()`.
+
+
 # pedtools 0.9.6
 
 ## Breaking changes
