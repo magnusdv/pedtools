@@ -51,6 +51,8 @@
 #' @param deceased A vector of labels indicating deceased pedigree members.
 #' @param starred A vector of labels indicating pedigree members that should be
 #'   marked with a star in the pedigree plot.
+#' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
+#'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param hints A list with alignment hints passed on to
 #'   `kinship2::align.pedigree()`. Rarely necessary, but see Examples.
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
@@ -108,6 +110,9 @@
 #' # ... but can be suppressed
 #' plot(x, fouInb = NULL)
 #'
+#' # Twins
+#' x = nuclearPed(children = c("tw1", "tw2"))
+#' plot(x, twins = rbind(c("tw1", "tw2", 1)))
 #'
 #' #-----------------------------
 #' # In some cases, the plotting machinery of `kinship2` needs a hint
@@ -129,7 +134,7 @@
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
                     hatched = NULL, shaded = NULL, deceased = NULL,
-                    starred = NULL, textInside = NULL, textAbove = NULL,
+                    starred = NULL, twins = NULL, textInside = NULL, textAbove = NULL,
                     hints = NULL, fouInb = "autosomal",
                     margins = c(0.6, 1, 4.1, 1), keep.par = FALSE, ...) {
 
@@ -238,9 +243,21 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
     density = angle = NULL
   }
 
-  pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff, hints = hints)
+  # Twin info
+  if(is.vector(twins))
+    twins = rbind(twins)
+
+# Convert to `kinship2` and generate plot object --------------------------
+
+
+  pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff,
+                                  relation = twins, hints = hints)
+
   pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
                                  density = density, angle = angle, keep.par = keep.par, ...)
+
+
+# Add extra annotations ---------------------------------------------------
 
   # Expand dots (needed in some commands below)
   dotArgs.uneval = match.call(expand.dots = FALSE)$`...`
@@ -390,17 +407,21 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
 
 #' @rdname plot.ped
 #' @export
-as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, hints = NULL) {
+as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, relation = NULL, hints = NULL) {
     ped = as.data.frame(x)  # not as.matrix()
     ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
 
     affected = ifelse(ped$id %in% aff, 1, 0) # NULL => affected01 = c(0,0,..)
     status = ifelse(ped$id %in% deceased, 1, 0)
 
-    kinped = suppressWarnings( # Avoid kinship2 warning about missing genders a.s.o.
-      kinship2::pedigree(id = ped$id, dadid = ped$fid, momid = ped$mid,
-                         sex = ped$sex, affected = affected,
-                         status = status,  missid = 0))
+    arglist = list(id = ped$id, dadid = ped$fid, momid = ped$mid,
+                   sex = ped$sex, affected = affected,
+                   status = status, missid = 0)
+    if(!is.null(relation))
+      arglist$relation = relation
+
+    # Avoid kinship2 warning about missing genders a.s.o.
+    kinped = suppressWarnings(do.call(kinship2::pedigree, arglist))
 
     # Possible hints for kinship2::align.pedigree
     kinped$hints = hints

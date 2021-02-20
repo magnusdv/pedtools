@@ -22,6 +22,7 @@
   shaded = NULL,
   deceased = NULL,
   starred = NULL,
+  twins = NULL,
   textInside = NULL,
   textAbove = NULL,
   hints = NULL,
@@ -54,7 +55,13 @@
   ...
 )
 
-as_kinship2_pedigree(x, deceased = NULL, aff = NULL, hints = NULL)
+as_kinship2_pedigree(
+  x,
+  deceased = NULL,
+  aff = NULL,
+  relation = NULL,
+  hints = NULL
+)
 
 \method{plot}{pedList}(x, ...)
 }
@@ -113,6 +120,9 @@ should be hatched.}
 
 \item{starred}{A vector of labels indicating pedigree members that should be
 marked with a star in the pedigree plot.}
+
+\item{twins}{A data frame with columns \code{id1}, \code{id2} and \code{code}, passed on to
+the \code{relation} parameter of \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.}
 
 \item{textInside, textAbove}{Character vectors of text to be printed inside or
 above pedigree symbols.}
@@ -183,6 +193,9 @@ plot(x)
 # ... but can be suppressed
 plot(x, fouInb = NULL)
 
+# Twins
+x = nuclearPed(children = c("tw1", "tw2"))
+plot(x, twins = rbind(c("tw1", "tw2", 1)))
 
 #-----------------------------
 # In some cases, the plotting machinery of `kinship2` needs a hint
