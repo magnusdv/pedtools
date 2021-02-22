@@ -59,7 +59,7 @@ as_kinship2_pedigree(
   x,
   deceased = NULL,
   aff = NULL,
-  relation = NULL,
+  twins = NULL,
   hints = NULL
 )
 
@@ -194,8 +194,14 @@ plot(x)
 plot(x, fouInb = NULL)
 
 # Twins
-x = nuclearPed(children = c("tw1", "tw2"))
-plot(x, twins = rbind(c("tw1", "tw2", 1)))
+x = nuclearPed(children = c("tw1", "tw2", "tw3"))
+plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
+plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # DZ
+
+# Triplets
+plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
+                           id2 = c("tw2", "tw3"),
+                           code = 2))
 
 #-----------------------------
 # In some cases, the plotting machinery of `kinship2` needs a hint

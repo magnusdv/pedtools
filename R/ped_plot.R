@@ -111,8 +111,14 @@
 #' plot(x, fouInb = NULL)
 #'
 #' # Twins
-#' x = nuclearPed(children = c("tw1", "tw2"))
-#' plot(x, twins = rbind(c("tw1", "tw2", 1)))
+#' x = nuclearPed(children = c("tw1", "tw2", "tw3"))
+#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
+#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # DZ
+#'
+#' # Triplets
+#' plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
+#'                            id2 = c("tw2", "tw3"),
+#'                            code = 2))
 #'
 #' #-----------------------------
 #' # In some cases, the plotting machinery of `kinship2` needs a hint
@@ -245,13 +251,13 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 
   # Twin info
   if(is.vector(twins))
-    twins = rbind(twins)
+    twins = data.frame(id1 = twins[1], id2 = twins[2], code = as.integer(twins[3]))
 
 # Convert to `kinship2` and generate plot object --------------------------
 
 
   pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff,
-                                  relation = twins, hints = hints)
+                                  twins = twins, hints = hints)
 
   pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
                                  density = density, angle = angle, keep.par = keep.par, ...)
@@ -407,7 +413,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
 
 #' @rdname plot.ped
 #' @export
-as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, relation = NULL, hints = NULL) {
+as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, twins = NULL, hints = NULL) {
     ped = as.data.frame(x)  # not as.matrix()
     ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
 
@@ -417,8 +423,8 @@ as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, relation = NULL,
     arglist = list(id = ped$id, dadid = ped$fid, momid = ped$mid,
                    sex = ped$sex, affected = affected,
                    status = status, missid = 0)
-    if(!is.null(relation))
-      arglist$relation = relation
+    if(!is.null(twins))
+      arglist$relation = twins
 
     # Avoid kinship2 warning about missing genders a.s.o.
     kinped = suppressWarnings(do.call(kinship2::pedigree, arglist))
