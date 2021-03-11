@@ -43,11 +43,14 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
     stop2("Duplicated element of argument `ids`: ", dup)
   }
 
-  if(is.pedList(x)) {
-
-    # Check that all `ids` are known
-    if(!is.null(ids) && !all(ids %in% unlist(labels(x))))
+  # Check `ids` argument
+  if(!is.null(ids)) {
+    ids = as.character(ids)
+    if(!all(ids %in% unlist(labels(x))))
       stop2("Unknown ID label: ", setdiff(ids, unlist(labels(x))))
+  }
+
+  if(is.pedList(x)) {
 
     # Check equality of marker counts and names
     name(x, seq_markers(x))
@@ -63,7 +66,7 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
 
     # Sort rows according to input `ids`
     if(!is.null(ids))
-      res = res[as.character(ids), , drop = FALSE]
+      res = res[ids, , drop = FALSE]
 
     return(res)
   }
@@ -95,5 +98,5 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
   colnames(g) = mNames
 
   # Return subset
-  g[ids, , drop = FALSE]
+  g[ids, , drop = FALSE]  # NB: ids must be character here
 }
