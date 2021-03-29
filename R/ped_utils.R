@@ -363,3 +363,4 @@ getComponent = function(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE) {
   # Return comp idx of the input ids, including NA if not present
   compi[idx]
 }
+

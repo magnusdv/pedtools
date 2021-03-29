@@ -63,9 +63,10 @@ doubleCousins = function(degree1, degree2, removal1 = 0, removal2 = 0,
   if(!isCount(removal2, minimum = 0)) stop2("`removal2` must be a nonnegative integer: ", removal2)
 
   # Ensure paternal path is longest (otherwise swap)
-  if(degree2*2+removal2 > degree1*2 + removal1) {
+  if(2*degree1 + removal1 < 2*degree2 + removal2) {
     tmp = degree2; degree2 = degree1; degree1 = tmp
     tmp = removal2; removal2 = removal1; removal1 = tmp
+    tmp = half2; half2 = half1; half1 = tmp
   }
 
   # Corner case: Paternal and maternal 0th cousins.
