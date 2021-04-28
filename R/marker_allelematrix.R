@@ -229,7 +229,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     if(hasMatrixNames) {
       nms = sub("\\.[^.]*$", "", nms[seq(1, length(nms), by = 2)])
 
-      # Converts numerical names to NA
+      # Convert numerical names to NA
       if (isTRUE(any(suppressWarnings(nms == as.integer(nms)))))
         hasMatrixNames = FALSE
     }
