@@ -198,7 +198,7 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
 }
 
 
-newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
+newMarkerOLD = function(allelematrix_int, alleles, afreq, name = NA_character_,
                      chrom = NA_character_, posMb = NA_real_,
                      mutmod = NULL, pedmembers, sex) {
 
@@ -219,6 +219,46 @@ newMarker = function(allelematrix_int, alleles, afreq, name = NA_character_,
             pedmembers = pedmembers, sex = sex, class = "marker")
 }
 
+#' Internal marker constructor
+#'
+#' This is the internal constructor of `marker` objects. It does not do any
+#' input validation and should only be used in programming scenarios, and only
+#' if you know what you are doing. Most users are recommended to use the regular
+#' constructor [marker()].
+#'
+#' See [marker()] for more details about the marker attributes.
+#'
+#' @param alleleMatrixInt An integer matrix.
+#' @param alleles A character vector.
+#' @param afreq A numeric vector.
+#' @param name A character of length 1.
+#' @param chrom A character of length 1.
+#' @param posMb A numeric of length 1.
+#' @param mutmod A mutation model.
+#' @param pedmembers A character vector.
+#' @param sex An integer vector.
+#'
+#' @return A `marker` object.
+#'
+#' @examples
+#'
+#' newMarker(matrix(c(1L, 0L, 1L, 1L, 0L, 2L), ncol = 2),
+#'           alleles = c("A", "B"), afreq = c(0.1, 0.9), name = "M",
+#'           pedmembers = c("1", "2", "3"), sex = c(1L, 2L, 1L))
+#'
+#' @export
+newMarker = function(alleleMatrixInt, alleles, afreq, name = NA_character_,
+                     chrom = NA_character_, posMb = NA_real_,
+                     mutmod = NULL, pedmembers, sex) {
+
+  x = alleleMatrixInt
+  attributes(x) = list(dim = dim(alleleMatrixInt),
+                       alleles = alleles, afreq = afreq, name = name,
+                       chrom = chrom, posMb = posMb, mutmod = mutmod,
+                       pedmembers = pedmembers, sex = sex)
+  class(x) = "marker"
+  x
+}
 
 validateMarker = function(x) {
   attrs = attributes(x)
