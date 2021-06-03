@@ -3,6 +3,7 @@
 \name{ped_utils}
 \alias{ped_utils}
 \alias{pedsize}
+\alias{generations}
 \alias{hasUnbrokenLoops}
 \alias{hasInbredFounders}
 \alias{hasSelfing}
@@ -12,6 +13,8 @@
 \title{Pedigree utilities}
 \usage{
 pedsize(x)
+
+generations(x, maxComp = TRUE)
 
 hasUnbrokenLoops(x)
 
@@ -28,12 +31,20 @@ peelingOrder(x)
 \arguments{
 \item{x}{A \code{ped} object, or (in some functions - see Details) a list of such.}
 
+\item{maxComp}{A logical, by default TRUE. See Value.}
+
 \item{chromType}{Either "autosomal" (default) or "x".}
 }
 \value{
 \itemize{
 \item \code{pedsize(x)} returns the number of pedigree members in each component of
 \code{x}.
+\item \code{generations(x)} returns the number of generations in \code{x}, defined as the
+number of individuals in the longest line of parent-child links. (Note that
+this definition is valid also if \code{x} has loops.) If \code{x} has multiple
+components, the output depends on the parameter \code{maxComp}. If this is FALSE,
+the output is a vector containing the result for each component. If TRUE
+(default), only the highest number is returned.
 \item \code{hasUnbrokenLoops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
 computation is done here; the function simply returns the value of
 \code{x$UNBROKEN_LOOPS}).
@@ -60,13 +71,7 @@ probability calculations in other packages, as e.g. in
 }
 }
 \description{
-Various utility functions for \code{ped} objects
-}
-\details{
-The functions \code{pedsize()}, \code{hasUnbrokenLoops()}, \code{hasInbredFounders()} and
-\code{hasSelfing()} allow as input either a single \code{ped} object or a list of such.
-In the latter case each function returns TRUE if it is TRUE for any of the
-components.
+Various utility functions for \code{ped} objects.
 }
 \examples{
 x = fullSibMating(1)

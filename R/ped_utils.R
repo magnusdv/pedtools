@@ -1,19 +1,22 @@
 #' Pedigree utilities
 #'
-#' Various utility functions for `ped` objects
-#'
-#' The functions `pedsize()`, `hasUnbrokenLoops()`, `hasInbredFounders()` and
-#' `hasSelfing()` allow as input either a single `ped` object or a list of such.
-#' In the latter case each function returns TRUE if it is TRUE for any of the
-#' components.
+#' Various utility functions for `ped` objects.
 #'
 #' @param x A `ped` object, or (in some functions - see Details) a list of such.
+#' @param maxComp A logical, by default TRUE. See Value.
 #' @param chromType Either "autosomal" (default) or "x".
 #'
 #' @return
 #'
 #' * `pedsize(x)` returns the number of pedigree members in each component of
 #' `x`.
+#'
+#' * `generations(x)` returns the number of generations in `x`, defined as the
+#' number of individuals in the longest line of parent-child links. (Note that
+#' this definition is valid also if `x` has loops.) If `x` has multiple
+#' components, the output depends on the parameter `maxComp`. If this is FALSE,
+#' the output is a vector containing the result for each component. If TRUE
+#' (default), only the highest number is returned.
 #'
 #' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of
@@ -48,6 +51,7 @@
 #' x = fullSibMating(1)
 #' stopifnot(pedsize(x) == 6)
 #' stopifnot(hasUnbrokenLoops(x))
+#' stopifnot(generations(x) == 3)
 #'
 #' # All members have common ancestors except the grandparents
 #' CA = hasCommonAncestor(x)
@@ -81,6 +85,30 @@ pedsize = function(x) {
   stop2("Input to `pedsize()` must be a `ped` object or a list of such")
 }
 
+#' @rdname ped_utils
+#' @export
+generations = function(x, maxComp = TRUE) {
+
+  if(is.pedList(x)) {
+    gens = sapply(x, generations)
+    return(if(maxComp) max(gens) else gens)
+  }
+
+  x = parentsBeforeChildren(x)
+
+  FIDX = x$FIDX
+  MIDX = x$MIDX
+  NONFOU = nonfounders(x, internal = TRUE)
+  N = pedsize(x)
+
+  # Vector of (maximal) generation number of each ID: dp[i] = 1 + max(dp[parents])
+  # NB: Requires "parentsBeforeChildren".
+  dp = rep(1L, N)
+  for(i in NONFOU)
+    dp[i] = 1L + max(dp[c(FIDX[i], MIDX[i])])
+
+  max(dp)
+}
 
 #' @rdname ped_utils
 #' @export
