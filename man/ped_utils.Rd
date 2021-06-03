@@ -77,6 +77,7 @@ Various utility functions for \code{ped} objects.
 x = fullSibMating(1)
 stopifnot(pedsize(x) == 6)
 stopifnot(hasUnbrokenLoops(x))
+stopifnot(generations(x) == 3)
 
 # All members have common ancestors except the grandparents
 CA = hasCommonAncestor(x)
