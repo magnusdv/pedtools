@@ -68,7 +68,7 @@ descendants(x, id, inclusive = FALSE, internal = FALSE)
 commonDescendants(x, ids, inclusive = FALSE, internal = FALSE)
 }
 \arguments{
-\item{x}{A \code{\link[=ped]{ped()}} object.}
+\item{x}{A \code{\link[=ped]{ped()}} object or a list of such.}
 
 \item{internal}{A logical indicating whether \code{id} (or \code{ids}) refers to the
 internal order.}
@@ -78,7 +78,7 @@ labels.}
 
 \item{degree, removal}{Non-negative integers.}
 
-\item{half}{a logical or NA. If TRUE (resp FALSE), only half (resp. full)
+\item{half}{a logical or NA. If TRUE (resp. FALSE), only half (resp. full)
 siblings/cousins/nephews/nieces are returned. If NA, both categories are
 included.}
 

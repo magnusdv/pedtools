@@ -45,7 +45,7 @@ if you know what you are doing. Most users are recommended to use the regular
 constructor \code{\link[=marker]{marker()}}.
 }
 \details{
-See \code{\link[=marker]{marker()}} for details about the input parameters.
+See \code{\link[=marker]{marker()}} for more details about the marker attributes.
 }
 \examples{
 
