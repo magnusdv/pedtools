@@ -142,7 +142,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, i
             validate = validate, isConnected = TRUE, verbose = verbose)
       })
 
-      return(structure(pedlist, names = famids, class = "pedList"))
+      return(structure(pedlist, names = famids, class = c("pedList", "list")))
     }
   }
 
