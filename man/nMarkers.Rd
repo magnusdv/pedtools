@@ -10,7 +10,7 @@ nMarkers(x)
 hasMarkers(x)
 }
 \arguments{
-\item{x}{A \code{ped} object or a list of such (se Value).}
+\item{x}{A \code{ped} object or a list of such (see Value).}
 }
 \value{
 The function \code{nMarkers} returns the number of marker objects attached

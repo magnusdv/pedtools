@@ -10,7 +10,8 @@ trivialMut = function(mut) {
 
 #' Test if something is a marker
 #'
-#' Functions for testing if something is a `marker` object, or a list of such objects.
+#' Functions for testing if something is a `marker` object, or a list of such
+#' objects.
 #'
 #' @param x Any object
 #'
@@ -29,7 +30,7 @@ is.markerList = function(x) {
 
 #' The number of markers attached to a pedigree
 #'
-#' @param x A `ped` object or a list of such (se Value).
+#' @param x A `ped` object or a list of such (see Value).
 #' @return The function `nMarkers` returns the number of marker objects attached
 #'   to `x`. If `x` is a list of pedigrees, an error is raised unless all of
 #'   them have the same number of markers.

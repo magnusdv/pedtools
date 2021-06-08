@@ -27,8 +27,8 @@ marker(
 the ID label of a member of \code{x}, and \code{genotype} is a numeric or character
 vector of length 1 or 2 (see Examples).}
 
-\item{geno}{a character vector of length \code{pedsize(x)}, with genotypes
-written in the format "a/b".}
+\item{geno}{a character vector of length \code{pedsize(x)}, with genotypes written
+in the format "a/b".}
 
 \item{allelematrix}{a matrix with 2 columns and \code{pedsize(x)} rows. If this is
 non-NULL, then \code{...} must be empty.}

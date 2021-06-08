@@ -7,8 +7,8 @@
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
 #'   the ID label of a member of `x`, and `genotype` is a numeric or character
 #'   vector of length 1 or 2 (see Examples).
-#' @param geno a character vector of length `pedsize(x)`, with genotypes
-#'   written in the format "a/b".
+#' @param geno a character vector of length `pedsize(x)`, with genotypes written
+#'   in the format "a/b".
 #' @param allelematrix a matrix with 2 columns and `pedsize(x)` rows. If this is
 #'   non-NULL, then `...` must be empty.
 #' @param alleles a character (or coercible to character) containing allele

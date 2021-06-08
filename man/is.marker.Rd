@@ -16,5 +16,6 @@ is.markerList(x)
 A logical
 }
 \description{
-Functions for testing if something is a \code{marker} object, or a list of such objects.
+Functions for testing if something is a \code{marker} object, or a list of such
+objects.
 }
