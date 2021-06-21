@@ -21,7 +21,7 @@ Description: A comprehensive collection of tools for creating,
     in the book 'Pedigree Analysis in R' (Vigeland, 2021,
     ISBN:9780128244302).
 License: GPL-3
-URL: https://github.com/magnusdv/pedtools
+URL: https://github.com/magnusdv/pedtools, https://magnusdv.github.io/pedsuite/
 Imports: 
     kinship2
 Suggests: 
