@@ -26,7 +26,7 @@ imported from the
 for pedigree analysis, including applications in forensic and medical
 genetics. The **ped suite** has its own [GitHub
 repository](https://github.com/magnusdv/pedsuite) and a dedicated
-[website](https://magnusdv.github.io/pedsuite) offering more
+[website](https://magnusdv.github.io/pedsuite/) offering more
 information.
 
 ## Installation
