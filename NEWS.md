@@ -1,3 +1,22 @@
+# pedtools 1.0.1
+
+## New features
+
+* New function `generations()` for counting generations in pedigrees.
+
+* New function `newMarker()` (mostly for internal use).
+
+* `plot.ped()` gains a new parameter `twins`.
+
+* `father()` and `mother()` now accepts ped lists as input.
+
+## Bug fixes
+
+* Fixed bug in `getGenotypes()` affecting pedigrees with numerical labels.
+
+* Fixed bug in `doubleCousins()`.
+
+
 # pedtools 0.9.7
 
 ## Breaking changes
