@@ -10,6 +10,8 @@
 
 * `father()` and `mother()` now accepts ped lists as input.
 
+* Added info and links to **ped suite** in README.
+
 ## Bug fixes
 
 * Fixed bug in `getGenotypes()` affecting pedigrees with numerical labels.
