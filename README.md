@@ -22,9 +22,12 @@ loop breaking, and merging pedigrees. The plotting functionality is
 imported from the
 [kinship2](https://CRAN.R-project.org/package=kinship2) package.
 
-**pedtools** is a continuation of the
-[paramlink](https://CRAN.R-project.org/package=paramlink) package, which
-is no longer actively developed.
+**pedtools** is the hub of the **ped suite**, a collection of R packages
+for pedigree analysis, including applications in forensic and medical
+genetics. The **ped suite** has its own [GitHub
+repository](https://github.com/magnusdv/pedsuite) and a dedicated
+[website](https://magnusdv.github.io/pedsuite) offering more
+information.
 
 ## Installation
 
@@ -66,5 +69,7 @@ plot(x, marker = m, hatched = leaves(x))
 
 <img src="man/figures/README-example-1.png" width="40%" />
 
-For details about what **pedtools** can do, and many other examples, the
-vignette is the recommended place to start.
+For details about what **pedtools** can do, and many other examples,
+[the
+vignette](https://cran.r-project.org/package=pedtools/vignettes/pedtools.html)
+is the recommended place to start.
