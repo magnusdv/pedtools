@@ -14,7 +14,7 @@
 \usage{
 pedsize(x)
 
-generations(x, maxComp = TRUE)
+generations(x, maxOnly = TRUE, maxComp = TRUE)
 
 hasUnbrokenLoops(x)
 

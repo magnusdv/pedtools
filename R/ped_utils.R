@@ -87,13 +87,14 @@ pedsize = function(x) {
 
 #' @rdname ped_utils
 #' @export
-generations = function(x, maxComp = TRUE) {
+generations = function(x, maxOnly = TRUE, maxComp = TRUE) {
 
   if(is.pedList(x)) {
     gens = sapply(x, generations)
     return(if(maxComp) max(gens) else gens)
   }
 
+  xorig = x
   x = parentsBeforeChildren(x)
 
   FIDX = x$FIDX
@@ -107,7 +108,11 @@ generations = function(x, maxComp = TRUE) {
   for(i in NONFOU)
     dp[i] = 1L + max(dp[c(FIDX[i], MIDX[i])])
 
-  max(dp)
+  if(maxOnly)
+    return(dp)
+
+  names(dp) = x$ID
+  dp[xorig$ID]
 }
 
 #' @rdname ped_utils
