@@ -29,23 +29,37 @@
 #' relabel(x, new = "girl", old = 3)
 #'
 #' @importFrom kinship2 align.pedigree
+#' @importFrom utils as.roman
 #' @export
 relabel = function(x, new, old = labels(x), reorder = FALSE) {
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 
-  if(identical(new, "asPlot")) {
+  if(identical(new, "asPlot") || identical(new, "generations")) {
     if(is.pedList(x))
       stop2("`asPlot` cannot be used with ped lists")
     p = align.pedigree(as_kinship2_pedigree(x), packed = FALSE, align = FALSE)
     oldIdx = unlist(lapply(seq_along(p$n), function(i) p$nid[i, 1:p$n[i]]))
 
-    if(anyDuplicated(oldIdx))
-      oldIdx = unique.default(oldIdx)
-      # stop2('option `new = "asPlot"` failed for this pedigree')
+    # Remove duplicates
+    dups = duplicated(oldIdx)
+    if(any(dups))
+      oldIdx = oldIdx[!dups]
 
     old = labels(x)[oldIdx]
-    new = seq_along(old)
+
+    if(identical(new, "generations")) {
+      gen = rep(seq_along(p$n), p$n)
+
+      if(any(dups))
+        gen = gen[!dups]
+
+      idx = unlist(lapply(1:max(gen), function(g) seq_len(sum(gen == g))))
+      new = paste(as.roman(gen), idx, sep = "-")
+    }
+    else {
+      new = seq_along(old)
+    }
 
     reorder = TRUE
   }
