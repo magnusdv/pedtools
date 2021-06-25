@@ -3,7 +3,8 @@
 #' Various utility functions for `ped` objects.
 #'
 #' @param x A `ped` object, or (in some functions - see Details) a list of such.
-#' @param maxComp A logical, by default TRUE. See Value.
+#' @param maxOnly A logical, by default TRUE. (See Value.)
+#' @param maxComp A logical, by default TRUE. (See Value.)
 #' @param chromType Either "autosomal" (default) or "x".
 #'
 #' @return
@@ -11,12 +12,14 @@
 #' * `pedsize(x)` returns the number of pedigree members in each component of
 #' `x`.
 #'
-#' * `generations(x)` returns the number of generations in `x`, defined as the
-#' number of individuals in the longest line of parent-child links. (Note that
-#' this definition is valid also if `x` has loops.) If `x` has multiple
-#' components, the output depends on the parameter `maxComp`. If this is FALSE,
-#' the output is a vector containing the result for each component. If TRUE
-#' (default), only the highest number is returned.
+#' * `generations(x)` by default returns the number of generations in `x`,
+#' defined as the number of individuals in the longest line of parent-child
+#' links. (Note that this definition is valid also if `x` has loops.) If
+#' `maxOnly = FALSE`, the output is a named integer vector, showing the
+#' generation number of each pedigree member. If `x` has multiple components,
+#' the output depends on the parameter `maxComp`. If this is FALSE, the output
+#' is a vector containing the result for each component. If TRUE (default), only
+#' the highest number is returned.
 #'
 #' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of

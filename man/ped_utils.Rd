@@ -31,7 +31,9 @@ peelingOrder(x)
 \arguments{
 \item{x}{A \code{ped} object, or (in some functions - see Details) a list of such.}
 
-\item{maxComp}{A logical, by default TRUE. See Value.}
+\item{maxOnly}{A logical, by default TRUE. (See Value.)}
+
+\item{maxComp}{A logical, by default TRUE. (See Value.)}
 
 \item{chromType}{Either "autosomal" (default) or "x".}
 }
@@ -39,12 +41,14 @@ peelingOrder(x)
 \itemize{
 \item \code{pedsize(x)} returns the number of pedigree members in each component of
 \code{x}.
-\item \code{generations(x)} returns the number of generations in \code{x}, defined as the
-number of individuals in the longest line of parent-child links. (Note that
-this definition is valid also if \code{x} has loops.) If \code{x} has multiple
-components, the output depends on the parameter \code{maxComp}. If this is FALSE,
-the output is a vector containing the result for each component. If TRUE
-(default), only the highest number is returned.
+\item \code{generations(x)} by default returns the number of generations in \code{x},
+defined as the number of individuals in the longest line of parent-child
+links. (Note that this definition is valid also if \code{x} has loops.) If
+\code{maxOnly = FALSE}, the output is a named integer vector, showing the
+generation number of each pedigree member. If \code{x} has multiple components,
+the output depends on the parameter \code{maxComp}. If this is FALSE, the output
+is a vector containing the result for each component. If TRUE (default), only
+the highest number is returned.
 \item \code{hasUnbrokenLoops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
 computation is done here; the function simply returns the value of
 \code{x$UNBROKEN_LOOPS}).
