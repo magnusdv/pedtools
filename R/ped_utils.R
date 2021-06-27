@@ -112,7 +112,7 @@ generations = function(x, maxOnly = TRUE, maxComp = TRUE) {
     dp[i] = 1L + max(dp[c(FIDX[i], MIDX[i])])
 
   if(maxOnly)
-    return(dp)
+    return(max(dp))
 
   names(dp) = x$ID
   dp[xorig$ID]
