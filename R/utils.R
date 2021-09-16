@@ -100,7 +100,7 @@ fast.grid = function(argslist, as.list = FALSE) {
   nargs = length(argslist)
   orep = nr = prod(lengths(argslist))
   if (nargs == 0L || nr == 0L)
-    return(matrix(ncol = 0, nrow = 0))
+    return(if(as.list) list() else matrix(ncol = 0, nrow = 0))
 
   rep.fac = 1L
   res = NULL
