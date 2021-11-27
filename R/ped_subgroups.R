@@ -15,24 +15,29 @@
 #'   siblings/cousins/nephews/nieces are returned. If NA, both categories are
 #'   included.
 #'
-#' @return The functions `ancestors(x, id)` and `descendants(x, id)` return a
-#'   vector containing the IDs of all ancestors (resp. descendants) of the
-#'   individual `id` within the pedigree `x`. If `inclusive = TRUE`, `id` is
-#'   included in the output.
+#' @return The functions `founders`, `nonfounders`, `males`, `females`, `leaves`
+#' each return a vector containing the IDs of all pedigree members with the
+#' wanted property. (Recall that a founder is a member without parents in the
+#' pedigree, and that a leaf is a member without children in the pedigree.)
 #'
-#'   For `commonAncestors(x, ids)` and `commonDescendants(x, ids)`, a vector
-#'   containing the IDs of common ancestors to all of `ids`.
+#' The functions `father`, `mother`, `cousins`, `grandparents`,
+#' `nephews_nieces`, `children`, `parents`, `siblings`, `spouses`, `unrelated`,
+#' each returns a vector containing the IDs of all pedigree members having the
+#' specified relationship with `id`.
 #'
-#'   The functions `founders`, `nonfounders`, `males`, `females`, `leaves` each
-#'   return a vector containing the IDs of all pedigree members with the wanted
-#'   property. (Recall that a founder is a member without parents in the
-#'   pedigree, and that a leaf is a member without children in the pedigree.)
+#' The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
+#' containing the IDs of all ancestors (resp. descendants) of the individual
+#' `id` within the pedigree `x`. If `inclusive = TRUE`, `id` is included in the
+#' output, otherwise not.
 #'
-#'   The functions `father`, `mother`, `cousins`, `grandparents`,
-#'   `nephews_nieces`, `children`, `parents`, `siblings`, `spouses`,
-#'   `unrelated`, each returns a vector containing the IDs of all pedigree
-#'   members having the specified relationship with `id`.
+#' For `commonAncestors(x, ids)` and `commonDescendants(x, ids)`, the output is
+#' a vector containing the IDs of common ancestors (descendants) to all of
+#' `ids`.
 #'
+#' Finally, `descentPaths(x, ids)` returns a list of lists, containing all
+#' pedigree paths descending from each individual in `ids` (by default all
+#' founders).
+
 #' @author Magnus Dehli Vigeland
 #'
 #' @examples
@@ -474,3 +479,38 @@ commonDescendants = function(x, ids, inclusive = FALSE, internal = FALSE) {
   desc
 }
 
+#' @rdname ped_subgroups
+#' @export
+descentPaths = function(x, ids = founders(x), internal = FALSE) {
+  if(!internal) {
+    idsInt = internalID(x, ids)
+    names(idsInt) = ids  # ensures names on output list
+    labs = labels(x)
+  }
+  else
+    idsInt = ids
+
+  offs = lapply(1:pedsize(x), children, x = x, internal = TRUE)
+
+  lapply(idsInt, function(id) {
+    res = list(id)
+
+    while (TRUE) {
+      newoffs = offs[vapply(res, function(path) path[length(path)], 1)]
+      if (length(unlist(newoffs)) == 0)
+        break
+      nextstep = lapply(1:length(res), function(r)
+        if (length(newoffs[[r]]) == 0) res[r]
+        else lapply(newoffs[[r]], function(kid) c(res[[r]], kid)))
+
+      res = unlist(nextstep, recursive = FALSE)
+    }
+
+    if (!internal)
+      res = lapply(res, function(v) labs[v])
+
+    res
+  })
+}
+
+.descentPaths = descentPaths

@@ -76,7 +76,7 @@
 #' @export
 inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedingLoops
   n = pedsize(x)
-  dls = .descentPaths(x, 1:n, internal = TRUE)
+  dls = descentPaths(x, 1:n, internal = TRUE)
   dls = dls[lengths(dls) > 1]
 
   loops = list()

@@ -23,6 +23,7 @@
 \alias{commonAncestors}
 \alias{descendants}
 \alias{commonDescendants}
+\alias{descentPaths}
 \title{Pedigree subgroups}
 \usage{
 founders(x, internal = FALSE)
@@ -66,6 +67,8 @@ commonAncestors(x, ids, inclusive = FALSE, internal = FALSE)
 descendants(x, id, inclusive = FALSE, internal = FALSE)
 
 commonDescendants(x, ids, inclusive = FALSE, internal = FALSE)
+
+descentPaths(x, ids = founders(x), internal = FALSE)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object or a list of such.}
@@ -86,23 +89,28 @@ included.}
 among his or her own ancestors/descendants}
 }
 \value{
-The functions \code{ancestors(x, id)} and \code{descendants(x, id)} return a
-vector containing the IDs of all ancestors (resp. descendants) of the
-individual \code{id} within the pedigree \code{x}. If \code{inclusive = TRUE}, \code{id} is
-included in the output.
-
-For \code{commonAncestors(x, ids)} and \code{commonDescendants(x, ids)}, a vector
-containing the IDs of common ancestors to all of \code{ids}.
-
-The functions \code{founders}, \code{nonfounders}, \code{males}, \code{females}, \code{leaves} each
-return a vector containing the IDs of all pedigree members with the wanted
-property. (Recall that a founder is a member without parents in the
+The functions \code{founders}, \code{nonfounders}, \code{males}, \code{females}, \code{leaves}
+each return a vector containing the IDs of all pedigree members with the
+wanted property. (Recall that a founder is a member without parents in the
 pedigree, and that a leaf is a member without children in the pedigree.)
 
 The functions \code{father}, \code{mother}, \code{cousins}, \code{grandparents},
-\code{nephews_nieces}, \code{children}, \code{parents}, \code{siblings}, \code{spouses},
-\code{unrelated}, each returns a vector containing the IDs of all pedigree
-members having the specified relationship with \code{id}.
+\code{nephews_nieces}, \code{children}, \code{parents}, \code{siblings}, \code{spouses}, \code{unrelated},
+each returns a vector containing the IDs of all pedigree members having the
+specified relationship with \code{id}.
+
+The commands \code{ancestors(x, id)} and \code{descendants(x, id)} return vectors
+containing the IDs of all ancestors (resp. descendants) of the individual
+\code{id} within the pedigree \code{x}. If \code{inclusive = TRUE}, \code{id} is included in the
+output, otherwise not.
+
+For \code{commonAncestors(x, ids)} and \code{commonDescendants(x, ids)}, the output is
+a vector containing the IDs of common ancestors (descendants) to all of
+\code{ids}.
+
+Finally, \code{descentPaths(x, ids)} returns a list of lists, containing all
+pedigree paths descending from each individual in \code{ids} (by default all
+founders).
 }
 \description{
 A collection of utility functions for identifying pedigree members with

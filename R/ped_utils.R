@@ -118,6 +118,7 @@ generations = function(x, maxOnly = TRUE, maxComp = TRUE) {
   dp[xorig$ID]
 }
 
+
 #' @rdname ped_utils
 #' @export
 hasUnbrokenLoops = function(x) {
@@ -304,7 +305,7 @@ hasNumLabs = function(x) {
 
 .generations = function(x) {
   FOU = founders(x, internal = TRUE)
-  max(lengths(unlist(.descentPaths(x, FOU, internal = TRUE), recursive = FALSE)))
+  max(lengths(unlist(descentPaths(x, FOU, internal = TRUE), recursive = FALSE)))
 }
 
 # Utility function for generating numbered "NN" labels.
@@ -318,30 +319,6 @@ nextNN = function(labs) { # labs a character vector
     return("NN_1")
   nextNNnum = max(NNnum, na.rm = TRUE) + 1
   return(sprintf("NN_%d", nextNNnum))
-}
-
-
-.descentPaths = function(x, ids, internal = FALSE) {
-  if (!internal) ids = internalID(x, ids)
-
-  offs = lapply(1:pedsize(x), children, x = x, internal = TRUE)
-  lapply(ids, function(id) {
-    res = list(id)
-    while (TRUE) {
-      newoffs = offs[vapply(res, function(path) path[length(path)], 1)]
-      if (length(unlist(newoffs)) == 0)
-        break
-      nextstep = lapply(1:length(res), function(r)
-        if (length(newoffs[[r]]) == 0) res[r]
-        else lapply(newoffs[[r]], function(kid) c(res[[r]], kid)))
-      res = unlist(nextstep, recursive = FALSE)
-    }
-    if (!internal) {
-      labs = labels(x)
-      res = lapply(res, function(int_ids) labs[int_ids])
-    }
-    res
-  })
 }
 
 
@@ -398,5 +375,76 @@ getComponent = function(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE) {
 
   # Return comp idx of the input ids, including NA if not present
   compi[idx]
+}
+
+
+
+topolOrder = function(x) {
+  N = pedsize(x)
+
+  env = new.env()
+  logvec = logical(N)
+  names(logvec) = x$ID
+
+  isNonFou = logvec
+  isNonFou[nonfounders(x)] = TRUE
+
+  env$visited = logvec
+  env$ord = character(N)
+  env$k = 1
+
+  dfs = function(x, id, env) {
+    env$visited[id] = TRUE
+
+    if(isNonFou[id]) {
+      fa = father(x, id)
+      if(!env$visited[fa])
+        dfs(x, fa, env)
+      mo = mother(x, id)
+      if(!env$visited[mo])
+        dfs(x, mo, env)
+    }
+
+    k = env$k
+    env$ord[k] = id
+    #message("Added ", id, " in position ", N-k)
+
+    env$k = k + 1
+  }
+
+  lvs = sort.int(leaves(x), method = "quick")
+  for(id in lvs)
+    dfs(x, id, env)
+
+  # Return ordered labels
+  env$ord
+}
+
+reorderSimple = function(x, neworder, ids = NULL) {
+  if(!is.ped(x))
+    stop2("`reorderQuick` only works for `ped` objects")
+  if(length(neworder) != length(x$ID))
+    stop2("Wrong length of `neworder`")
+
+  if(is.character(neworder))
+    neworder = match(neworder, x$ID)
+
+  ID = x$ID[neworder]
+  FIDX = x$FIDX[neworder]
+  MIDX = x$MIDX[neworder]
+  SEX = x$SEX[neworder]
+
+  nonf = FIDX > 0
+  FIDX[nonf] = match(FIDX[nonf], neworder)
+  MIDX[nonf] = match(MIDX[nonf], neworder)
+
+  # Mask all but `ids` indivs
+  if(!is.null(ids)) {
+    mask = !ID %in% ids
+    ID[mask] = "*"
+    SEX[mask] = "*"
+  }
+
+  list(ID, FIDX, MIDX, SEX)
 }
 
