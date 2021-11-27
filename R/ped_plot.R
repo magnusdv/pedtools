@@ -658,8 +658,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     widths = rep_len(widths, N)
   }
 
-  maxGen = max(vapply(flatlist, function(arglist) .generations(arglist[[1]]), 1))
-
+  maxGen = max(vapply(flatlist, function(arglist) generations(arglist[[1]]), 1))
 
   extra.args = list(...)
 
@@ -678,7 +677,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
     # Margins
     arglist$margins = arglist$margins %||% {
-      g = .generations(arglist$x)
+      g = generations(arglist$x)
       addMar = 2 * (maxGen - g + 1)
       defaultmargins + c(addMar, 0, addMar, 0)
     }

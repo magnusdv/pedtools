@@ -302,14 +302,14 @@ hasNumLabs = function(x) {
   isTRUE(all(labs == numlabs))
 }
 
-
+# CAN BE REMOVED!
 .generations = function(x) {
   FOU = founders(x, internal = TRUE)
   max(lengths(unlist(descentPaths(x, FOU, internal = TRUE), recursive = FALSE)))
 }
 
 # Utility function for generating numbered "NN" labels.
-# Returns "NN_i" where i increments largest j occuring as NN_j, NN.j or NN-j in input.
+# Returns "NN_i" where i increments largest j occurring as NN_j, NN.j or NN-j in input.
 nextNN = function(labs) { # labs a character vector
   NNs = grepl("^NN", labs)
   if(!any(NNs))
