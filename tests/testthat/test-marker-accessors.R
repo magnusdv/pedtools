@@ -1,6 +1,7 @@
 
+x = nuclearPed(1)
+
 test_that("simple marker getters work", {
-  x = nuclearPed(1)
   m = marker(x, name="m1", chrom=1, posMb=1e7)
   x = setMarkers(x, m)
 
@@ -18,7 +19,6 @@ test_that("simple marker getters work", {
 
 
 test_that("alleles() accessor works", {
-  x = nuclearPed(1)
   als = c("p","e","d")
   m1 = marker(x, alleles=1:3, name="m1")
   m2 = marker(x, alleles=als, name="m2")
@@ -34,7 +34,6 @@ test_that("alleles() accessor works", {
 })
 
 test_that("afreq() accessor works", {
-  x = nuclearPed(1)
   afr = c(.2,.3,.5)
   m1 = marker(x, name="m1")
   m2 = marker(x, alleles=1:3, afreq=afr, name="m2")
@@ -56,7 +55,6 @@ test_that("afreq() accessor works", {
 })
 
 test_that("afreq replacement works", {
-  x = nuclearPed(1)
   m = marker(x, alleles=c("a", "b"), name="m1")
   x = setMarkers(x, list(m))
 
@@ -70,7 +68,6 @@ test_that("afreq replacement works", {
 })
 
 test_that("afreq replacement gives correct error messages", {
-  x = nuclearPed(1)
   m = marker(x, alleles=c("a"), name="m1")
   x = setMarkers(x, list(m))
 

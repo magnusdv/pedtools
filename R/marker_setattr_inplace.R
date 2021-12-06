@@ -1,82 +1,55 @@
-#' Get/set marker attributes
+#' Set marker attributes
 #'
-#' These functions can be used to manipulate a single attribute of one or
-#' several markers. Each getter/setter can be used in two ways: Either directly
-#' on a `marker` object, or on a `ped` object which has markers attached to it.
+#' These S3 methods perform in-place modifications of marker attributes. They
+#' work on single marker objects and markers attached to ped objects (or lists
+#' of such). Although these functions will continue to exist, we recommend the
+#' newer alternatives [setGenotype()], [setAfreq()], ... in most cases.
 #'
 #' @param x Either a `marker` object, a `ped` object or a list of `ped` objects.
 #' @param marker,markers The index or name of a marker (or a vector indicating
 #'   several markers) attached to `ped`. Used if `x` is a `ped` object.
 #' @param id The ID label of a single pedigree member.
-#' @param ... Further arguments, not used in most of these functions.
+#' @param ... Further arguments, not used.
 #' @param value Replacement value(s).
 #'
-#' @return The getters return the value of the query. The setters perform
-#'   in-place modification of the input.
-#'
+#' @return These functions perform in-place modification of `x`.
+#' @seealso Regular, pipe-friendly (not in-place) setters: [marker_setattr]. Marker attribute getters: [marker_getattr].
 #' @examples
 #' x = nuclearPed(1)
-#' x = setMarkers(x, locusAttributes = list(name = "M", alleles = 1:2))
+#' x = addMarker(x, alleles = 1:2)
 #'
-#' # Set genotype
-#' genotype(x, marker = "M", id = 1) = 1:2
-#' genotype(x, marker = "M", id = 3) = 1
+#' # Set genotypes
+#' genotype(x, marker = 1, id = 1) = "1/2"
 #'
-#' # Genotypes are returned as a vector of length 2
-#' genotype(x, marker = "M", id = 1)
+#' # Set marker name
+#' name(x, 1) = "M"
 #'
 #' # Change allele freqs
 #' afreq(x, "M") = c(`1` = 0.1, `2` = 0.9)
 #'
-#' # Check the new frequencies
-#' afreq(x, "M")
+#' # Set position
+#' chrom(x, "M") = 1
+#' posMb(x, "M") = 123.45
 #'
-#' @name marker_getset
+#' # Check result
+#' m = marker(x, `1` = "1/2", name = "M", afreq = c(`1` = 0.1, `2` = 0.9),
+#'            chrom = 1, posMb = 123.45)
+#' stopifnot(identical(x$MARKERS[[1]], m))
+#'
+#' @name marker_inplace
 NULL
 
-#' @rdname marker_getset
-#' @export
-genotype = function(x, ...) {
-  UseMethod("genotype")
-}
 
-#' @rdname marker_getset
-#' @export
-genotype.marker = function(x, id, ...) {
-  if(length(id) != 1)
-    stop2("Argument `id` must have length 1")
 
-  id_int = match(id, attr(x, 'pedmembers'))
-  if(is.na(id_int))
-    stop2("Unknown ID label: ", id)
+# Genotype ----------------------------------------------------------------
 
-  g_num = x[id_int, ]
-
-  g = rep(NA_character_, 2)
-  g[g_num > 0] = alleles(x)[g_num]
-  g
-}
-
-#' @rdname marker_getset
-#' @export
-genotype.ped = function(x, markers = NULL, id, ...) {
-  mlist = getMarkers(x, markers = markers)
-  if(length(mlist) == 0)
-    stop2("No markers selected")
-  if(length(mlist) > 1)
-    stop2("More than one marker selected")
-
-  m = mlist[[1]]
-  genotype(m, id)
-}
-
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `genotype<-` = function(x, ..., value) {
   UseMethod("genotype<-")
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `genotype<-.marker` = function(x, id, ..., value) {
   pedlabels = attr(x, 'pedmembers')
@@ -109,7 +82,7 @@ genotype.ped = function(x, markers = NULL, id, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `genotype<-.ped` = function(x, marker, id, ..., value) {
   if(missing(marker) || length(marker) == 0)
@@ -122,45 +95,16 @@ genotype.ped = function(x, markers = NULL, id, ...) {
   x
 }
 
-### mutmod ###
-#' @rdname marker_getset
-#' @export
-mutmod = function(x, ...) {
-  UseMethod("mutmod")
-}
 
-#' @rdname marker_getset
-#' @export
-mutmod.marker = function(x, ...) {
-  attr(x, 'mutmod')
-}
+# Mutation model ----------------------------------------------------------
 
-#' @rdname marker_getset
-#' @export
-mutmod.ped = function(x, marker, ...) {
-  if(missing(marker) || length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
-  if(length(marker) > 1)
-    stop2("Mutation model can only be accessed for one marker at a time")
-
-  mlist = getMarkers(x, markers = marker)
-  m = mlist[[1]]
-  mutmod(m)
-}
-
-#' @rdname marker_getset
-#' @export
-mutmod.list = function(x, marker, ...) {
-  mutmod(x[[1]], marker = marker)
-}
-
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `mutmod<-` = function(x, ..., value) {
   UseMethod("mutmod<-")
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `mutmod<-.marker` = function(x, ..., value) {
   if (!requireNamespace("pedmut", quietly = TRUE))
@@ -185,7 +129,7 @@ mutmod.list = function(x, marker, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `mutmod<-.ped` = function(x, marker = NULL, ..., value) {
   marker = marker %||% seq_markers(x)
@@ -197,7 +141,7 @@ mutmod.list = function(x, marker, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `mutmod<-.list` = function(x, marker = NULL, ..., value) {
   marker = marker %||% seq_markers(x)
@@ -208,85 +152,16 @@ mutmod.list = function(x, marker, ...) {
 }
 
 
-### alleles ###
-#' @rdname marker_getset
-#' @export
-alleles = function(x, ...) {
-  UseMethod("alleles")
-}
 
-#' @rdname marker_getset
-#' @export
-alleles.marker = function(x, ...) {
-  attr(x, 'alleles')
-}
+# Allele frequencies ------------------------------------------------------
 
-#' @rdname marker_getset
-#' @export
-alleles.ped = function(x, marker, ...) {
-  if(missing(marker) || length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
-  if(length(marker) > 1)
-    stop2("Allele extraction can only be done for a single marker")
-
-  mlist = getMarkers(x, markers = marker)
-  m = mlist[[1]]
-  alleles(m)
-}
-
-#' @rdname marker_getset
-#' @export
-alleles.list = function(x, marker, ...) {
-  comp_wise = lapply(x, alleles, marker = marker)
-  if(!listIdentical(comp_wise))
-    stop2("The output of `alleles()` differs between pedigree components")
-  comp_wise[[1]]
-}
-
-### afreq ###
-#' @rdname marker_getset
-#' @export
-afreq = function(x, ...) {
-  UseMethod("afreq")
-}
-
-#' @rdname marker_getset
-#' @export
-afreq.marker = function(x, ...) {
-  afr = attr(x, "afreq")
-  names(afr) = alleles(x)
-  afr
-}
-
-#' @rdname marker_getset
-#' @export
-afreq.ped = function(x, marker, ...) {
-  if(missing(marker) || length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
-  if(length(marker) > 1)
-    stop2("Frequency extraction can only be done for a single marker")
-  mlist = getMarkers(x, markers = marker)
-
-  m = mlist[[1]]
-  afreq(m)
-}
-
-#' @rdname marker_getset
-#' @export
-afreq.list = function(x, marker, ...) {
-  comp_wise = lapply(x, afreq, marker = marker)
-  if(!listIdentical(comp_wise))
-    stop2("The output of `afreq()` differs between pedigree components")
-  comp_wise[[1]]
-}
-
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `afreq<-` = function(x, ..., value) {
   UseMethod("afreq<-")
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `afreq<-.marker` = function(x, ..., value) {
   als = alleles(x)
@@ -309,11 +184,11 @@ afreq.list = function(x, marker, ...) {
   if(round(sum(value), 3) != 1)
     stop2("Frequencies must sum to 1")
 
-  attr(x, 'afreq') = value[als_order]
+  attr(x, 'afreq') = as.numeric(value[als_order])
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `afreq<-.ped` = function(x, marker, ..., value) {
   if(missing(marker) || length(marker) == 0)
@@ -327,7 +202,7 @@ afreq.list = function(x, marker, ...) {
 }
 
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `afreq<-.list` = function(x, marker, ..., value) {
   for(i in seq_along(x))
@@ -343,45 +218,14 @@ afreq.list = function(x, marker, ...) {
 ######################
 
 
-### getters
-#' @rdname marker_getset
-#' @export
-name = function(x, ...) {
-  UseMethod("name")
-}
-
-#' @rdname marker_getset
-#' @export
-name.marker = function(x, ...) {
-  attr(x, 'name')
-}
-
-#' @rdname marker_getset
-#' @export
-name.ped = function(x, markers = NULL, ...) {
-  markers = markers %||% seq_markers(x)
-
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, name.marker, character(1))
-}
-
-#' @rdname marker_getset
-#' @export
-name.list = function(x, markers = NULL, ...) {
-  comp_wise = lapply(x, name, markers = markers)
-  if(!listIdentical(comp_wise))
-    stop2("The output of `name()` differs between pedigree components")
-  comp_wise[[1]]
-}
-
 ### name setter
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `name<-` = function(x, ..., value) {
   UseMethod("name<-")
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `name<-.marker` = function(x, ..., value) {
   name = as.character(value)
@@ -395,7 +239,7 @@ name.list = function(x, markers = NULL, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `name<-.ped` = function(x, markers = NULL, ..., value) {
   markers = markers %||% seq_markers(x)
@@ -421,51 +265,24 @@ name.list = function(x, markers = NULL, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `name<-.list` = function(x, markers = NULL, ..., value) {
   lapply(x, function(cmp) `name<-`(cmp, markers = markers, value = value))
 }
 
 
-#' @rdname marker_getset
-#' @export
-chrom = function(x, ...) {
-  UseMethod("chrom")
-}
 
-#' @rdname marker_getset
-#' @export
-chrom.marker = function(x, ...) {
-  attr(x, 'chrom')
-}
+# Chromosome --------------------------------------------------------------
 
-#' @rdname marker_getset
-#' @export
-chrom.ped = function(x, markers = NULL, ...) {
-  markers = markers %||% seq_markers(x)
 
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, chrom.marker, character(1))
-}
-
-#' @rdname marker_getset
-#' @export
-chrom.list = function(x, markers = NULL, ...) {
-  comp_wise = lapply(x, chrom, markers = markers)
-  if(!listIdentical(comp_wise))
-    stop2("The output of `chrom()` differs between pedigree components")
-  comp_wise[[1]]
-}
-
-### chrom setter
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `chrom<-` = function(x, ..., value) {
   UseMethod("chrom<-")
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `chrom<-.marker` = function(x, ..., value) {
   chrom = as.character(value)
@@ -477,7 +294,7 @@ chrom.list = function(x, markers = NULL, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `chrom<-.ped` = function(x, markers = NULL, ..., value) {
   markers = markers %||% seq_markers(x)
@@ -499,42 +316,25 @@ chrom.list = function(x, markers = NULL, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `chrom<-.list` = function(x, markers = NULL, ..., value) {
   lapply(x, function(cmp) `chrom<-`(cmp, markers = markers, value = value))
 }
 
-#' @rdname marker_getset
-#' @export
-posMb = function(x, ...) {
-  UseMethod("posMb")
-}
-
-#' @rdname marker_getset
-#' @export
-posMb.marker = function(x, ...) {
-  as.numeric(attr(x, 'posMb'))
-}
-
-#' @rdname marker_getset
-#' @export
-posMb.ped = function(x, markers = NULL, ...) {
-  markers = markers %||% seq_markers(x)
-
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, posMb, numeric(1))
-}
 
 
-### posMb setter
-#' @rdname marker_getset
+# Position ----------------------------------------------------------------
+
+
+#' @rdname marker_inplace
 #' @export
 `posMb<-` = function(x, ..., value) {
   UseMethod("posMb<-")
 }
 
-#' @rdname marker_getset
+
+#' @rdname marker_inplace
 #' @export
 `posMb<-.marker` = function(x, ..., value) {
   pos = suppressWarnings(as.numeric(value))
@@ -546,7 +346,7 @@ posMb.ped = function(x, markers = NULL, ...) {
   x
 }
 
-#' @rdname marker_getset
+#' @rdname marker_inplace
 #' @export
 `posMb<-.ped` = function(x, markers = NULL, ..., value) {
   markers = markers %||% seq_markers(x)
