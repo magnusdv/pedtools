@@ -6,6 +6,7 @@
 \usage{
 readPed(
   pedfile,
+  colSep = "",
   header = NA,
   famid_col = NA,
   id_col = NA,
@@ -23,9 +24,14 @@ readPed(
 \arguments{
 \item{pedfile}{A file name}
 
+\item{colSep}{A column separator character, passed on as the \code{sep} argument
+of \code{\link[=read.table]{read.table()}}. The default is to separate on ‘white space’, that is one
+or more spaces, tabs, newlines or carriage returns. (Note: the parameter
+\code{sep} is used to indicate allele separation in genotypes.)}
+
 \item{header}{A logical. If NA, the program will interpret the first line as
-a header line if the first entry contains "id" AND the word "sex" is an
-entry.}
+a header line it contains both "id" and "sex" as part of some entries
+(ignoring case).}
 
 \item{famid_col}{Index of family ID column. If NA, the program looks for a
 column named "famid" (ignoring case).}
@@ -57,14 +63,26 @@ and split into separate alleles with \code{strsplit(..., split = sep, fixed = TR
 
 \item{validate}{A logical indicating if the pedigree structure should be validated.}
 
-\item{...}{Further parameters passed on to \code{\link[=read.table]{read.table()}}, e.g. \code{sep},
+\item{...}{Further parameters passed on to \code{\link[=read.table]{read.table()}}, e.g.
 \code{comment.char} and \code{quote}.}
 }
 \value{
 A \link{ped} object or a list of such.
 }
 \description{
-Read a pedigree from file
+Reads a text file in pedigree format, or something fairly close to it.
+}
+\details{
+If there are no headers, and no column information is provided by the user,
+the program assumes the following column order:
+\itemize{
+\item family ID (optional; guessed from the data)
+\item individual ID
+\item father's ID
+\item mother's ID
+\item sex
+\item marker data (remaining columns)
+}
 }
 \examples{
 

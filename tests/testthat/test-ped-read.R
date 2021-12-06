@@ -91,3 +91,25 @@ test_that("marker_col argument of as.ped() works", {
   trio.ped = as.ped(trio, marker_col=5:ncol(trio))
   expect_length(trio.ped$MARKERS, 1)
 })
+
+test_that("readPed() handles spaces in ID labels", {
+  x = singleton("A B C")
+  tmp = writePed(x, tempfile(), what = "ped")
+  y = readPed(tmp, colSep = "\t")
+  expect_identical(x,y)
+})
+
+test_that("readPed() guesses columns correctly", {
+  x = nuclearPed(1)
+  df = as.data.frame(x)
+  write.table(df, tmp <- tempfile(), col.names = FALSE, row.names = FALSE, quote = FALSE)
+
+  y = readPed(tmp)
+  expect_identical(x,y)
+
+  df2 = c(1, df)
+  write.table(df, tmp2 <- tempfile(), col.names = FALSE, row.names = FALSE, quote = FALSE)
+
+  y2 = readPed(tmp2)
+  expect_identical(x,y2)
+})

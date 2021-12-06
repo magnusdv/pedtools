@@ -1,10 +1,31 @@
 #' Read a pedigree from file
 #'
+#' Reads a text file in pedigree format, or something fairly close to it.
+#'
+#' If there are no headers, and no column information is provided by the user,
+#' the program assumes the following column order:
+#'
+#' * family ID (optional; guessed from the data)
+#'
+#' * individual ID
+#'
+#' * father's ID
+#'
+#' * mother's ID
+#'
+#' * sex
+#'
+#' * marker data (remaining columns)
+#'
 #' @param pedfile A file name
+#' @param colSep A column separator character, passed on as the `sep` argument
+#'   of [read.table()]. The default is to separate on ‘white space’, that is one
+#'   or more spaces, tabs, newlines or carriage returns. (Note: the parameter
+#'   `sep` is used to indicate allele separation in genotypes.)
 #' @param header A logical. If NA, the program will interpret the first line as
-#'   a header line if the first entry contains "id" AND the word "sex" is an
-#'   entry.
-#' @param ... Further parameters passed on to [read.table()], e.g. `sep`,
+#'   a header line it contains both "id" and "sex" as part of some entries
+#'   (ignoring case).
+#' @param ... Further parameters passed on to [read.table()], e.g.
 #'   `comment.char` and `quote`.
 #'
 #' @return A [ped] object or a list of such.
@@ -52,7 +73,8 @@
 #' @inheritParams as.ped.data.frame
 #' @importFrom utils read.table
 #' @export
-readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = NA,
+readPed = function(pedfile, colSep = "", header = NA,
+                   famid_col = NA, id_col = NA, fid_col = NA,
                    mid_col = NA, sex_col = NA, marker_col = NA,
                    locusAttributes = NULL, missing = 0,
                    sep = NULL, validate = TRUE, ...) {
@@ -62,11 +84,30 @@ readPed = function(pedfile, header = NA, famid_col = NA, id_col = NA, fid_col = 
     # Read first line
     first = tolower(scan(pedfile, what = "", nlines = 1, quiet = TRUE, ...))
 
-    # Interpret as header line if 1) first element contains "id" and 2) "sex" is an entry
-    header = grepl("id", first[1], fixed = TRUE) && "sex" %in% first
+    # Interpret as header line if it contains both "id" and "sex"
+    header = any(grepl("id", first, fixed = TRUE)) && any(grepl("sex", first, fixed = TRUE))
   }
 
-  ped.df = read.table(pedfile, header = header, colClasses = "character", check.names = FALSE, ...)
+  ped.df = read.table(pedfile, sep = colSep, header = header,
+                      colClasses = "character", check.names = FALSE, ...)
+
+  # guess columns if no header info
+  if(!header && isTRUE(all(is.na(c(famid_col, id_col, fid_col, mid_col, sex_col, marker_col))))) {
+    hasFamid = anyDuplicated(ped.df[,1]) || (ncol(ped.df) >=5 && isTRUE(all(0 == ped.df[,3:4])))
+    if(hasFamid) {
+      famid_col = 1
+      id_col = 2
+      fid_col = 3
+      mid_col = 4
+      sex_col = 5
+    }
+    else {
+      id_col = 1
+      fid_col = 2
+      mid_col = 3
+      sex_col = 4
+    }
+  }
 
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
