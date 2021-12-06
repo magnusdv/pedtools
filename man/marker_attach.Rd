@@ -58,7 +58,9 @@ In many applications it is useful to \emph{attach} markers to their associated
 \code{ped} object. In particular for bigger projects with many markers, this makes
 it easier to manipulate the dataset as a unit. The function \code{setMarkers()}
 replaces all existing markers with the supplied ones, while \code{addMarkers()}
-appends the supplied markers to any existing ones.
+appends the supplied markers to any existing ones. Note that there is also
+the function \code{\link[=addMarker]{addMarker()}}, which creates and attaches a single marker in one
+go.
 }
 \details{
 The most general format of \code{locusAttributes} a list of lists, one for each
@@ -88,15 +90,21 @@ the allele labels).
 }
 \examples{
 x = singleton(1)
-m1 = marker(x, '1' = 1:2)
-m2 = marker(x, '1' = 'a')
+m1 = marker(x, `1` = "1/2")
+m2 = marker(x, `1` = "a/b")
 
-x = setMarkers(x, m1)
-x = addMarkers(x, m2)
-x
+# Attach to x
+x1 = setMarkers(x, list(m1, m2))
 
 # Reversing the order of the markers
-x = setMarkers(x, list(m2, m1))
-x
+setMarkers(x, list(m2, m1))
 
+# Alternative syntax, adding one marker at a time
+x2 = x |> addMarker(`1` = "1/2") |> addMarker(`1` = "a/b")
+
+stopifnot(identical(x1, x2))
+
+}
+\seealso{
+\code{\link[=addMarker]{addMarker()}}
 }

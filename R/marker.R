@@ -1,7 +1,8 @@
 #' Marker objects
 #'
-#' Creating a marker object associated with a pedigree.
-#'
+#' Creating a marker object associated with a pedigree. The function `marker()`
+#' returns a marker object, while `addMarker()` first creates the marker
+#' and then attaches it to `x`.
 #'
 #' @param x a [`ped`] object
 #' @param ... one or more expressions of the form `id = genotype`, where `id` is
@@ -57,6 +58,9 @@
 #'
 #' # An empty SNP with alleles "A" and "B"
 #' marker(x, alleles = c("A", "B"))
+#'
+#' # Creating and attaching to `x`
+#' addMarker(x, alleles = c("A", "B"))
 #'
 #' # Alleles/frequencies can be given jointly or separately
 #' stopifnot(identical(
@@ -198,25 +202,19 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
 }
 
 
-newMarkerOLD = function(allelematrix_int, alleles, afreq, name = NA_character_,
-                     chrom = NA_character_, posMb = NA_real_,
-                     mutmod = NULL, pedmembers, sex) {
+#' @rdname marker
+#' @export
+addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
+                     afreq = NULL, chrom = NA, posMb = NA, name = NA,
+                     NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
+                     validate = TRUE) {
 
-  stopifnot2(is.matrix(allelematrix_int),
-            ncol(allelematrix_int) == 2,
-            is.integer(allelematrix_int),
-            is.character(alleles),
-            is.numeric(afreq),
-            is.character(name),
-            is.character(chrom),
-            is.numeric(posMb),
-            is.null(mutmod) || is.list(mutmod),
-            is.character(pedmembers),
-            is.integer(sex))
-
-  structure(allelematrix_int, alleles = alleles, afreq = afreq, name = name,
-            chrom = chrom, posMb = posMb, mutmod = mutmod,
-            pedmembers = pedmembers, sex = sex, class = "marker")
+  m = marker(x, ..., geno = geno, allelematrix = allelematrix,
+             alleles = alleles, afreq = afreq,
+             chrom = chrom, posMb = posMb, name = name,
+             NAstrings = NAstrings, mutmod = mutmod, rate = rate,
+             validate = validate)
+  addMarkers(x, m)
 }
 
 #' Internal marker constructor
@@ -266,11 +264,13 @@ validateMarker = function(x) {
   ## alleles
   alleles = attrs$alleles
   NA_allele_ = c(0, "", NA)
+
   if(any(alleles %in% NA_allele_))
     stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
 
   if(dup <- anyDuplicated(alleles))
     stop2("Duplicated allele label: ", alleles[dup])
+
   ## afreq
   afreq = attrs$afreq
   if (length(afreq) != length(alleles))

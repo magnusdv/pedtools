@@ -4,7 +4,9 @@
 #' `ped` object. In particular for bigger projects with many markers, this makes
 #' it easier to manipulate the dataset as a unit. The function `setMarkers()`
 #' replaces all existing markers with the supplied ones, while `addMarkers()`
-#' appends the supplied markers to any existing ones.
+#' appends the supplied markers to any existing ones. Note that there is also
+#' the function [addMarker()], which creates and attaches a single marker in one
+#' go.
 #'
 #' The most general format of `locusAttributes` a list of lists, one for each
 #' marker, where possible entries in the inner lists are as follows (default
@@ -55,18 +57,24 @@
 #'   consistency with `x`.
 #'
 #' @return A `ped` object.
+#'
+#' @seealso [addMarker()]
+#'
 #' @examples
 #' x = singleton(1)
-#' m1 = marker(x, '1' = 1:2)
-#' m2 = marker(x, '1' = 'a')
+#' m1 = marker(x, `1` = "1/2")
+#' m2 = marker(x, `1` = "a/b")
 #'
-#' x = setMarkers(x, m1)
-#' x = addMarkers(x, m2)
-#' x
+#' # Attach to x
+#' x1 = setMarkers(x, list(m1, m2))
 #'
 #' # Reversing the order of the markers
-#' x = setMarkers(x, list(m2, m1))
-#' x
+#' setMarkers(x, list(m2, m1))
+#'
+#' # Alternative syntax, adding one marker at a time
+#' x2 = x |> addMarker(`1` = "1/2") |> addMarker(`1` = "a/b")
+#'
+#' stopifnot(identical(x1, x2))
 #'
 #' @name marker_attach
 NULL
