@@ -10,13 +10,7 @@
 \usage{
 inbreedingLoops(x)
 
-breakLoops(
-  x,
-  loopBreakers = NULL,
-  verbose = TRUE,
-  errorIfFail = TRUE,
-  loop_breakers = NULL
-)
+breakLoops(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE)
 
 tieLoops(x, verbose = TRUE)
 
@@ -35,8 +29,6 @@ breakers.}
 
 \item{errorIfFail}{a logical: If TRUE an error is raised if the loop breaking
 is unsuccessful. If FALSE, the pedigree is returned unchanged.}
-
-\item{loop_breakers}{Deprecated; renamed to \code{loopBreakers}.}
 }
 \value{
 For \code{breakLoops}, a \code{ped} object in which the indicated loop breakers

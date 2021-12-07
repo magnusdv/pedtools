@@ -225,6 +225,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 
   # Very soft deprecation of `shaded`
   if(!is.null(shaded)) {
+    message("The argument `shaded` has been renamed to `hatched`; please use this instead.")
     hatched = shaded
     shaded = NULL
   }

@@ -247,31 +247,3 @@ writeFreqDatabase = function(x, filename, markers = NULL, format = c("list", "la
       write("", file = filename, append = TRUE)
   }
 }
-
-#' @rdname freqDatabase
-#' @export
-setFrequencyDatabase = function(...) {
-  warning("The function `setFrequencyDatabase()` has been renamed to `setFreqDatabase()`")
-  setFreqDatabase(...)
-}
-
-#' @rdname freqDatabase
-#' @export
-getFrequencyDatabase = function(...) {
-  warning("The function `getFrequencyDatabase()` has been renamed to `getFreqDatabase()`")
-  getFreqDatabase(...)
-}
-
-#' @rdname freqDatabase
-#' @export
-readFrequencyDatabase = function(...) {
-  warning("The function `readFrequencyDatabase()` has been renamed to `readFreqDatabase()`")
-  readFreqDatabase(...)
-}
-
-#' @rdname freqDatabase
-#' @export
-writeFrequencyDatabase = function(...) {
-  warning("The function `writeFrequencyDatabase()` has been renamed to `writeFreqDatabase()`")
-  writeFreqDatabase(...)
-}

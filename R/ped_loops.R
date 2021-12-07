@@ -30,7 +30,6 @@
 #' @param verbose a logical: Verbose output or not?
 #' @param errorIfFail a logical: If TRUE an error is raised if the loop breaking
 #'   is unsuccessful. If FALSE, the pedigree is returned unchanged.
-#' @param loop_breakers Deprecated; renamed to `loopBreakers`.
 #'
 #' @return For `breakLoops`, a `ped` object in which the indicated loop breakers
 #'   are duplicated. The returned object will also have a non-null
@@ -102,11 +101,7 @@ inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedi
 
 #' @export
 #' @rdname inbreedingLoops
-breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE, loop_breakers = NULL) {
-  if(!is.null(loop_breakers)) {
-    message("`loop_breakers` has been renamed to `loopBreakers` and will be removed in a future version")
-    loopBreakers = loop_breakers
-  }
+breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE) {
 
   if (isFALSE(x$UNBROKEN_LOOPS) || is.singleton(x)) {
     if (verbose) {
