@@ -20,8 +20,8 @@
 #'
 #' @examples
 #' x = nuclearPed(1)
-#' m1 = marker(x, `2` = 1:2, alleles = 1:2, name = "m1")
-#' m2 = marker(x, `3` = 2, alleles = 1:2, name = "m2")
+#' m1 = marker(x, `2` = "1/2", alleles = 1:2, name = "m1")
+#' m2 = marker(x, `3` = "2/2", alleles = 1:2, name = "m2")
 #' x = setMarkers(x, list(m1, m2))
 #'
 #' getGenotypes(x)

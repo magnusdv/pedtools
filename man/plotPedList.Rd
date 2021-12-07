@@ -117,14 +117,13 @@ dev.off()
 # its parameters can be specified in its own list.
 
 x1 = nuclearPed(nch = 3)
-m1 = marker(x1, `3` = 1:2)
+m1 = marker(x1, `3` = "1/2")
 marg1 = c(7, 4, 7, 4)
 plot1 = list(x1, marker = m1, margins = marg1, title = "Plot 1",
              deceased = 1:2, cex = 1.3)
 
 x2 = cousinPed(2)
-m2 = marker(x2, alleles = "A")
-genotype(m2, leaves(x2)) = "A"
+m2 = marker(x2, `11` = "A/A", `12` = "A/A")
 marg2 = c(3, 4, 2, 4)
 plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2",
              symbolsize = 1.2, labs = NULL)

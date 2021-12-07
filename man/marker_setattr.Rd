@@ -60,9 +60,8 @@ x = nuclearPed(1) |>
   setPosition(marker = "M", posMb = 123.45)
 
 # Of course, all of this could have been done on creation:
-y = nuclearPed() |>
-  addMarker(`1` = "1/2", name = "M", afreq = c(`1` = 0.1, `2` = 0.9),
-            chrom = 1, posMb = 123.45)
+y = addMarker(nuclearPed(), `1` = "1/2", afreq = c(`1` = 0.1, `2` = 0.9),
+              name = "M", chrom = 1, posMb = 123.45)
 stopifnot(identical(x, y))
 
 }

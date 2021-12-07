@@ -35,11 +35,9 @@ test_that("setMarkers() gives same result with and without alleleMarkers", {
 
 
 test_that("addMarkers() gives same result with and without alleleMarkers", {
-  x = nuclearPed(fa="fa", mo="mo", children="boy")
-  x = setMarkers(x, marker(x, name="M0"))
-
-  m = marker(x, mo='b', boy=c('b','c'), alleles=letters[1:3], name="snp")
-  y = addMarkers(x, m)
+  x = nuclearPed(fa="fa", mo="mo", children="boy") |>
+    addMarker(name="M0")
+  y = addMarker(x, mo='b/b', boy='b/c', alleles=letters[1:3], name="snp")
 
   amat = cbind(c(0,'b','b'),c(0,'b','c'))
   ann = list(alleles=letters[1:3], name="snp")
@@ -69,8 +67,8 @@ test_that("setMarkers() deals with marker names and ordering", {
 
   ### trio
   trio = nuclearPed(child = "a")
-  m1 = marker(trio, a = 1:2, name = "M1")
-  m2 = marker(trio, a = 2:3, name = "M2")
+  m1 = marker(trio, a = "1/2", name = "M1")
+  m2 = marker(trio, a = "2/3", name = "M2")
   trio12 = setMarkers(trio, list(m1, m2))
 
   am_all = getAlleles(trio12)

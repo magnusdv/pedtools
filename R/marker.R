@@ -74,8 +74,6 @@
 #' # ... or using the `geno` vector (all members in order)
 #' marker(x, geno = c("1/1", "1/2", NA))
 #'
-#' # For homozygous genotypes, a single allele suffices
-#' marker(x, fa = 1)
 #'
 #' # Attaching a marker to the pedigree
 #' m = marker(x) # By default a SNP with alleles 1,2

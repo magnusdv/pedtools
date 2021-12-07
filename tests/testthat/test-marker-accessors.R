@@ -83,8 +83,8 @@ test_that("afreq replacement gives correct error messages", {
 test_that("genotype() works", {
   x = nuclearPed(children="boy") # labels are 1,2,boy
   m1 = marker(x, name="m1")
-  m2 = marker(x, boy=1:2, name="m2")
-  m3 = marker(x, '1'=17.2, name="m3") # homoz for STR allele
+  m2 = marker(x, boy="1/2", name="m2")
+  m3 = marker(x, "1"="17.2/17.2", name="m3") # homoz for STR allele
   x = setMarkers(x, list(m1,m2,m3))
 
   genoNA = c(NA_character_, NA_character_)
@@ -108,21 +108,20 @@ test_that("genotype replacement works", {
   m2 = marker(x, name="m2", alleles=c("a", "b"))
   x = setMarkers(x, list(m1, m2))
 
-  genotype(x, 1, id=101) = 2
-  genotype(x, "m1", "boy") = 2:1
+  genotype(x, 1, id=101) = "2/2"
+  genotype(x, "m1", "boy") = "2/1"
   expect_equal(genotype(x, "m1", 101), c("2", "2"))
   expect_equal(genotype(x, 1, "boy"), c("2", "1"))
 
-  genotype(x, 2, id=101) = 'b'
-  genotype(x, "m2", "boy") = c('b','a')
+  genotype(x, 2, id=101) = 'b/b'
+  genotype(x, "m2", "boy") = 'b/a'
   expect_equal(genotype(x, "m2", 101), c("b", "b"))
   expect_equal(genotype(x, 2, "boy"), c("b", "a"))
 })
 
 test_that("genotype replacement gives correct error messages", {
   x = nuclearPed(father=101, mother=102, children="boy")
-  m1 = marker(x, name="m1", alleles=1:2)
-  x = setMarkers(x, m1)
+  x = addMarker(x, name="m1", alleles=1:2)
 
   expect_error({genotype(x, "m2", 101) = 3}, "Unknown marker name: m2")
   expect_error({genotype(x, 2, 101) = 3}, "Marker index out of range: 2")
@@ -135,8 +134,7 @@ test_that("genotype replacement gives correct error messages", {
 
 test_that("genotype replacement works with partial genotypes", {
   x = nuclearPed(father=101, mother=102, children=1:2)
-  m1 = marker(x, name="m1", alleles=c('a','b'))
-  x = setMarkers(x, m1)
+  x = addMarker(x, name="m1", alleles=c('a','b'))
 
   genotype(x, "m1", id=101) = c("a", NA)
   genotype(x, "m1", id=102) = c("a", "")

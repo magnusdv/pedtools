@@ -45,7 +45,7 @@
 #'
 #' #-------- emptyMarkers() ------------
 #' # Add genotype for indiv 1 at marker 1
-#' genotype(x[[1]], 1, 1) = 1:2
+#' genotype(x[[1]], 1, 1) = "1/2"
 #'
 #' # Check that markers 2 and 3 are empty
 #' stopifnot(identical(emptyMarker(x), c(FALSE,TRUE,TRUE)),
@@ -57,8 +57,8 @@
 #' stopifnot(identical(nTyped(x), c(1L,0L,0L)))
 #'
 #' # Add genotypes for third marker
-#' genotype(x[[1]], marker = 3, id = 1:3) = 1
-#' genotype(x[[2]], marker = 3, id = 10) = 2
+#' genotype(x[[1]], marker = 3, id = 1:3) = "1/1"
+#' genotype(x[[2]], marker = 3, id = 10) = "2/2"
 #'
 #' # nTyped() returns total over all components
 #' stopifnot(identical(nTyped(x), c(1L,0L,4L)))

@@ -12,9 +12,9 @@
 #' x = singleton(1)
 #'
 #' # Various markers with misordered genotypes
-#' m1 = marker(x, `1` = 2:1)
-#' m2 = marker(x, `1` = c('b','a'))
-#' m3 = marker(x, `1` = c("100.3", "99.1"))
+#' m1 = marker(x, `1` = "2/1")
+#' m2 = marker(x, `1` = "b/a")
+#' m3 = marker(x, `1` = "100.3/99.1")
 #' x = setMarkers(x, list(m1, m2, m3))
 #' x
 #'

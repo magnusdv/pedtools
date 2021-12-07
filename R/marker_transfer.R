@@ -33,27 +33,23 @@
 #'
 #' @examples
 #'
-#' x = nuclearPed(fa = "father", mo = "mother", children = "boy")
-#' m = marker(x, father = 1:2, mother = 1, boy = 1:2)
-#' x = setMarkers(x, m)
+#' x = nuclearPed(fa = "A", mo = "B", child = "C")
+#' x = addMarker(x, A = "1/2", B = "1/1", C = "1/2", name = "M1")
 #'
-#' y = list(singleton("father"), nuclearPed(mo = "mother", children = "boy"))
+#' y = list(singleton("A"), nuclearPed(fa = "D", mo = "B", child = "C"))
 #'
 #' # By default all common individuals are transferred
 #' transferMarkers(x, y)
 #'
 #' # Transfer data for the boy only
-#' transferMarkers(x, y, ids = "boy")
+#' transferMarkers(x, y, ids = "C")
 #'
-#' # Transfer without erasing marker attributes or others genotypes
-#' # Note that `erase = FALSE` requires markers to be named
-#' z = nuclearPed(children = "boy")
-#' z = setMarkers(z, marker(z, '1' = c(2,2), alleles = 1:2, afreq = c(.1, .9)))
-#' name(x, 1) = name(z, 1) = 'M1'
-#' z2 = transferMarkers(x, z, ids = "boy", erase = FALSE)
-#' z2
-#' # Frequencies are not transferred
-#' afreq(z2, 1)
+#' # Transfer without first erasing the target markers
+#' z = nuclearPed(fa = "A", mo = "B", child = "C")
+#' z = addMarker(z, A = "1/1", alleles = 1:2, name = "M1")
+#'
+#' transferMarkers(x, z, ids = "C", erase = FALSE)
+#' transferMarkers(x, z, ids = "C", erase = TRUE) # note the difference
 #'
 #' @export
 transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,

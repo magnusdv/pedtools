@@ -26,10 +26,10 @@ Check marker data for Mendelian inconsistencies
 }
 \examples{
 
-x = nuclearPed(3)
+x = nuclearPed()
 
 # Add a SNP with Mendelian error
-m = marker(x, '1' = 1, '2' = 1, '3' = 1:2)
+m = marker(x, '1' = "1/1", '2' = "1/1", '3' = "1/2")
 x = setMarkers(x, m)
 
 mendelianCheck(x)
