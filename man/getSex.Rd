@@ -6,7 +6,7 @@
 \alias{swapSex}
 \title{Get or set the sex of pedigree members}
 \usage{
-getSex(x, ids, named = FALSE)
+getSex(x, ids = NULL, named = FALSE)
 
 setSex(x, ids = NULL, sex)
 
@@ -15,7 +15,8 @@ swapSex(x, ids, verbose = TRUE)
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
 
-\item{ids}{A character vector (or coercible to one) containing ID labels.}
+\item{ids}{A character vector (or coercible to one) containing ID labels. If
+NULL, defaults to all members of \code{x}.}
 
 \item{named}{A logical: return a named vector or not.}
 
@@ -29,7 +30,7 @@ unnamed and shorter than \code{ids} it is recycled to \code{length(ids)}.}
 \itemize{
 \item \code{getSex(x, ids)} returns an integer vector of the same length as \code{ids},
 with entries 0 (unknown), 1 (male) or 2 (female).
-\item \code{setSex(x, ids, sex)} returns a ped object identical to \code{x}, but where the
+\item \code{setSex(x, ids, sex)} returns a ped object similar to \code{x}, but where the
 sex of \code{ids} is set according to the entries of \code{sex}
 \item \code{swapSex(x, ids)} returns a ped object identical to \code{x}, but where the sex
 of \code{ids} (and their spouses) are swapped (1 <-> 2).
