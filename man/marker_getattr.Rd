@@ -93,7 +93,7 @@ posMb(x, ...)
 several markers) attached to \code{x}.}
 }
 \value{
-These functions perform in-place modification of \code{x}.
+The associated marker attributes.
 }
 \description{
 S3 methods retrieving marker attributes. They work on single marker objects
@@ -111,5 +111,5 @@ chrom(x, marker = 1) # NA
 
 }
 \seealso{
-Setting marker attrubtes: \link{marker_setattr} and \link{marker_inplace}.
+Setting marker attributes: \link{marker_setattr} and \link{marker_inplace}.
 }

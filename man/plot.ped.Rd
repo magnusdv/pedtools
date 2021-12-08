@@ -128,7 +128,7 @@ the \code{relation} parameter of \code{\link[kinship2:plot.pedigree]{kinship2::p
 above pedigree symbols.}
 
 \item{hints}{A list with alignment hints passed on to
-\code{kinship2::align.pedigree()}. Rarely necessary, but see Examples.}
+\code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Rarely necessary, but see Examples.}
 
 \item{fouInb}{Either "autosomal" (default), "x" or NULL. If "autosomal" or
 "x", inbreeding coefficients are added to the plot above the inbred
@@ -141,19 +141,19 @@ singletons only the first element (the 'bottom' margin) is used.}
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
 
-\item{\dots}{Arguments passed on to \code{plot.pedigree} in the \code{kinship2}
-package. In particular \code{symbolsize} and \code{cex} can be useful.}
+\item{\dots}{Arguments passed on to \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}. In
+particular \code{symbolsize} and \code{cex} can be useful.}
 
 \item{yadj}{A tiny adjustment sometimes needed to fix the appearance of
 singletons.}
 }
 \description{
 This is the main function for pedigree plotting, with many options for
-controlling the appearance of pedigree symbols and accompanying labels. Most
-of the work is done by the plotting functionality in the \code{kinship2} package.
+controlling the appearance of pedigree symbols and accompanying labels. It
+wraps the plotting functionality in the \code{kinship2} package.
 }
 \details{
-\code{plot.ped} is in essence an elaborate wrapper for
+This plotting function is in essence an elaborate wrapper for
 \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
 }
 \examples{

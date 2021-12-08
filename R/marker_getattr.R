@@ -9,8 +9,10 @@
 #' @param id The ID label of a single pedigree member.
 #' @param ... Further arguments, not used.
 #'
-#' @return These functions perform in-place modification of `x`.
-#' @seealso Setting marker attrubtes: [marker_setattr] and [marker_inplace].
+#' @return The associated marker attributes.
+#'
+#' @seealso Setting marker attributes: [marker_setattr] and [marker_inplace].
+#'
 #' @examples
 #' x = nuclearPed(1)
 #' x = addMarker(x) # add empty marker

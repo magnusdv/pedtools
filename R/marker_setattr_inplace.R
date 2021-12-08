@@ -13,7 +13,10 @@
 #' @param value Replacement value(s).
 #'
 #' @return These functions perform in-place modification of `x`.
-#' @seealso Regular, pipe-friendly (not in-place) setters: [marker_setattr]. Marker attribute getters: [marker_getattr].
+#'
+#' @seealso Alternative setters (not in-place): [marker_setattr].
+#'   Marker attribute getters: [marker_getattr].
+#'
 #' @examples
 #' x = nuclearPed(1)
 #' x = addMarker(x, alleles = 1:2)

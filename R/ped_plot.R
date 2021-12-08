@@ -1,10 +1,10 @@
 #' Plot pedigrees with genotypes
 #'
 #' This is the main function for pedigree plotting, with many options for
-#' controlling the appearance of pedigree symbols and accompanying labels. Most
-#' of the work is done by the plotting functionality in the `kinship2` package.
+#' controlling the appearance of pedigree symbols and accompanying labels. It
+#' wraps the plotting functionality in the `kinship2` package.
 #'
-#' `plot.ped` is in essence an elaborate wrapper for
+#' This plotting function is in essence an elaborate wrapper for
 #' [kinship2::plot.pedigree()].
 #'
 #' @param x A [ped()] object.
@@ -54,7 +54,7 @@
 #' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param hints A list with alignment hints passed on to
-#'   `kinship2::align.pedigree()`. Rarely necessary, but see Examples.
+#'   [kinship2::align.pedigree()]. Rarely necessary, but see Examples.
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
@@ -67,8 +67,8 @@
 #'   additional annotation.
 #' @param yadj A tiny adjustment sometimes needed to fix the appearance of
 #'   singletons.
-#' @param \dots Arguments passed on to `plot.pedigree` in the `kinship2`
-#'   package. In particular `symbolsize` and `cex` can be useful.
+#' @param \dots Arguments passed on to [kinship2::plot.pedigree()]. In
+#'   particular `symbolsize` and `cex` can be useful.
 #'
 #' @author Magnus Dehli Vigeland
 #' @seealso [kinship2::plot.pedigree()]
