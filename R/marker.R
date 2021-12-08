@@ -234,6 +234,38 @@ addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
                      NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
                      validate = TRUE) {
 
+  if(is.pedList(x)) {
+    if(!is.null(allelematrix))
+      stop2("The argument `allelematrix` cannot be used when `x` is a list of pedigrees")
+    if(is.null(alleles) && is.null(afreq))
+      stop2("Either `alleles` or `afreq` must be specified when `x` is a list of pedigrees")
+
+    glist = parseGeno(geno) %||% parseDots(...)
+
+    nms = names(glist)
+    if(is.null(nms))
+      stop2("Genotypes must be named")
+
+    unkn = setdiff(nms, unlist(labels(x)))
+    if(length(unkn))
+      stop2("Unknown ID label: ", unkn)
+
+    y = lapply(x, function(comp) {
+      labsi = labels(comp)
+      mi = glist2amat(glist[intersect(nms, labsi)], labsi)
+
+      addMarker(comp, allelematrix = mi, alleles = alleles,
+                afreq = afreq, chrom = chrom, posMb = posMb, name = name,
+                NAstrings = NAstrings, mutmod = mutmod, rate = rate,
+                validate = validate)
+    })
+    return(y)
+  }
+
+  if(!is.ped(x))
+    stop2("Input to `addMarker()` must be a `ped` object or a list of such")
+
+  # Otherwise
   m = marker(x, ..., geno = geno, allelematrix = allelematrix,
              alleles = alleles, afreq = afreq,
              chrom = chrom, posMb = posMb, name = name,
