@@ -1,4 +1,15 @@
 
+
+test_that("addMarker() works on ped list", {
+  x = list(nuclearPed(), singleton(4))
+  y = addMarker(x, geno = c("1" = "1/2", "4" = 1), alleles = 1:2)
+  expect_equal(y, list(addMarker(nuclearPed(), "1" = "1/2"), addMarker(singleton(4), 1, alleles = 1:2)))
+
+  z = addMarker(x, "1" = "1/2", alleles = 1:3)
+  expect_equal(alleles(z, 1), as.character(1:3))
+})
+
+
 test_that("setMarkers() creates empty markers with locusAttributes", {
   x = nuclearPed(1)
   ann = list(list(alleles=1:2, name="snp1"), list(alleles=c("a", "b")))
