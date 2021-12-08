@@ -1,5 +1,12 @@
-# pedtools (development version)
+# pedtools 1.1.0
 
+The main theme of this version is to make `pedtools` more adapted to piping, e.g., allowing chains of commands like `nuclearPed() |> addSon(1) |> addMarker(alleles = 1:2)`.
+
+* New functions `setAfreq()`, `setChrom()`, `setGenotype()`, `setMarkername()`, `setPosition()` for modifying marker attributes. These are alternatives to the previous in-place modifiers `afreq<-()` a.s.o..
+
+* New function `addMarker()` which simplifies that common task of creating and attaching a single marker. The command `addMarker(x, ...)` is equivalent to `addMarkers(x, marker(x, ...))`.
+
+* The new `addMarker()` accepts ped lists, so that one can write e.g. `list(singleton(1), singleton(2)) |> addMarker("1" = "a/b", alleles = c("a", "b"))`
 # pedtools 1.0.1
 
 ## New features
