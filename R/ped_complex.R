@@ -1,7 +1,7 @@
 #' Complex pedigree structures
 #'
 #' Functions for creating a selection of pedigrees that are awkward to construct
-#' from scratch, or by using the simple structures described in [ped_basic].
+#' from scratch or with the simple structures described in [ped_basic].
 #'
 #' The function `doubleCousins` returns a pedigree linking two individuals who
 #' are simultaneous paternal and maternal cousins. More precisely, they are:
@@ -21,6 +21,8 @@
 #' final generation are simultaneous half k'th cousins, for each `k =
 #' 0,...,n-1`.
 #'
+#' `halfSibTriangle` produces a triangular pedigree in which every pair of
+#' parents are half siblings.
 #'
 #' @param degree1,degree2,removal1,removal2 Nonnegative integers.
 #' @param half1,half2 Logicals, indicating if the fathers (resp. mothers) should
@@ -49,6 +51,10 @@
 #' # Quadruple half first cousins
 #' x = quadHalfFirstCousins()
 #' # plot(x) # Weird plotting behaviour for this pedigree.
+#'
+#' # Triangular half-sib pattern
+#' x = halfSibTriangle(4)
+#' # plot(x)
 #'
 #' @name ped_complex
 NULL
@@ -167,7 +173,7 @@ halfSibStack = function(n) {
     # Creates pedigree resulting from a breeding scheme where each generation adds two half
     # brothers and a female founder.  These become the parents of the half brothers in the next
     # layer.
-    if(!isCount(n)) stop2("`generations` must be a positive integer")
+    if(!isCount(n)) stop2("`n` must be a positive integer")
     x = ped(id = 1:5, fid = c(0, 0, 0, 1, 2), mid = c(0, 0, 0, 3, 3),
             sex = c(1, 1, 2, 1, 1), verbose = FALSE)
     for (g in seq_len(n)[-1]) {
@@ -176,4 +182,26 @@ halfSibStack = function(n) {
         x = addChildren(x, father = m - 1, mother = m, nch = 1, verbose = FALSE)
     }
     x
+}
+
+#' @param g A positive integer; the number of generations.
+#' @rdname ped_complex
+#' @export
+halfSibTriangle = function(g) {
+  # A breeding scheme producing a triangular pedigree where every pair of parents are half sibs.
+  if(!isCount(g))
+    stop2("`g` must be a positive integer")
+  if(g == 1)
+    return(singleton(1))
+
+  N = choose(g + 1, 2)
+  id = seq_len(N)
+  sex = unlist(lapply(g:1, function(a) rep_len(c(1L, 2L), length.out = a)))
+  rw = rep(1:g, g:1) # row number
+  par1 = pmax(0, id - g + rw - 2)
+  par2 = pmax(0, id - g + rw - 1)
+  fid = ifelse(sex == 1, par1, par2)
+  mid = ifelse(sex == 1, par2, par1)
+
+  ped(id = id, fid = fid, mid = mid, sex = sex, verbose = FALSE)
 }

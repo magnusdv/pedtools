@@ -7,6 +7,7 @@
 \alias{quadHalfFirstCousins}
 \alias{fullSibMating}
 \alias{halfSibStack}
+\alias{halfSibTriangle}
 \title{Complex pedigree structures}
 \usage{
 doubleCousins(
@@ -26,6 +27,8 @@ quadHalfFirstCousins()
 fullSibMating(n)
 
 halfSibStack(n)
+
+halfSibTriangle(g)
 }
 \arguments{
 \item{degree1, degree2, removal1, removal2}{Nonnegative integers.}
@@ -36,13 +39,15 @@ be full or half cousins.}
 \item{child}{A logical: Should a child be added to the double cousins?}
 
 \item{n}{A positive integer indicating the number of crossings.}
+
+\item{g}{A positive integer; the number of generations.}
 }
 \value{
 A \code{\link{ped}} object.
 }
 \description{
 Functions for creating a selection of pedigrees that are awkward to construct
-from scratch, or by using the simple structures described in \link{ped_basic}.
+from scratch or with the simple structures described in \link{ped_basic}.
 }
 \details{
 The function \code{doubleCousins} returns a pedigree linking two individuals who
@@ -61,6 +66,9 @@ common case, double first cousins.
 
 \code{halfSibStack} produces a breeding scheme where the two individuals in the
 final generation are simultaneous half k'th cousins, for each \verb{k = 0,...,n-1}.
+
+\code{halfSibTriangle} produces a triangular pedigree in which every pair of
+parents are half siblings.
 }
 \examples{
 
@@ -79,6 +87,10 @@ x = doubleFirstCousins()
 # Quadruple half first cousins
 x = quadHalfFirstCousins()
 # plot(x) # Weird plotting behaviour for this pedigree.
+
+# Triangular half-sib pattern
+x = halfSibTriangle(4)
+# plot(x)
 
 }
 \seealso{
