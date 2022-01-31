@@ -49,7 +49,7 @@ Write a pedigree to file
 \examples{
 
 x = nuclearPed(1)
-x = setMarkers(x, marker(x, "3" = "a/b", name = "m1"))
+x = addMarker(x, "3" = "a/b", name = "m1")
 
 # Write to file
 fn = writePed(x, prefix = tempfile("test"))

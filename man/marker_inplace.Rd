@@ -115,6 +115,6 @@ stopifnot(identical(x$MARKERS[[1]], m))
 
 }
 \seealso{
-Regular, pipe-friendly (not in-place) setters: \link{marker_setattr}.
+Alternative setters (not in-place): \link{marker_setattr}.
 Marker attribute getters: \link{marker_getattr}.
 }
