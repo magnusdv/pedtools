@@ -96,9 +96,12 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
       stop2("When `x` is a list of pedigrees, argument `m` must be NULL")
     y = lapply(x, function(comp)
       setMarkers(comp, alleleMatrix = alleleMatrix, locusAttributes = locusAttributes,
-                 missing = missing, sep = sep))
+                 missing = missing, sep = sep, checkCons = checkCons))
     return(y)
   }
+
+  if(!is.ped(x))
+    stop2("First argument must be a `ped` object or a list of such")
 
   # If no data, remove all markers and return
   if(is.null(m) && is.null(alleleMatrix) && length(locusAttributes) == 0) {
@@ -132,6 +135,7 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   x
 }
 
+
 #' @rdname marker_attach
 #' @export
 addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
@@ -143,7 +147,19 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   if(isFALSE(sep))
     sep = NULL
 
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+  # If pedlist input, recurse over components
+  if(is.pedList(x)) {
+    if(!is.null(m))
+      stop2("When `x` is a list of pedigrees, argument `m` must be NULL")
+    y = lapply(x, function(comp)
+      addMarkers(comp, alleleMatrix = alleleMatrix, locusAttributes = locusAttributes,
+                 missing = missing, sep = sep, checkCons = checkCons))
+    return(y)
+  }
+
+  if(!is.ped(x))
+    stop2("First argument must be a `ped` object or a list of such")
+
 
   # If no data, do nothing
   if(is.null(m) && is.null(alleleMatrix) && length(locusAttributes) == 0) {
