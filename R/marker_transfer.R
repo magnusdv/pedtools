@@ -74,7 +74,7 @@ transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
   if(checkSex) {
     sexFrom = getSex(from, idsFrom)
     sexTo = getSex(to, idsTo)
-    if(any(bad <- sexFrom != sexTo)) {
+    if(any(bad <- sexFrom > 0 & sexTo > 0 & sexFrom != sexTo)) {
       ss = c("male", "female")
       mess = sprintf(" '%s' (%s)  -->  '%s' (%s)",
                      idsFrom[bad], ss[sexFrom[bad]], idsTo[bad], ss[sexTo[bad]])
