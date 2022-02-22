@@ -17,8 +17,8 @@ test_that("writePed is reversed by readPed - singleton", {
 })
 
 test_that("writePed is reversed by readPed - ped with marker", {
-  x = nuclearPed(fa = "fa", nch = 1)
-  x = setMarkers(x, marker(x, fa = "a/b", name = "m1"))
+  x = nuclearPed(fa = "fa", nch = 1) |>
+    addMarker(fa = "a/b", name = "m1")
 
   # Without famid
   f1 = wrped(x, famid = F, header = T)
@@ -31,7 +31,7 @@ test_that("writePed is reversed by readPed - ped with marker", {
 })
 
 test_that("writePed is reversed by readPed - pedlist", {
-  x = setMarkers(singleton(1), marker(singleton(1), "1" = 1:2, name = "m"))
+  x = addMarker(singleton(1), "1" = 1:2, name = "m")
   xx = list(p1 = x, p2 = x)
 
   f1 = wrped(xx, famid = T, header = T)
@@ -41,8 +41,8 @@ test_that("writePed is reversed by readPed - pedlist", {
 })
 
 test_that("writePed is reversed by readPed - ped+freq", {
-  x = nuclearPed(fa = "fa", nch = 1)
-  x = setMarkers(x, marker(x, fa = "a/b", afreq = c(a=.1, b=.9), name = "m1"))
+  x = nuclearPed(fa = "fa", nch = 1) |>
+  addMarker(fa = "a/b", afreq = c(a=.1, b=.9), name = "m1")
 
   # Without famid
   ff = wrped(x, famid = F, header = T, what = c("ped", "freq"))

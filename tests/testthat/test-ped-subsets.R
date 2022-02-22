@@ -21,11 +21,11 @@ test_that("branch() catches errors", {
 })
 
 test_that("subset() preserves marker annotations", {
-  x = nuclearPed(1)
-  x = setMarkers(x, marker(x, '3'=2, alleles=1:2, afreq=c(0.1,0.9), name="m1"))
+  x = nuclearPed(1) |>
+    addMarker('3' = "2/2", alleles = 1:2, afreq = c(0.1,0.9), name = "m1")
 
-  s = singleton(3)
-  s = setMarkers(s, marker(s, '3'=2, alleles=1:2, afreq=c(0.1,0.9), name="m1"))
+  s = singleton(3) |>
+    addMarker('3' = "2/2", alleles = 1:2, afreq = c(0.1,0.9), name = "m1")
 
   expect_identical(subset(x, 3), s)
 })

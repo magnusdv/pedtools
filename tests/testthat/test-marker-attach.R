@@ -21,8 +21,7 @@ test_that("setMarkers() creates empty markers with locusAttributes", {
 })
 
 test_that("addMarkers() adds empty markers with locusAttributes", {
-  x = nuclearPed(1)
-  x = setMarkers(x, marker(x, name="M0"))
+  x = nuclearPed(1) |> addMarker(name = "M0")
 
   ann = list(list(alleles=1:2, name="snp1"), list(alleles=c("a", "b")))
   x = addMarkers(x, locusAttributes=ann)

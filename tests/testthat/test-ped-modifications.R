@@ -156,16 +156,14 @@ test_that("adding and removing child restores original", {
 })
 
 test_that("adding and removing child restores original - with markers", {
-  x = nuclearPed(1)
-  x = setMarkers(x, marker(x, '3'=1:2))
+  x = nuclearPed(1) |> addMarker('3' = "1/2")
   y = addChildren(x, father=3, verbose=F)
   z = removeIndividuals(y, 5, verbose=F)
   expect_equal(x, z)
 })
 
 test_that("adding and removing parents restores original - with markers", {
-  x = nuclearPed(1)
-  x = setMarkers(x, marker(x, '1'=1:2))
+  x = nuclearPed(1) |> addMarker('1' = "1/2")
   y = addParents(x, id=1, verbose=F)
   z = branch(y, 1)
   expect_equal(x, z)
@@ -245,8 +243,7 @@ test_that("relabel() is strict", {
 })
 
 test_that("relabelling is passed on to markers", {
-  x = nuclearPed(1)
-  x = setMarkers(x, marker(x))
+  x = nuclearPed(1) |> addMarker()
   x = relabel(x, old=2, new="mother")
   expect_identical(attr(x$MARKERS[[1]], 'pedmembers'),
                    c('1','mother','3'))

@@ -71,10 +71,11 @@ test_that("as.ped() converts data.frame to singletons with marker columns", {
 })
 
 test_that("as.ped() does not reorder (i.e. does not shuffle genotypes)", {
-  x = reorderPed(nuclearPed(1), 3:1)
-  x = setMarkers(x, marker(x, '3' = 1:2, name = "M"))
-  s = singleton("NN")
-  s = setMarkers(s, marker(s, NN = 1:2, name = "M"))
+  x = reorderPed(nuclearPed(1), 3:1) |>
+    addMarker('3' = "1/2", name = "M")
+  s = singleton("NN") |>
+    addMarker(NN = 1:2, name = "M")
+
   df = rbind(as.data.frame(x), as.data.frame(s))
   df = cbind(famid = c(1,1,1,2), df)
 

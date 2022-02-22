@@ -29,11 +29,12 @@ test_that("ped is unchanged after back-and-fourth transfer to singleton", {
 
 test_that("pedlist is unchaged after self-transfer of markers", {
 
-  x = nuclearPed(children="boy")
-  x = setMarkers(x, marker(x, boy="a", alleles=c("a", "b")))
+  x = nuclearPed(children="boy") |>
+    addMarker(boy="a", alleles=c("a", "b"))
 
-  y = singleton("otherboy")
-  y = setMarkers(y, marker(y, otherboy="b", alleles=c("a", "b")))
+  y = singleton("otherboy") |>
+    addMarker(otherboy="b", alleles=c("a", "b"))
+
   pedlist = list(x, y)
 
   expect_identical(transferMarkers(pedlist,pedlist), pedlist)
@@ -65,8 +66,7 @@ test_that("transfer of multiple markers works when erase = F", {
 })
 
 test_that("transferMarkers checks for duplicated IDs", {
-  x = singleton("a")
-  x = setMarkers(x, marker(x, a = "1/2", name = "M"))
+  x = singleton("a") |> addMarker(a = "1/2", name = "M")
 
   expect_error(transferMarkers(list(x,x), x), "Non-unique ID label in source ped: a")
   expect_error(transferMarkers(list(x,x), x, ids = "a"), "Non-unique ID label in source ped: a")
@@ -77,15 +77,13 @@ test_that("transferMarkers checks for duplicated IDs", {
 })
 
 test_that("transferMarkers works with changing labels", {
-  x = singleton("a"); y = singleton("b")
-  x = setMarkers(x, marker(x, a = "1/2", name = "M"))
-
+  x = singleton("a") |> addMarker(a = "1/2", name = "M")
+  y = singleton("b")
   expect_equal(transferMarkers(x, y, idsFrom = "a", idsTo = "b"),
-               setMarkers(y, marker(y, b = "1/2", name = "M")))
+               addMarker(y, b = "1/2", name = "M"))
 
   # Roundtrip
-  x1 = nuclearPed()
-  x1 = setMarkers(x1, marker(x1, "1" = "1/2"))
+  x1 = nuclearPed() |> addMarker("1" = "1/2")
 
   x2 = transferMarkers(x1, x1, idsFrom=1, idsTo=2)
   x3 = transferMarkers(x2, x2, idsFrom=2, idsTo=3)
