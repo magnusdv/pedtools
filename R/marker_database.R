@@ -193,13 +193,13 @@ readFreqDatabase = function(filename, format = c("list", "ladder"), ...) {
     raw = raw[raw$V1 != "", 1:2, drop = FALSE]
 
     # First/last lines numbers for each marker
-    newMarker = which(is.na(raw$V2))
-    stops = c(newMarker[-1] -  1, nrow(raw))
-    nms = raw[newMarker, 1]
+    newM = which(is.na(raw$V2))
+    stops = c(newM[-1] -  1, nrow(raw))
+    nms = raw[newM, 1]
 
     # Convert to list of named frequency vectors
     res = lapply(seq_along(nms), function(i) {
-      m = raw[newMarker[i]:stops[i], , drop = FALSE]
+      m = raw[newM[i]:stops[i], , drop = FALSE]
       als = m[-1, 1]
       afr = m[-1, 2]
       setNames(afr, als)
