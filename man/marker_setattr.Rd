@@ -22,7 +22,8 @@ setPosition(x, marker = NULL, posMb)
 \arguments{
 \item{x}{A \code{ped} object or a list of \code{ped} objects.}
 
-\item{marker}{The index or name of a marker attached to \code{x}.}
+\item{marker}{A vector of indices or names of one or several markers attached
+to \code{x}.}
 
 \item{id}{The ID label of a single pedigree member.}
 
@@ -35,12 +36,14 @@ don't sum to 1 after rounding to 3 decimals. If the vector is named, and
 \code{alleles} is not NULL, an error is raised if \code{setequal(names(afreq), alleles)} is not TRUE. If \code{afreq} is not specified, all alleles are given
 equal frequencies.}
 
-\item{name}{a character string: the name of the marker. Default: NA.}
+\item{name}{A character of the same length as \code{marker}, containing marker
+names.}
 
-\item{chrom}{a single integer: the chromosome number. Default: NA.}
+\item{chrom}{A character of the same length as \code{marker}, containing
+chromosome labels.}
 
-\item{posMb}{a nonnegative real number: the physical position of the marker,
-in megabases. Default: NA.}
+\item{posMb}{A numeric of the same length as \code{marker}, containing the
+physical marker positions in megabases (or NA).}
 }
 \value{
 A copy of \code{x} with modified attributes.

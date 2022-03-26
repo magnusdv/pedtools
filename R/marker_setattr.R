@@ -7,7 +7,14 @@
 #' @inheritParams marker
 #' @param x A `ped` object or a list of `ped` objects.
 #' @param id The ID label of a single pedigree member.
-#' @param marker The index or name of a marker attached to `x`.
+#' @param marker A vector of indices or names of one or several markers attached
+#'   to `x`.
+#' @param name A character of the same length as `marker`, containing marker
+#'   names.
+#' @param chrom A character of the same length as `marker`, containing
+#'   chromosome labels.
+#' @param posMb A numeric of the same length as `marker`, containing the
+#'   physical marker positions in megabases (or NA).
 #'
 #' @return A copy of `x` with modified attributes.
 #'
@@ -224,6 +231,9 @@ setMarkername = function(x, marker = NULL, name) {
   marker = marker %||% seq_markers(x)
   if(length(marker) == 0)
     stop2("Argument `marker` cannot be empty")
+
+  name = as.character(name) # especially important to allow NA input
+
   if(length(name) != length(marker))
     stop2("Length of `name` must equal the number of markers")
   if(!is.character(name))
