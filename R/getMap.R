@@ -29,6 +29,9 @@
 #'
 #'   `setMap()` returns `x` with modified marker attributes.
 #'
+#'   `hasLinkedMarkers()` returns TRUE if two markers are located (with set
+#'   position) on the same chromosome, and FALSE otherwise.
+#'
 #' @examples
 #' x = singleton(1)
 #' m1 = marker(x, chrom = 1, posMb = 10, name = "m1")
@@ -146,4 +149,20 @@ setMap = function(x, map, matchNames = NA, ...) {
   }
 
   x
+}
+
+
+
+#' @export
+#' @rdname getMap
+hasLinkedMarkers = function(x) {
+  map = getMap(x, na.action = 0, verbose = FALSE)
+  if(is.null(map))
+    return(FALSE)
+
+  # With data on both chrom and position
+  haspos = !is.na(map$CHROM) & !is.na(map$MB)
+
+  # Return TRUE if two markers on the same chromosome
+  anyDuplicated(map$CHROM[haspos]) > 0
 }

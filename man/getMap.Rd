@@ -3,11 +3,14 @@
 \name{getMap}
 \alias{getMap}
 \alias{setMap}
+\alias{hasLinkedMarkers}
 \title{Tabulate marker positions}
 \usage{
 getMap(x, markers = NULL, na.action = 0, verbose = TRUE)
 
 setMap(x, map, matchNames = NA, ...)
+
+hasLinkedMarkers(x)
 }
 \arguments{
 \item{x}{An object of class \code{ped} or a list of such.}
@@ -31,6 +34,9 @@ be used to assign chromosome labels and positions from \code{map}.}
 \code{MB}.
 
 \code{setMap()} returns \code{x} with modified marker attributes.
+
+\code{hasLinkedMarkers()} returns TRUE if two markers are located (with set
+position) on the same chromosome, and FALSE otherwise.
 }
 \description{
 Return a map of the markers attached to a pedigree.
