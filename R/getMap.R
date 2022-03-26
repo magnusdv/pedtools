@@ -11,7 +11,14 @@
 #' * `na.action` = 2: Remove markers with missing data.
 #'
 #' In `setMap()`, the `map` argument should be a data frame (or file) with the
-#' following columns in order: 1) chromosome, 2) marker name, 3) position in megabases.
+#' following columns in order:
+#'
+#' 1) chromosome
+#'
+#' 2) marker name
+#'
+#' 3) position (Mb)
+#'
 #' Column names are ignored, as are any columns after the first three.
 #'
 #' @param x An object of class `ped` or a list of such.
@@ -19,7 +26,8 @@
 #'   `x`. By default, all markers are included.
 #' @param na.action Either 0 (default), 1 or 2. (See Details.)
 #' @param verbose A logical.
-#' @param map Either a data frame or the path to a map file.
+#' @param map Either a data frame or the path to a map file. See Details
+#'   regarding format.
 #' @param matchNames A logical; if TRUE, pre-existing marker names of `x` will
 #'   be used to assign chromosome labels and positions from `map`.
 #' @param ... Further arguments passed to `read.table()`.
@@ -46,7 +54,9 @@
 #'
 #' # Getting and setting map are inverses
 #' y = setMap(x, getMap(x))
-#' identical(x,y)
+#' stopifnot(identical(x,y))
+#'
+#' hasLinkedMarkers(x)
 #'
 #' @export
 getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
@@ -167,3 +177,4 @@ hasLinkedMarkers = function(x) {
   # Return TRUE if two markers on the same chromosome
   anyDuplicated(map$CHROM[haspos]) > 0
 }
+

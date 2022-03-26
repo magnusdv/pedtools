@@ -22,7 +22,8 @@ hasLinkedMarkers(x)
 
 \item{verbose}{A logical.}
 
-\item{map}{Either a data frame or the path to a map file.}
+\item{map}{Either a data frame or the path to a map file. See Details
+regarding format.}
 
 \item{matchNames}{A logical; if TRUE, pre-existing marker names of \code{x} will
 be used to assign chromosome labels and positions from \code{map}.}
@@ -50,7 +51,13 @@ The \code{na.action} argument controls how missing values are dealt with:
 }
 
 In \code{setMap()}, the \code{map} argument should be a data frame (or file) with the
-following columns in order: 1) chromosome, 2) marker name, 3) position in megabases.
+following columns in order:
+\enumerate{
+\item chromosome
+\item marker name
+\item position (Mb)
+}
+
 Column names are ignored, as are any columns after the first three.
 }
 \examples{
@@ -67,6 +74,8 @@ getMap(x, na.action = 2)
 
 # Getting and setting map are inverses
 y = setMap(x, getMap(x))
-identical(x,y)
+stopifnot(identical(x,y))
+
+hasLinkedMarkers(x)
 
 }
