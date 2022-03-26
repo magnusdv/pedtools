@@ -142,21 +142,24 @@ setMap = function(x, map, matchNames = NA, ...) {
 
   # Match names if either i) mismatch in number, or ii) names actually match in some order
   if(is.na(matchNames))
-    matchNames = (nrow(map) != N) || (!all(is.na(mapNames)) && setequal(mapNames, xNames))
+    matchNames = (nrow(map) != N) || (!any(is.na(mapNames)) && setequal(mapNames, xNames))
 
   if(matchNames) {
     mIdx = match(xNames, mapNames, nomatch = NA)
     mIdx = mIdx[!is.na(mIdx)]
 
-    chrom(x, mIdx) = map[[1]][mIdx]
-    posMb(x, mIdx) = map[[3]][mIdx]
+    chr = map[[1]][mIdx]
+    pos = map[[3]][mIdx]
+    x = setChrom(x, 1:N, chrom = chr)
+    x = setPosition(x, 1:N, posMb = pos)
   }
   else {
     if(nrow(map) != N)
-      stop2("`map` incompatible with `x` (with `matchNames = F`)")
-    chrom(x, 1:N) = map[[1]]
-    name(x, 1:N) = map[[2]]
-    posMb(x, 1:N) = map[[3]]
+      stop2("`map` incompatible with `x`. If the markers are named, set `matchNames = TRUE`")
+
+    x = setChrom(x, 1:N, chrom = map[[1]])
+    x = setMarkername(x, 1:N, name = map[[2]])
+    x = setPosition(x, 1:N, posMb = map[[3]])
   }
 
   x
