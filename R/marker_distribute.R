@@ -10,7 +10,7 @@
 #' @param prefix A string used as prefix for marker names. The default (NULL)
 #'   gives no names.
 #'
-#' @return A ped object similar to `x`.
+#' @return An object similar to `x`, but with the indicated markers attached.
 #'
 #' @examples
 #' x = distributeMarkers(nuclearPed(), n = 10, prefix = "M")
@@ -64,3 +64,85 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 }
 
 
+
+#' Attach SNP loci to a pedigree
+#'
+#' Create and attach a list of empty SNP markers with specified positions,
+#' alleles and allele frequencies.
+#'
+#' The data frame `snpData` should contain the following columns in order:
+#'
+#' * MARKER: Marker names (character)
+#'
+#' * CHROM: Chromosome (character)
+#'
+#' * MB: Physical position in megabases (numeric)
+#'
+#' * A1: First allele (character; single letters)
+#'
+#' * A2: Second allele (character; single letters)
+#'
+#' * FREQ1: Allele frequency of A1 (numeric; values in `[0,1]`)
+#'
+#' The actual names of the input data frame do not matter.
+#'
+#' Each column must be of the stated class, or coercible to this. (For example,
+#' CHROM, A1 and A2 may all be given as numbers, internally converted to
+#' characters.)
+#'
+#' @param x A `ped` object.
+#' @param snpData A data frame with 6 columns. See Details.
+#'
+#' @return An object similar to `x`, but with the indicated markers attached.
+#'
+#' @examples
+#' snps = data.frame(
+#'   MARKER = c("snp1", "snp2"),
+#'   CHROM  = 1:2,
+#'   MB     = c(1.23, 2.34),
+#'   A1    = c("A", "G"),
+#'   A2    = c("C", "C"),
+#'   FREQ1    = c(0.7, 0.12))
+#'
+#' x = setSNPs(nuclearPed(), snpData = snps)
+#' getMap(x)
+#'
+#' @importFrom utils head
+#' @export
+setSNPs = function(x, snpData) {
+
+  if(is.pedList(x))
+    return(lapply(x, function(y) setSNPs(y, snpData)))
+  if(!is.ped(x))
+    stop2("Argument `x` is not a ped object: ", class(x))
+
+  if(!is.data.frame(snpData) || ncol(snpData) != 6)
+    stop2("`snpData` must be a data frame with 6 columns. See ?setSNPs")
+
+  # Columns
+  MARKER = as.character(snpData[[1]])
+  CHROM = as.character(snpData[[2]])
+  MB = as.numeric(snpData[[3]])
+  A1 = as.character(snpData[[4]])
+  A2 = as.character(snpData[[5]])
+  FREQ1 = as.numeric(snpData[[6]])
+
+  if(any(bad <- (FREQ1 > 1 | FREQ1 < 0)))
+    stop2("Illegal allele frequency: ", head(FREQ1[bad]))
+  if(any(bad <- (nchar(c(A1, A2)) != 1)))
+    stop2("Illegal allele label (should be single letters/digits): ", head(c(A1, A2)[bad]))
+
+  # Same for all markers
+  labs = labels(x)
+  sex = getSex(x)
+  als = matrix(0L, ncol = 2, nrow = pedsize(x))
+
+  # Construct markers
+  mlist = lapply(seq_along(MARKER), function(i)
+    newMarker(als, alleles = c(A1[i], A2[i]), afreq = c(FREQ1[i], 1 - FREQ1[i]),
+              name = MARKER[i], chrom = CHROM[i], posMb = MB[i], pedmembers = labs, sex = sex)
+  )
+
+  class(mlist) = "markerList"
+  setMarkers(x, mlist, checkCons = FALSE)
+}

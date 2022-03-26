@@ -31,7 +31,7 @@ default, the lengths of the human chromosomes 1-22 are used, as returned by
 gives no names.}
 }
 \value{
-A ped object similar to \code{x}.
+An object similar to \code{x}, but with the indicated markers attached.
 }
 \description{
 Attach identical markers evenly distributed across the genome
