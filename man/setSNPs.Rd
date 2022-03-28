@@ -21,8 +21,8 @@ alleles and allele frequencies.
 \details{
 The data frame \code{snpData} should contain the following columns in order:
 \itemize{
-\item MARKER: Marker names (character)
 \item CHROM: Chromosome (character)
+\item MARKER: Marker name (character)
 \item MB: Physical position in megabases (numeric)
 \item A1: First allele (character; single letters)
 \item A2: Second allele (character; single letters)
@@ -31,14 +31,14 @@ The data frame \code{snpData} should contain the following columns in order:
 
 The actual names of the input data frame do not matter.
 
-Each column must be of the stated class, or coercible to this. (For example,
-CHROM, A1 and A2 may all be given as numbers, internally converted to
-characters.)
+Each column must be of the stated type, or coercible to this. (For example,
+CHROM, A1 and A2 may all be given as numbers, but will be internally
+converted to characters.)
 }
 \examples{
 snps = data.frame(
-  MARKER = c("snp1", "snp2"),
   CHROM  = 1:2,
+  MARKER = c("M1", "M2"),
   MB     = c(1.23, 2.34),
   A1    = c("A", "G"),
   A2    = c("C", "C"),
@@ -46,5 +46,6 @@ snps = data.frame(
 
 x = setSNPs(nuclearPed(), snpData = snps)
 getMap(x)
+getFreqDatabase(x)
 
 }

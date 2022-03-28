@@ -72,9 +72,9 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 #'
 #' The data frame `snpData` should contain the following columns in order:
 #'
-#' * MARKER: Marker names (character)
-#'
 #' * CHROM: Chromosome (character)
+#'
+#' * MARKER: Marker name (character)
 #'
 #' * MB: Physical position in megabases (numeric)
 #'
@@ -86,9 +86,9 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 #'
 #' The actual names of the input data frame do not matter.
 #'
-#' Each column must be of the stated class, or coercible to this. (For example,
-#' CHROM, A1 and A2 may all be given as numbers, internally converted to
-#' characters.)
+#' Each column must be of the stated type, or coercible to this. (For example,
+#' CHROM, A1 and A2 may all be given as numbers, but will be internally
+#' converted to characters.)
 #'
 #' @param x A `ped` object.
 #' @param snpData A data frame with 6 columns. See Details.
@@ -97,8 +97,8 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 #'
 #' @examples
 #' snps = data.frame(
-#'   MARKER = c("snp1", "snp2"),
 #'   CHROM  = 1:2,
+#'   MARKER = c("M1", "M2"),
 #'   MB     = c(1.23, 2.34),
 #'   A1    = c("A", "G"),
 #'   A2    = c("C", "C"),
@@ -106,6 +106,7 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 #'
 #' x = setSNPs(nuclearPed(), snpData = snps)
 #' getMap(x)
+#' getFreqDatabase(x)
 #'
 #' @importFrom utils head
 #' @export
@@ -119,9 +120,16 @@ setSNPs = function(x, snpData) {
   if(!is.data.frame(snpData) || ncol(snpData) != 6)
     stop2("`snpData` must be a data frame with 6 columns. See ?setSNPs")
 
+  names(snpData) = toupper(names(snpData))
+
+  # If all names present, but possibly wrong order: sort
+  nms = c("CHROM", "MARKER", "MB", "A1", "A2", "FREQ1")
+  if(setequal(nms, names(snpData)))
+    snpData = snpData[nms]
+
   # Columns
-  MARKER = as.character(snpData[[1]])
-  CHROM = as.character(snpData[[2]])
+  CHROM = as.character(snpData[[1]])
+  MARKER = as.character(snpData[[2]])
   MB = as.numeric(snpData[[3]])
   A1 = as.character(snpData[[4]])
   A2 = as.character(snpData[[5]])
