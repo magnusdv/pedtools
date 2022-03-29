@@ -11,7 +11,7 @@ distributeMarkers(
   chromLen = NULL,
   alleles = 1:2,
   afreq = NULL,
-  prefix = NULL
+  prefix = "M"
 )
 }
 \arguments{
@@ -27,8 +27,7 @@ default, the lengths of the human chromosomes 1-22 are used, as returned by
 
 \item{alleles, afreq}{Passed onto \code{\link[=marker]{marker()}}.}
 
-\item{prefix}{A string used as prefix for marker names. The default (NULL)
-gives no names.}
+\item{prefix}{A string used as prefix for marker names. Default: "M".}
 }
 \value{
 An object similar to \code{x}, but with the indicated markers attached.
@@ -37,7 +36,7 @@ An object similar to \code{x}, but with the indicated markers attached.
 Attach identical markers evenly distributed across the genome
 }
 \examples{
-x = distributeMarkers(nuclearPed(), n = 10, prefix = "M")
+x = distributeMarkers(nuclearPed(), n = 10)
 getMap(x)
 
 }

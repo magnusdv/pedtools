@@ -7,19 +7,17 @@
 #'   default, the lengths of the human chromosomes 1-22 are used, as returned by
 #'   `sapply(ibdsim2::loadMap("decode"), ibdsim2::physRange)`.
 #' @param alleles,afreq Passed onto [marker()].
-#' @param prefix A string used as prefix for marker names. The default (NULL)
-#'   gives no names.
+#' @param prefix A string used as prefix for marker names. Default: "M".
 #'
 #' @return An object similar to `x`, but with the indicated markers attached.
 #'
 #' @examples
-#' x = distributeMarkers(nuclearPed(), n = 10, prefix = "M")
+#' x = distributeMarkers(nuclearPed(), n = 10)
 #' getMap(x)
 #'
 #' @export
 distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
-                             alleles = 1:2, afreq = NULL, prefix = NULL) {
-  if(is.null(chromLen))
+                             alleles = 1:2, afreq = NULL, prefix = "M") {
 
   if(!length(chromLen)) {
     chromLen = c(246.98258, 241.01465, 197.08100, 188.84446, 180.22043, 169.42632, 158.18255,
