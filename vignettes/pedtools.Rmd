@@ -180,7 +180,7 @@ plot(x1, margin = c(1,1,1,1))
 ```
 
 **Alternative A**  
-One approach is to first create individuals 1-6 as half sibships, with 1 child on the left side, and 2 children on the right. After this, we use `addChildren()` to add the inbred child.
+One approach is to first create the pedigree consisting of individuals 1-6, with `halfSibPed()`, and then use `addChildren()` to add the inbred child.
 ```{r}
 x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
 x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
@@ -217,7 +217,7 @@ identical(x1, x2)
 ```
 
 ### Example 3: A complex family tree
-For our final example we consider a complicated family tree extending both upwards and downwards from a single person.
+Here we consider the family tree below, extending both upwards and downwards from a single person.
 
 ```{r merge-example, echo = FALSE, message = F}
 # Top part
@@ -245,7 +245,7 @@ The hardest part of using `mergePed()` is to get the labelling right; this will 
 ```
 
 ## Pedigree subsets
-Pedtools offers a range of utility functions for identifying subsets of pedigree members. These come in two flavours: 1) members with certain _global_ property, and 2) members with a certain relationship to a given individual.
+Many situations call for selecting all pedigree members sharing some property, e.g., all females, or all descendants of some person. Several utilities in pedtools exist to help with such tasks. Generally these come in two flavours: 1) members with certain _global_ property, and 2) members with a certain relationship to a given individual.
 
 **Pedigree members with a certain property**  
 Each of the following functions returns a vector specifying the members with the given property. 

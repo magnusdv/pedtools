@@ -97,11 +97,11 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 #'
 #' * MB: Physical position in megabases (numeric)
 #'
-#' * A1: First allele (character; single letters)
+#' * A1: First allele (single-letter character)
 #'
-#' * A2: Second allele (character; single letters)
+#' * A2: Second allele (single-letter character)
 #'
-#' * FREQ1: Allele frequency of A1 (numeric; values in `[0,1]`)
+#' * FREQ1: Allele frequency of A1 (number in `[0,1]`)
 #'
 #' The actual names of the input data frame do not matter.
 #'

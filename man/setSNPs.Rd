@@ -24,9 +24,9 @@ The data frame \code{snpData} should contain the following columns in order:
 \item CHROM: Chromosome (character)
 \item MARKER: Marker name (character)
 \item MB: Physical position in megabases (numeric)
-\item A1: First allele (character; single letters)
-\item A2: Second allele (character; single letters)
-\item FREQ1: Allele frequency of A1 (numeric; values in \verb{[0,1]})
+\item A1: First allele (single-letter character)
+\item A2: Second allele (single-letter character)
+\item FREQ1: Allele frequency of A1 (number in \verb{[0,1]})
 }
 
 The actual names of the input data frame do not matter.
