@@ -241,19 +241,18 @@ addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
       stop2("Either `alleles` or `afreq` must be specified when `x` is a list of pedigrees")
 
     glist = parseGeno(geno) %||% parseDots(...)
+    if(hasGeno <- !is.null(glist)) {
+      if(is.null(nms <- names(glist)))
+        stop2("Genotypes must be named when `x` is a ped list")
 
-    nms = names(glist)
-    if(is.null(nms))
-      stop2("Genotypes must be named")
-
-    unkn = setdiff(nms, unlist(labels(x)))
-    if(length(unkn))
-      stop2("Unknown ID label: ", unkn)
+      unkn = setdiff(nms, unlist(labels(x)))
+      if(length(unkn))
+        stop2("Unknown ID label: ", unkn)
+    }
 
     y = lapply(x, function(comp) {
       labsi = labels(comp)
-      mi = glist2amat(glist[intersect(nms, labsi)], labsi)
-
+      mi = if(hasGeno) glist2amat(glist[intersect(nms, labsi)], labsi) else NULL
       addMarker(comp, allelematrix = mi, alleles = alleles,
                 afreq = afreq, chrom = chrom, posMb = posMb, name = name,
                 NAstrings = NAstrings, mutmod = mutmod, rate = rate,

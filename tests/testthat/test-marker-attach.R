@@ -7,6 +7,9 @@ test_that("addMarker() works on ped list", {
 
   z = addMarker(x, "1" = "1/2", alleles = 1:3)
   expect_equal(alleles(z, 1), as.character(1:3))
+
+  expect_equal(addMarker(x, alleles = 1:2), list(addMarker(x[[1]], alleles = 1:2),
+                                                 addMarker(x[[2]], alleles = 1:2)))
 })
 
 
