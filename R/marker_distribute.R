@@ -20,9 +20,19 @@
 distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
                              alleles = 1:2, afreq = NULL, prefix = NULL) {
   if(is.null(chromLen))
+
+  if(!length(chromLen)) {
     chromLen = c(246.98258, 241.01465, 197.08100, 188.84446, 180.22043, 169.42632, 158.18255,
-                            143.83232, 136.96897, 132.52836, 133.86230, 132.11300, 94.68256, 85.03331, 77.41597,
-                            89.03333, 81.90883, 79.11141, 57.31905, 63.19036, 32.01867, 33.16128)
+                 143.83232, 136.96897, 132.52836, 133.86230, 132.11300, 94.68256, 85.03331, 77.41597,
+                 89.03333, 81.90883, 79.11141, 57.31905, 63.19036, 32.01867, 33.16128)
+  }
+  chromNames = names(chromLen) %||% as.character(seq_along(chromLen))
+
+  if(any(chromNames == ""))
+    stop2("Irregular chromosome names")
+  if(dup <- anyDuplicated(chromNames))
+    stop("Duplicated chromosome name: ", chromNames[dup])
+
   # Total genome length
   L = sum(chromLen)
 
@@ -31,20 +41,31 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 
   # Compute positions if only the number of markers is given
   if(!is.null(n)) {
+
+    if(length(n) != 1 || !is.numeric(n) || n <= 0 || round(n) != n)
+      stop2("`n` must be a positive integer (or NULL): ", n)
+
     pos0 = seq(0, L, length.out = n)
     starts0 = cumsum(c(0, chromLen))
     posList = split(pos0, cut(pos0, starts0, labels = FALSE, include.lowest = TRUE))
-    chr = as.integer(names(posList))
-    starts = starts0[chr]
-    pos = unlist(unname(posList)) - rep(starts, lengths(posList))
+    chrnum = as.integer(rep(names(posList), lengths(posList)))
+    starts = starts0[chrnum]
+    pos = unlist(posList, use.names = FALSE) - starts
   }
   else {
+
+    if(length(dist) != 1 || !is.numeric(dist) || dist <= 0)
+      stop2("`dist` must be a positive number (or NULL): ", dist)
+
     posList = lapply(chromLen, function(len) seq(from = 0, to = len, by = dist))
     pos = unlist(posList, use.names = FALSE)
-    chr = rep(seq_along(posList), lengths(posList))
+    chrnum = rep(seq_along(posList), lengths(posList))
   }
 
+  # Chromosome names
+  chr = chromNames[chrnum]
 
+  # Marker names
   nms = if(!is.null(prefix)) paste0(prefix, seq_along(chr)) else NA_character_  # note: NA accepts subsetting
 
   m = marker(x, alleles = afreq, afreq = afreq)
