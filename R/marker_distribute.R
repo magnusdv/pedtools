@@ -137,17 +137,26 @@ setSNPs = function(x, snpData) {
 
   if(any(bad <- (FREQ1 > 1 | FREQ1 < 0)))
     stop2("Illegal allele frequency: ", head(FREQ1[bad]))
-  if(any(bad <- (nchar(c(A1, A2)) != 1)))
-    stop2("Illegal allele label (should be single letters/digits): ", head(c(A1, A2)[bad]))
+  als = c(A1, A2)
+  legal = c(LETTERS, letters, 1:9)
+  if(!all(als %in% legal))
+    stop2("Illegal allele label (should be single letters/digits): ", head(setdiff(als, legal)))
+
+  # Sort allele pairs
+  swap = A1 > A2
+  if(any(swap)) {
+    A1tmp = A1; A1[swap] = A2[swap]; A2[swap] = A1tmp[swap]
+    FREQ1[swap] = 1 - FREQ1[swap]
+  }
 
   # Same for all markers
   labs = labels(x)
   sex = getSex(x)
-  als = matrix(0L, ncol = 2, nrow = pedsize(x))
+  amat = matrix(0L, ncol = 2, nrow = pedsize(x))
 
   # Construct markers
   mlist = lapply(seq_along(MARKER), function(i)
-    newMarker(als, alleles = c(A1[i], A2[i]), afreq = c(FREQ1[i], 1 - FREQ1[i]),
+    newMarker(amat, alleles = c(A1[i], A2[i]), afreq = c(FREQ1[i], 1 - FREQ1[i]),
               name = MARKER[i], chrom = CHROM[i], posMb = MB[i], pedmembers = labs, sex = sex)
   )
 
