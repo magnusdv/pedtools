@@ -29,6 +29,10 @@ repository](https://github.com/magnusdv/pedsuite) and a dedicated
 [website](https://magnusdv.github.io/pedsuite/) offering more
 information.
 
+<span style="color:red;"> Try the **QuickPed** app for building and
+analysing pedigrees here: <https://magnusdv.shinyapps.io/quickped/>
+</span>
+
 ## Installation
 
 To get **pedtools**, install from CRAN as follows:
@@ -37,8 +41,7 @@ To get **pedtools**, install from CRAN as follows:
 install.packages("pedtools")
 ```
 
-Alternatively, you can obtain the latest development version from
-GitHub:
+Alternatively, fetch the latest development version from GitHub:
 
 ``` r
 # install.packages("devtools") # install devtools if needed
@@ -47,29 +50,45 @@ devtools::install_github("magnusdv/pedtools")
 
 ## Example
 
-The following example illustrates how pedigrees and markers may be built
-from scratch.
+The following example illustrates a step-by-step creation of a pedigree
+with a marker object.
 
 ``` r
 library(pedtools)
 
-# Create pedigree
-x = cousinPed(degree = 0, removal = 2)
-x = addChildren(x, father = 3, nch = 2, sex = 2)
+# Start with two half brothers
+x = halfSibPed(type = "paternal")
 
-# Relabel according to plot order
-x = relabel(x, "asPlot")
+# Make 5 female
+x = swapSex(x, 5)
 
-# Create marker and attach to pedigree
-m = marker(x, "7" = "a/b", "11" = "b/b")
+# Add 6 as a sister to 5
+x = addChildren(x, father = 2, mother = 3, nch = 1, sex = 2)
+
+# Add inbred child
+x = addChildren(x, father = 4, mother = 5, nch = 1)
+
+# Create marker
+m = marker(x, "7" = "a/b", alleles = c("a", "b"))
 
 # Plot pedigree with genotypes
-plot(x, marker = m, hatched = leaves(x))
+plot(x, marker = m, hatched = 7)
 ```
 
 <img src="man/figures/README-example-1.png" width="40%" />
 
+The process of building pedigrees is perfectly suited for the pipe
+operator `|>` recently introduced in R. For example, the above pedigree
+could have been created as follows:
+
+``` r
+x = halfSibPed(type = "paternal") |>
+  swapSex(5) |>
+  addChildren(father = 2, mother = 3, nch = 1, sex = 2) |>
+  addChildren(father = 4, mother = 5, nch = 1)
+```
+
 For details about what **pedtools** can do, and many other examples,
 [the
 vignette](https://cran.r-project.org/package=pedtools/vignettes/pedtools.html)
-is the recommended place to start.
+is a good place to start.
