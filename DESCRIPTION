@@ -1,12 +1,9 @@
 Type: Package
 Package: pedtools
 Title: Creating and Working with Pedigrees and Marker Data
-Version: 1.1.0.9000
+Version: 1.2.0
 Authors@R: 
-    person(given = "Magnus Dehli",
-           family = "Vigeland",
-           role = c("aut", "cre"),
-           email = "m.d.vigeland@medisin.uio.no",
+    person("Magnus Dehli", "Vigeland", , "m.d.vigeland@medisin.uio.no", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-9134-4962"))
 Description: A comprehensive collection of tools for creating,
     manipulating and visualising pedigrees and genetic marker data.
@@ -21,7 +18,10 @@ Description: A comprehensive collection of tools for creating,
     in the book 'Pedigree Analysis in R' (Vigeland, 2021,
     ISBN:9780128244302).
 License: GPL-3
-URL: https://github.com/magnusdv/pedtools, https://magnusdv.github.io/pedsuite/
+URL: https://github.com/magnusdv/pedtools,
+    https://magnusdv.github.io/pedsuite/
+Depends: 
+    R (>= 4.1)
 Imports: 
     kinship2
 Suggests: 
