@@ -2,7 +2,7 @@
 % Please edit documentation in R/marker_distribute.R
 \name{distributeMarkers}
 \alias{distributeMarkers}
-\title{Attach identical markers evenly distributed across the genome}
+\title{Distribute markers evenly along a set of chromosomes}
 \usage{
 distributeMarkers(
   x,
@@ -30,13 +30,21 @@ default, the lengths of the human chromosomes 1-22 are used, as returned by
 \item{prefix}{A string used as prefix for marker names. Default: "M".}
 }
 \value{
-An object similar to \code{x}, but with the indicated markers attached.
+A copy of \code{x} with the indicated markers attached.
 }
 \description{
-Attach identical markers evenly distributed across the genome
+Create and attach identical (empty) marker objects, distributed along a set
+of chromosomes.
+}
+\details{
+Note: When using the \code{dist} parameter, the function treats each chromosome
+separately, places one marker at the start and then every \code{dist} megabases.
+(See Examples.)
 }
 \examples{
 x = distributeMarkers(nuclearPed(), n = 10)
 getMap(x)
 
+y = distributeMarkers(nuclearPed(), dist = 100)
+getMap(y)
 }

@@ -16,6 +16,8 @@
 
 * Fix bug in `addMarker()` when input is a list of pedigrees.
 
+* Fix glitches in `setMap()`.
+
 ## Other
 
 * Various improvements in code and docs.

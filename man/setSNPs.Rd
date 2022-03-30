@@ -12,39 +12,42 @@ setSNPs(x, snpData)
 \item{snpData}{A data frame with 6 columns. See Details.}
 }
 \value{
-An object similar to \code{x}, but with the indicated markers attached.
+A copy of \code{x} with the indicated SNP markers attached.
 }
 \description{
-Create and attach a list of empty SNP markers with specified positions,
-alleles and allele frequencies.
+Create and attach a list of empty SNP markers with specified position and
+allele frequencies.
 }
 \details{
-The data frame \code{snpData} should contain the following columns in order:
+The data frame \code{snpData} should contain the following columns, in order:
 \itemize{
-\item CHROM: Chromosome (character)
-\item MARKER: Marker name (character)
-\item MB: Physical position in megabases (numeric)
-\item A1: First allele (single-letter character)
-\item A2: Second allele (single-letter character)
-\item FREQ1: Allele frequency of A1 (number in \verb{[0,1]})
+\item \code{CHROM}: Chromosome (character)
+\item \code{MARKER}: Marker name (character)
+\item \code{MB}: Physical position in megabases (numeric)
+\item \code{A1}: First allele (single-letter character)
+\item \code{A2}: Second allele (single-letter character)
+\item \code{FREQ1}: Allele frequency of \code{A1} (number in \verb{[0,1]})
 }
 
-The actual names of the input data frame do not matter.
+The actual column names do not matter.
 
-Each column must be of the stated type, or coercible to this. (For example,
-CHROM, A1 and A2 may all be given as numbers, but will be internally
+Each column must be of the stated type, or coercible to it. (For example,
+\code{CHROM}, \code{A1} and \code{A2} may be given as numbers, but will be internally
 converted to characters.)
 }
 \examples{
+
 snps = data.frame(
   CHROM  = 1:2,
   MARKER = c("M1", "M2"),
   MB     = c(1.23, 2.34),
-  A1    = c("A", "G"),
-  A2    = c("C", "C"),
-  FREQ1    = c(0.7, 0.12))
+  A1     = c("A", "G"),
+  A2     = c("C", "C"),
+  FREQ1  = c(0.7, 0.12))
 
 x = setSNPs(nuclearPed(), snpData = snps)
+
+# Inspect the results:
 getMap(x)
 getFreqDatabase(x)
 

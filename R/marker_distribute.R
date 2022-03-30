@@ -1,4 +1,11 @@
-#' Attach identical markers evenly distributed across the genome
+#' Distribute markers evenly along a set of chromosomes
+#'
+#' Create and attach identical (empty) marker objects, distributed along a set
+#' of chromosomes.
+#'
+#' Note: When using the `dist` parameter, the function treats each chromosome
+#' separately, places one marker at the start and then every `dist` megabases.
+#' (See Examples.)
 #'
 #' @param x A ped object.
 #' @param n The total number of markers. Either this or `dist` must be NULL.
@@ -9,12 +16,14 @@
 #' @param alleles,afreq Passed onto [marker()].
 #' @param prefix A string used as prefix for marker names. Default: "M".
 #'
-#' @return An object similar to `x`, but with the indicated markers attached.
+#' @return A copy of `x` with the indicated markers attached.
 #'
 #' @examples
 #' x = distributeMarkers(nuclearPed(), n = 10)
 #' getMap(x)
 #'
+#' y = distributeMarkers(nuclearPed(), dist = 100)
+#' getMap(y)
 #' @export
 distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
                              alleles = 1:2, afreq = NULL, prefix = "M") {
@@ -86,44 +95,47 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 
 #' Attach SNP loci to a pedigree
 #'
-#' Create and attach a list of empty SNP markers with specified positions,
-#' alleles and allele frequencies.
+#' Create and attach a list of empty SNP markers with specified position and
+#' allele frequencies.
 #'
-#' The data frame `snpData` should contain the following columns in order:
+#' The data frame `snpData` should contain the following columns, in order:
 #'
-#' * CHROM: Chromosome (character)
+#' * `CHROM`: Chromosome (character)
 #'
-#' * MARKER: Marker name (character)
+#' * `MARKER`: Marker name (character)
 #'
-#' * MB: Physical position in megabases (numeric)
+#' * `MB`: Physical position in megabases (numeric)
 #'
-#' * A1: First allele (single-letter character)
+#' * `A1`: First allele (single-letter character)
 #'
-#' * A2: Second allele (single-letter character)
+#' * `A2`: Second allele (single-letter character)
 #'
-#' * FREQ1: Allele frequency of A1 (number in `[0,1]`)
+#' * `FREQ1`: Allele frequency of `A1` (number in `[0,1]`)
 #'
-#' The actual names of the input data frame do not matter.
+#' The actual column names do not matter.
 #'
-#' Each column must be of the stated type, or coercible to this. (For example,
-#' CHROM, A1 and A2 may all be given as numbers, but will be internally
+#' Each column must be of the stated type, or coercible to it. (For example,
+#' `CHROM`, `A1` and `A2` may be given as numbers, but will be internally
 #' converted to characters.)
 #'
 #' @param x A `ped` object.
 #' @param snpData A data frame with 6 columns. See Details.
 #'
-#' @return An object similar to `x`, but with the indicated markers attached.
+#' @return A copy of `x` with the indicated SNP markers attached.
 #'
 #' @examples
+#'
 #' snps = data.frame(
 #'   CHROM  = 1:2,
 #'   MARKER = c("M1", "M2"),
 #'   MB     = c(1.23, 2.34),
-#'   A1    = c("A", "G"),
-#'   A2    = c("C", "C"),
-#'   FREQ1    = c(0.7, 0.12))
+#'   A1     = c("A", "G"),
+#'   A2     = c("C", "C"),
+#'   FREQ1  = c(0.7, 0.12))
 #'
 #' x = setSNPs(nuclearPed(), snpData = snps)
+#'
+#' # Inspect the results:
 #' getMap(x)
 #' getFreqDatabase(x)
 #'
