@@ -6,7 +6,7 @@
 \alias{hasLinkedMarkers}
 \title{Tabulate marker positions}
 \usage{
-getMap(x, markers = NULL, na.action = 0, verbose = TRUE)
+getMap(x, markers = NULL, na.action = 0, merlin = FALSE, verbose = TRUE)
 
 setMap(x, map, matchNames = NA, ...)
 
@@ -19,6 +19,9 @@ hasLinkedMarkers(x)
 \code{x}. By default, all markers are included.}
 
 \item{na.action}{Either 0 (default), 1 or 2. (See Details.)}
+
+\item{merlin}{A logical mostly for internal use: If TRUE the function returns
+a matrix instead of a data frame.}
 
 \item{verbose}{A logical.}
 

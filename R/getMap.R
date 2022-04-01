@@ -25,6 +25,8 @@
 #' @param markers A vector of names or indices referring to markers attached to
 #'   `x`. By default, all markers are included.
 #' @param na.action Either 0 (default), 1 or 2. (See Details.)
+#' @param merlin A logical mostly for internal use: If TRUE the function returns
+#'   a matrix instead of a data frame.
 #' @param verbose A logical.
 #' @param map Either a data frame or the path to a map file. See Details
 #'   regarding format.
@@ -59,7 +61,7 @@
 #' hasLinkedMarkers(x)
 #'
 #' @export
-getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
+getMap = function(x, markers = NULL, na.action = 0, merlin = FALSE, verbose = TRUE) {
   if(is.pedList(x)) {
     if(verbose) message("Input is a list of pedigrees; extracting map from first component")
     x = x[[1]]
@@ -81,14 +83,21 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
   marker = unlist(lapply(m, attr, "name"))
   mb     = unlist(lapply(m, attr, "posMb"))
 
-  if (na.action == 1) {
-    if (verbose)
-      message("Warning: Missing map entries. Inserting dummy values.")
+  if(merlin) {
+    map = c(chrom, marker, mb)
+    dim(map) = c(length(m), 3L)
+    colnames(map) = c("CHROM", "MARKER", "MB")
+    return(fixMerlinMap(map))
+  }
 
+  if(na.action == 1) {
     naPos = is.na(mb) | is.na(chrom)
 
     # Autosomal unknowns: Put each on separate chromosome
     if(any(naPosAut <- naPos & !chrom %in% c("X", 23))) {
+      if(verbose)
+        message("Warning: Missing map entries. Inserting dummy values.")
+
       chrom[naPosAut] = 100 + 1:sum(naPosAut)
       mb[naPosAut] = 0
     }
@@ -96,6 +105,9 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
     # X unknowns: Separate by 400 cM
     if(any(naPosX <- naPos & chrom %in% c("X", 23))) {
       if(sum(naPosX) > 10) stop2("More than 10 markers on X with unknown position")
+      if(verbose)
+        message("Warning: Missing map entries. Inserting dummy values.")
+
       mb[naPosX] = (1:sum(naPosX)) * 400 + if(all(naPos)) -400 else max(mb, na.rm = TRUE)
     }
 
@@ -111,7 +123,45 @@ getMap = function(x, markers = NULL, na.action = 0, verbose = TRUE) {
     mb = mb[!miss]
   }
 
-  data.frame(CHROM = chrom, MARKER = marker, MB = mb, stringsAsFactors = FALSE)
+  data.frame(CHROM = chrom, MARKER = marker, MB = mb)
+}
+
+
+
+# Internal merlin fix
+fixMerlinMap = function(map) {
+  if(!anyNA(map))
+    return(map)
+
+  chr = map[, "CHROM"]
+  mar = map[, "MARKER"]
+  mb = map[, "MB"]
+
+  # NA names: make unique
+  if(anyNA(mar))
+    map[is.na(mar), "MARKER"] = paste0("_m", seq_len(sum(is.na(mar))))
+
+  naPos = is.na(mb) | is.na(chr)
+  if(!any(naPos))
+    return(map)
+
+  X = !is.na(chr) & (chr == "23" | chr == "X")
+  if(!any(X)) Xchrom = FALSE
+  else if(all(X)) Xchrom = TRUE
+  else stop2("Mix of autosomal and X markers")
+
+  # Autosomal: put on different chromosomes
+  if(!Xchrom) {
+    map[naPos, "CHROM"] = 100 + 1:sum(naPos)
+    map[naPos, "MB"] = 0
+  }
+  else {  # X: Separate by 400 cM
+    if(sum(naPos) > 10)
+      stop2("More than 10 markers on X with unknown position")
+    map[naPos, "MB"] = (1:sum(naPos)) * 400 + if(all(naPos)) -400 else max(mb, na.rm = TRUE)
+  }
+
+  map
 }
 
 

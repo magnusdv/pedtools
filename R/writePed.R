@@ -40,7 +40,7 @@ writePed = function(x, prefix, what = "ped", famid = is.pedList(x),
                     header = TRUE, merlin = FALSE, verbose = TRUE) {
 
   if(merlin)
-    return(writePed_merlin(x, prefix = prefix, verbose = verbose))
+    return(writeMerlin(x, prefix = prefix, verbose = verbose))
 
   fnames = setNames(paste(prefix, what, sep = "."), what)
 
@@ -144,6 +144,63 @@ writePed_merlin = function(x, prefix, verbose = TRUE) {
 
   col3 = character(L)
   allfreqs = unlist(lapply(x$MARKERS, afreq))
+  col3[-cum] = format(allfreqs, scientifit = FALSE, digits = 6)
+
+  freqmatr = cbind(col1, col2, col3)
+  write.table(freqmatr, file = fnames[["freq"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+  if(verbose) message("File written: ", fnames[["freq"]])
+
+  invisible(unname(fnames))
+}
+
+#' @importFrom utils write.table
+writeMerlin = function(x, prefix, verbose = TRUE) {
+
+  what = c("ped", "map", "dat", "freq")
+  fnames = setNames(paste(prefix, what, sep = "."), what)
+
+  ### ped file
+  if(is.pedList(x)) {
+    pedmatr = do.call(rbind, lapply(x, as.matrix.ped, include.attrs = FALSE))
+    pedmatr = cbind(rep.int(seq_along(x), pedsize(x)), pedmatr)
+    x = x[[1]]
+  } else {
+    pedmatr = cbind(1L, as.matrix.ped(x, include.attrs = FALSE))
+  }
+
+  # writelines faster than write and write.table
+  lines = vapply(1:nrow(pedmatr), function(i) paste(pedmatr[i, ], collapse = " "), "")
+  writeLines(lines, fnames[["ped"]])
+  if(verbose) message("File written: ", fnames[["ped"]])
+
+  ### map file
+  mapmatr = getMap(x, merlin = TRUE, verbose = FALSE)
+  write.table(mapmatr, file = fnames[["map"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+  if(verbose) message("File written: ", fnames[["map"]])
+
+  ### dat file
+  markernames = mapmatr[,"MARKER"]
+  datmatr = cbind("M", markernames)
+  write.table(datmatr, file = fnames[["dat"]], col.names = FALSE, row.names = FALSE, quote = FALSE)
+  if(verbose) message("File written: ", fnames[["dat"]])
+
+  ### freq file
+  nalls = nAlleles.ped(x)
+  L = sum(nalls) + length(nalls)
+  cum = cumsum(c(1, nalls + 1))
+  length(cum) = length(nalls)  #remove last
+
+  col1 = rep("A", L)
+  col1[cum] = "M"
+
+  col2 = character(L)
+  col2[cum] = markernames
+
+  allalleles = unlist(lapply(nalls, seq_len)) # numerical allele names for merlin!
+  col2[-cum] = allalleles
+
+  col3 = character(L)
+  allfreqs = unlist(lapply(x$MARKERS, attr, "afreq"))
   col3[-cum] = format(allfreqs, scientifit = FALSE, digits = 6)
 
   freqmatr = cbind(col1, col2, col3)
