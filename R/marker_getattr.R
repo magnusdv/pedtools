@@ -279,6 +279,13 @@ name.ped = function(x, markers = NULL, ...) {
   vapply(mlist, name.marker, character(1))
 }
 
+name2.ped = function(x, markers = NULL, ...) {
+  markers = markers %||% seq_markers(x)
+
+  mlist = getMarkers(x, markers = markers)
+  vapply(mlist, name.marker, character(1))
+}
+
 #' @rdname marker_getattr
 #' @export
 name.list = function(x, markers = NULL, ...) {

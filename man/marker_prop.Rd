@@ -35,9 +35,9 @@ emptyMarker(x, ...)
 
 \method{emptyMarker}{marker}(x, ...)
 
-\method{emptyMarker}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+\method{emptyMarker}{ped}(x, markers = NULL, ...)
 
-\method{emptyMarker}{list}(x, markers = seq_len(nMarkers(x)), ...)
+\method{emptyMarker}{list}(x, markers = NULL, ...)
 
 nTyped(x, ...)
 
@@ -45,9 +45,9 @@ nTyped(x, ...)
 
 \method{nTyped}{marker}(x, ...)
 
-\method{nTyped}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+\method{nTyped}{ped}(x, markers = NULL, ...)
 
-\method{nTyped}{list}(x, markers = seq_len(nMarkers(x)), ...)
+\method{nTyped}{list}(x, markers = NULL, ...)
 
 nAlleles(x, ...)
 
@@ -55,9 +55,9 @@ nAlleles(x, ...)
 
 \method{nAlleles}{marker}(x, ...)
 
-\method{nAlleles}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+\method{nAlleles}{ped}(x, markers = NULL, ...)
 
-\method{nAlleles}{list}(x, markers = seq_len(nMarkers(x)), ...)
+\method{nAlleles}{list}(x, markers = NULL, ...)
 
 isXmarker(x, ...)
 
@@ -65,9 +65,9 @@ isXmarker(x, ...)
 
 \method{isXmarker}{marker}(x, ...)
 
-\method{isXmarker}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+\method{isXmarker}{ped}(x, markers = NULL, ...)
 
-\method{isXmarker}{list}(x, markers = seq_len(nMarkers(x)), ...)
+\method{isXmarker}{list}(x, markers = NULL, ...)
 
 allowsMutations(x, ...)
 
@@ -75,24 +75,22 @@ allowsMutations(x, ...)
 
 \method{allowsMutations}{marker}(x, ...)
 
-\method{allowsMutations}{ped}(x, markers = seq_len(nMarkers(x)), ...)
+\method{allowsMutations}{ped}(x, markers = NULL, ...)
 
-\method{allowsMutations}{list}(x, markers = seq_len(nMarkers(x)), ...)
+\method{allowsMutations}{list}(x, markers = NULL, ...)
 }
 \arguments{
 \item{x}{A single \code{marker} object or a \code{ped} object (or a list of such)}
 
 \item{...}{Not used.}
 
-\item{markers}{A vector of names or indices of markers attached to \code{x}, in
-the case that \code{x} is a \code{ped} object or a list of such. By default all
-attached markers are selected.}
+\item{markers}{A vector of names or indices of markers attached to \code{x}. By
+default all attached markers are selected.}
 }
 \value{
 If \code{x} is a single \code{marker} object, the output is a vector of length 1.
 
-If \code{x} is a \code{ped} object, or a list of such, the output is a vector of the
-same length as \code{markers} (which includes all attached markers by default),
+Otherwise, a vector of length \code{nMarkers(x)} (default) or \code{length(markers)},
 reporting the property of each marker.
 }
 \description{

@@ -20,17 +20,15 @@
 #' non-NULL and differs from the identity matrix.
 #'
 #' @param x A single `marker` object or a `ped` object (or a list of such)
-#' @param markers A vector of names or indices of markers attached to `x`, in
-#'   the case that `x` is a `ped` object or a list of such. By default all
-#'   attached markers are selected.
+#' @param markers A vector of names or indices of markers attached to `x`. By
+#'   default all attached markers are selected.
 #' @param ... Not used.
 #'
 #' @return
 #'
 #' If `x` is a single `marker` object, the output is a vector of length 1.
 #'
-#' If `x` is a `ped` object, or a list of such, the output is a vector of the
-#' same length as `markers` (which includes all attached markers by default),
+#' Otherwise, a vector of length `nMarkers(x)` (default) or `length(markers)`,
 #' reporting the property of each marker.
 #'
 #' @examples
@@ -100,13 +98,14 @@ emptyMarker.marker = function(x, ...) {
 
 #' @rdname marker_prop
 #' @export
-emptyMarker.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
-  vapply(getMarkers(x, markers), emptyMarker.marker, logical(1))
+emptyMarker.ped = function(x, markers = NULL, ...) {
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers)
+  vapply(mlist, emptyMarker.marker, logical(1))
 }
 
 #' @rdname marker_prop
 #' @export
-emptyMarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+emptyMarker.list = function(x, markers = NULL, ...) {
   if(length(x) == 0)
     return(logical(0))
   comp_wise = lapply(x, emptyMarker.ped, markers = markers)
@@ -134,13 +133,14 @@ nTyped.marker = function(x, ...) {
 
 #' @rdname marker_prop
 #' @export
-nTyped.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
-  vapply(getMarkers(x, markers), nTyped.marker, integer(1))
+nTyped.ped = function(x, markers = NULL, ...) {
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers)
+  vapply(mlist, nTyped.marker, integer(1))
 }
 
 #' @rdname marker_prop
 #' @export
-nTyped.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+nTyped.list = function(x, markers = NULL, ...) {
   if(length(x) == 0)
     return(logical(0))
   comp_wise = lapply(x, nTyped.ped, markers = markers)
@@ -168,13 +168,14 @@ nAlleles.marker = function(x, ...) {
 
 #' @rdname marker_prop
 #' @export
-nAlleles.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
-  vapply(getMarkers(x, markers), nAlleles.marker, integer(1))
+nAlleles.ped = function(x, markers = NULL, ...) {
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers)
+  vapply(mlist, nAlleles.marker, integer(1))
 }
 
 #' @rdname marker_prop
 #' @export
-nAlleles.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+nAlleles.list = function(x, markers = NULL, ...) {
   if(length(x) == 0)
     return(integer(0))
   comp_wise = lapply(x, nAlleles.ped, markers = markers)
@@ -206,13 +207,15 @@ isXmarker.marker = function(x, ...) {
 
 #' @rdname marker_prop
 #' @export
-isXmarker.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
-  vapply(getMarkers(x, markers), isXmarker.marker, logical(1))
+isXmarker.ped = function(x, markers = NULL, ...) {
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers)
+  chr = vapply(mlist, chrom.marker, character(1))
+  !is.na(chr) & (chr == "X" | chr == "23")
 }
 
 #' @rdname marker_prop
 #' @export
-isXmarker.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+isXmarker.list = function(x, markers = NULL, ...) {
   if(length(x) == 0)
     return(logical(0))
   comp_wise = lapply(x, isXmarker.ped, markers = markers)
@@ -243,13 +246,14 @@ allowsMutations.marker = function(x, ...) {
 
 #' @rdname marker_prop
 #' @export
-allowsMutations.ped = function(x, markers = seq_len(nMarkers(x)), ...) {
-  vapply(getMarkers(x, markers), allowsMutations.marker, logical(1))
+allowsMutations.ped = function(x, markers = NULL, ...) {
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers)
+  vapply(mlist, allowsMutations.marker, logical(1))
 }
 
 #' @rdname marker_prop
 #' @export
-allowsMutations.list = function(x, markers = seq_len(nMarkers(x)), ...) {
+allowsMutations.list = function(x, markers = NULL, ...) {
   comp_wise = lapply(x, allowsMutations.ped, markers = markers)
   if(!listIdentical(comp_wise))
     stop2("The output of `allowsMutations()` differs between components")
