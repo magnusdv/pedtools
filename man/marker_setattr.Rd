@@ -11,7 +11,7 @@
 \usage{
 setGenotype(x, marker = NULL, id, geno)
 
-setAfreq(x, marker, afreq)
+setAfreq(x, marker, afreq, strict = TRUE)
 
 setMarkername(x, marker = NULL, name)
 
@@ -35,6 +35,9 @@ population frequency of each allele. A warning is issued if the frequencies
 don't sum to 1 after rounding to 3 decimals. If the vector is named, and
 \code{alleles} is not NULL, an error is raised if \code{setequal(names(afreq), alleles)} is not TRUE. If \code{afreq} is not specified, all alleles are given
 equal frequencies.}
+
+\item{strict}{A logical. If TRUE (default) the new frequencies cannot remove
+or add any alleles.}
 
 \item{name}{A character of the same length as \code{marker}, containing marker
 names.}

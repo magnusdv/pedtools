@@ -15,6 +15,8 @@
 #'   chromosome labels.
 #' @param posMb A numeric of the same length as `marker`, containing the
 #'   physical marker positions in megabases (or NA).
+#' @param strict A logical. If TRUE (default) the new frequencies cannot remove
+#'   or add any alleles.
 #'
 #' @return A copy of `x` with modified attributes.
 #'
@@ -178,7 +180,7 @@ setGenotype = function(x, marker = NULL, id, geno) {
 
 #' @rdname marker_setattr
 #' @export
-setAfreq = function(x, marker, afreq) {
+setAfreq = function(x, marker, afreq, strict = TRUE) {
 
   if(missing(marker) || length(marker) == 0)
     stop2("Argument `marker` cannot be empty")
@@ -199,19 +201,42 @@ setAfreq = function(x, marker, afreq) {
   if(anyDuplicated.default(freqnames))
     stop2("Duplicated alleles in frequency vector: ", afreq[duplicated(freqnames)])
 
-  if(length(miss <- setdiff(als, freqnames)))
-    stop2("Alleles missing from frequency vector: ", miss)
-
-  alsOrder = match(freqnames, als)
-  if(anyNA(alsOrder))
-    stop2("Unknown allele: ", freqnames[is.na(alsOrder)])
-
   if(round(sum(afreq), 3) != 1)
     stop2("Frequencies must sum to 1")
 
-  attr(m, "afreq") = as.numeric(afreq[alsOrder])
-  x$MARKERS[[idx]] = m
+  if(strict) {
+    if(length(miss <- setdiff(als, freqnames)))
+      stop2("Alleles missing from frequency vector: ", miss)
 
+    alsOrder = match(freqnames, als)
+    if(anyNA(alsOrder))
+      stop2("Unknown allele: ", freqnames[is.na(alsOrder)])
+    afreq = afreq[alsOrder]
+    attr(m, "afreq") = as.numeric(afreq)
+  }
+  else {
+    if(allowsMutations(m))
+      warning("Mutation models may be invalidated by frequency change")
+
+    # Sort (numerically if appropriate)
+    if (!anyNA(suppressWarnings(as.numeric(freqnames))))
+      alsOrder = order(as.numeric(freqnames))
+    else
+      alsOrder = order(freqnames)
+    afreq = afreq[alsOrder]
+    freqnames = names(afreq)
+
+    # Recompute index matrix
+    obs = als[m[m > 0]] # observed alleles
+    m[m > 0] = match(obs, freqnames)
+    if(anyNA(m))
+      stop2("Invalid allele: ", setdiff(obs, freqnames))
+
+    attr(m, "afreq") = unname(afreq)
+    attr(m, "alleles") = freqnames
+  }
+
+  x$MARKERS[[idx]] = m
   x
 }
 
