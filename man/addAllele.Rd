@@ -7,7 +7,8 @@
 addAllele(x, marker, allele, freq = 0.001, adjust = c("previous", "all"))
 }
 \arguments{
-\item{x}{A \code{ped} object or a list of such.}
+\item{x}{A \code{ped} object or a list of such, or a frequency database (list of
+numeric vectors).}
 
 \item{marker}{The name or index of a marker attached to \code{x}.}
 
@@ -29,6 +30,8 @@ Extends the allele set of a marker attached to a pedigree, by adding a single
 allele.
 }
 \examples{
+
+## Ped input
 x = nuclearPed() |>
   addMarker(geno = c(NA, NA, "b/c"), afreq = c(b = 0.5, c = 0.5))
 
@@ -37,5 +40,11 @@ afreq(y, 1)
 
 z = addAllele(y, marker = 1, allele = "d", freq = 0.1, adjust = "all")
 afreq(z, 1)
+
+
+## Database input
+db = list(M1 = c(a = .2, b = .3, c = .5),
+          M2 = c("7" = .9, "8.3" = .1))
+addAllele(db, marker = "M2", allele = "8")
 
 }

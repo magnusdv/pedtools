@@ -89,7 +89,8 @@ checkConsistency = function(x, mlist) {
 #' Extends the allele set of a marker attached to a pedigree, by adding a single
 #' allele.
 #'
-#' @param x A `ped` object or a list of such.
+#' @param x A `ped` object or a list of such, or a frequency database (list of
+#'   numeric vectors).
 #' @param marker The name or index of a marker attached to `x`.
 #' @param allele The name of the new allele.
 #' @param freq The frequency of the new allele, by default 0.001.
@@ -102,6 +103,8 @@ checkConsistency = function(x, mlist) {
 #' @return A copy of `x` with modified marker attributes.
 #'
 #' @examples
+#'
+#' ## Ped input
 #' x = nuclearPed() |>
 #'   addMarker(geno = c(NA, NA, "b/c"), afreq = c(b = 0.5, c = 0.5))
 #'
@@ -110,6 +113,12 @@ checkConsistency = function(x, mlist) {
 #'
 #' z = addAllele(y, marker = 1, allele = "d", freq = 0.1, adjust = "all")
 #' afreq(z, 1)
+#'
+#'
+#' ## Database input
+#' db = list(M1 = c(a = .2, b = .3, c = .5),
+#'           M2 = c("7" = .9, "8.3" = .1))
+#' addAllele(db, marker = "M2", allele = "8")
 #'
 #' @export
 addAllele = function(x, marker, allele, freq = 0.001, adjust = c("previous", "all")) {
@@ -123,19 +132,45 @@ addAllele = function(x, marker, allele, freq = 0.001, adjust = c("previous", "al
   if(length(allele) > 1)
     stop2("Please add one allele at a time")
 
-  old = afreq(x, marker)
+  # Input type: ped or db?
+  type = if(is.ped(x) || is.pedList(x)) "ped" else "db"
+
+  if(type == "ped") {
+    old = afreq(x, marker)
+  }
+  else {
+    old = x[[marker]]
+    if(is.null(old) || is.null(names(old)) || !is.numeric(old))
+      stop2("Something wrong with the existing frequency vector: Not a named numeric.")
+    if(round(sum(old),3) != 1)
+      stop2("Something wrong with the existing frequency vector: Does not sum to 1:\n", old)
+  }
+
   if(allele %in% names(old))
     stop2("This allele is already present")
 
   names(freq) = allele
+  s = sum(old) # should be 1, but may deviate slightly
+
+  # Add new allele and adjust frequencies
   switch(match.arg(adjust),
     all = {
-      newfr = c(old, freq)/(1 + freq)
+      newfr = c(old, freq)/(s + freq)
     },
     previous = {
-      newfr = c(old * (1 - freq), freq)
+      newfr = c(old/s * (1 - freq), freq) # note normalisation of `old`
     }
   )
 
-  setAfreq(x, marker, afreq = newfr, strict = FALSE)
+  if(type == "ped") {
+    x = setAfreq(x, marker, afreq = newfr, strict = FALSE)
+  }
+  else {
+    als = names(newfr)
+    isNum = !anyNA(suppressWarnings(as.numeric(als)))
+    ord = if(isNum) order(as.numeric(als)) else order(als)
+    x[[marker]] = newfr[ord]
+  }
+
+  x
 }
