@@ -75,7 +75,11 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
   # Marker names
   nms = if(!is.null(prefix)) paste0(prefix, seq_along(chr)) else NA_character_  # note: NA accepts subsetting
 
-  m = marker(x, alleles = afreq, afreq = afreq)
+  # Alleles/freqs
+  if(!is.null(names(afreq)))
+    alleles = NULL
+
+  m = marker(x, alleles = alleles, afreq = afreq)
   mlist = lapply(seq_along(pos), function(i) {
     mi = m
     attr(mi, "chrom") = chr[i]

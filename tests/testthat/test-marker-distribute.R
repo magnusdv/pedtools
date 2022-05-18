@@ -37,3 +37,15 @@ test_that("distributeMarkers() cathces bad input", {
   expect_error(dm(n = 1, chromLen = c(a=1, a=2)), "Duplicated chromosome name")
 })
 
+test_that("distributeMarkers() assigns correct alleles and freqs", {
+  s = singleton(1)
+  expect_equal(nAlleles(distributeMarkers(s, n = 2, alleles = 1:3)), c(3,3))
+  expect_equal(nAlleles(distributeMarkers(s, n = 1, alleles = 1:4)), c(4))
+
+  afr = c(a=.3,b=.5, c=.2)
+  expect_equal(afreq(distributeMarkers(s, n = 2, afreq = afr), 2), afr)
+
+  afr2 = c(b=.3,a=.5, c=.2)
+  expect_equal(afreq(distributeMarkers(s, n = 2, afreq = afr2), 2), afr2[sort(names(afr2))])
+})
+
