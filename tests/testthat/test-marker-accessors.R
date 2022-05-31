@@ -147,3 +147,18 @@ test_that("genotype replacement works with partial genotypes", {
   expect_equal(genotype(x, 1, 1), c("b", NA_character_))
   expect_equal(genotype(x, 1, 2), c("b", NA_character_))
 })
+
+######## NEW SETTERS #############
+
+test_that("setGenotype() works", {
+  m = marker(x, alleles = 1:2)
+  x = setMarkers(x, list(m,m))
+
+  y1 = setGenotype(x, marker = 1:2, id = 1, geno = c("1/1", "2/2"))
+  y1 = setGenotype(y1, marker = 1:2, id = 3, geno = c("1/2", "2/1"))
+
+  y2 = setGenotype(x, marker = 1, id = c(1,3), geno = c("1/1", "1/2"))
+  y2 = setGenotype(y2, marker = 2, id = c(1,3), geno = c("2/2", "2/1"))
+
+  expect_equal(y1, y2)
+})

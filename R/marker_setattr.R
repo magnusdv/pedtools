@@ -166,7 +166,7 @@ setGenotype = function(x, marker = NULL, id, geno) {
     }
 
     midx = whichMarkers(x, markers = marker)
-    x$MARKERS[[midx]] = lapply(seq_along(midx), function(k) {
+    x$MARKERS[midx] = lapply(seq_along(midx), function(k) {
       m = x$MARKERS[[midx[k]]]
       setGenotypeMarker(m, id = id, geno = geno[k])
     })
