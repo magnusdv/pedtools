@@ -219,18 +219,16 @@ identical(x1, x2)
 ### Example 3: A complex family tree
 Here we consider the family tree below, extending both upwards and downwards from a single person.
 
-```{r merge-example, echo = FALSE, message = F}
+```{r merge-example, echo = FALSE, message=FALSE}
 # Top part
-x = ancestralPed(g = 2) # bottom person is `7`; relabel to `8`
-x = relabel(x, old = 7, new = 8)
+x = ancestralPed(g = 2) # bottom person is "7"
 
 # Bottom part
-y = halfCousinPed(degree = 1) 
+y = halfCousinPed(degree = 1) # top person is "2"
 y = swapSex(y, 4)
-y = relabel(y, new = 7:15) # top person becomes `8`
 
 # Merge
-z = mergePed(x, y)
+z = mergePed(x, y, by = c("7" = "2"), relabel = TRUE)
 ```
 
 ```{r merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7}
