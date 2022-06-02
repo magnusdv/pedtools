@@ -4,45 +4,78 @@
 \alias{mergePed}
 \title{Merge two pedigrees}
 \usage{
-mergePed(x, y, ...)
+mergePed(x, y, by = NULL, relabel = FALSE, ...)
 }
 \arguments{
 \item{x, y}{\code{\link[=ped]{ped()}} objects}
 
-\item{...}{further arguments passed along to \code{\link[=ped]{ped()}}, e.g.
-\code{famid}, \code{validate} and \code{reorder}.}
+\item{by}{The individuals to merge by. The most general form uses a named
+vector with entries of the form \code{id.x = id.y} (see Examples). If the vector
+is unnamed, it is assumed that the merging individuals have the same labels
+in both pedigrees. Finally, if \code{by = NULL} (default), it is set to
+\code{intersect(labels(x), labels(y))}.}
+
+\item{relabel}{A logical, by default FALSE. If TRUE, \code{relabel(..., "asPlot")}
+is run on the merged pedigree before returning.}
+
+\item{...}{further arguments passed along to \code{\link[=ped]{ped()}}, e.g. \code{famid},
+\code{validate} and \code{reorder}.}
 }
 \value{
 A \code{ped} object.
 }
 \description{
-This function merges two ped objects, joining them at the individuals
-with equal ID labels. This is especially useful for building 'top-heavy'
-pedigrees. Only ped objects without marker data are supported.
+This function merges two \code{ped} objects, joining them at the indicated
+individuals. Only ped objects without marker data are supported.
+}
+\details{
+Some internal checks are done to ensure that merging individuals have the
+same sex and the same parents.
+
+If \code{relabel = FALSE}, some relabelling might still be performed in order to
+ensure unique labels for everyone. Specifically, this is the case if some ID
+labels occur in both \code{x} and \code{y} other than those given in the \code{by} argument.
+In such cases, the relevant members of \code{y} get a suffix \code{.y}.
 }
 \examples{
 
-# Creating a trio where each parent have first cousin parents.
-# (Alternatively, this could be built using many calls to addParents().)
+############
+# Example 1
+# A family trio where each parent have first cousin parents.
+############
 
-# Paternal family
-x = cousinPed(1, child = TRUE)
-x = addSon(x, 9)
+# Trio
+x = nuclearPed(1)
+
+# Add paternal family
+pat = cousinPed(1, child = TRUE)
+x = mergePed(x, pat, by = c("1" = "9"))
 
 # Maternal family
-y = cousinPed(1, child = TRUE)
-y = relabel(y, c(101:108, 10))
-y = swapSex(y, 10)
+mat = cousinPed(1, child = TRUE) |> swapSex("9")
+x = mergePed(x, mat, by = c("2" = "9"))
 
-# Joining x and y at the common individuals (in this case: `10`)
-z = mergePed(x, y)
+# Relabel (Alternative: add `relabel = TRUE` in the previous call)
+x = relabel(x, "asPlot")
 
-# Plot all three pedigrees
-opar = par(mfrow = c(1, 3))
-plot(x); plot(y); plot(z, col = list(red = labels(y)))
+plot(x)
 
-# Reset graphical parameters
-par(opar)
+
+##################################
+# Example 2: Double first cousins
+##################################
+
+# First cousins, whose fathers are brothers
+y = cousinPed(degree = 1)
+
+# Create two sisters
+motherPed = nuclearPed(2, sex = 2)
+
+# Plot to see who is who: `plotPedList(list(y, motherPed))`
+
+# Merge
+z = mergePed(y, motherPed, by = c("4" = 3, "6" = 4), relabel = TRUE)
+plot(z)
 
 }
 \author{

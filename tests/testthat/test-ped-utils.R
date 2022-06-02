@@ -85,3 +85,40 @@ test_that("mergePed() works in half sib example", {
   zz = ped(id=1:5, fid=c(0,0,1,0,4), mid=c(0,0,2,0,2), sex=c(1,2,1,1,1))
   expect_identical(z,zz)
 })
+
+test_that("mergePed() works with `by`", {
+  expect_identical(
+    mergePed(nuclearPed(), nuclearPed(), by = 1:3, relabel = T),
+    nuclearPed())
+
+  expect_identical(
+    mergePed(nuclearPed(), nuclearPed(), by = 1:3, relabel = T),
+    nuclearPed())
+
+  expect_identical(
+    mergePed(nuclearPed(), nuclearPed(fa=1, mo=4,ch=5), by = 1, relabel = T),
+    halfSibPed())
+
+  expect_identical(
+    mergePed(nuclearPed(fa = "A", mo = "B"), nuclearPed(), by = c(A=1), relabel = T),
+    halfSibPed())
+})
+
+test_that("mergePed() catches errors", {
+
+  expect_error(
+    mergePed(nuclearPed(), nuclearPed(), by = c("4" = 2)),
+    "Unknown ID label in pedigree 1")
+
+  expect_error(
+    mergePed(nuclearPed(), nuclearPed(), by = c("1" = 4)),
+    "Unknown ID label in pedigree 2")
+
+  expect_error(
+    mergePed(nuclearPed(), nuclearPed(), by = c("1" = 2)),
+    "Gender mismatch")
+
+  expect_error(
+    mergePed(nuclearPed(), nuclearPed(), by = 3),
+    "Parent mismatch")
+})
