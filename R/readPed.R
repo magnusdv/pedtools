@@ -19,7 +19,7 @@
 #'
 #' @param pedfile A file name
 #' @param colSep A column separator character, passed on as the `sep` argument
-#'   of [read.table()]. The default is to separate on ‘white space’, that is one
+#'   of [read.table()]. The default is to separate on white space, that is, one
 #'   or more spaces, tabs, newlines or carriage returns. (Note: the parameter
 #'   `sep` is used to indicate allele separation in genotypes.)
 #' @param header A logical. If NA, the program will interpret the first line as

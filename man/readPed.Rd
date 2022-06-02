@@ -25,7 +25,7 @@ readPed(
 \item{pedfile}{A file name}
 
 \item{colSep}{A column separator character, passed on as the \code{sep} argument
-of \code{\link[=read.table]{read.table()}}. The default is to separate on ‘white space’, that is one
+of \code{\link[=read.table]{read.table()}}. The default is to separate on white space, that is, one
 or more spaces, tabs, newlines or carriage returns. (Note: the parameter
 \code{sep} is used to indicate allele separation in genotypes.)}
 
