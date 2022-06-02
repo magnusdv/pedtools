@@ -12,10 +12,9 @@
 #'
 #' `addSon()` and `addDaughter()` are wrappers for a common use of
 #' `addChildren()`, namely adding a single child to a pedigree member. Note that
-#' its argument `parent` is gender-neutral, unlike in `addChildren()` where you have
-#' to know the parental genders. Also note that the other parent is always
-#' created as a new individual. Thus, applying `addDaughter()` twice with the
-#' same parent will create half sisters.
+#' the arguments `parent` and `parent2` are gender-neutral so that parents can
+#' be given in any order. If only one parent is supplied, the other is created
+#' as a new individual.
 #'
 #' In `removeIndividuals()` all descendants of `ids` are also removed. Any
 #' individuals (spouses) left unconnected to the remaining pedigree are also
@@ -41,16 +40,14 @@
 #'   (i.e. not included in the function call). In cases 2 and 3 a new founder is
 #'   added to the pedigree. In case 2 its label is the one given, while in case
 #'   3 a suitable label is created by the program (see Details).
-#' @param nch A positive integer indicating the number of children to be created.
-#'   Default: 1.
+#' @param nch A positive integer indicating the number of children to be
+#'   created. Default: 1.
 #' @param sex Gender codes of the created children (recycled if needed).
 #' @param verbose A logical: Verbose output or not.
-#' @param parent The ID label (coercible to character) of a single pedigree
-#'   member, which will be the father or mother (depending on its gender) of the
-#'   new child.
+#' @param parent,parent2 ID labels, of which `parent` must be an existing member
+#'   of `x`.
 #'
 #' @return The modified `ped` object.
-#' @author Magnus Dehli Vigeland
 #' @seealso [ped()], [relabel()], [swapSex()]
 #'
 #' @examples
@@ -171,24 +168,44 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
 
 #' @rdname ped_modify
 #' @export
-addSon = function(x, parent, id = NULL, verbose = TRUE) {
-  parent_sex = getSex(x, parent)
-  if (parent_sex == 1)
-    addChildren(x, father = parent, nch = 1, sex = 1, ids = id, verbose = verbose)
-  else if (parent_sex == 2)
-    addChildren(x, mother = parent, nch = 1, sex = 1, ids = id, verbose = verbose)
-  else stop2("Not implemented for parents of unknown sex: ", parent)
+addSon = function(x, parent, parent2 = NULL, id = NULL, verbose = TRUE) {
+  if(length(parent) != 1)
+    stop2("Argument `parent` must have length 1: ", parent)
+  if(!is.null(parent2) && length(parent2) != 1)
+    stop2("Argument `parent2` must be NULL or a vector of length 1: ", parent)
+
+  pars = c(parent, parent2)
+  if(!all(pars %in% unlist(labels(x))))
+    stop2("Unknown ID label: ", setdiff(pars, unlist(labels(x))))
+
+  sex1 = getSex(x, parent)
+  if(sex1 == 1)
+    addChildren(x, father = parent, mother = parent2, nch = 1, sex = 1, ids = id, verbose = verbose)
+  else if(sex1 == 2)
+    addChildren(x, mother = parent, father = parent2, nch = 1, sex = 1, ids = id, verbose = verbose)
+  else
+    stop2("Not implemented for parents of unknown sex: ", parent)
 }
 
 #' @rdname ped_modify
 #' @export
-addDaughter = function(x, parent, id = NULL, verbose = TRUE) {
-  parent_sex = getSex(x, parent)
-  if (parent_sex == 1)
-    addChildren(x, father = parent, nch = 1, sex = 2, ids = id, verbose = verbose)
-  else if (parent_sex == 2)
-    addChildren(x, mother = parent, nch = 1, sex = 2, ids = id, verbose = verbose)
-  else stop2("Not implemented for parents of unknown sex: ", parent)
+addDaughter = function(x, parent, parent2 = NULL, id = NULL, verbose = TRUE) {
+  if(length(parent) != 1)
+    stop2("Argument `parent` must have length 1: ", parent)
+  if(!is.null(parent2) && length(parent2) != 1)
+    stop2("Argument `parent2` must be NULL or a vector of length 1: ", parent)
+
+  pars = c(parent, parent2)
+  if(!all(pars %in% unlist(labels(x))))
+    stop2("Unknown ID label: ", setdiff(pars, unlist(labels(x))))
+
+  sex1 = getSex(x, parent)
+  if(sex1 == 1)
+    addChildren(x, father = parent, mother = parent2, nch = 1, sex = 2, ids = id, verbose = verbose)
+  else if (sex1 == 2)
+    addChildren(x, mother = parent, father = parent2, nch = 1, sex = 2, ids = id, verbose = verbose)
+  else
+    stop2("Not implemented for parents of unknown sex: ", parent)
 }
 
 #' @rdname ped_modify

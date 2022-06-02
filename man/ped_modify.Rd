@@ -21,9 +21,9 @@ addChildren(
   verbose = TRUE
 )
 
-addSon(x, parent, id = NULL, verbose = TRUE)
+addSon(x, parent, parent2 = NULL, id = NULL, verbose = TRUE)
 
-addDaughter(x, parent, id = NULL, verbose = TRUE)
+addDaughter(x, parent, parent2 = NULL, id = NULL, verbose = TRUE)
 
 addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
 
@@ -43,8 +43,8 @@ existing member, 2) not belong to any existing member, or 3) be missing
 added to the pedigree. In case 2 its label is the one given, while in case
 3 a suitable label is created by the program (see Details).}
 
-\item{nch}{A positive integer indicating the number of children to be created.
-Default: 1.}
+\item{nch}{A positive integer indicating the number of children to be
+created. Default: 1.}
 
 \item{sex}{Gender codes of the created children (recycled if needed).}
 
@@ -55,9 +55,8 @@ labels are assigned automatically as explained in Details.}
 
 \item{verbose}{A logical: Verbose output or not.}
 
-\item{parent}{The ID label (coercible to character) of a single pedigree
-member, which will be the father or mother (depending on its gender) of the
-new child.}
+\item{parent, parent2}{ID labels, of which \code{parent} must be an existing member
+of \code{x}.}
 
 \item{id}{The ID label of some existing pedigree member.}
 
@@ -83,10 +82,9 @@ already exists, the numbers are adjusted accordingly.
 
 \code{addSon()} and \code{addDaughter()} are wrappers for a common use of
 \code{addChildren()}, namely adding a single child to a pedigree member. Note that
-its argument \code{parent} is gender-neutral, unlike in \code{addChildren()} where you have
-to know the parental genders. Also note that the other parent is always
-created as a new individual. Thus, applying \code{addDaughter()} twice with the
-same parent will create half sisters.
+the arguments \code{parent} and \code{parent2} are gender-neutral so that parents can
+be given in any order. If only one parent is supplied, the other is created
+as a new individual.
 
 In \code{removeIndividuals()} all descendants of \code{ids} are also removed. Any
 individuals (spouses) left unconnected to the remaining pedigree are also
@@ -112,7 +110,4 @@ x = removeIndividuals(x, 4)
 }
 \seealso{
 \code{\link[=ped]{ped()}}, \code{\link[=relabel]{relabel()}}, \code{\link[=swapSex]{swapSex()}}
-}
-\author{
-Magnus Dehli Vigeland
 }
