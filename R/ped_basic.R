@@ -8,8 +8,15 @@
 #'
 #' `cousinPed(degree = n, removal = k)` creates a pedigree with two `n`'th
 #' cousins, `k` times removed. By default, removals are added on the right side,
-#' but this can be changed by adding `side = left`. (Similarly for
-#' `halfCousinPed`.)
+#' but this can be changed by adding `side = left`.
+#'
+#' `halfCousinPed(...)` is a synonym for `cousinPed(..., half = TRUE)`.
+#'
+#' `avuncularPed()` creates uncle/aunt - nephew/niece pedigrees. The empty call
+#' `avuncularPed()` is equivalent to avuncularPed("uncle", "nephew"). Note that
+#' the arguments can be abbreviated, so that e.g. `avuncularPed("a", "ni")`
+#' produces an aunt-niece relationship. Grand (and great-grand etc) uncles/aunts
+#' can be produced by specifying `removal` greater than 1.
 #'
 #' `ancestralPed(g)` returns the family tree of a single individual, including
 #' all ancestors `g` generations back.
@@ -39,7 +46,13 @@
 #' @param removal A non-negative integer. See Details and Examples.
 #' @param side Either "right" or "left"; the side on which removals should be
 #'   added.
-#' @param child A logical: Should an inbred child be added to the two cousins?
+#' @param half A logical indicating if the relationship should be "half-like".
+#'   Default: FALSE.
+#' @param child A logical: Should an inbred child be added to the two bottom
+#'   individuals?
+#' @param top,bottom Words indicating the gender combination in avuncular
+#'   relationships. The first must be either "uncle" or "aunt", while the second
+#'   is "nephew" or "niece". Both can be abbreviated.
 #' @param g A nonnegative integer indicating the number of ancestral generations
 #'   to include. The resulting pedigree has `2^(g+1)-1` members. The case `g =
 #'   0` results in a singleton.
@@ -176,40 +189,58 @@ linearPed = function(n, sex = 1) {
   x
 }
 
+
 #' @rdname ped_basic
 #' @export
-cousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
+cousinPed = function(degree, removal = 0, side = c("right", "left"), half = FALSE, child = FALSE) {
+
+  if(half)
+    return(halfCousinPed(degree = degree, removal = removal, side = side, child = child))
+
   if(!isCount(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
   if(!isCount(removal, minimum = 0))
     stop2("`removal` must be a nonnegative integer: ", removal)
 
+  side = match.arg(side)
   deg_right = deg_left = degree
-  switch(match.arg(side),
+  switch(side,
          right = {deg_right <- deg_right + removal},
-         left  = {deg_left <- deg_left + removal})
+         left  = {deg_left  <- deg_left  + removal})
 
   # Chain on the left side
   x = linearPed(deg_left + 1)
 
   # Chain on the right side
   y = linearPed(deg_right + 1)
-  y = relabel(y, old = 3:pedsize(y),
-              new = pedsize(x) + 1:(pedsize(y) - 2))
 
   # Merge
-  z = mergePed(x, y)
+  z = mergePed(x, y, by = if(half) 1 else 1:2, relabel = TRUE)
 
-  if (child) {
+  if(child) {
     parents = leaves(z)
-    z = swapSex(z, parents[2], verbose = FALSE)
-    z = addChildren(z, father = parents[1], mother = parents[2], nch = 1, verbose = FALSE)
+    fa = if(removal == 0 || side == "right") parents[1] else parents[2]
+    mo = setdiff(parents, fa)
+    z = swapSex(z, mo, verbose = FALSE)
+    z = addChildren(z, father = fa, mother = mo, nch = 1, verbose = FALSE)
   }
 
-  # Relabel
-  z = relabel(z, "asPlot")
-
   z
+}
+
+#' @rdname ped_basic
+#' @export
+avuncularPed = function(top = c("uncle", "aunt"), bottom = c("nephew", "niece"),
+                        side = c("right", "left"), removal = 1, half = FALSE) {
+  x = cousinPed(0, removal = removal, side = side, half = half)
+
+  # Swap sexes if aunt and/or niece
+  swp = c(match.arg(top) == "aunt",
+          match.arg(bottom) == "niece")
+  if(any(swp))
+    x = swapSex(x, leaves(x)[swp])
+
+  x
 }
 
 

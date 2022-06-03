@@ -6,6 +6,7 @@
 \alias{halfSibPed}
 \alias{linearPed}
 \alias{cousinPed}
+\alias{avuncularPed}
 \alias{halfCousinPed}
 \alias{ancestralPed}
 \alias{selfingPed}
@@ -23,7 +24,21 @@ halfSibPed(
 
 linearPed(n, sex = 1)
 
-cousinPed(degree, removal = 0, side = c("right", "left"), child = FALSE)
+cousinPed(
+  degree,
+  removal = 0,
+  side = c("right", "left"),
+  half = FALSE,
+  child = FALSE
+)
+
+avuncularPed(
+  top = c("uncle", "aunt"),
+  bottom = c("nephew", "niece"),
+  side = c("right", "left"),
+  removal = 1,
+  half = FALSE
+)
 
 halfCousinPed(degree, removal = 0, side = c("right", "left"), child = FALSE)
 
@@ -67,7 +82,15 @@ cousins, a.s.o.}
 \item{side}{Either "right" or "left"; the side on which removals should be
 added.}
 
-\item{child}{A logical: Should an inbred child be added to the two cousins?}
+\item{half}{A logical indicating if the relationship should be "half-like".
+Default: FALSE.}
+
+\item{child}{A logical: Should an inbred child be added to the two bottom
+individuals?}
+
+\item{top, bottom}{Words indicating the gender combination in avuncular
+relationships. The first must be either "uncle" or "aunt", while the second
+is "nephew" or "niece". Both can be abbreviated.}
 
 \item{g}{A nonnegative integer indicating the number of ancestral generations
 to include. The resulting pedigree has \code{2^(g+1)-1} members. The case \code{g = 0} results in a singleton.}
@@ -88,8 +111,15 @@ maternal half sibs are wanted instead, add \code{type = "maternal"}.
 
 \code{cousinPed(degree = n, removal = k)} creates a pedigree with two \code{n}'th
 cousins, \code{k} times removed. By default, removals are added on the right side,
-but this can be changed by adding \code{side = left}. (Similarly for
-\code{halfCousinPed}.)
+but this can be changed by adding \code{side = left}.
+
+\code{halfCousinPed(...)} is a synonym for \code{cousinPed(..., half = TRUE)}.
+
+\code{avuncularPed()} creates uncle/aunt - nephew/niece pedigrees. The empty call
+\code{avuncularPed()} is equivalent to avuncularPed("uncle", "nephew"). Note that
+the arguments can be abbreviated, so that e.g. \code{avuncularPed("a", "ni")}
+produces an aunt-niece relationship. Grand (and great-grand etc) uncles/aunts
+can be produced by specifying \code{removal} greater than 1.
 
 \code{ancestralPed(g)} returns the family tree of a single individual, including
 all ancestors \code{g} generations back.
