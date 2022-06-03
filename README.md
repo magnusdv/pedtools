@@ -62,17 +62,17 @@ x = halfSibPed(type = "paternal")
 # Make 5 female
 x = swapSex(x, 5)
 
-# Add 6 as a sister to 5
-x = addChildren(x, father = 2, mother = 3, nch = 1, sex = 2)
+# Add a sister to 5 (parents are 2 and 3)
+x = addDaughter(x, parents = 2:3)
 
 # Add inbred child
-x = addChildren(x, father = 4, mother = 5, nch = 1)
+x = addSon(x, parents = 4:5)
 
 # Create marker
-m = marker(x, "7" = "a/b", alleles = c("a", "b"))
+x = addMarker(x, "7" = "a/b")
 
 # Plot pedigree with genotypes
-plot(x, marker = m, hatched = 7)
+plot(x, marker = 1, hatched = 7)
 ```
 
 <img src="man/figures/README-example-1.png" width="40%" />
@@ -84,8 +84,9 @@ could have been created as follows:
 ``` r
 x = halfSibPed(type = "paternal") |>
   swapSex(5) |>
-  addChildren(father = 2, mother = 3, nch = 1, sex = 2) |>
-  addChildren(father = 4, mother = 5, nch = 1)
+  addDaughter(parents = 2:3) |>
+  addSon(parents = 4:5) |>
+  addMarker("7" = "a/b")
 ```
 
 For details about what **pedtools** can do, and many other examples,
