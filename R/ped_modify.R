@@ -81,6 +81,12 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
 
   if(!father_exists && !mother_exists)
     stop2("At least one parent must be an existing pedigree member")
+
+  if(father_exists && getSex(x, father) == 2)
+    stop2("Assigned father is female: ", father)
+  if(mother_exists && getSex(x, mother) == 1)
+    stop2("Assigned mother is male: ", mother)
+
   if(!is.null(ids) && length(ids) != nch)
     stop2("Length of 'ids' must equal the number of children")
   if(any(ids %in% labs))
