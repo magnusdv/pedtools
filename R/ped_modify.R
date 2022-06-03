@@ -10,11 +10,10 @@
 #' labels. If not, the new labels are "NN_1", "NN_2", ... If any such label
 #' already exists, the numbers are adjusted accordingly.
 #'
-#' `addSon()` and `addDaughter()` are wrappers for a common use of
-#' `addChildren()`, namely adding a single child to a pedigree member. Note that
-#' the arguments `parent` and `parent2` are gender-neutral so that parents can
-#' be given in any order. If only one parent is supplied, the other is created
-#' as a new individual.
+#' `addSon()` and `addDaughter()` are wrappers for the most common use of
+#' `addChildren()`, namely adding a single child to a pedigree. Note that the
+#' parents can be given in any order. If only one parent is supplied, the other
+#' is created as a new individual.
 #'
 #' In `removeIndividuals()` all descendants of `ids` are also removed. Any
 #' individuals (spouses) left unconnected to the remaining pedigree are also
@@ -44,8 +43,9 @@
 #'   created. Default: 1.
 #' @param sex Gender codes of the created children (recycled if needed).
 #' @param verbose A logical: Verbose output or not.
-#' @param parent,parent2 ID labels, of which `parent` must be an existing member
-#'   of `x`.
+#' @param parents A vector of 1 or 2 ID labels, of which at least one must be an
+#'   existing member of `x`.
+#' @param parent Deprecated; renamed to `parents`.
 #'
 #' @return The modified `ped` object.
 #' @seealso [ped()], [relabel()], [swapSex()]
@@ -78,11 +78,12 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
   # Check input
   father_exists = isTRUE(father %in% labs)
   mother_exists = isTRUE(mother %in% labs)
-  if (!father_exists && !mother_exists)
+
+  if(!father_exists && !mother_exists)
     stop2("At least one parent must be an existing pedigree member")
-  if (!is.null(ids) && length(ids) != nch)
+  if(!is.null(ids) && length(ids) != nch)
     stop2("Length of 'ids' must equal the number of children")
-  if (any(ids %in% labs))
+  if(any(ids %in% labs))
     stop2("Individuals already exist: ", intersect(ids, labs))
 
   # Recycle `sex` if needed
@@ -168,44 +169,56 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
 
 #' @rdname ped_modify
 #' @export
-addSon = function(x, parent, parent2 = NULL, id = NULL, verbose = TRUE) {
-  if(length(parent) != 1)
-    stop2("Argument `parent` must have length 1: ", parent)
-  if(!is.null(parent2) && length(parent2) != 1)
-    stop2("Argument `parent2` must be NULL or a vector of length 1: ", parent)
+addSon = function(x, parents, id = NULL, verbose = TRUE, parent = NULL) {
+  if(!is.null(parent))
+    parents = parent
 
-  pars = c(parent, parent2)
-  if(!all(pars %in% unlist(labels(x))))
-    stop2("Unknown ID label: ", setdiff(pars, unlist(labels(x))))
+  npar = length(parents)
+  if(npar == 0 || npar > 2)
+    stop2("Argument `parents` must have length 1 or 2: ", parents)
 
-  sex1 = getSex(x, parent)
+  parents = as.character(parents) # remove potential names etc
+  existing = parents %in% unlist(labels(x))
+  if(!any(existing))
+    stop2("At least one parent must be an existing pedigree member: ", parents)
+
+  par1 = if(existing[1]) parents[1] else parents[2]
+  par2 = if(npar == 2) setdiff(parents, par1) else NULL
+
+  sex1 = getSex(x, par1)
   if(sex1 == 1)
-    addChildren(x, father = parent, mother = parent2, nch = 1, sex = 1, ids = id, verbose = verbose)
+    addChildren(x, father = par1, mother = par2, nch = 1, sex = 1, ids = id, verbose = verbose)
   else if(sex1 == 2)
-    addChildren(x, mother = parent, father = parent2, nch = 1, sex = 1, ids = id, verbose = verbose)
+    addChildren(x, father = par2, mother = par1, nch = 1, sex = 1, ids = id, verbose = verbose)
   else
-    stop2("Not implemented for parents of unknown sex: ", parent)
+    stop2("Not implemented for parents of unknown sex: ", par1)
 }
 
 #' @rdname ped_modify
 #' @export
-addDaughter = function(x, parent, parent2 = NULL, id = NULL, verbose = TRUE) {
-  if(length(parent) != 1)
-    stop2("Argument `parent` must have length 1: ", parent)
-  if(!is.null(parent2) && length(parent2) != 1)
-    stop2("Argument `parent2` must be NULL or a vector of length 1: ", parent)
+addDaughter = function(x, parents, id = NULL, verbose = TRUE, parent = NULL) {
+  if(!is.null(parent))
+    parents = parent
 
-  pars = c(parent, parent2)
-  if(!all(pars %in% unlist(labels(x))))
-    stop2("Unknown ID label: ", setdiff(pars, unlist(labels(x))))
+  npar = length(parents)
+  if(npar == 0 || npar > 2)
+    stop2("Argument `parents` must have length 1 or 2: ", parents)
 
-  sex1 = getSex(x, parent)
+  parents = as.character(parents) # remove potential names etc
+  existing = parents %in% unlist(labels(x))
+  if(!any(existing))
+    stop2("At least one parent must be an existing pedigree member: ", parents)
+
+  par1 = if(existing[1]) parents[1] else parents[2]
+  par2 = if(npar == 2) setdiff(parents, par1) else NULL
+
+  sex1 = getSex(x, par1)
   if(sex1 == 1)
-    addChildren(x, father = parent, mother = parent2, nch = 1, sex = 2, ids = id, verbose = verbose)
-  else if (sex1 == 2)
-    addChildren(x, mother = parent, father = parent2, nch = 1, sex = 2, ids = id, verbose = verbose)
+    addChildren(x, father = par1, mother = par2, nch = 1, sex = 2, ids = id, verbose = verbose)
+  else if(sex1 == 2)
+    addChildren(x, father = par2, mother = par1, nch = 1, sex = 2, ids = id, verbose = verbose)
   else
-    stop2("Not implemented for parents of unknown sex: ", parent)
+    stop2("Not implemented for parents of unknown sex: ", par1)
 }
 
 #' @rdname ped_modify

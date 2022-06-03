@@ -155,6 +155,18 @@ test_that("adding and removing child restores original", {
 
 })
 
+test_that("addSon() works with unordered parents", {
+  x = nuclearPed(1)
+  expect_identical(addSon(x, 1:2), addSon(x, 2:1))
+  expect_identical(addSon(x, 3:4), addSon(x, 4:3))
+})
+
+test_that("addSon() cathces errors", {
+  x = nuclearPed(1)
+  expect_error(addSon(x, c(1,3)), "Assigned mother is male")
+  expect_error(addSon(x, 4:5), "At least one parent must be an existing pedigree member")
+})
+
 test_that("adding and removing child restores original - with markers", {
   x = nuclearPed(1) |> addMarker('3' = "1/2")
   y = addChildren(x, father=3, verbose=F)

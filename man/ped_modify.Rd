@@ -21,9 +21,9 @@ addChildren(
   verbose = TRUE
 )
 
-addSon(x, parent, parent2 = NULL, id = NULL, verbose = TRUE)
+addSon(x, parents, id = NULL, verbose = TRUE, parent = NULL)
 
-addDaughter(x, parent, parent2 = NULL, id = NULL, verbose = TRUE)
+addDaughter(x, parents, id = NULL, verbose = TRUE, parent = NULL)
 
 addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
 
@@ -55,10 +55,12 @@ labels are assigned automatically as explained in Details.}
 
 \item{verbose}{A logical: Verbose output or not.}
 
-\item{parent, parent2}{ID labels, of which \code{parent} must be an existing member
-of \code{x}.}
+\item{parents}{A vector of 1 or 2 ID labels, of which at least one must be an
+existing member of \code{x}.}
 
 \item{id}{The ID label of some existing pedigree member.}
+
+\item{parent}{Deprecated; renamed to \code{parents}.}
 
 \item{subset}{A character vector (or coercible to such) with ID labels
 forming a connected sub-pedigree.}
@@ -80,11 +82,10 @@ so, the new labels are integers subsequent to the largest of the existing
 labels. If not, the new labels are "NN_1", "NN_2", ... If any such label
 already exists, the numbers are adjusted accordingly.
 
-\code{addSon()} and \code{addDaughter()} are wrappers for a common use of
-\code{addChildren()}, namely adding a single child to a pedigree member. Note that
-the arguments \code{parent} and \code{parent2} are gender-neutral so that parents can
-be given in any order. If only one parent is supplied, the other is created
-as a new individual.
+\code{addSon()} and \code{addDaughter()} are wrappers for the most common use of
+\code{addChildren()}, namely adding a single child to a pedigree. Note that the
+parents can be given in any order. If only one parent is supplied, the other
+is created as a new individual.
 
 In \code{removeIndividuals()} all descendants of \code{ids} are also removed. Any
 individuals (spouses) left unconnected to the remaining pedigree are also
