@@ -119,6 +119,7 @@ The following pedigree structures serve as starting points for pedigree construc
 * `nuclearPed()`, a nuclear pedigree (parents+children)
 * `halfSibPed()`, two sibships with one parent in common
 * `linearPed()`, a straight line of successors
+* `avuncularPed()`, uncle-nephew and similar relationships
 * `cousinPed()`, cousins of specified degree/removal
 * `halfCousinPed()`, half cousins of specified degree/removal
 * `ancestralPed()`, a family tree containing the ancestors of a single person
@@ -180,10 +181,10 @@ plot(x1, margin = c(1,1,1,1))
 ```
 
 **Alternative A**  
-One approach is to first create the pedigree consisting of individuals 1-6, with `halfSibPed()`, and then use `addChildren()` to add the inbred child.
+One approach is to first create the pedigree consisting of individuals 1-6, with `halfSibPed()`, and then use `addSon()` to add the inbred child.
 ```{r}
 x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
-x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
+x1 = addSon(x1, parents = 4:5)
 ```
 
 **Alternative B**  
@@ -191,7 +192,7 @@ We could also view the half siblings 4 and 5 as half cousins of degree 0. The `h
 
 ```{r}
 x2 = halfCousinPed(0, child = T)
-x2 = addChildren(x2, father = 2, mother = 3, nch = 1)
+x2 = addSon(x2, parents = 2:3)
 x2 = relabel(x2, old = c(7,6), new = c(6,7))
 ```
 
@@ -217,7 +218,7 @@ identical(x1, x2)
 ```
 
 ### Example 3: A complex family tree
-Here we consider the family tree below, extending both upwards and downwards from a single person.
+Here we consider the family tree below, extending both upwards and downwards from a single person. We will use this example to demonstrate the `mergePed()` function, which "glues" together two pedigrees by the indicated members.
 
 ```{r merge-example, echo = FALSE, message=FALSE}
 # Top part
@@ -235,15 +236,17 @@ z = mergePed(x, y, by = c("7" = "2"), relabel = TRUE)
 plot(z, margins = c(1,1,1,1))
 ```
 
-We will use this example to demonstrate the `mergePed()` function. When this function is given two pedigrees, it "glues together" members with matching ID labels, and checks that the result is a valid pedigree. 
-
-The hardest part of using `mergePed()` is to get the labelling right; this will almost always involve the `relabel()` function. To keep track of the labels, you should plot after each new line of code. Here is how the pedigree was created:
-
 ```{r, label = "merge-example"}
 ```
 
+Note the argument `by = c("7" = "2")`, which means that individual "7" in `x` should be identified with "2" in `y`. As seen in the plot below, this individual ends up as "8" after relabelling in the final result.
+
+```{r merge-parts, fig.width = 9, fig.height = 3.5}
+plotPedList(list(x, y, z))
+```
+
 ## Pedigree subsets
-Many situations call for selecting all pedigree members sharing some property, e.g., all females, or all descendants of some person. Several utilities in pedtools exist to help with such tasks. Generally these come in two flavours: 1) members with certain _global_ property, and 2) members with a certain relationship to a given individual.
+Many situations call for selecting all pedigree members sharing some property, e.g., all females, or all descendants of some person. Several utilities in **pedtools** exist to help with such tasks. Generally these come in two flavours: 1) members with certain _global_ property, and 2) members with a certain relationship to a given individual.
 
 **Pedigree members with a certain property**  
 Each of the following functions returns a vector specifying the members with the given property. 
@@ -325,9 +328,9 @@ plot(trio, marker = m1, sep = "", showEmpty = T, missing = "?", margins = c(1,1,
 ```
 
 ## Markers attached to `ped` objects
-Although a `ped` object is needed in the creation of a `marker`, the two are independent of each other once the marker is created. In many applications it is useful to _attach_ markers to their `ped` object. In particular for bigger projects with many markers, this makes it easier to manipulate the dataset as a unit. 
+In most applications it is useful to _attach_ markers to their `ped` object. In particular for bigger projects with many markers, this makes it easier to manipulate the dataset as a unit. 
 
-To attach a marker `m` (which could be a list of several markers) to a pedigree `x`, there are two options:
+To attach a marker object `m` (which could be a list of several markers) to a pedigree `x`, there are two main options:
 
 * `setMarkers(x, m)`
 * `addMarkers(x, m)`
@@ -336,6 +339,14 @@ The difference between these is that `setMarkers()` replaces all existing marker
 ```{r}
 trio = setMarkers(trio, list(m1, m2))
 trio
+```
+
+There is a handy shortcut, `addMarker()` (without the 's'), allowing you to create and attach a single marker in one go. The command `addMarker(x, ...)` is essentially equivalent to `setMarkers(x, marker(x, ...))`. It is also well adapted to piping, as in this example:
+
+```{r}
+nuclearPed(1) |> 
+  addMarker(name = "myMarker", alleles = c("a", "b", "c")) |>
+  setGenotype(marker = 1, id = 3, geno = "a/c")
 ```
 
 **Selecting and removing attached markers**  
