@@ -1,3 +1,27 @@
+# pedtools 1.3.0
+
+## New features
+
+* New function `avuncularPed()` for creating aunt/uncle - nephew/niece pedigrees.
+
+* New function `addAllele()` for extending the allele set of a marker.
+
+* `addSon()` and `addDaughter()` are now more flexible. The previous argument `parent` has been renamed to `parents` and accepts one or two parents in any order.
+
+* `mergePed()` has been overhauled. In particular the new argument `by` makes it much more user friendly.
+
+* `setAfreq()` gains argument `strict`.
+
+
+## Other
+
+* Minor improvements of README and vignette.
+
+* Fixed bug in `setGenotype()` when setting multiple markers.
+
+* Fixed bug ignoring alleles in `distributeMarkers()`.
+
+
 # pedtools 1.2.0
 
 ## New features
