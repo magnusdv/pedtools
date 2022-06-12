@@ -693,7 +693,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   }
 
   new.oma = if (hasTitles) c(0, 0, 3, 0) else c(0, 0, 0, 0)
-  opar = par(oma = new.oma, xpd = NA)
+  opar = par(oma = new.oma, xpd = NA, mfrow = c(1,1)) # include mfrow to ensure layout is reverted on exit
   on.exit(par(opar))
 
   if(verbose) {
