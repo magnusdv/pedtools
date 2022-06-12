@@ -275,7 +275,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   # Add title
   if (!is.null(title))
     title(title, cex.main = dotArgs$cex.main %||% cex, col.main = dotArgs$col.main,
-          font.main = dotArgs$font.main, fam = fam, xpd = NA)
+          font.main = dotArgs$font.main, family = fam, xpd = NA)
 
   # Add carrier dots
   if(is.function(carrier))
@@ -286,13 +286,13 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   # Text inside symbols
   if(!is.null(textInside)) {
     text(pdat$x, pdat$y + pdat$boxh/2, labels = textInside, cex = cex, col = cols,
-         font = dotArgs[['font']], fam = fam)
+         font = dotArgs[['font']], family = fam)
   }
 
   # Text above pedigree symbols
   if(!is.null(textAbove)) {
     text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = cols,
-         font = dotArgs[['font']], fam = fam, adj = c(0.5, -0.5), xpd = TRUE)
+         font = dotArgs[['font']], family = fam, adj = c(0.5, -0.5), xpd = TRUE)
   }
   else if(!is.null(fouInb) && hasInbredFounders(x)) {
     # Add founder inbreeding coefficients
@@ -302,7 +302,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
     finb.txt = sprintf("f = %.4g", finb)
 
     text(pdat$x[idx], pdat$y[idx], labels = finb.txt, cex = cex, font = 3,
-         fam = fam, adj = c(0.5, -0.5), xpd = TRUE)
+         family = fam, adj = c(0.5, -0.5), xpd = TRUE)
   }
 
   invisible(pdat)
