@@ -17,6 +17,13 @@
 #'
 #' * marker data (remaining columns)
 #'
+#' #### Reading SNP data
+#'
+#' Adding the argument `locusAttributes = "snp-AB"`, sets all markers to be
+#' equifrequent SNPs with alleles A and B. Moreover, the letters A and B may be
+#' replaced by other single-character letters or numbers, e.g., "snp-12" gives
+#' alleles 1 and 2.
+#'
 #' @param pedfile A file name
 #' @param colSep A column separator character, passed on as the `sep` argument
 #'   of [read.table()]. The default is to separate on white space, that is, one

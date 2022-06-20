@@ -27,16 +27,20 @@
 #'
 #' * `rate` : mutation model parameter (NULL)
 #'
-#' If `locusAttributes` is just a single list of attributes (not a list of
-#' lists), then it is repeated to match the number of markers. In particular,
-#' the shortcut `locusAttributes = "snp-12"` sets all markers to be SNPs with
-#' alleles 1 and 2.`
+#' If `locusAttributes` is a single list of attributes (not a list of lists),
+#' then it is repeated to match the number of markers.
 #'
-#' Two alternative format of `locusAttributes` are allowed: If a data.frame or
-#' matrix is given, an attempt is made to interpret it as a frequency database
-#' in `allelic ladder` format. Such an interpretation is also attempted if
-#' `locusAttributes` is a list of named frequency vectors (where the names are
-#' the allele labels).
+#' #### Alternative formats of `locusAttributes`:
+#'
+#' * data frame or matrix. In this case an attempt is made to interpret it as a
+#' frequency database in `allelic ladder` format.
+#'
+#' * A list of frequency vectors. All vectors should sum to 1, and be named
+#' (with allele labels)
+#'
+#' * Shortcut for simple SNP data: The argument `locusAttributes = "snp-AB"`
+#' sets all markers to be equifrequent SNPs with alleles A and B. The letters A
+#' and B may be replaced by other single-character letters or numbers.
 #'
 #' @param x A `ped` object
 #' @param m Either a single `marker` object or a list of `marker` objects
@@ -72,7 +76,9 @@
 #' setMarkers(x, list(m2, m1))
 #'
 #' # Alternative syntax, adding one marker at a time
-#' x2 = x |> addMarker(`1` = "1/2") |> addMarker(`1` = "a/b")
+#' x2 = x |>
+#'   addMarker(`1` = "1/2") |>
+#'   addMarker(`1` = "a/b")
 #'
 #' stopifnot(identical(x1, x2))
 #'
@@ -198,13 +204,13 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 checkLocusAttribs = function(a) {
   if(length(a) == 0) return(a)
 
-  if(identical(a, "snp-12"))
-    a = list(alleles = 1:2)
-  else if(identical(a, "snp-ab"))
-    a = list(alleles = c('a','b'))
-  else if(identical(a, "snp-AB"))
-    a = list(alleles = c('A','B'))
-
+  # Shortcut for SNPs
+  if(length(a) == 1 && is.character(a) && isTRUE(startsWith(tolower(a), "snp"))) {
+    nch = nchar(a)
+    if(!nch %in% 5:6)
+      stop2("Shortcut code for SNP markers must be of the form 'snpAB' or 'snp-AB': ", a)
+    a = list(alleles = strsplit(a, "")[[1]][c(nch - 1, nch)])
+  }
   attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")
 
   # Format 1: List of lists

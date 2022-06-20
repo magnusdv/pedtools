@@ -83,6 +83,13 @@ the program assumes the following column order:
 \item sex
 \item marker data (remaining columns)
 }
+\subsection{Reading SNP data}{
+
+Adding the argument \code{locusAttributes = "snp-AB"}, sets all markers to be
+equifrequent SNPs with alleles A and B. Moreover, the letters A and B may be
+replaced by other single-character letters or numbers, e.g., "snp-12" gives
+alleles 1 and 2.
+}
 }
 \examples{
 

@@ -77,16 +77,19 @@ where \code{L = length(alleles)})
 \item \code{rate} : mutation model parameter (NULL)
 }
 
-If \code{locusAttributes} is just a single list of attributes (not a list of
-lists), then it is repeated to match the number of markers. In particular,
-the shortcut \code{locusAttributes = "snp-12"} sets all markers to be SNPs with
-alleles 1 and 2.`
-
-Two alternative format of \code{locusAttributes} are allowed: If a data.frame or
-matrix is given, an attempt is made to interpret it as a frequency database
-in \verb{allelic ladder} format. Such an interpretation is also attempted if
-\code{locusAttributes} is a list of named frequency vectors (where the names are
-the allele labels).
+If \code{locusAttributes} is a single list of attributes (not a list of lists),
+then it is repeated to match the number of markers.
+\subsection{Alternative formats of \code{locusAttributes}:}{
+\itemize{
+\item data frame or matrix. In this case an attempt is made to interpret it as a
+frequency database in \verb{allelic ladder} format.
+\item A list of frequency vectors. All vectors should sum to 1, and be named
+(with allele labels)
+\item Shortcut for simple SNP data: The argument \code{locusAttributes = "snp-AB"}
+sets all markers to be equifrequent SNPs with alleles A and B. The letters A
+and B may be replaced by other single-character letters or numbers.
+}
+}
 }
 \examples{
 x = singleton(1)
@@ -100,7 +103,9 @@ x1 = setMarkers(x, list(m1, m2))
 setMarkers(x, list(m2, m1))
 
 # Alternative syntax, adding one marker at a time
-x2 = x |> addMarker(`1` = "1/2") |> addMarker(`1` = "a/b")
+x2 = x |>
+  addMarker(`1` = "1/2") |>
+  addMarker(`1` = "a/b")
 
 stopifnot(identical(x1, x2))
 
