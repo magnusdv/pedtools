@@ -3,8 +3,11 @@
 #' Functions for getting or changing the ID labels of pedigree members.
 #'
 #' @param x A `ped` object or a list of such.
-#' @param new,old Character vectors (or coercible to character) of the same
-#'   length. ID labels in `old` are replaced by those in `new`.
+#' @param new Either a character vector containing new labels, or one of the
+#'   special words "asPlot" or "generations". Default: "asPlot", which produces
+#'   numeric labels following the plot (top to bottom; left to right).
+#' @param old A vector of ID labels, of the same length as `new`. (Ignored if
+#'   `new` is one of the special words.)
 #' @param reorder A logical. If TRUE, [reorderPed()] is called on `x` after
 #'   relabelling. Default: FALSE.
 #'
@@ -26,12 +29,17 @@
 #' x
 #' labels(x)
 #'
-#' relabel(x, new = "girl", old = 3)
+#' y = relabel(x, new = "girl", old = 3)
+#' y
+#'
+#' # Back to the numeric labels
+#' z = relabel(y)
+#' stopifnot(identical(x,z))
 #'
 #' @importFrom kinship2 align.pedigree
 #' @importFrom utils as.roman
 #' @export
-relabel = function(x, new, old = labels(x), reorder = FALSE) {
+relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE) {
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 

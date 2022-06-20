@@ -6,7 +6,7 @@
 \alias{labels.list}
 \title{Get or modify pedigree labels}
 \usage{
-relabel(x, new, old = labels(x), reorder = FALSE)
+relabel(x, new = "asPlot", old = labels(x), reorder = FALSE)
 
 \method{labels}{ped}(object, ...)
 
@@ -15,8 +15,12 @@ relabel(x, new, old = labels(x), reorder = FALSE)
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
 
-\item{new, old}{Character vectors (or coercible to character) of the same
-length. ID labels in \code{old} are replaced by those in \code{new}.}
+\item{new}{Either a character vector containing new labels, or one of the
+special words "asPlot" or "generations". Default: "asPlot", which produces
+numeric labels following the plot (top to bottom; left to right).}
+
+\item{old}{A vector of ID labels, of the same length as \code{new}. (Ignored if
+\code{new} is one of the special words.)}
 
 \item{reorder}{A logical. If TRUE, \code{\link[=reorderPed]{reorderPed()}} is called on \code{x} after
 relabelling. Default: FALSE.}
@@ -43,7 +47,12 @@ x = nuclearPed()
 x
 labels(x)
 
-relabel(x, new = "girl", old = 3)
+y = relabel(x, new = "girl", old = 3)
+y
+
+# Back to the numeric labels
+z = relabel(y)
+stopifnot(identical(x,z))
 
 }
 \seealso{
