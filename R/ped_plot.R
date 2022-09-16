@@ -201,11 +201,6 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
     text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
   }
 
-  # Needed for centred title. Without, par() doesn't equal 'margins'...(why??)
-  opar = par(mar = margins)
-  if(!keep.par)
-    on.exit(par(opar))
-
   # Colours
   if(is.list(col)) {
     cols = rep(1, nInd)
@@ -243,15 +238,28 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 
 # Convert to `kinship2` and generate plot object --------------------------
 
+  # Set margins
+  if(length(margins) == 1) {
+    margins = rep(margins, 4)
+
+    # Make room for title
+    if(!is.null(title))
+      margins[3] = 3.1 + margins[3]  # default: 4.1
+  }
+
+  opar = par(mar = margins, xpd = TRUE)
+  if(!keep.par)
+    on.exit(par(opar))
+
   if(is.singleton(x)) {
-    pdat = .plot1(x, lab = text, col = cols, filled = aff, deceased = deceased, mar = margins,
-                  density = density, angle = angle, keep.par = keep.par)
+    pdat = .plot1(x, lab = text, col = cols, deceased = deceased, aff = aff,
+                  density = density, angle = angle, ...)
   }
   else {
     pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff,
                                     twins = twins, hints = hints)
-    pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
-                                 density = density, angle = angle, keep.par = keep.par, ...)
+    pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols,
+                                   density = density, angle = angle, keep.par = TRUE, ...)
   }
 
 
@@ -299,9 +307,71 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   invisible(pdat)
 }
 
-#' @rdname plot.ped
-#' @export
-plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
+#' @importFrom graphics frame polygon segments strheight strwidth
+.plot1 = function(x, lab = x$ID, col = 1, aff = NULL, deceased = NULL,
+                  density = NULL, angle = NULL,
+                  cex = 1, symbolsize = 1, ...) {
+
+  isAff = x$ID %in% aff
+  isDec = x$ID %in% deceased
+
+  # Ensure no filling if unaff
+  if(!isAff)
+    density = NULL
+
+  frame()
+  psize = par("pin")
+
+  stemp1 = strwidth("ABC", units = "inches", cex = cex) * 2.5/3
+  stemp2 = strheight("1g", units = "inches", cex = cex)
+  stemp3 = strheight(lab, units = "inches", cex = cex)
+
+  ht1 = psize[2] - (stemp3 + stemp2)
+  wd2 = 0.5 * psize[1]
+
+  boxsize = symbolsize * min(stemp1, ht1, wd2)
+  hscale = psize[1]/2
+  vscale = psize[2] - (stemp3 + stemp2 + boxsize)
+  if (ht1 <= 0 || vscale <= 0)
+    stop2("Labels leave no room for the graph, reduce cex")
+  boxw = boxsize/hscale
+  boxh = boxsize/vscale
+
+  # User coordinates: x from 0 to 1; y from 0.5 (top) to 1.5 + label height
+  par(usr = c(0, 2, 1.5 + boxh + stemp2/vscale + stemp3/vscale, 0.5))
+
+  # Coordinates (top center)
+  xpos = 1
+  ypos = 1
+
+  # Symbol: 0 = diamond; 1 = square; 2 = circle
+  poly = switch(getSex(x) + 1,
+                list(x = c(0, -0.5, 0, 0.5), y = c(0, 0.5, 1, 0.5)), # diamond
+                list(x = c(-1, -1, 1, 1)/2, y = c(0, 1, 1, 0)),      # square
+                list(x = 0.5 * cos(seq(0, 2 * pi, length = 50)),     # circle
+                     y = 0.5 * sin(seq(0, 2 * pi, length = 50)) + 0.5))
+
+  # fill color (named 'col' in polygon)
+  fill = if(isAff) col else NA
+
+  # Draw symbol
+  polygon(xpos + poly$x * boxw, ypos + poly$y * boxh, border = col,
+          col = fill, density = density, angle = angle)
+
+  # Deceased?
+  if(isDec)
+    segments(xpos - 0.6 * boxw, ypos + 1.1 * boxh, xpos + 0.6 * boxw, ypos - 0.1 * boxh)
+
+  # Label
+  labh = stemp2/vscale
+  text(xpos, ypos + boxh + labh * 0.7, lab, cex = cex, adj = c(0.5, 1), ...)
+
+  invisible(list(plist = NULL, x = xpos, y = ypos, boxw = boxw, boxh = boxh))
+}
+
+# @rdname plot.ped
+# @export
+.plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                           labs = labels(x), title = NULL, col = 1, aff = NULL,
                           carrier = NULL, hatched = NULL, deceased = NULL, starred = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal",
@@ -528,9 +598,7 @@ plot.pedList = function(x, ...) {
 #'              symbolsize = 1.2, labs = NULL)
 #'
 #' x3 = singleton("Mr. X")
-#' marg3 = c(10, 0, 0, 0)
-#' plot3 = list(x3, margins = marg3, title = "Plot 3",
-#'              symbolsize = 1, cex = 2)
+#' plot3 = list(x3, title = "Plot 3", cex = 2)
 #'
 #' x4 = halfSibPed()
 #' hatched = 4:5
@@ -663,8 +731,12 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     # Margins
     arglist$margins = arglist$margins %||% {
       g = generations(arglist$x)
-      addMar = 2 * (maxGen - g + 1)
-      defaultmargins + c(addMar, 0, addMar, 0)
+      if(g == 1) # singleton
+        rep(2, 4)
+      else {
+        addMar = 2 * (maxGen - g + 1)
+        defaultmargins + c(addMar, 0, addMar, 0)
+      }
     }
 
     arglist

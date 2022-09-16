@@ -2,7 +2,6 @@
 % Please edit documentation in R/ped_plot.R
 \name{plot.ped}
 \alias{plot.ped}
-\alias{plot.singleton}
 \alias{as_kinship2_pedigree}
 \alias{plot.pedList}
 \title{Plot pedigrees with genotypes}

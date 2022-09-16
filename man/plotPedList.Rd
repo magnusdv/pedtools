@@ -129,9 +129,7 @@ plot2 = list(x2, marker = m2, margins = marg2, title = "Plot 2",
              symbolsize = 1.2, labs = NULL)
 
 x3 = singleton("Mr. X")
-marg3 = c(10, 0, 0, 0)
-plot3 = list(x3, margins = marg3, title = "Plot 3",
-             symbolsize = 1, cex = 2)
+plot3 = list(x3, title = "Plot 3", cex = 2)
 
 x4 = halfSibPed()
 hatched = 4:5
