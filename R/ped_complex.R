@@ -150,6 +150,57 @@ quadHalfFirstCousins = function() {
         sex = rep(1:2, 5))
 }
 
+quadSecondCousins = function(type = c("cyclic", "exchange")) {
+  type = match.arg(type)
+
+  x = switch(type,
+  cyclic = {
+    pedmat = matrix(c(
+      1,0,0,1,
+      2,0,0,2,
+      3,0,0,1,
+      4,0,0,2,
+      5,0,0,1,
+      6,0,0,2,
+      7,0,0,1,
+      8,0,0,2,
+      9,1,2,1,
+      10,7,8,2,
+      11,3,4,1,
+      12,5,6,2,
+      13,5,6,1,
+      14,7,8,2,
+      15,3,4,1,
+      16,1,2,2,
+      17,9,10,1,
+      18,11,12,2,
+      19,13,14,1,
+      20,15,16,2,
+      21,17,18,1,
+      22,19,20,1), byrow = T, ncol = 4)
+
+    ped(id  = pedmat[,1],
+        fid = pedmat[,2],
+        mid = pedmat[,3],
+        sex = pedmat[,4],
+        validate = FALSE, reorder = FALSE, verbose = FALSE) |>
+      relabel()
+  },
+  exchange = {
+    part1 = doubleFirstCousins() |>
+      addSon(c(9,11), verbose = FALSE) |>
+      addSon(c(10,13), verbose = FALSE)
+
+    part2 = doubleFirstCousins() |>
+      addSon(c(9,11), verbose = FALSE) |>
+      addSon(c(10,13), verbose = FALSE) |>
+      swapSex(9:10, verbose = FALSE) |>
+      relabel(old = c(9,11, 10,13), new = c(11,9, 13,10))
+
+    mergePed(part1, part2, by = c(9:14), relabel = TRUE)
+  })
+}
+
 #' @rdname ped_complex
 #' @export
 fullSibMating = function(n) {
