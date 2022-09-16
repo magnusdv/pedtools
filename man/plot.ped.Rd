@@ -25,30 +25,8 @@
   textAbove = NULL,
   hints = NULL,
   fouInb = "autosomal",
-  margins = c(0.6, 1, 4.1, 1),
+  margins = 1,
   keep.par = FALSE,
-  ...
-)
-
-\method{plot}{singleton}(
-  x,
-  marker = NULL,
-  sep = "/",
-  missing = "-",
-  showEmpty = FALSE,
-  labs = labels(x),
-  title = NULL,
-  col = 1,
-  aff = NULL,
-  carrier = NULL,
-  hatched = NULL,
-  deceased = NULL,
-  starred = NULL,
-  textInside = NULL,
-  textAbove = NULL,
-  fouInb = "autosomal",
-  margins = c(8, 0, 0, 0),
-  yadj = 0,
   ...
 )
 

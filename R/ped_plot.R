@@ -141,7 +141,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
                     hatched = NULL, deceased = NULL, starred = NULL, twins = NULL,
                     textInside = NULL, textAbove = NULL,
                     hints = NULL, fouInb = "autosomal",
-                    margins = c(0.6, 1, 4.1, 1), keep.par = FALSE, ...) {
+                    margins = 1, keep.par = FALSE, ...) {
 
   if(hasSelfing(x))
     stop2("Plotting of pedigrees with selfing is not yet supported")
