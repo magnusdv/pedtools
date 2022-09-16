@@ -47,7 +47,6 @@
 #'   to indicate unaffected carriers of the disease allele.)
 #' @param hatched A vector of labels identifying members whose plot symbols
 #'   should be hatched.
-#' @param shaded (Deprecated) synonym of `hatched`
 #' @param deceased A vector of labels indicating deceased pedigree members.
 #' @param starred A vector of labels indicating pedigree members that should be
 #'   marked with a star in the pedigree plot.
@@ -139,8 +138,8 @@
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
-                    hatched = NULL, shaded = NULL, deceased = NULL,
-                    starred = NULL, twins = NULL, textInside = NULL, textAbove = NULL,
+                    hatched = NULL, deceased = NULL, starred = NULL, twins = NULL,
+                    textInside = NULL, textAbove = NULL,
                     hints = NULL, fouInb = "autosomal",
                     margins = c(0.6, 1, 4.1, 1), keep.par = FALSE, ...) {
 
@@ -154,11 +153,11 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
     labs = labs(x)
 
   if(identical(labs, "num"))
-    labs = setNames(labels(x), 1:nInd)
+    labs = setNames(x$ID, 1:nInd)
 
   text = rep("", nInd) # Initialise
 
-  mtch = match(labels(x), labs, nomatch = 0L)
+  mtch = match(x$ID, labs, nomatch = 0L)
   showIdx = mtch > 0
   showLabs = labs[mtch]
 
@@ -215,19 +214,12 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
       if(is.function(thiscol))
         idscol = thiscol(x)
       else
-        idscol = intersect(labels(x), thiscol)
+        idscol = intersect(x$ID, thiscol)
       cols[internalID(x, idscol)] = cc
     }
   }
   else {
      cols = rep(col, length = nInd)
-  }
-
-  # Very soft deprecation of `shaded`
-  if(!is.null(shaded)) {
-    message("The argument `shaded` has been renamed to `hatched`; please use this instead.")
-    hatched = shaded
-    shaded = NULL
   }
 
   # Affected/hatched individuals
@@ -238,30 +230,29 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   if(!is.null(aff) && !is.null(hatched))
     stop2("Both `aff` and `hatched` cannot both be used")
 
-  if(!is.null(aff)) {
-    density = -1
-    angle = 90
-  }
-  else if(!is.null(hatched)) {
-    aff = hatched
-    density = 25
-    angle = 45
-  } else {
-    density = angle = NULL
-  }
+  # filling density and angle
+  density = if(!is.null(aff)) -1 else if(!is.null(hatched)) 25 else NULL
+  angle = if(!is.null(aff)) 90 else if(!is.null(hatched)) 45 else NULL
+  if(!is.null(hatched))
+    aff = hatched # for kinship2
 
   # Twin info
   if(is.vector(twins))
     twins = data.frame(id1 = twins[1], id2 = twins[2], code = as.integer(twins[3]))
 
+
 # Convert to `kinship2` and generate plot object --------------------------
 
-
-  pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff,
-                                  twins = twins, hints = hints)
-
-  pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
+  if(is.singleton(x)) {
+    pdat = .plot1(x, lab = text, col = cols, filled = aff, deceased = deceased, mar = margins,
+                  density = density, angle = angle, keep.par = keep.par)
+  }
+  else {
+    pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff,
+                                    twins = twins, hints = hints)
+    pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols, mar = margins,
                                  density = density, angle = angle, keep.par = keep.par, ...)
+  }
 
 
 # Add extra annotations ---------------------------------------------------
@@ -312,8 +303,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
 #' @export
 plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                           labs = labels(x), title = NULL, col = 1, aff = NULL,
-                          carrier = NULL, hatched = NULL, shaded = NULL,
-                          deceased = NULL, starred = NULL,
+                          carrier = NULL, hatched = NULL, deceased = NULL, starred = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal",
                           margins = c(8, 0, 0, 0), yadj = 0, ...) {
 
@@ -329,11 +319,6 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
 
   if(is.function(carrier))
     carrier = carrier(x)
-
-  if(!is.null(shaded)) {
-    hatched = shaded
-    shaded = NULL
-    }
 
   if(is.function(hatched))
     hatched = hatched(x)
@@ -377,7 +362,7 @@ plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty 
   pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
                showEmpty = showEmpty, labs = labs,
                title = title, col = col, aff = aff, carrier = carrier,
-               hatched = hatched, shaded = shaded, deceased = deceased,
+               hatched = hatched, deceased = deceased,
                starred = starred, textInside = textInside, textAbove = textAbove,
                margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
 

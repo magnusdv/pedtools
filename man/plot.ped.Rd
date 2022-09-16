@@ -19,7 +19,6 @@
   aff = NULL,
   carrier = NULL,
   hatched = NULL,
-  shaded = NULL,
   deceased = NULL,
   starred = NULL,
   twins = NULL,
@@ -44,7 +43,6 @@
   aff = NULL,
   carrier = NULL,
   hatched = NULL,
-  shaded = NULL,
   deceased = NULL,
   starred = NULL,
   textInside = NULL,
@@ -113,8 +111,6 @@ to indicate unaffected carriers of the disease allele.)}
 
 \item{hatched}{A vector of labels identifying members whose plot symbols
 should be hatched.}
-
-\item{shaded}{(Deprecated) synonym of \code{hatched}}
 
 \item{deceased}{A vector of labels indicating deceased pedigree members.}
 
