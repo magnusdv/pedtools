@@ -307,6 +307,13 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   invisible(pdat)
 }
 
+
+
+# Plot singleton ----------------------------------------------------------
+
+# Note: Singletons are not allowed by kinship2::plot.pedigree().
+# Some code from kinship2 is reused to ensure similar appearance.
+
 #' @importFrom graphics frame polygon segments strheight strwidth
 .plot1 = function(x, lab = x$ID, col = 1, aff = NULL, deceased = NULL,
                   density = NULL, angle = NULL,
@@ -319,6 +326,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   if(!isAff)
     density = NULL
 
+  # Scaling
   frame()
   psize = par("pin")
 
