@@ -87,8 +87,8 @@
 #' plot(x, marker = "SNP", hatched = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
 #'
-#' # Filled symbols
-#' plot(x, aff = males(x))
+#' # Medical pedigree
+#' plot(x, aff = males(x), carrier = "mo")
 #'
 #' # Label only some members
 #' plot(x, labs = c("fa", "boy"))
@@ -109,10 +109,13 @@
 #' # ... but can be suppressed
 #' plot(x, fouInb = NULL)
 #'
+#' # Other text above and inside symbols
+#' plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+#'
 #' # Twins
 #' x = nuclearPed(children = c("tw1", "tw2", "tw3"))
 #' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
-#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # DZ
+#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
 #'
 #' # Triplets
 #' plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
@@ -270,6 +273,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   dotArgs = lapply(dotArgs.uneval, eval.parent, n = 2L)
   cex = dotArgs[['cex']]
   fam = dotArgs[['family']]
+  font = dotArgs[['font']]
 
   # Add title
   if (!is.null(title))
@@ -285,23 +289,30 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   # Text inside symbols
   if(!is.null(textInside)) {
     text(pdat$x, pdat$y + pdat$boxh/2, labels = textInside, cex = cex, col = cols,
-         font = dotArgs[['font']], family = fam)
+         font = font, family = fam)
   }
 
-  # Text above pedigree symbols
-  if(!is.null(textAbove)) {
-    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = cols,
-         font = dotArgs[['font']], family = fam, adj = c(0.5, -0.5), xpd = TRUE)
-  }
-  else if(!is.null(fouInb) && hasInbredFounders(x)) {
-    # Add founder inbreeding coefficients
+  # Text above symbols
+  fontAbove = font
+
+  # Founder inbreeding (replaces `textAbove`!)
+  if(!is.null(fouInb) && hasInbredFounders(x)) {
     finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
     finb = finb[finb > 0]
-    idx = internalID(x, names(finb))
-    finb.txt = sprintf("f = %.4g", finb)
+    textAbove = sprintf("f = %.4g", finb)
+    names(textAbove) = names(finb)
+    fontAbove = 3  # always italic
+  }
 
-    text(pdat$x[idx], pdat$y[idx], labels = finb.txt, cex = cex, font = 3,
-         family = fam, adj = c(0.5, -0.5), xpd = TRUE)
+  # Place text above
+  if(!is.null(textAbove)) {
+    if(!is.null(nmsAbove <- names(textAbove))) {
+      tmp = character(nInd)
+      tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
+      textAbove = tmp
+    }
+    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = cols,
+         font = fontAbove, family = fam, adj = c(0.5, -0.5), xpd = TRUE)
   }
 
   invisible(pdat)

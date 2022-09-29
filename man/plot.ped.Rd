@@ -144,8 +144,8 @@ plot(x, marker = "SNP")
 plot(x, marker = "SNP", hatched = typedMembers(x),
      starred = "fa", deceased = "mo")
 
-# Filled symbols
-plot(x, aff = males(x))
+# Medical pedigree
+plot(x, aff = males(x), carrier = "mo")
 
 # Label only some members
 plot(x, labs = c("fa", "boy"))
@@ -166,10 +166,13 @@ plot(x)
 # ... but can be suppressed
 plot(x, fouInb = NULL)
 
+# Other text above and inside symbols
+plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+
 # Twins
 x = nuclearPed(children = c("tw1", "tw2", "tw3"))
 plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
-plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # DZ
+plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
 
 # Triplets
 plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
