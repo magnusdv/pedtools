@@ -46,7 +46,7 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE) {
   if(identical(new, "asPlot") || identical(new, "generations")) {
     if(is.pedList(x))
       stop2("`asPlot` cannot be used with ped lists")
-    p = align.pedigree(as_kinship2_pedigree(x), packed = FALSE, align = FALSE)
+    p = .alignPed(x)$plist
     oldIdx = unlist(lapply(seq_along(p$n), function(i) p$nid[i, 1:p$n[i]]))
 
     # Remove duplicates

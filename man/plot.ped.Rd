@@ -114,34 +114,30 @@ singletons only the first element (the 'bottom' margin) is used.}
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
 
-\item{\dots}{Arguments passed on to \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}. In
-particular \code{symbolsize} and \code{cex} can be useful.}
-
-\item{yadj}{A tiny adjustment sometimes needed to fix the appearance of
-singletons.}
+\item{\dots}{Arguments passed to internal methods. In particular \code{symbolsize}
+and \code{cex} can be useful.}
 }
 \description{
 This is the main function for pedigree plotting, with many options for
-controlling the appearance of pedigree symbols and accompanying labels. It
-wraps the plotting functionality in the \code{kinship2} package.
-}
-\details{
-This plotting function is in essence an elaborate wrapper for
-\code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
+controlling the appearance of pedigree symbols and accompanying labels. The
+main calculations of the pedigree layout and alignment is done by importing
+the \code{kinship2} package, see \link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike
+\code{kinship2}, the implementation here also supports plotting singletons. In
+addition, some minor adjustments have been made to improve scaling and avoid
+unneeded duplications.
 }
 \examples{
 
-x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-m = marker(x, fa = "1/1", boy = "1/2", name = "SNP")
+x = nuclearPed(father = "fa", mother = "mo", child = "boy") |>
+  addMarker(fa = "1/1", boy = "1/2", name = "SNP")
 
-plot(x, marker = m)
+plot(x, marker = 1)
 
-# Markers attached to `x` may be called by name
-x = setMarkers(x, m)
+# or call marker by name
 plot(x, marker = "SNP")
 
 # Other options
-plot(x, marker = "SNP", hatched = typedMembers(x),
+plot(x, marker = 1, hatched = typedMembers(x),
      starred = "fa", deceased = "mo")
 
 # Medical pedigree
@@ -180,18 +176,18 @@ plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
                            code = 2))
 
 #-----------------------------
-# In some cases, the plotting machinery of `kinship2` needs a hint
+# In some cases, the alignment machinery of `kinship2` needs a hint
 # (see ?kinship2::align.pedigree)
 
 # Example with 3/4-siblings
-y = nuclearPed(2)
-y = addChildren(y, 3, mother = 5, nch = 1)
-y = addChildren(y, 4, mother = 5, nch = 1)
+y = nuclearPed(2) |> addSon(c(3,5)) |> addSon(c(4,5))
 
-plot(y) # bad
+# Bad
+plot(y)
 
+# Good
 hints = list(order = 1:7, spouse = rbind(c(3,5,0), c(5,4,0)))
-plot(y, hints = hints) # good
+plot(y, hints = hints)
 
 }
 \seealso{
