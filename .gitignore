@@ -7,3 +7,5 @@ notes-private
 inst/doc
 revdep/
 Rprof.out
+/doc/
+/Meta/
