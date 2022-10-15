@@ -23,6 +23,7 @@
   twins = NULL,
   textInside = NULL,
   textAbove = NULL,
+  arrows = FALSE,
   hints = NULL,
   fouInb = "autosomal",
   margins = 1,
@@ -99,6 +100,9 @@ the \code{relation} parameter of \code{\link[kinship2:plot.pedigree]{kinship2::p
 
 \item{textInside, textAbove}{Character vectors of text to be printed inside or
 above pedigree symbols.}
+
+\item{arrows}{A logical (default = FALSE). If TRUE, the pedigree is plotted
+as a DAG, i.e., with an arrow connecting each parent-child pair.}
 
 \item{hints}{A list with alignment hints passed on to
 \code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Rarely necessary, but see Examples.}

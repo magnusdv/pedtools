@@ -60,6 +60,8 @@
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
 #' @param textInside,textAbove Character vectors of text to be printed inside or
 #'   above pedigree symbols.
+#' @param arrows A logical (default = FALSE). If TRUE, the pedigree is plotted
+#'   as a DAG, i.e., with an arrow connecting each parent-child pair.
 #' @param margins A numeric of length 4 indicating the plot margins. For
 #'   singletons only the first element (the 'bottom' margin) is used.
 #' @param keep.par A logical (default = FALSE). If TRUE, the graphical
@@ -144,8 +146,10 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
                     hints = NULL, fouInb = "autosomal",
                     margins = 1, keep.par = FALSE, ...) {
 
-  if(hasSelfing(x))
-    stop2("Plotting of pedigrees with selfing is not yet supported")
+  if(hasSelfing(x) && !arrows) {
+    cat("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message.")
+    arrows = TRUE
+  }
 
   nInd = pedsize(x)
 
