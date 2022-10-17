@@ -408,55 +408,44 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
 }
 
 # Function fixing pedigree alignment of 3/4-siblings and similar
-# Founders with two spouses on the same level should be placed between!
+# Founders with two (or more) spouses on the same level should be placed between
 .fix34 = function(x, k2ped, plist = NULL, packed = TRUE, width = 10, align = c(1.5, 2)) {
 
-  nid = plist$nid
-
-  # If no duplications, return unchanged
-  if(!anyDuplicated.default(nid, incomparables = 0))
-    return(plist)
-
   # Large pedigrees: return unchanged
-  if(length(x$ID) > 15)
+  if(length(x$ID) > 30)
     return(plist)
 
   fouInt = founders(x, internal = TRUE)
+  nid = plist$nid
+
+  # If no duplicated founders, return unchanged
+  dups = duplicated.default(nid, incomparables = 0)
+  if(!length(.myintersect(fouInt, nid[dups])))
+     return(plist)
+
+  # List of spouses
+  ALLSP = vector(mode = "list", length = length(x$ID))
+  ALLSP[fouInt] = lapply(fouInt, function(i) spouses(x, i, internal = TRUE))
+
+  # Founders with multiple spouses
+  fou2 = fouInt[lengths(ALLSP[fouInt]) > 1]
+
+  # Go row by row in nid
   SP = NULL
+  for(k in 2:length(plist$n)) {
+    rw = nid[k, ]
 
-  # Try twice if needed
-  for(i in 1:2) {
-
-    realign = FALSE
-
-    # Go row by row in nid
-    for(k in 2:length(plist$n)) {
-      rw = nid[k, ]
-
-      # Duplicated individuals who are founders
-      dups = unique.default(rw[duplicated.default(rw, incomparables = 0)])
-      dups = intersect(fouInt, dups)
-
-      for(id in dups) {
-        s = spouses(x, id, internal = TRUE)
-
-        # Exactly two spouses?
-        if(length(s) == 2) {
-          realign = TRUE
-          SP = rbind(SP, c(s[1], id, 0), c(id, s[2], 0))
-        }
-      }
+    for(id in .myintersect(fou2, rw)) {
+      s = .myintersect(ALLSP[[id]], rw) # spouses on that level
+      if(length(s) > 1)
+        SP = rbind(SP, c(s[1], id, 0), c(id, s[2], 0))
     }
+  }
 
-    # If any needs fixing, redo alignment
-    if(realign) {
-      hints = list(order = seq_along(x$ID), spouses = SP)
-      plist = align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
-    }
-
-    # If noting changed, stop loop
-    if(identical(nid, plist$nid))
-      break
+  # If hints added, redo alignment
+  if(!is.null(SP)) {
+    hints = list(order = seq_along(x$ID), spouses = SP)
+    plist = align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
   }
 
   plist
