@@ -5,3 +5,5 @@
 ^notes-private$
 ^revdep$
 ^CRAN-SUBMISSION$
+^doc$
+^Meta$

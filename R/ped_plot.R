@@ -1,11 +1,12 @@
 #' Plot pedigrees with genotypes
 #'
 #' This is the main function for pedigree plotting, with many options for
-#' controlling the appearance of pedigree symbols and accompanying labels. It
-#' wraps the plotting functionality in the `kinship2` package.
-#'
-#' This plotting function is in essence an elaborate wrapper for
-#' [kinship2::plot.pedigree()].
+#' controlling the appearance of pedigree symbols and accompanying labels. The
+#' main pedigree layout and alignment is calculated with the `kinship2` package,
+#' see [kinship2::align.pedigree] for details. Unlike `kinship2`, the
+#' implementation here also supports plotting singletons. In addition, some
+#' minor adjustments have been made to improve scaling and avoid unneeded
+#' duplications.
 #'
 #' @param x A [ped()] object.
 #' @param marker Either a vector of names or indices referring to markers
@@ -53,42 +54,45 @@
 #' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param hints A list with alignment hints passed on to
-#'   [kinship2::align.pedigree()]. Rarely necessary, but see Examples.
+#'   [kinship2::align.pedigree()]. Rarely necessary.
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
 #' @param textInside,textAbove Character vectors of text to be printed inside or
 #'   above pedigree symbols.
+#' @param arrows A logical (default = FALSE). If TRUE, the pedigree is plotted
+#'   as a DAG, i.e., with an arrow connecting each parent-child pair.
 #' @param margins A numeric of length 4 indicating the plot margins. For
 #'   singletons only the first element (the 'bottom' margin) is used.
 #' @param keep.par A logical (default = FALSE). If TRUE, the graphical
 #'   parameters are not reset after plotting, which may be useful for adding
 #'   additional annotation.
-#' @param yadj A tiny adjustment sometimes needed to fix the appearance of
-#'   singletons.
-#' @param \dots Arguments passed on to [kinship2::plot.pedigree()]. In
-#'   particular `symbolsize` and `cex` can be useful.
+#' @param \dots Arguments passed to internal methods. In particular `symbolsize`
+#'   and `cex` can be useful.
 #'
 #' @author Magnus Dehli Vigeland
 #' @seealso [kinship2::plot.pedigree()]
 #'
 #' @examples
 #'
-#' x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-#' m = marker(x, fa = "1/1", boy = "1/2", name = "SNP")
+#' x = nuclearPed(father = "fa", mother = "mo", child = "boy") |>
+#'   addMarker(fa = "1/1", boy = "1/2", name = "SNP")
 #'
-#' plot(x, marker = m)
+#' plot(x, marker = 1)
 #'
-#' # Markers attached to `x` may be called by name
-#' x = setMarkers(x, m)
+#' # or call marker by name
 #' plot(x, marker = "SNP")
 #'
+#' # Modify margins
+#' plot(x, margins = 6)
+#' plot(x, margins = c(0,0,6,6)) # b,l,t,r
+#'
 #' # Other options
-#' plot(x, marker = "SNP", hatched = typedMembers(x),
+#' plot(x, marker = 1, hatched = typedMembers(x),
 #'      starred = "fa", deceased = "mo")
 #'
-#' # Filled symbols
-#' plot(x, aff = males(x))
+#' # Medical pedigree
+#' plot(x, aff = males(x), carrier = "mo")
 #'
 #' # Label only some members
 #' plot(x, labs = c("fa", "boy"))
@@ -109,29 +113,19 @@
 #' # ... but can be suppressed
 #' plot(x, fouInb = NULL)
 #'
+#' # Other text above and inside symbols
+#' plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+#'
 #' # Twins
 #' x = nuclearPed(children = c("tw1", "tw2", "tw3"))
 #' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
-#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # DZ
+#' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
 #'
 #' # Triplets
 #' plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
 #'                            id2 = c("tw2", "tw3"),
 #'                            code = 2))
 #'
-#' #-----------------------------
-#' # In some cases, the plotting machinery of `kinship2` needs a hint
-#' # (see ?kinship2::align.pedigree)
-#'
-#' # Example with 3/4-siblings
-#' y = nuclearPed(2)
-#' y = addChildren(y, 3, mother = 5, nch = 1)
-#' y = addChildren(y, 4, mother = 5, nch = 1)
-#'
-#' plot(y) # bad
-#'
-#' hints = list(order = 1:7, spouse = rbind(c(3,5,0), c(5,4,0)))
-#' plot(y, hints = hints) # good
 #'
 #' @importFrom graphics points text
 #' @importFrom kinship2 plot.pedigree
@@ -139,12 +133,14 @@
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
                     hatched = NULL, deceased = NULL, starred = NULL, twins = NULL,
-                    textInside = NULL, textAbove = NULL,
+                    textInside = NULL, textAbove = NULL, arrows = FALSE,
                     hints = NULL, fouInb = "autosomal",
                     margins = 1, keep.par = FALSE, ...) {
 
-  if(hasSelfing(x))
-    stop2("Plotting of pedigrees with selfing is not yet supported")
+  if(hasSelfing(x) && !arrows) {
+    cat("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message.")
+    arrows = TRUE
+  }
 
   nInd = pedsize(x)
 
@@ -201,20 +197,39 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
     text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
   }
 
+  # Prepare text above
+  showFouInb = !is.null(fouInb) && hasInbredFounders(x)
+  if(is.function(textAbove))
+    textAbove = textAbove(x)
+  else if(showFouInb) {
+    finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
+    finb = finb[finb > 0]
+    textAbove = sprintf("f = %.4g", finb)
+    names(textAbove) = names(finb)
+  }
+
+  mode(textAbove) = "character"
+  nmsAbove = names(textAbove)
+  if(!is.null(nmsAbove)) {
+    tmp = character(nInd)
+    tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
+    textAbove = tmp
+  }
+
   # Colours
   if(is.list(col)) {
-    cols = rep(1, nInd)
+    colvec = rep(1, nInd)
     for(cc in names(col)) {
       thiscol = col[[cc]]
       if(is.function(thiscol))
         idscol = thiscol(x)
       else
         idscol = intersect(x$ID, thiscol)
-      cols[internalID(x, idscol)] = cc
+      colvec[internalID(x, idscol)] = cc
     }
   }
   else {
-     cols = rep(col, length = nInd)
+     colvec = rep(col, length = nInd)
   }
 
   # Affected/hatched individuals
@@ -228,258 +243,59 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
   # filling density and angle
   density = if(!is.null(aff)) -1 else if(!is.null(hatched)) 25 else NULL
   angle = if(!is.null(aff)) 90 else if(!is.null(hatched)) 45 else NULL
+
   if(!is.null(hatched))
     aff = hatched # for kinship2
+
+  aff01 = ifelse(x$ID %in% aff, 1, 0)
+
+  # Carrier (convert to T/F)
+  if(is.function(carrier))
+    carrier = carrier(x)
+  carrierTF = x$ID %in% carrier
+
+  # Deceased (convert to T/F)
+  if(is.function(deceased))
+    deceased = deceased(x)
+  deceasedTF = x$ID %in% deceased
 
   # Twin info
   if(is.vector(twins))
     twins = data.frame(id1 = twins[1], id2 = twins[2], code = as.integer(twins[3]))
 
 
-# Convert to `kinship2` and generate plot object --------------------------
+  # Main part --------------------------
 
-  # Set margins
-  if(length(margins) == 1) {
-    margins = rep(margins, 4)
+  # Ped alignment
+  pdat0 = .alignPed(x, dag = arrows, hints = hints, twins = twins, ...)
 
-    # Make room for title
-    if(!is.null(title))
-      margins[3] = 3.1 + margins[3]  # default: 4.1
-  }
+  # Prepare plot window and calculate scaling parameters
+  pdat = plotSetup(pdat0, textUnder = text, textAbove = textAbove,
+                   hasTitle = !is.null(title), mar = margins, ...)
 
-  opar = par(mar = margins, xpd = TRUE)
   if(!keep.par)
-    on.exit(par(opar))
+    on.exit(par(pdat$oldpar))
 
-  if(is.singleton(x)) {
-    pdat = .plot1(x, lab = text, col = cols, deceased = deceased, aff = aff,
-                  density = density, angle = angle, ...)
-  }
-  else {
-    pedigree = as_kinship2_pedigree(x, deceased = deceased, aff = aff,
-                                    twins = twins, hints = hints)
-    pdat = kinship2::plot.pedigree(pedigree, id = text, col = cols,
-                                   density = density, angle = angle, keep.par = TRUE, ...)
-  }
+  # Main plot
+  .plotPed(pdat, dag = arrows, aff = aff01, density = density, angle = angle, col = colvec, ...)
 
-
-# Add extra annotations ---------------------------------------------------
-
-  # Expand dots (needed in some commands below)
-  dotArgs.uneval = match.call(expand.dots = FALSE)$`...`
-  dotArgs = lapply(dotArgs.uneval, eval.parent, n = 2L)
-  cex = dotArgs[['cex']]
-  fam = dotArgs[['family']]
-
-  # Add title
-  if (!is.null(title))
-    title(title, cex.main = dotArgs$cex.main %||% cex, col.main = dotArgs$col.main,
-          font.main = dotArgs$font.main, family = fam, xpd = NA)
-
-  # Add carrier dots
-  if(is.function(carrier))
-    carrier = carrier(x)
-  carrier = internalID(x, carrier, errorIfUnknown = FALSE)
-  points(pdat$x[carrier], pdat$y[carrier] + pdat$boxh/2, pch = 16, cex = cex, col = cols[carrier])
-
-  # Text inside symbols
-  if(!is.null(textInside)) {
-    text(pdat$x, pdat$y + pdat$boxh/2, labels = textInside, cex = cex, col = cols,
-         font = dotArgs[['font']], family = fam)
-  }
-
-  # Text above pedigree symbols
-  if(!is.null(textAbove)) {
-    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = cols,
-         font = dotArgs[['font']], family = fam, adj = c(0.5, -0.5), xpd = TRUE)
-  }
-  else if(!is.null(fouInb) && hasInbredFounders(x)) {
-    # Add founder inbreeding coefficients
-    finb = founderInbreeding(x, chromType = fouInb, named = TRUE)
-    finb = finb[finb > 0]
-    idx = internalID(x, names(finb))
-    finb.txt = sprintf("f = %.4g", finb)
-
-    text(pdat$x[idx], pdat$y[idx], labels = finb.txt, cex = cex, font = 3,
-         family = fam, adj = c(0.5, -0.5), xpd = TRUE)
-  }
+  # Annotate
+  .annotatePed(pdat, deceased = deceasedTF, carrier = carrierTF, title = title,
+                textUnder = text, textInside = textInside,
+                textAbove = textAbove, col = colvec, ...)
 
   invisible(pdat)
 }
 
 
-
-# Plot singleton ----------------------------------------------------------
-
-# Note: Singletons are not allowed by kinship2::plot.pedigree().
-# Some code from kinship2 is reused to ensure similar appearance.
-
-#' @importFrom graphics frame polygon segments strheight strwidth
-.plot1 = function(x, lab = x$ID, col = 1, aff = NULL, deceased = NULL,
-                  density = NULL, angle = NULL,
-                  cex = 1, symbolsize = 1, ...) {
-
-  isAff = x$ID %in% aff
-  isDec = x$ID %in% deceased
-
-  # Ensure no filling if unaff
-  if(!isAff)
-    density = NULL
-
-  # Scaling
-  frame()
-  psize = par("pin")
-
-  stemp1 = strwidth("ABC", units = "inches", cex = cex) * 2.5/3
-  stemp2 = strheight("1g", units = "inches", cex = cex)
-  stemp3 = strheight(lab, units = "inches", cex = cex)
-
-  ht1 = psize[2] - (stemp3 + stemp2)
-  wd2 = 0.5 * psize[1]
-
-  boxsize = symbolsize * min(stemp1, ht1, wd2)
-  hscale = psize[1]/2
-  vscale = psize[2] - (stemp3 + stemp2 + boxsize)
-  if (ht1 <= 0 || vscale <= 0)
-    stop2("Labels leave no room for the graph, reduce cex")
-  boxw = boxsize/hscale
-  boxh = boxsize/vscale
-
-  # User coordinates: x from 0 to 1; y from 0.5 (top) to 1.5 + label height
-  par(usr = c(0, 2, 1.5 + boxh + stemp2/vscale + stemp3/vscale, 0.5))
-
-  # Coordinates (top center)
-  xpos = 1
-  ypos = 1
-
-  # Symbol: 0 = diamond; 1 = square; 2 = circle
-  poly = switch(getSex(x) + 1,
-                list(x = c(0, -0.5, 0, 0.5), y = c(0, 0.5, 1, 0.5)), # diamond
-                list(x = c(-1, -1, 1, 1)/2, y = c(0, 1, 1, 0)),      # square
-                list(x = 0.5 * cos(seq(0, 2 * pi, length = 50)),     # circle
-                     y = 0.5 * sin(seq(0, 2 * pi, length = 50)) + 0.5))
-
-  # fill color (named 'col' in polygon)
-  fill = if(isAff) col else NA
-
-  # Draw symbol
-  polygon(xpos + poly$x * boxw, ypos + poly$y * boxh, border = col,
-          col = fill, density = density, angle = angle)
-
-  # Deceased?
-  if(isDec)
-    segments(xpos - 0.6 * boxw, ypos + 1.1 * boxh, xpos + 0.6 * boxw, ypos - 0.1 * boxh)
-
-  # Label
-  labh = stemp2/vscale
-  text(xpos, ypos + boxh + labh * 0.7, lab, cex = cex, adj = c(0.5, 1), ...)
-
-  invisible(list(plist = NULL, x = xpos, y = ypos, boxw = boxw, boxh = boxh))
-}
-
-# @rdname plot.ped
-# @export
-.plot.singleton = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
-                          labs = labels(x), title = NULL, col = 1, aff = NULL,
-                          carrier = NULL, hatched = NULL, deceased = NULL, starred = NULL,
-                          textInside = NULL, textAbove = NULL, fouInb = "autosomal",
-                          margins = c(8, 0, 0, 0), yadj = 0, ...) {
-
-  # Tweak labels if necessary. After addParents, internal index is 3!
-  if(is.function(labs))
-    labs = labs(x)
-
-  if(identical(labs, "num"))
-    labs = c(`1` = labels(x))
-
-  if(is.function(aff))
-    aff = aff(x)
-
-  if(is.function(carrier))
-    carrier = carrier(x)
-
-  if(is.function(hatched))
-    hatched = hatched(x)
-
-  if(is.function(starred))
-    starred = starred(x)
-
-  if(!is.null(textInside))
-    textInside = c("", "", textInside)
-
-  if(!is.null(textAbove))
-    textAbove = c("", "", textAbove)
-
-  # Founder inbreeding (this must be extracted before addParents())
-  if(!is.null(fouInb) && hasInbredFounders(x))
-    finb = founderInbreeding(x, chromType = fouInb) #names unneccesary
-  else
-    finb = NULL
-
-  # Markers: Must be attached to `x` before addParents
-  if (length(marker) == 0)
-    mlist = NULL
-  else if (is.marker(marker))
-    mlist = list(marker)
-  else if (is.markerList(marker))
-    mlist = marker
-  else if (is.numeric(marker) || is.character(marker))
-    mlist = getMarkers(x, markers = marker)
-  else
-    stop2("Argument `marker` must be either:\n",
-         "  * an object of class `marker`\n",
-         "  * a list of `marker` objects\n",
-         "  * a character vector (names of attached markers)\n",
-         "  * an integer vector (indices of attached markers)")
-  x = setMarkers(x, mlist)
-
-  # Add parents!
-  y = suppressMessages(addParents(x, labels(x)[1], father = "__FA__", mother = "__MO__",
-                                  verbose = FALSE))
-
-  pdat = plot.ped(y, marker = y$MARKERS, sep = sep, missing = missing,
-               showEmpty = showEmpty, labs = labs,
-               title = title, col = col, aff = aff, carrier = carrier,
-               hatched = hatched, deceased = deceased,
-               starred = starred, textInside = textInside, textAbove = textAbove,
-               margins = c(margins[1], 0, 0, 0), keep.par = TRUE, ...)
-
-  usr = par("usr")
-  rect(usr[1] - 0.1, pdat$y[3] - yadj, usr[2] + 0.1, usr[4], border = NA, col = "white")
-
-
-  # Expand dots (needed in some commands below)
-  dotArgs.uneval = match.call(expand.dots = FALSE)$`...`
-  dotArgs = lapply(dotArgs.uneval, eval.parent, n = 2L)
-  cex = dotArgs[['cex']]
-  fam = dotArgs$family
-
-  # Add title
-  if (!is.null(title))
-    title(title, cex.main = dotArgs$cex.main %||% cex, col.main = dotArgs$col.main, line = -2.8,
-          font.main = dotArgs$font.main, family = fam, xpd = NA)
-
-  # Text above pedigree symbols
-  if(!is.null(textAbove)) {
-    text(pdat$x, pdat$y, labels = textAbove, cex = cex, col = col,
-         font = dotArgs[['font']], family = fam, adj = c(0.5, -0.5), xpd = TRUE)
-  }
-  else if(!is.null(finb)) {
-    finb.txt = sprintf("f = %.4g", finb)
-    idx = 3 # the "child"
-
-    text(pdat$x[idx], pdat$y[idx], labels = finb.txt, family = fam,
-         cex = cex, font = 3, adj = c(0.5, -0.5), xpd = TRUE)
-  }
-
-  invisible(pdat)
-}
 
 #' @rdname plot.ped
 #' @export
 as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, twins = NULL, hints = NULL) {
     ped = as.data.frame(x)  # not as.matrix()
-    ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
+
+    if(nrow(ped) > 1) # fails (in kinship2::pedigree) for singletons
+      ped$sex[ped$sex == 0] = 3 # kinship2 code for "diamond"
 
     affected = ifelse(ped$id %in% aff, 1, 0) # NULL => affected01 = c(0,0,..)
     status = ifelse(ped$id %in% deceased, 1, 0)
@@ -498,6 +314,7 @@ as_kinship2_pedigree = function(x, deceased = NULL, aff = NULL, twins = NULL, hi
 
     kinped
 }
+
 
 #' @rdname plot.ped
 #' @export

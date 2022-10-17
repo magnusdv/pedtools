@@ -36,6 +36,7 @@ avuncularPed(
   top = c("uncle", "aunt"),
   bottom = c("nephew", "niece"),
   side = c("right", "left"),
+  type = c("paternal", "maternal"),
   removal = 1,
   half = FALSE
 )

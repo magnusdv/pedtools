@@ -153,7 +153,7 @@ quadHalfFirstCousins = function() {
 quadSecondCousins = function(type = c("cyclic", "exchange")) {
   type = match.arg(type)
 
-  x = switch(type,
+  switch(type,
   cyclic = {
     pedmat = matrix(c(
       1,0,0,1,

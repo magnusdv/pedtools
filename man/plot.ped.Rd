@@ -23,6 +23,7 @@
   twins = NULL,
   textInside = NULL,
   textAbove = NULL,
+  arrows = FALSE,
   hints = NULL,
   fouInb = "autosomal",
   margins = 1,
@@ -100,8 +101,11 @@ the \code{relation} parameter of \code{\link[kinship2:plot.pedigree]{kinship2::p
 \item{textInside, textAbove}{Character vectors of text to be printed inside or
 above pedigree symbols.}
 
+\item{arrows}{A logical (default = FALSE). If TRUE, the pedigree is plotted
+as a DAG, i.e., with an arrow connecting each parent-child pair.}
+
 \item{hints}{A list with alignment hints passed on to
-\code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Rarely necessary, but see Examples.}
+\code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Rarely necessary.}
 
 \item{fouInb}{Either "autosomal" (default), "x" or NULL. If "autosomal" or
 "x", inbreeding coefficients are added to the plot above the inbred
@@ -114,38 +118,38 @@ singletons only the first element (the 'bottom' margin) is used.}
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
 
-\item{\dots}{Arguments passed on to \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}. In
-particular \code{symbolsize} and \code{cex} can be useful.}
-
-\item{yadj}{A tiny adjustment sometimes needed to fix the appearance of
-singletons.}
+\item{\dots}{Arguments passed to internal methods. In particular \code{symbolsize}
+and \code{cex} can be useful.}
 }
 \description{
 This is the main function for pedigree plotting, with many options for
-controlling the appearance of pedigree symbols and accompanying labels. It
-wraps the plotting functionality in the \code{kinship2} package.
-}
-\details{
-This plotting function is in essence an elaborate wrapper for
-\code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.
+controlling the appearance of pedigree symbols and accompanying labels. The
+main pedigree layout and alignment is calculated with the \code{kinship2} package,
+see \link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike \code{kinship2}, the
+implementation here also supports plotting singletons. In addition, some
+minor adjustments have been made to improve scaling and avoid unneeded
+duplications.
 }
 \examples{
 
-x = nuclearPed(father = "fa", mother = "mo", child = "boy")
-m = marker(x, fa = "1/1", boy = "1/2", name = "SNP")
+x = nuclearPed(father = "fa", mother = "mo", child = "boy") |>
+  addMarker(fa = "1/1", boy = "1/2", name = "SNP")
 
-plot(x, marker = m)
+plot(x, marker = 1)
 
-# Markers attached to `x` may be called by name
-x = setMarkers(x, m)
+# or call marker by name
 plot(x, marker = "SNP")
 
+# Modify margins
+plot(x, margins = 6)
+plot(x, margins = c(0,0,6,6)) # b,l,t,r
+
 # Other options
-plot(x, marker = "SNP", hatched = typedMembers(x),
+plot(x, marker = 1, hatched = typedMembers(x),
      starred = "fa", deceased = "mo")
 
-# Filled symbols
-plot(x, aff = males(x))
+# Medical pedigree
+plot(x, aff = males(x), carrier = "mo")
 
 # Label only some members
 plot(x, labs = c("fa", "boy"))
@@ -166,29 +170,19 @@ plot(x)
 # ... but can be suppressed
 plot(x, fouInb = NULL)
 
+# Other text above and inside symbols
+plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+
 # Twins
 x = nuclearPed(children = c("tw1", "tw2", "tw3"))
 plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
-plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # DZ
+plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
 
 # Triplets
 plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
                            id2 = c("tw2", "tw3"),
                            code = 2))
 
-#-----------------------------
-# In some cases, the plotting machinery of `kinship2` needs a hint
-# (see ?kinship2::align.pedigree)
-
-# Example with 3/4-siblings
-y = nuclearPed(2)
-y = addChildren(y, 3, mother = 5, nch = 1)
-y = addChildren(y, 4, mother = 5, nch = 1)
-
-plot(y) # bad
-
-hints = list(order = 1:7, spouse = rbind(c(3,5,0), c(5,4,0)))
-plot(y, hints = hints) # good
 
 }
 \seealso{

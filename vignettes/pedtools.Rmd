@@ -82,23 +82,15 @@ In most cases it is not recommended for regular users to interact directly with 
 ## Basic pedigree plots
 To plot a pedigree, simply use `plot()`.
 
-```{r eval=FALSE}
+```{r, fig.dim = c(2,2)}
 plot(trio)
-```
-
-```{r echo=FALSE, fig.dim = c(2,2)}
-plot(trio, margins = c(1,1,1,1))
 ```
 
 Under the hood, `pedtools::plot()` is an elaborate wrapper of the excellent plotting functionality of the `kinship2` package. Most of the possibilities provided by kinship2 are available from pedtools, and several features are added. An overview can be found in the documentation `?plot.ped`, but a quick example should get you started:
 
-```{r eval=FALSE}
+```{r fig.dim = c(2,2)}
 plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
-     col = c("green", "red", "blue"), title = "Trio 1")
-```
-```{r echo=FALSE, fig.dim = c(2,2)}
-plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
-     col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,1.5,1))
+     col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,2,1))
 ```
 
 See Section 2.2 for how to add, and control the appearance of, marker genotypes to pedigree plots.
@@ -175,9 +167,9 @@ Note that `addDaughter()` automatically created the mother as "NN_1", so we need
 This time we will create this inbred family:
 
 ```{r echo=FALSE}
-x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
-x1 = addChildren(x1, father = 4, mother = 5, nch = 1)
-plot(x1, margin = c(1,1,1,1))
+x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |> 
+  addSon(parents = 4:5)
+plot(x1)
 ```
 
 **Alternative A**  
@@ -233,7 +225,7 @@ z = mergePed(x, y, by = c("7" = "2"), relabel = TRUE)
 ```
 
 ```{r merge-plot, echo = FALSE, fig.width = 3.5, fig.height = 3.7}
-plot(z, margins = c(1,1,1,1))
+plot(z)
 ```
 
 ```{r, label = "merge-example"}
@@ -310,21 +302,13 @@ A side note: It may come as a surprise that you don't need quotes around the ID 
 ## Plotting pedigrees with marker data
 Including marker data in a pedigree plot is straightforward:
 
-```{r, eval=FALSE}
+```{r, fig.dim=c(2,2)}
 plot(trio, marker = m1)
 ```
 
-```{r, echo=FALSE, fig.dim=c(2,2)}
-plot(trio, marker = m1, margins = c(1,1,1,1))
-```
-
 The appearance of the genotypes can be tweaked in various ways, as documented in `?plot.ped`. Here's an example:
-```{r, eval=FALSE}
+```{r, fig.dim=c(2,2)}
 plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
-```
-
-```{r, echo=FALSE, fig.dim=c(2,2)}
-plot(trio, marker = m1, sep = "", showEmpty = T, missing = "?", margins = c(1,1,1,1))
 ```
 
 ## Markers attached to `ped` objects
