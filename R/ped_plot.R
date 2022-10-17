@@ -2,11 +2,11 @@
 #'
 #' This is the main function for pedigree plotting, with many options for
 #' controlling the appearance of pedigree symbols and accompanying labels. The
-#' main calculations of the pedigree layout and alignment is done by importing
-#' the `kinship2` package, see [kinship2::align.pedigree] for details. Unlike
-#' `kinship2`, the implementation here also supports plotting singletons. In
-#' addition, some minor adjustments have been made to improve scaling and avoid
-#' unneeded duplications.
+#' main pedigree layout and alignment is calculated with the `kinship2` package,
+#' see [kinship2::align.pedigree] for details. Unlike `kinship2`, the
+#' implementation here also supports plotting singletons. In addition, some
+#' minor adjustments have been made to improve scaling and avoid unneeded
+#' duplications.
 #'
 #' @param x A [ped()] object.
 #' @param marker Either a vector of names or indices referring to markers
@@ -54,7 +54,7 @@
 #' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param hints A list with alignment hints passed on to
-#'   [kinship2::align.pedigree()]. Rarely necessary, but see Examples.
+#'   [kinship2::align.pedigree()]. Rarely necessary.
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
@@ -82,6 +82,10 @@
 #'
 #' # or call marker by name
 #' plot(x, marker = "SNP")
+#'
+#' # Modify margins
+#' plot(x, margins = 6)
+#' plot(x, margins = c(0,0,6,6)) # b,l,t,r
 #'
 #' # Other options
 #' plot(x, marker = 1, hatched = typedMembers(x),
@@ -122,19 +126,6 @@
 #'                            id2 = c("tw2", "tw3"),
 #'                            code = 2))
 #'
-#' #-----------------------------
-#' # In some cases, the alignment machinery of `kinship2` needs a hint
-#' # (see ?kinship2::align.pedigree)
-#'
-#' # Example with 3/4-siblings
-#' y = nuclearPed(2) |> addSon(c(3,5)) |> addSon(c(4,5))
-#'
-#' # Bad
-#' plot(y)
-#'
-#' # Good
-#' hints = list(order = 1:7, spouse = rbind(c(3,5,0), c(5,4,0)))
-#' plot(y, hints = hints)
 #'
 #' @importFrom graphics points text
 #' @importFrom kinship2 plot.pedigree

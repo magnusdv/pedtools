@@ -105,7 +105,7 @@ above pedigree symbols.}
 as a DAG, i.e., with an arrow connecting each parent-child pair.}
 
 \item{hints}{A list with alignment hints passed on to
-\code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Rarely necessary, but see Examples.}
+\code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Rarely necessary.}
 
 \item{fouInb}{Either "autosomal" (default), "x" or NULL. If "autosomal" or
 "x", inbreeding coefficients are added to the plot above the inbred
@@ -124,11 +124,11 @@ and \code{cex} can be useful.}
 \description{
 This is the main function for pedigree plotting, with many options for
 controlling the appearance of pedigree symbols and accompanying labels. The
-main calculations of the pedigree layout and alignment is done by importing
-the \code{kinship2} package, see \link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike
-\code{kinship2}, the implementation here also supports plotting singletons. In
-addition, some minor adjustments have been made to improve scaling and avoid
-unneeded duplications.
+main pedigree layout and alignment is calculated with the \code{kinship2} package,
+see \link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike \code{kinship2}, the
+implementation here also supports plotting singletons. In addition, some
+minor adjustments have been made to improve scaling and avoid unneeded
+duplications.
 }
 \examples{
 
@@ -139,6 +139,10 @@ plot(x, marker = 1)
 
 # or call marker by name
 plot(x, marker = "SNP")
+
+# Modify margins
+plot(x, margins = 6)
+plot(x, margins = c(0,0,6,6)) # b,l,t,r
 
 # Other options
 plot(x, marker = 1, hatched = typedMembers(x),
@@ -179,19 +183,6 @@ plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
                            id2 = c("tw2", "tw3"),
                            code = 2))
 
-#-----------------------------
-# In some cases, the alignment machinery of `kinship2` needs a hint
-# (see ?kinship2::align.pedigree)
-
-# Example with 3/4-siblings
-y = nuclearPed(2) |> addSon(c(3,5)) |> addSon(c(4,5))
-
-# Bad
-plot(y)
-
-# Good
-hints = list(order = 1:7, spouse = rbind(c(3,5,0), c(5,4,0)))
-plot(y, hints = hints)
 
 }
 \seealso{
