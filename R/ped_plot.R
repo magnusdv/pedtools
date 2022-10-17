@@ -138,7 +138,7 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
                     margins = 1, keep.par = FALSE, ...) {
 
   if(hasSelfing(x) && !arrows) {
-    cat("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message.")
+    cat("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message\n")
     arrows = TRUE
   }
 
@@ -387,7 +387,7 @@ plot.pedList = function(x, ...) {
 #' plotPedList(peds, widths = w, groups = list(1, 2:3), titles = 1:2)
 #'
 #' # Parameters added in the main call are used in each sub-plot
-#' plotPedList(peds, widths = w, margins = c(2, 4, 2, 4), labs = leaves,
+#' plotPedList(peds, widths = w, margins = c(6, 3, 6, 3), labs = leaves,
 #'             hatched = leaves, symbolsize = 1.3, col = list(red = 1))
 #'
 #' dev.off()
@@ -423,7 +423,7 @@ plot.pedList = function(x, ...) {
 #'              symbolsize = 1.2, labs = NULL)
 #'
 #' x3 = singleton("Mr. X")
-#' plot3 = list(x3, title = "Plot 3", cex = 2)
+#' plot3 = list(x3, title = "Plot 3", cex = 2, carrier = "Mr. X")
 #'
 #' x4 = halfSibPed()
 #' hatched = 4:5
@@ -433,7 +433,7 @@ plot.pedList = function(x, ...) {
 #'              hatched = hatched, col = col)
 #'
 #' plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
-#'             groups = list(1, 2:3, 4), newdev = TRUE)
+#'             fmar = 0.03, groups = list(1, 2:3, 4), newdev = TRUE)
 #'
 #' dev.off()
 #'
