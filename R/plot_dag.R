@@ -91,12 +91,12 @@ shortArrows = function(x0, y0, x1, y1, sex0, sex1, rx, ry, sex, length = 0.1, ..
     y1[toMy] = y1[toMy] - ry
   }
 
-  # Shrink females
-  if(any(fromF <- sex0 == 2)) {
+  # Shrink females (and diamonds)
+  if(any(fromF <- sex0 != 1)) {
     x0[fromF] = x0[fromF] + rx * cos(t0[fromF])
     y0[fromF] = y0[fromF] + ry * sin(t0[fromF])
   }
-  if(any(toF <- sex1 == 2)) {
+  if(any(toF <- sex1 != 1)) {
     x1[toF] = x1[toF] + rx * cos(t1[toF])
     y1[toF] = y1[toF] + ry * sin(t1[toF])
   }
