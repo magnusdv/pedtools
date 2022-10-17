@@ -27,9 +27,9 @@
 
   # Singleton
   if(nInd == 1) {
-    plist = list(n = 1, nid = cbind(1), pos = cbind(1), fam = cbind(0), spouse = cbind(0))
-    return(list(plist = plist, x = 1, y = 1, nInd = 1, sex = x$SEX, ped = x,
-                plotord = 1, xall = 1, yall = 1, maxlev = 1, xrange = c(0.5, 1.5)))
+    plist = list(n = 1, nid = cbind(1), pos = cbind(0), fam = cbind(0), spouse = cbind(0))
+    return(list(plist = plist, x = 0, y = 1, nInd = 1, sex = x$SEX, ped = x,
+                plotord = 1, xall = 0, yall = 1, maxlev = 1, xrange = c(0,0)))
   }
 
   # Alignment for DAG presentation (with arrows)
@@ -115,7 +115,7 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
 
   # Margins
   if(length(mar) == 1)
-    mar = if(hasTitle) c(mar, mar, mar + 3.1, mar) else rep(mar, 4)
+    mar = if(hasTitle) c(mar, mar, mar + 2.1, mar) else rep(mar, 4)
 
   # Set basic parameters (usr comes later!)
   oldpar = par(mar = mar, xpd = TRUE)
@@ -132,15 +132,20 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
   if (ht1 <= 0)
     stop2("Labels leave no room for the graph, reduce cex")
 
-  # Singleton
-  if(maxlev == 1) {
+  # Singleton and selfing towers
+  if(xrange[1] == xrange[2]) {
     wd2 = psize[1] * 0.5
-    boxsize = symbolsize * min(stemp1, wd2) # don't use ht1 here!
+    boxsize = symbolsize * min(stemp1, wd2) # don't use ht1 here
     hscale = psize[1]
-    vscale = psize[2] - (stemp2 + stemp3 + stemp4 + boxsize)
-    usr = c(0.5, 1.5,
-            1.5 + (stemp2 + stemp3 + boxsize)/vscale,
-            0.5 - stemp4/vscale)
+    vscale = (psize[2] - (stemp2 + stemp3 + stemp4 + boxsize)) / (max(1, maxlev - 1))
+
+    yrange = if(maxlev == 1) c(0.5, 1.5) else c(1, maxlev)
+    top    = yrange[1] - stemp4/vscale
+    bottom = yrange[2] + (stemp2 + stemp3 + boxsize)/vscale
+
+    left  = xrange[1] - 0.5
+    right = xrange[2] + 0.5
+
   }
   else {
     ht2 = psize[2]/(maxlev + (maxlev-1)/2)
@@ -149,26 +154,25 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
     hscale = (psize[1] - boxsize)/diff(xrange)  #horizontal scale from user-> inch
 
     # MDV: Adjust top for curved duplication lines
-    curvAdj = 0
     nid1 = nid[1, ]
     nid1 = nid1[nid1 > 0]
-    if(anyDuplicated.default(nid1))
-      curvAdj = 0.5
-    else if(any(nid1 %in% nid[2, ]))
-      curvAdj = 0.1225
+    curvAdj = if(anyDuplicated.default(nid1)) 0.5 else if(any(nid1 %in% nid[2, ])) 0.1225 else 0
 
     # Don't adjust for text above if also for curve. (NB: Fails in extreme cases)
     if(curvAdj > 0)
       stemp4 = 0
 
     denom = maxlev - 1 + curvAdj
-
     vscale = (psize[2] - (stemp2 + stemp3 + boxsize + stemp4)) / denom
-    usr = c(xrange[1] - 0.5*boxsize/hscale,
-            xrange[2] + 0.5*boxsize/hscale,
-            maxlev + (stemp2 + stemp3 + boxsize)/vscale,
-            1 - stemp4/vscale - curvAdj)
+
+    left   = xrange[1] - 0.5*boxsize/hscale
+    right  = xrange[2] + 0.5*boxsize/hscale
+
+    top    = 1 - stemp4/vscale - curvAdj
+    bottom = maxlev + (stemp2 + stemp3 + boxsize)/vscale
   }
+
+  usr = c(left, right, bottom, top)
 
   boxw = boxsize/hscale  # box width in user units
   boxh = boxsize/vscale  # box height in user units
