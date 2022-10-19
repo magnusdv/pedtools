@@ -513,6 +513,131 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 }
 
 
+#' @rdname plot.ped
+#' @export
+#' @importFrom graphics plot.default
+plot.list = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
+                     labs = unlist(labels(x), use.names = FALSE), col = 1, aff = NULL,
+                     carrier = NULL, hatched = NULL, deceased = NULL, starred = NULL,
+                     textInside = NULL, textAbove = NULL, arrows = FALSE, fouInb = "autosomal",
+                     title = NULL, margins = 1, keep.par = FALSE, ...) {
+
+  if(!is.pedList(x))
+    return(plot.default(x, ...))
+
+  if(hasSelfing(x) && !arrows) {
+    cat("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message\n")
+    arrows = TRUE
+  }
+
+  x1 = x[[1]]
+  x2 = x[[2]]
+
+  # Compute and merge plists
+  p1 = .getPlist(x1, dag = arrows)
+  p2 = .getPlist(x2, dag = arrows)
+
+  r1 = length(p1$n)
+  c1 = max(p1$n)
+  r2 = length(p2$n)
+  c2 = max(p2$n)
+
+  nid = pos = fam = sp = matrix(0, nrow = max(r1, r2), ncol = c1 + c2)
+
+  # n
+  n1 = p1$n
+  n2 = p2$n
+  nid1 = p1$nid
+  nid2 = p2$nid
+  pos1 = p1$pos
+  pos2 = p2$pos
+  fam1 = p1$fam
+  fam2 = p2$fam
+  sp1 = p1$spouse
+  sp2 = p2$spouse
+
+  nInd1 = max(nid1)
+  nInd2 = max(nid2)
+
+  # Merge n
+  n1pad = n2pad = integer(max(r1, r2))
+  n1pad[seq_along(n1)] = n1
+  n2pad[seq_along(n2)] = n2
+  n = n1pad + n2pad
+  n
+
+  # Merge matrices
+  for(i in seq_along(n)) {
+    if(i <= r1) {
+      seq1 = seq_len(n1[i])
+      nid[i, seq1] = nid1[i, seq1]
+      pos[i, seq1] = pos1[i, seq1]
+      if(i>1) fam[i, seq1] = fam1[i, seq1]
+      sp[i, seq1] = sp1[i, seq1]
+    }
+    if(i <= r2) {
+      seq2 = seq_len(n2[i])
+      nid[i, n1pad[i] + seq2] = nid2[i, seq2] + nInd1
+      pos[i, n1pad[i] + seq2] = pos2[i, seq2] + max(pos1) + 1
+      if(i>1) fam[i, n1pad[i] + seq2] = fam2[i, seq2] + n1pad[i-1] * (fam2[i, seq2] > 0)
+      sp[i, n1pad[i] + seq2] = sp2[i, seq2]
+    }
+  }
+
+  # Collect into plist
+  plist = list(n = n, nid = nid, pos = pos, fam = fam, spouse = sp)
+  plist2 = .extendPlist(plist, x)
+
+  # Adjust y positions
+  #idx = match(6:8, plist2$plotord)
+  #plist2$yall[idx] = plist2$yall[idx] + 0.5
+
+  # Merge annotations
+  annot1 = .prepAnnotation(x1, marker = marker, sep = sep, missing = missing,
+                           showEmpty = showEmpty, labs = labs, starred = starred,
+                           textInside = textInside, textAbove = textAbove, fouInb = fouInb,
+                           col = col, aff = aff, hatched = hatched, carrier = carrier,
+                           deceased = deceased)
+  annot2 = .prepAnnotation(x2, marker = marker, sep = sep, missing = missing,
+                           showEmpty = showEmpty, labs = labs, starred = starred,
+                           textInside = textInside, textAbove = textAbove, fouInb = fouInb,
+                           col = col, aff = aff, hatched = hatched, carrier = carrier,
+                           deceased = deceased)
+
+  mrg = function(a, def)
+    c(annot1[[a]] %||% rep(def, nInd1), annot2[[a]] %||% rep(def, nInd2))
+
+  annot = list(textUnder = mrg("textUnder", ""),
+               textAbove = mrg("textAbove", ""),
+               textInside = mrg("textInside", ""),
+               colvec = mrg("colvec", 1),
+               aff01 = mrg("aff01", 0),
+               density = annot1$density,
+               angle = annot1$angle,
+               carrierTF = mrg("carrierTF", FALSE),
+               deceasedTF = mrg("deceasedTF", FALSE))
+
+  # Calculate scaling parameters and prepare plot window
+  pdat = plotSetup(plist2, textUnder = annot$textUnder, textAbove = annot$textAbove,
+                   hasTitle = !is.null(title), mar = margins, ...)
+
+  if(!keep.par)
+    on.exit(par(pdat$oldpar))
+
+  # Main plot
+  .plotPed(pdat, dag = arrows, aff = annot$aff01, density = annot$density,
+           angle = annot$angle, col = annot$colvec, ...)
+
+  # Annotate
+  .annotatePed(pdat, title = title, deceased = annot$deceasedTF, carrier = annot$carrierTF,
+               textUnder = annot$textUnder, textInside = annot$textInside,
+               textAbove = annot$textAbove, col = annot$colvec, ...)
+
+  invisible(pdat)
+}
+
+
+
 
 # Function for preparing various plot annotations
 .prepAnnotation = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,

@@ -4,6 +4,7 @@
 \alias{plot.ped}
 \alias{as_kinship2_pedigree}
 \alias{plot.pedList}
+\alias{plot.list}
 \title{Plot pedigrees with genotypes}
 \usage{
 \method{plot}{ped}(
@@ -40,6 +41,29 @@ as_kinship2_pedigree(
 )
 
 \method{plot}{pedList}(x, ...)
+
+\method{plot}{list}(
+  x,
+  marker = NULL,
+  sep = "/",
+  missing = "-",
+  showEmpty = FALSE,
+  labs = unlist(labels(x), use.names = FALSE),
+  col = 1,
+  aff = NULL,
+  carrier = NULL,
+  hatched = NULL,
+  deceased = NULL,
+  starred = NULL,
+  textInside = NULL,
+  textAbove = NULL,
+  arrows = FALSE,
+  fouInb = "autosomal",
+  title = NULL,
+  margins = 1,
+  keep.par = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
