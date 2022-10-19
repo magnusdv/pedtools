@@ -15,13 +15,13 @@
 #' @export
 print.ped = function(x, ..., markers, verbose = TRUE) {
   nm = nMarkers(x)
-  showmess = F
+  showmess = FALSE
   if (missing(markers)) {
     if (nm < 10)
       markers = seq_len(nm)
     else {
       markers = 1:5
-      showmess = T
+      showmess = TRUE
     }
   }
   else {

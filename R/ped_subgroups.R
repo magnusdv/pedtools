@@ -499,7 +499,7 @@ descentPaths = function(x, ids = founders(x), internal = FALSE) {
       newoffs = offs[vapply(res, function(path) path[length(path)], 1)]
       if (length(unlist(newoffs)) == 0)
         break
-      nextstep = lapply(1:length(res), function(r)
+      nextstep = lapply(seq_along(res), function(r)
         if (length(newoffs[[r]]) == 0) res[r]
         else lapply(newoffs[[r]], function(kid) c(res[[r]], kid)))
 

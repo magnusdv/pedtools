@@ -169,7 +169,8 @@ writeMerlin = function(x, prefix, verbose = TRUE) {
   }
 
   # writelines faster than write and write.table
-  lines = vapply(1:nrow(pedmatr), function(i) paste(pedmatr[i, ], collapse = " "), "")
+  nr = nrow(pedmatr)
+  lines = vapply(seq_len(nr), function(i) paste(pedmatr[i, ], collapse = " "), "")
   writeLines(lines, fnames[["ped"]])
   if(verbose) message("File written: ", fnames[["ped"]])
 

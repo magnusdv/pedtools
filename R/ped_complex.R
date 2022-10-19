@@ -177,7 +177,7 @@ quadSecondCousins = function(type = c("cyclic", "exchange")) {
       19,13,14,1,
       20,15,16,2,
       21,17,18,1,
-      22,19,20,1), byrow = T, ncol = 4)
+      22,19,20,1), byrow = TRUE, ncol = 4)
 
     ped(id  = pedmat[,1],
         fid = pedmat[,2],
