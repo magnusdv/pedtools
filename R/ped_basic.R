@@ -316,7 +316,7 @@ selfingPed = function(s, sex = 1) {
     stop2("`s` must be a nonnegative integer: ", s)
 
   if(s == 0)
-    return(singleton(1))
+    return(singleton(1, sex = sex))
 
   ped(id = 1:(s+1), fid = 0:s, mid = 0:s, sex = c(rep(0, s), sex),
       reorder = FALSE, validate = FALSE, verbose = FALSE)
