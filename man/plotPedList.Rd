@@ -139,7 +139,8 @@ plot4 = list(x4, margins = marg4, title = "Plot 4", cex = 1.3,
              hatched = hatched, col = col)
 
 plotPedList(list(plot1, plot2, plot3, plot4), widths = c(2,3,1,2),
-            fmar = 0.03, groups = list(1, 2:3, 4), newdev = TRUE)
+            fmar = 0.03, groups = list(1, 2:3, 4), newdev = TRUE,
+            cex.main = 1.5)
 
 dev.off()
 
@@ -151,7 +152,7 @@ dev.off()
 
 plotPedList(list(halfCousinPed(4), cousinPed(7)),
             titles = c("Large", "Very large"),
-            dev.height = 8, dev.width = 5)
+            dev.height = 8, dev.width = 5, margins = 1.5)
 
 dev.off()
 

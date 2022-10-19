@@ -18,19 +18,17 @@
 # Alignment ---------------------------------------------------------------
 
 #' @importFrom kinship2 align.pedigree
-.alignPed = function(x, dag = FALSE, packed = TRUE, width = 10, align = c(1.5, 2),
+.getPlist = function(x, dag = FALSE, packed = TRUE, width = 10, align = c(1.5, 2),
                      hints = NULL, twins = NULL, ...) {
 
-  if(!is.ped(x))
-    stop2("First argument to `alignPed()` must be a `ped` object")
-  nInd = pedsize(x)
-
   # Singleton
-  if(nInd == 1) {
+  if(is.singleton(x) == 1) {
     plist = list(n = 1, nid = cbind(1), pos = cbind(0), fam = cbind(0), spouse = cbind(0))
-    return(list(plist = plist, x = 0, y = 1, nInd = 1, sex = x$SEX, ped = x,
-                plotord = 1, xall = 0, yall = 1, maxlev = 1, xrange = c(0,0)))
+    return(plist)
   }
+
+  if(!is.ped(x))
+    stop2("First argument must be a `ped` object")
 
   # Alignment for DAG presentation (with arrows)
   if(dag) {
@@ -62,25 +60,35 @@
     }
 
     plist = list(n = n, nid = nid, pos = pos, fam = NULL, spouse = NULL)
-  }
-  else {
-    # Otherwise: align with kinship2 alignment
-    k2ped = as_kinship2_pedigree(x, twins = twins)
-    plist = align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
-
-    # Fix annoying rounding error in first column of `pos`
-    plist$pos[, 1] = round(plist$pos[, 1], 6)
-
-    # Ad hoc fix for 3/4 siblings and similar
-    if(is.null(hints))
-      plist = .fix34(x, k2ped, plist, packed, width, align)
+    return(plist)
   }
 
+  ### Default: Align with kinship2 alignment
+
+  if(hasSelfing(x))
+    stop2("Pedigree with selfing requires `dag = TRUE`")
+
+  k2ped = as_kinship2_pedigree(x, twins = twins)
+  plist = align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
+
+  # Fix annoying rounding error in first column of `pos`
+  plist$pos[, 1] = round(plist$pos[, 1], 6)
+
+  # Ad hoc fix for 3/4 siblings and similar
+  if(is.null(hints))
+    plist = .fix34(x, k2ped, plist, packed, width, align)
+
+  plist
+}
+
+
+.extendPlist = function(plist, x) {
   nid = plist$nid
   pos = plist$pos
 
-  xrange = range(pos[nid > 0])
+  nInd = max(nid)
   maxlev = nrow(pos)
+  xrange = range(pos[nid > 0])
 
   id = as.vector(nid)
   plotord = id[id > 0]
@@ -95,8 +103,15 @@
   xpos = pos[tmp]
   ypos = row(pos)[tmp]
 
-  list(plist = plist, x = xpos, y = ypos, nInd = nInd, sex = x$SEX, ped = x,
+  list(plist = plist, x = xpos, y = ypos, nInd = nInd, sex = getSex(x), ped = x,
        plotord = plotord, xall = xall, yall = yall, maxlev = maxlev, xrange = xrange)
+}
+
+.alignPed = function(x, dag = FALSE, packed = TRUE, width = 10, align = c(1.5, 2),
+                     hints = NULL, twins = NULL, ...) {
+
+  plist = .getPlist(x, dag = dag, packed = packed, width = width, align = align, hints = hints, twins = twins)
+  .extendPlist(plist, x)
 }
 
 
@@ -132,20 +147,32 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
   if (ht1 <= 0)
     stop2("Labels leave no room for the graph, reduce cex")
 
-  # Singleton and selfing towers
+  yrange = if(maxlev == 1) c(0.5, 1.5) else c(1, maxlev)
+
+  # Singletons and selfing towers
   if(xrange[1] == xrange[2]) {
     wd2 = psize[1] * 0.5
     boxsize = symbolsize * min(stemp1, wd2) # don't use ht1 here
     hscale = psize[1]
     vscale = (psize[2] - (stemp2 + stemp3 + stemp4 + boxsize)) / (max(1, maxlev - 1))
 
-    yrange = if(maxlev == 1) c(0.5, 1.5) else c(1, maxlev)
     top    = yrange[1] - stemp4/vscale
     bottom = yrange[2] + (stemp2 + stemp3 + boxsize)/vscale
 
     left  = xrange[1] - 0.5
     right = xrange[2] + 0.5
+  }
+  else if(maxlev == 1) { # list of singletons
+    wd2 = psize[1] * 0.8/(.8 + diff(xrange))
+    boxsize = symbolsize * min(stemp1, wd2)
+    hscale = psize[1] / (diff(xrange) + 1)
+    vscale = (psize[2] - (stemp2 + stemp3 + stemp4 + boxsize))
 
+    top    = yrange[1] - stemp4/vscale
+    bottom = yrange[2] + (stemp2 + stemp3 + boxsize)/vscale
+
+    left  = xrange[1] - 0.5
+    right = xrange[2] + 0.5
   }
   else {
     ht2 = psize[2]/(maxlev + (maxlev-1)/2)
@@ -222,9 +249,9 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
 
   # Shapes
   POLYS = list(list(x = c(0, -0.5, 0, 0.5), y = c(0, 0.5, 1, 0.5)), # diamond
-              list(x = c(-1, -1, 1, 1)/2, y = c(0, 1, 1, 0)),      # square
-              list(x = 0.5 * cos(seq(0, 2 * pi, length = 50)),     # circle
-                   y = 0.5 * sin(seq(0, 2 * pi, length = 50)) + 0.5))
+               list(x = c(-1, -1, 1, 1)/2, y = c(0, 1, 1, 0)),      # square
+               list(x = 0.5 * cos(seq(0, 2 * pi, length = 50)),     # circle
+                    y = 0.5 * sin(seq(0, 2 * pi, length = 50)) + 0.5))
 
   # Function for drawing a single symbol
   drawbox = function(xpos, ypos, sex, aff, col) {
@@ -352,8 +379,8 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
 
 }
 
-#' @importFrom graphics segments
-.annotatePed = function(plotdat, deceased = FALSE, carrier = FALSE, title = NULL,
+#' @importFrom graphics segments points text
+.annotatePed = function(plotdat, title = NULL, deceased = FALSE, carrier = FALSE,
                          textUnder = NULL, textInside = NULL, textAbove = NULL,
                          col = 1, cex = 1, font = NULL, fam = NULL, colUnder = 1, colInside = 1,
                          colAbove = 1, cex.main = cex, font.main = NULL, col.main = NULL, ...) {
@@ -384,7 +411,6 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
     col = rep(col, plotdat$nInd)
 
   # Main labels
-  colUnder = rep(colUnder, )
   text(xall, yall + plotdat$boxh + plotdat$labh * 0.7, textUnder[plotord], col = colUnder,
        cex = cex, adj = c(.5, 1), font = font, family = fam, xpd = NA)
 
