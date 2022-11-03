@@ -1,7 +1,7 @@
 # Modified from `kinship2::plot.pedigree()`.
 # The main changes are:
 #
-# * Separate setup (dimensions and scaling), drawing and annotation
+# * Separate setup (dimensions and scaling), drawing and annotation (see below)
 # * Fixed scaling bugs, documented here: https://github.com/mayoverse/kinship2/pull/10
 # * Adjust scaling to account for duplication arrows
 # * Avoid unwanted duplications, e.g. in 3/4 siblings
@@ -13,7 +13,12 @@
 #     - pconnect = 0.5
 #     - branch = 0.6
 #     - packed = TRUE
-
+#
+# Internally, the previous single `plot()` function has been refactored into the following steps:
+# * .getPlist(): Basically `kinship2::align.pedigree(), but also handles singletons and DAGs
+# * .extendPlist(): Extend the basic alignment with various variables used to set up the plot
+# * plotSetup(): Set margin, call `frame()`, calculate symbol sizes and scaling variables
+# * .annotatePed(): Add labels and other annotation to the plot
 
 
 # Alignment ---------------------------------------------------------------

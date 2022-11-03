@@ -1,3 +1,39 @@
+# pedtools 2.0.0
+
+This version introduces a number of changes in the pedigree plotting. The alignment of individuals is still done with `kinship2`, but the calculation of scaling, margins and symbol sizes are now done in pedtools. As a result, pedigrees plotted with old code may look slightly different.
+
+## Breaking changes
+
+* Pedigree symbols should always have the same height/width (e.g., perfect squares for males). Previously, symbols were squished in many cases, sometimes heavily so.
+
+* Pedigrees now always span the entire plot region, which was often not the case before.
+
+* Plotting of singletons has been completely rewritten, and is now done in `plot.ped()`. The previous method `plot.singleton()` has been removed. As a result, singleton plots are much more consistent and appear centred in the plot region.
+
+* Some efforts are done to prevent unneeded duplication of founders, for instance in the case of 3/4-siblings: `nuclearPed(2) |> addSon(3) |> addSon(4:5) |> plot()`
+
+* The default plot margins have been set to 1.
+
+* `plotPedList()` is better at guessing relative widths.
+
+* Several minor tweaks in `plotPedList()` in response to changes in `plot.ped()`.
+
+* The function `relabel()` now has "asPlot" as default, i.e., using the numerical plot order.
+
+## New features
+
+* Pedigrees can now be plotted as directed acyclic graphs (DAGs), by adding `arrows = TRUE` in `plot()`.
+
+* Plotting pedigrees with selfing is now supported, by automatically switching to DAG mode.
+
+* The argument `margins` in `plot()` now accepts a single number, making it more user friendly. The default, `margins = 1` corresponds to `par(mar = c(1,1,1,1))`.
+
+## Bug fixes
+
+* Reset graphical parameters after `plotPedList()`
+
+*
+
 # pedtools 1.3.0
 
 ## New features
