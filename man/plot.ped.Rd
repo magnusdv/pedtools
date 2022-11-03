@@ -86,12 +86,12 @@ in the plot. Alternative forms:
 \item If \code{labs} is a vector with nonempty intersection with \code{labels(x)}, these
 individuals will be labelled. If the vector is named, then the (non-empty)
 names are used instead of the ID label. (See Examples.)
-\item If \code{labs} is NULL, or has nonempty intersection with \code{labels(x)}, then no
+\item If \code{labs} is NULL, or has empty intersection with \code{labels(x)}, then no
 labels are drawn.
 \item If \code{labs} is the word "num", then all individuals are numerically
 labelled following the internal ordering.
-\item If \code{labs} is a function, it will be replaced with \code{labs(x)} and handled
-as above. (See Examples.)
+\item If \code{labs} is a function, it is replaced with \code{labs(x)} and handled as
+above. (See Examples.)
 }}
 
 \item{title}{The plot title. If NULL (default) or '', no title is added to
@@ -148,11 +148,10 @@ and \code{cex} can be useful.}
 \description{
 This is the main function for pedigree plotting, with many options for
 controlling the appearance of pedigree symbols and accompanying labels. The
-main pedigree layout and alignment is calculated with the \code{kinship2} package,
-see \link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike \code{kinship2}, the
-implementation here also supports plotting singletons. In addition, some
-minor adjustments have been made to improve scaling and avoid unneeded
-duplications.
+main pedigree layout is calculated with the \code{kinship2} package, see
+\link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike \code{kinship2}, the implementation
+here also supports plotting singletons. In addition, some minor adjustments
+have been made to improve scaling and avoid unneeded duplications.
 }
 \examples{
 
@@ -206,7 +205,6 @@ plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
 plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
                            id2 = c("tw2", "tw3"),
                            code = 2))
-
 
 }
 \seealso{

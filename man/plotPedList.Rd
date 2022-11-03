@@ -11,7 +11,6 @@ plotPedList(
   titles = NULL,
   frames = TRUE,
   fmar = NULL,
-  frametitles = NULL,
   source = NULL,
   dev.height = NULL,
   dev.width = NULL,
@@ -40,8 +39,6 @@ given in individuals subplots.}
 
 \item{fmar}{A single number in the interval \eqn{[0,0.5)} controlling the
 position of the frames.}
-
-\item{frametitles}{Deprecated; use \code{titles} instead.}
 
 \item{source}{NULL (default), or the name or index of an element of \code{plots}.
 If given, marker data is temporarily transferred from this to all the other

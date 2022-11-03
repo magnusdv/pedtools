@@ -147,8 +147,15 @@ trio2 = swapSex(trio2, ids = 3)
 trio2 = relabel(trio2, new = c("fa", "mo", "girl"))
 ```
 
+With the pipe operator `|>` the above commands could be written in one chain, like this:
+```{r}
+trio2 = nuclearPed(1) |> 
+  swapSex(3) |> 
+  relabel(new = c("fa", "mo", "girl"))
+```
+
 **Alternative B (quickest and best)**  
-The previous approach can be condensed into a one-liner, since `nuclearPed()` allows an alternative syntax in which child genders and labels are specified directly:
+Even quicker than the pipe version is the following one-liner, where all details are specified directly in the call to `nuclearPed()`.
 ```{r}
 trio3 = nuclearPed(father = "fa", mother = "mo", children = "girl", sex = 2)
 ```
@@ -175,17 +182,17 @@ plot(x1)
 **Alternative A**  
 One approach is to first create the pedigree consisting of individuals 1-6, with `halfSibPed()`, and then use `addSon()` to add the inbred child.
 ```{r}
-x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1)
-x1 = addSon(x1, parents = 4:5)
+x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |> 
+  addSon(parents = 4:5)
 ```
 
 **Alternative B**  
-We could also view the half siblings 4 and 5 as half cousins of degree 0. The `halfCousinPed()` function accepts an option `child = TRUE` adding an inbred child. The labels will be different with this approach, so you should plot the pedigree after each command to see who-is-who. Also, we must relabel in the end.
+We could also view the half siblings 4 and 5 as half cousins of degree 0. The `halfCousinPed()` function accepts an option `child = TRUE` adding an inbred child. The labels will be different with this approach, so it might be useful to plot intermediate results to see who is who.
 
 ```{r}
-x2 = halfCousinPed(0, child = T)
-x2 = addSon(x2, parents = 2:3)
-x2 = relabel(x2, old = c(7,6), new = c(6,7))
+x2 = halfCousinPed(0, child = T) |> 
+  addSon(parents = 2:3) |> 
+  relabel(old = c(7,6), new = c(6,7))
 ```
 
 **A note about the order of pedigree members**  

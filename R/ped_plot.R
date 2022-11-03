@@ -2,11 +2,10 @@
 #'
 #' This is the main function for pedigree plotting, with many options for
 #' controlling the appearance of pedigree symbols and accompanying labels. The
-#' main pedigree layout and alignment is calculated with the `kinship2` package,
-#' see [kinship2::align.pedigree] for details. Unlike `kinship2`, the
-#' implementation here also supports plotting singletons. In addition, some
-#' minor adjustments have been made to improve scaling and avoid unneeded
-#' duplications.
+#' main pedigree layout is calculated with the `kinship2` package, see
+#' [kinship2::align.pedigree] for details. Unlike `kinship2`, the implementation
+#' here also supports plotting singletons. In addition, some minor adjustments
+#' have been made to improve scaling and avoid unneeded duplications.
 #'
 #' @param x A [ped()] object.
 #' @param marker Either a vector of names or indices referring to markers
@@ -24,14 +23,14 @@
 #'   individuals will be labelled. If the vector is named, then the (non-empty)
 #'   names are used instead of the ID label. (See Examples.)
 #'
-#'   * If `labs` is NULL, or has nonempty intersection with `labels(x)`, then no
+#'   * If `labs` is NULL, or has empty intersection with `labels(x)`, then no
 #'   labels are drawn.
 #'
 #'   * If `labs` is the word "num", then all individuals are numerically
 #'   labelled following the internal ordering.
 #'
-#'   * If `labs` is a function, it will be replaced with `labs(x)` and handled
-#'   as above. (See Examples.)
+#'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
+#'   above. (See Examples.)
 #'
 #' @param title The plot title. If NULL (default) or '', no title is added to
 #'   the plot.
@@ -126,7 +125,6 @@
 #'                            id2 = c("tw2", "tw3"),
 #'                            code = 2))
 #'
-#'
 #' @export
 plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                     labs = labels(x), title = NULL, col = 1, aff = NULL, carrier = NULL,
@@ -152,11 +150,10 @@ plot.ped = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FALS
     twins = data.frame(id1 = twins[1], id2 = twins[2], code = as.integer(twins[3]))
 
   # Pedigree alignment calculations
-  plist = .getPlist(x, dag = arrows, hints = hints, twins = twins, ...)
-  plist2 = .extendPlist(plist, x)
+  plist = .alignPed(x, dag = arrows, hints = hints, twins = twins, ...)
 
   # Calculate scaling parameters and prepare plot window
-  pdat = plotSetup(plist2, textUnder = annot$textUnder, textAbove = annot$textAbove,
+  pdat = plotSetup(plist, textUnder = annot$textUnder, textAbove = annot$textAbove,
                    hasTitle = !is.null(title), mar = margins, ...)
 
   if(!keep.par)
@@ -234,7 +231,6 @@ plot.pedList = function(x, ...) {
 #' @param frames A logical indicating if groups should be framed.
 #' @param fmar A single number in the interval \eqn{[0,0.5)} controlling the
 #'   position of the frames.
-#' @param frametitles Deprecated; use `titles` instead.
 #' @param source NULL (default), or the name or index of an element of `plots`.
 #'   If given, marker data is temporarily transferred from this to all the other
 #'   pedigrees. This may save some typing when plotting the same genotypes on
@@ -340,15 +336,10 @@ plot.pedList = function(x, ...) {
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot
 #' @export
 plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
-                       frames = TRUE, fmar = NULL, frametitles = NULL,
-                       source = NULL, dev.height = NULL, dev.width = NULL,
+                       frames = TRUE, fmar = NULL, source = NULL,
+                       dev.height = NULL, dev.width = NULL,
                        newdev = !is.null(dev.height) || !is.null(dev.width),
                        verbose = FALSE, ...) {
-
-  if(!is.null(frametitles)) {
-    message("Argument `frametitles` is deprecated; use `titles` instead")
-    titles = frametitles
-  }
 
   if(!(isTRUE(frames) || isFALSE(frames))) {
     message("`frames` must be either TRUE or FALSE; use `groups` to specify framing groups")
@@ -414,20 +405,19 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   finalTitles = grouptitles %||% sapply(flatlist, function(p) p$title %||% "")
   hasTitles = any(nchar(finalTitles) > 0)
 
-  # Relative plot widths
-  if (is.null(widths))
-    widths = vapply(flatlist, function(p) ifelse(is.singleton(p[[1]]), 1, 2.5), 1)
-  else {
-    if(!is.numeric(widths) && !length(widths) %in% c(1,N))
-      stop2("`widths` must be a numeric of length either 1 or the total number of objects")
-    widths = rep_len(widths, N)
-  }
+  # Extract `plist$n` for each (contains width and #gen)
+  nvec = lapply(flatlist, function(arglist) .getPlist(arglist[[1]], ...)$n)
 
-  maxGen = max(vapply(flatlist, function(arglist) generations(arglist[[1]]), 1))
+  # Max number of generations
+  maxGen = max(lengths(nvec))
+
+  # Max width
+  maxWid = vapply(nvec, max, 1)
 
   extra.args = list(...)
 
-  defaultmargins = if (N > 2) c(0, 4, 0, 4) else c(0, 2, 0, 2)
+  # Default left/right margin
+  marLR = if (N > 2) 3 else 2
 
   # Prepare plot args for each ped
   plotlist = lapply(flatlist, function(arglist) {
@@ -444,31 +434,39 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     arglist$margins = arglist$margins %||% {
       g = generations(arglist$x)
       if(g == 1) # singleton
-        rep(2, 4)
+        rep(0, 4)
       else {
-        addMar = 2 * (maxGen - g + 1)
-        defaultmargins + c(addMar, 0, addMar, 0)
+        marTB = 2*(maxGen - g) + 2
+        c(marTB, marLR, marTB, marLR)
       }
     }
-
     arglist
   })
+
+  # Relative plot widths
+  if (is.null(widths))
+    widths = sqrt(maxWid - 1) + 1
+  else {
+    if(!is.numeric(widths) && !length(widths) %in% c(1,N))
+      stop2("`widths` must be a numeric of length either 1 or the total number of objects")
+    widths = rep_len(widths, N)
+  }
 
   # Layout of plot regions
   if (newdev) {
     dev.height = dev.height %||% {max(3, 1 * maxGen) + 0.3 * as.numeric(hasTitles)}
-    dev.width = dev.width %||% {3 * N}
+    dev.width = dev.width %||% sum(vapply(nvec, max, 1)) + 1
     dev.new(height = dev.height, width = dev.width, noRStudioGD = TRUE)
   }
 
   new.oma = if (hasTitles) c(0, 0, 3, 0) else c(0, 0, 0, 0)
-  opar = par(oma = new.oma, xpd = NA, mfrow = c(1,1)) # include mfrow to ensure layout is reverted on exit
+  opar = par(oma = new.oma, xpd = NA, mfrow = c(1,1), mar = c(0,0,0,0)) # include mfrow to ensure layout is reverted on exit
   on.exit(par(opar))
 
   if(verbose) {
     message("Group structure: ", toString(groups))
     message("Relative widths: ", toString(widths))
-    message("Default margins: ", toString(defaultmargins))
+    message("Default margins: ", toString(marLR))
     message("Indiv. margins:")
     for(p in plotlist) message("  ", toString(p$margins))
     message("Input width/height: ", toString(c(dev.width, dev.height)))
@@ -491,8 +489,8 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
   # Draw frames
   if(frames) {
-    # Default margin: 4% of vertical height, but at most 0.25 inches.
-    fmar = fmar %||% min(0.04, 0.25/dev.size()[2])
+    # Default margin: 3% of vertical height, but at most 0.25 inches.
+    fmar = fmar %||% min(0.03, 0.25/dev.size()[2])
 
     margPix = grconvertY(0, from = "ndc", to = "device") * fmar
     margXnorm = grconvertX(margPix, from = "device", to = "ndc")
@@ -656,19 +654,7 @@ plot.list = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FAL
   if(identical(labs, "num"))
     labs = setNames(x$ID, 1:nInd)
 
-  text = rep("", nInd) # Initialise
-
-  mtch = match(x$ID, labs, nomatch = 0L)
-  showIdx = mtch > 0
-  showLabs = labs[mtch]
-
-  if(!is.null(nms <- names(labs))) { # use names(labs) if present
-    newnames = nms[mtch]
-    goodIdx = newnames != "" & !is.na(newnames)
-    showLabs[goodIdx] = newnames[goodIdx]
-  }
-
-  text[showIdx] = showLabs
+  text = .prepLabs(x, labs)
 
   # Add stars to labels
   if(is.function(starred))
@@ -702,7 +688,8 @@ plot.list = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FAL
     text = if (!any(nzchar(text))) geno else paste(text, geno, sep = "\n")
   }
 
-  res$textUnder = text
+  res$textUnder = trimws(text, "right", whitespace = "[\t\r\n]")
+
 
   # Text above symbols ------------------------------------------------------
 
@@ -800,4 +787,22 @@ plot.list = function(x, marker = NULL, sep = "/", missing = "-", showEmpty = FAL
 
   # Return list -------------------------------------------------------------
   res
+}
+
+# Convert `labs` to full vector with "" for unlabels indivs
+.prepLabs = function(x, labs) {
+  id = rep("", length(x$ID)) # Initialise
+
+  mtch = match(x$ID, labs, nomatch = 0L)
+  showIdx = mtch > 0
+  showLabs = labs[mtch]
+
+  if(!is.null(nms <- names(labs))) { # use names(labs) if present
+    newnames = nms[mtch]
+    goodIdx = newnames != "" & !is.na(newnames)
+    showLabs[goodIdx] = newnames[goodIdx]
+  }
+
+  id[showIdx] = showLabs
+  id
 }

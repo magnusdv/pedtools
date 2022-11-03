@@ -1,16 +1,17 @@
-# Modified from `kinship2::plot.pedigree()` (GPL >=2 licence).
+# Modified from `kinship2::plot.pedigree()`.
 # The main changes are:
 #
-# * Separate setup (plot dimensions and scaling) from the actual drawing
+# * Separate setup (dimensions and scaling), drawing and annotation
 # * Fixed scaling bugs, documented here: https://github.com/mayoverse/kinship2/pull/10
 # * Adjust scaling to account for duplication arrows
-# * Fix unwanted duplications, e.g. in 3/4 siblings
+# * Avoid unwanted duplications, e.g. in 3/4 siblings
+# * Don't use bottom labels to calculate inter-generation separation
+# * Allow plotting pedigrees as DAGs
 #
-# * Removed unused features, especially i) multiple phenotypes and ii) subregions
+# * Removed features not used by pedtools, including i) multiple phenotypes and ii) subregions
 # * Fixated some parameters at their default values:
 #     - pconnect = 0.5
 #     - branch = 0.6
-#     - align = c(1.5, 2)
 #     - packed = TRUE
 
 
@@ -19,7 +20,7 @@
 
 #' @importFrom kinship2 align.pedigree
 .getPlist = function(x, dag = FALSE, packed = TRUE, width = 10, align = c(1.5, 2),
-                     hints = NULL, twins = NULL, ...) {
+                     hints = NULL, twins = NULL, arrows = FALSE, ...) {
 
   # Singleton
   if(is.singleton(x) == 1) {
@@ -31,7 +32,7 @@
     stop2("First argument must be a `ped` object")
 
   # Alignment for DAG presentation (with arrows)
-  if(dag) {
+  if(dag || arrows) {
     # Generation number of each
     gvec = generations(x, maxOnly = FALSE)
     gvec = as.integer(gvec) # remove names
@@ -124,86 +125,106 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
   maxlev = pdat0$maxlev
   xrange = pdat0$xrange
   nid = pdat0$plist$nid
+  nid1 = nid[1, ][nid[1, ] > 0] # ids in first generation
 
-  # Create or advance frame
-  frame()
+  # Fix xrange/yrange for singletons and selfings
+  if(maxlev == 1 || xrange[1] == xrange[2])
+    xrange = xrange + c(-0.5, 0.5)
+  yrange = if(maxlev == 1) c(0.5, 1.5) else c(1, maxlev)
 
   # Margins
   if(length(mar) == 1)
     mar = if(hasTitle) c(mar, mar, mar + 2.1, mar) else rep(mar, 4)
 
-  # Set basic parameters (usr comes later!)
+  # Create/advance frame and set margin and xpd
+  frame()
   oldpar = par(mar = mar, xpd = TRUE)
 
-  psize = par('pin')  # plot region in inches
-  stemp1 = strwidth("ABC", units='inches', cex=cex) * 2.5/3
-  stemp2 = strheight('1g', units='inches', cex=cex)
-  stemp3 = max(strheight(textUnder, units='inches', cex=cex))
+  # Shortcut for finding height of a string in inches. Empty -> 0!
+  hinch = function(v) {
+    res = strheight(v, units = "inches", cex = cex)
+    res[v == ""] = 0
+    res
+  }
 
-  # Text above 1st-generation?
-  stemp4 = max(strheight(textAbove[nid[1, ]], units='inches', cex=cex))
+  # Dimensions in inches
+  psize = par('pin')
 
-  ht1 = psize[2]/maxlev - (stemp2 + stemp3 + stemp4)
+  # Text height
+  labh_in = hinch('M') # same as for "1g" used in kinship2 (`stemp2`)
+
+  # Make room for curved duplication lines involving first generation
+  # A bit hackish since curve height is only available in user coordinates.
+  curvAdj = if(anyDuplicated.default(nid1)) 0.5 else if(maxlev > 1 && any(nid1 %in% nid[2, ])) 0.1225 else 0
+
+  # Text above symbols in first generation
+  # Don't adjust for text above if also for curve. (NB: Fails in extreme cases)
+  abovetop_in = if(curvAdj>0) 0 else max(hinch(textAbove[nid1]))
+
+  # Add offset: "0.5 times the width [!] of a character"
+  if(abovetop_in > 0)
+    abovetop_in = abovetop_in + strwidth("W", units = "inches")/2
+
+  # Separation above/below labels
+  labsep1_in = 0.7*labh_in  # above text
+  labsep2_in = labh_in  # below text
+  labsep3_in = 0.3*labh_in  # below text in last generation
+
+  # Max label height (except last generation)
+  maxlabh_nolast_in = if(maxlev == 1) 0 else max(hinch(textUnder[nid[seq_len(maxlev - 1), ]]))
+
+  # Max label height in last generation
+  belowlast_in = max(hinch(textUnder[nid[maxlev, ]]))
+
+  # Everything below bottom symbol (label + space above and below)
+  if(belowlast_in > 0)
+    belowlast_in = belowlast_in + labsep1_in + labsep3_in
+
+  # KEY TO LAYOUT: Complete y-range (psize[2]) in inches corresponds to:
+  # abovetop_in + (labsep1_in + h + maxlabh_nolast_in + labsep2_in) * (maxlev - 1) + (h + belowlast_in)
+
+  # Symbol height restriction 1 (Solve above for h)
+  if(maxlev > 1) {
+    sep1_in = (labsep1_in + maxlabh_nolast_in + labsep2_in)
+    ht1 = (psize[2] - abovetop_in - belowlast_in - sep1_in * (maxlev - 1)) / maxlev
+  }
+  else
+    ht1 = psize[2] - abovetop_in - belowlast_in
+
   if (ht1 <= 0)
     stop2("Labels leave no room for the graph, reduce cex")
 
-  yrange = if(maxlev == 1) c(0.5, 1.5) else c(1, maxlev)
+  # Height restriction 2
+  ht2 = psize[2]/(maxlev + (maxlev-1)/2)
 
-  # Singletons and selfing towers
-  if(xrange[1] == xrange[2]) {
-    wd2 = psize[1] * 0.5
-    boxsize = symbolsize * min(stemp1, wd2) # don't use ht1 here
-    hscale = psize[1]
-    vscale = (psize[2] - (stemp2 + stemp3 + stemp4 + boxsize)) / (max(1, maxlev - 1))
+  # Width restriction 1: Default width = 2.5 letters (`stemp1`)
+  wd1 = strwidth("ABC", units='inches', cex=cex) * 2.5/3
 
-    top    = yrange[1] - stemp4/vscale
-    bottom = yrange[2] + (stemp2 + stemp3 + boxsize)/vscale
+  # Width restriction 2
+  wd2 = psize[1] * 0.8/(.8 + diff(xrange))  # = psize[1] for singletons/selfings
 
-    left  = xrange[1] - 0.5
-    right = xrange[2] + 0.5
-  }
-  else if(maxlev == 1) { # list of singletons
-    wd2 = psize[1] * 0.8/(.8 + diff(xrange))
-    boxsize = symbolsize * min(stemp1, wd2)
-    hscale = psize[1] / (diff(xrange) + 1)
-    vscale = (psize[2] - (stemp2 + stemp3 + stemp4 + boxsize))
+  # Box size in inches
+  boxsize = symbolsize * min(ht1, ht2, wd1, wd2)
 
-    top    = yrange[1] - stemp4/vscale
-    bottom = yrange[2] + (stemp2 + stemp3 + boxsize)/vscale
+  # Segments of length 1 inch
+  hscale = (psize[1] - boxsize)/diff(xrange)
+  denom = if(maxlev == 1) 1 else maxlev - 1 + curvAdj
+  vscale = (psize[2] - (abovetop_in + boxsize + belowlast_in)) / denom
 
-    left  = xrange[1] - 0.5
-    right = xrange[2] + 0.5
-  }
-  else {
-    ht2 = psize[2]/(maxlev + (maxlev-1)/2)
-    wd2 = psize[1] * 0.8/(.8 + diff(xrange))
-    boxsize = symbolsize * min(ht1, ht2, stemp1, wd2) # box size in inches
-    hscale = (psize[1] - boxsize)/diff(xrange)  #horizontal scale from user-> inch
-
-    # MDV: Adjust top for curved duplication lines
-    nid1 = nid[1, ]
-    nid1 = nid1[nid1 > 0]
-    curvAdj = if(anyDuplicated.default(nid1)) 0.5 else if(any(nid1 %in% nid[2, ])) 0.1225 else 0
-
-    # Don't adjust for text above if also for curve. (NB: Fails in extreme cases)
-    if(curvAdj > 0)
-      stemp4 = 0
-
-    denom = maxlev - 1 + curvAdj
-    vscale = (psize[2] - (stemp2 + stemp3 + boxsize + stemp4)) / denom
-
-    left   = xrange[1] - 0.5*boxsize/hscale
-    right  = xrange[2] + 0.5*boxsize/hscale
-
-    top    = 1 - stemp4/vscale - curvAdj
-    bottom = maxlev + (stemp2 + stemp3 + boxsize)/vscale
-  }
-
-  usr = c(left, right, bottom, top)
+  if(hscale <= 0 || vscale <= 0)
+    stop2("Cannot fit the graph; please reduce cex and/or symbolsize")
 
   boxw = boxsize/hscale  # box width in user units
   boxh = boxsize/vscale  # box height in user units
-  labh = stemp2/vscale   # height of a text string
+
+  # User coordinates
+  left   = xrange[1] - 0.5*boxw
+  right  = xrange[2] + 0.5*boxw
+  top    = yrange[1] - abovetop_in/vscale - curvAdj
+  bottom = yrange[2] + (boxsize + belowlast_in)/vscale
+  usr = c(left, right, bottom, top)
+
+  labh = labh_in/vscale        # height of a text string
   legh = min(1/4, boxh * 1.5)  # how tall are the 'legs' up from a child
 
   # Return plotting/scaling parameters
@@ -270,7 +291,6 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
             col = col[id])
   }
 
-
   ## Add lines between spouses (MDV: Vectorized/simplified)
   sp = plist$spouse
   cl = col(sp)[sp > 0]
@@ -299,7 +319,8 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
 
       # Draw the uplines
       who = (plist$fam[i,] == fam) #The kids of interest
-      if (is.null(plist$twins)) target = pos[i,who]
+      if (is.null(plist$twins))
+        target = pos[i,who]
       else {
         twin.to.left = (c(0, plist$twins[i,who])[1:sum(who)])
         temp = cumsum(twin.to.left == 0) #increment if no twin to the left
@@ -308,6 +329,7 @@ plotSetup = function(pdat0, textUnder = NULL, textAbove = NULL,
         tcount = table(temp)
         target = rep(tapply(pos[i,who], temp, mean), tcount)
       }
+
       yy = rep(i, sum(who))
       segments(pos[i,who], yy, target, yy-legh)
 
