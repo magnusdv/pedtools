@@ -2,7 +2,7 @@
 #'
 #' Functions to get or set inbreeding coefficients for the pedigree founders.
 #'
-#' @param x A `ped` object.
+#' @param x A `ped` object or a list of such.
 #' @param ids Any subset of `founders(x)`. If `ids` is missing in
 #'   `founderInbreeding()`, it is set to `founders(x)`.
 #' @param named A logical: If TRUE, the output vector is named with the ID
@@ -12,7 +12,10 @@
 #' @return For `founderInbreeding`, a numeric vector of the same length as
 #'   `ids`, containing the founder inbreeding coefficients.
 #'
+#'   For `setFounderInbreeding()`, a copy of `x` with modified
 #'   For `founderInbreeding<-` the updated `ped` object is returned.
+#'
+#'
 #'
 #' @examples
 #' x = nuclearPed(father = "fa", mother = "mo", child = 1)
@@ -29,7 +32,23 @@
 #'
 #' @export
 founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
-  if(!is.ped(x)) stop2("Input is not a `ped` object")
+
+  if(is.pedList(x)) {
+    missids = missing(ids) || is.null(ids)
+    filist = lapply(x, function(comp) {
+      idsComp = if(missids) founders(comp) else intersect(ids, founders(comp))
+      founderInbreeding(comp, idsComp, named = TRUE, chromType = chromType)
+    })
+    fi = unlist(filist, recursive = FALSE)
+    if(!missids)
+      fi = fi[as.character(ids)]
+    if(!named)
+      fi = unname(fi)
+    return(fi)
+  }
+
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object")
   if(!chromType %in% c("autosomal", "x"))
     stop2("Argument `chromType` must be a either 'autosomal' or 'x': ", chromType)
 

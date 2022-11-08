@@ -10,7 +10,7 @@ founderInbreeding(x, ids, named = FALSE, chromType = "autosomal")
 founderInbreeding(x, ids, chromType = "autosomal") <- value
 }
 \arguments{
-\item{x}{A \code{ped} object.}
+\item{x}{A \code{ped} object or a list of such.}
 
 \item{ids}{Any subset of \code{founders(x)}. If \code{ids} is missing in
 \code{founderInbreeding()}, it is set to \code{founders(x)}.}
