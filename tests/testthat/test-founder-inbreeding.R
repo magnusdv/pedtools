@@ -1,4 +1,5 @@
 
+
 test_that("setting/getting founder inbreeding works properly", {
   x = addSon(nuclearPed(1), 3, id="boy", verbose=F)
 
@@ -11,6 +12,24 @@ test_that("setting/getting founder inbreeding works properly", {
   founderInbreeding(x) = c('1' = 0.5)
   expect_equal(founderInbreeding(x, named=T), c('1'=0.5, '2'=0, '4'=1))
   expect_equal(founderInbreeding(x, c(4,1)), c(1, 0.5))
+})
+
+test_that("setFounderInbreeding works on lists", {
+
+  fi = function(a, ids = NULL)
+    founderInbreeding(a, ids, named = T)
+
+  x = list(nuclearPed(1), singleton(4))
+  y1 = setFounderInbreeding(x, value = 1)
+  expect_equal(fi(y1), c("1" = 1, "2" = 1, "4" = 1))
+
+  y2 = setFounderInbreeding(x, value = c("2" = 1))
+  expect_equal(fi(y2), c("1" = 0, "2" = 1, "4" = 0))
+
+  y3 = setFounderInbreeding(x, ids = 2, value = 1)
+  expect_equal(fi(y3), c("1" = 0, "2" = 1, "4" = 0))
+
+  expect_equal(fi(y3, ids = c(4,2)), c("4" = 0, "2" = 1))
 })
 
 test_that("founder inbreeding is preserved under modifications", {
