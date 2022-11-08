@@ -75,7 +75,7 @@ useful to determine the size of the active device.
 peds = list(nuclearPed(3), cousinPed(2), singleton(12), halfSibPed())
 plotPedList(peds, newdev = TRUE)
 
-# Modify the relative widths (which are not guessed)
+# Override automatic determination of relative widths
 w = c(2, 3, 1, 2)
 plotPedList(peds, widths = w)
 
@@ -101,8 +101,9 @@ dev.off()
 H1 = nuclearPed()
 H2 = list(singleton(1), singleton(3))  # grouped!
 
-plotPedList(list(H1, H2), dev.height = 2, dev.width = 4,
-            titles = c(expression(H[1]), expression(H[2])))
+plotPedList(list(H1, H2), dev.height = 3, dev.width = 4,
+            titles = c(expression(H[1]), expression(H[2])),
+            cex = 1.5, cex.main = 1.3)
 
 dev.off()
 

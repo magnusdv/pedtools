@@ -2,148 +2,42 @@
 % Please edit documentation in R/ped_plot.R
 \name{plot.ped}
 \alias{plot.ped}
-\alias{as_kinship2_pedigree}
+\alias{drawPed}
 \alias{plot.pedList}
 \alias{plot.list}
-\title{Plot pedigrees with genotypes}
+\title{Plot pedigree}
 \usage{
-\method{plot}{ped}(
-  x,
-  marker = NULL,
-  sep = "/",
-  missing = "-",
-  showEmpty = FALSE,
-  labs = labels(x),
-  title = NULL,
-  col = 1,
-  aff = NULL,
-  carrier = NULL,
-  hatched = NULL,
-  deceased = NULL,
-  starred = NULL,
-  twins = NULL,
-  textInside = NULL,
-  textAbove = NULL,
-  arrows = FALSE,
-  hints = NULL,
-  fouInb = "autosomal",
-  margins = 1,
-  keep.par = FALSE,
-  ...
-)
+\method{plot}{ped}(x, draw = TRUE, keep.par = FALSE, ...)
 
-as_kinship2_pedigree(
-  x,
-  deceased = NULL,
-  aff = NULL,
-  twins = NULL,
-  hints = NULL
-)
+drawPed(alignment, annotation = NULL, scaling = NULL, keep.par = FALSE, ...)
 
 \method{plot}{pedList}(x, ...)
 
-\method{plot}{list}(
-  x,
-  marker = NULL,
-  sep = "/",
-  missing = "-",
-  showEmpty = FALSE,
-  labs = unlist(labels(x), use.names = FALSE),
-  col = 1,
-  aff = NULL,
-  carrier = NULL,
-  hatched = NULL,
-  deceased = NULL,
-  starred = NULL,
-  textInside = NULL,
-  textAbove = NULL,
-  arrows = FALSE,
-  fouInb = "autosomal",
-  title = NULL,
-  margins = 1,
-  keep.par = FALSE,
-  ...
-)
+\method{plot}{list}(x, ...)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
 
-\item{marker}{Either a vector of names or indices referring to markers
-attached to \code{x}, a \code{marker} object, or a list of such. The genotypes for
-the chosen markers are written below each individual in the pedigree, in
-the format determined by \code{sep} and \code{missing}. See also \code{showEmpty}. If NULL
-(the default), no genotypes are plotted.}
+\item{draw}{A logical, by default TRUE. If FALSE, no plot is produced, only
+the plotting parameters are returned.}
 
-\item{sep}{A character of length 1 separating alleles for diploid markers.}
-
-\item{missing}{The symbol (integer or character) for missing alleles.}
-
-\item{showEmpty}{A logical, indicating if empty genotypes should be included.}
-
-\item{labs}{A vector or function controlling the individual labels included
-in the plot. Alternative forms:
-\itemize{
-\item If \code{labs} is a vector with nonempty intersection with \code{labels(x)}, these
-individuals will be labelled. If the vector is named, then the (non-empty)
-names are used instead of the ID label. (See Examples.)
-\item If \code{labs} is NULL, or has empty intersection with \code{labels(x)}, then no
-labels are drawn.
-\item If \code{labs} is the word "num", then all individuals are numerically
-labelled following the internal ordering.
-\item If \code{labs} is a function, it is replaced with \code{labs(x)} and handled as
-above. (See Examples.)
-}}
-
-\item{title}{The plot title. If NULL (default) or '', no title is added to
-the plot.}
-
-\item{col}{A vector of colours for the pedigree members, recycled if
-necessary. Alternatively, \code{col} can be a list assigning colours to specific
-members. For example if \code{col = list(red = "a", blue = c("b", "c"))} then
-individual "a" will be red, "b" and "c" blue, and everyone else black. By
-default everyone is black.}
-
-\item{aff}{A vector of labels identifying members whose plot symbols should
-be filled. (This is typically used in medical pedigrees to indicate
-affected members.)}
-
-\item{carrier}{A vector of labels identifying members whose plot symbols
-should be marked with a dot. (This is typically used in medical pedigrees
-to indicate unaffected carriers of the disease allele.)}
-
-\item{hatched}{A vector of labels identifying members whose plot symbols
-should be hatched.}
-
-\item{deceased}{A vector of labels indicating deceased pedigree members.}
-
-\item{starred}{A vector of labels indicating pedigree members that should be
-marked with a star in the pedigree plot.}
-
-\item{twins}{A data frame with columns \code{id1}, \code{id2} and \code{code}, passed on to
-the \code{relation} parameter of \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.}
-
-\item{textInside, textAbove}{Character vectors of text to be printed inside or
-above pedigree symbols.}
-
-\item{arrows}{A logical (default = FALSE). If TRUE, the pedigree is plotted
-as a DAG, i.e., with an arrow connecting each parent-child pair.}
-
-\item{hints}{A list with alignment hints passed on to
-\code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Rarely necessary.}
-
-\item{fouInb}{Either "autosomal" (default), "x" or NULL. If "autosomal" or
-"x", inbreeding coefficients are added to the plot above the inbred
-founders. If NULL, or if no founders are inbred, nothing is added.}
-
-\item{margins}{A numeric of length 4 indicating the plot margins. For
-singletons only the first element (the 'bottom' margin) is used.}
-
-\item{keep.par}{A logical (default = FALSE). If TRUE, the graphical
+\item{keep.par}{A logical, by default FALSE. If TRUE, the graphical
 parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
 
-\item{\dots}{Arguments passed to internal methods. In particular \code{symbolsize}
-and \code{cex} can be useful.}
+\item{...}{Arguments passed on to the internal plot functions. For a complete
+list of parameters, see \link{internalplot}. The most important ones are
+illustrated in the Examples below.}
+
+\item{alignment}{List of alignment details, as returned by \code{\link[=.pedAlignment]{.pedAlignment()}}.}
+
+\item{annotation}{List of annotation details as returned by \code{\link[=.pedAnnotation]{.pedAnnotation()}}.}
+
+\item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
+}
+\value{
+A list of three lists with various plot details: \code{alignment}, \code{annotation},
+\code{scaling}.
 }
 \description{
 This is the main function for pedigree plotting, with many options for
@@ -155,36 +49,50 @@ have been made to improve scaling and avoid unneeded duplications.
 }
 \examples{
 
-x = nuclearPed(father = "fa", mother = "mo", child = "boy") |>
-  addMarker(fa = "1/1", boy = "1/2", name = "SNP")
+# Singleton
+plot(singleton(1))
 
-plot(x, marker = 1)
+# Trio
+x = nuclearPed(father = "fa", mother = "mo", child = "boy")
+plot(x)
 
-# or call marker by name
-plot(x, marker = "SNP")
-
-# Modify margins
+#' # Modify margins
 plot(x, margins = 6)
 plot(x, margins = c(0,0,6,6)) # b,l,t,r
 
+# Larger text and symbols
+plot(x, cex = 1.5)
+
+# Enlarge symbols only
+plot(x, symbolsize = 1.5)
+
 # Other options
-plot(x, marker = 1, hatched = typedMembers(x),
-     starred = "fa", deceased = "mo")
+plot(x, hatched = "boy", starred = "fa", deceased = "mo", title = "Fam 1")
 
 # Medical pedigree
-plot(x, aff = males(x), carrier = "mo")
+plot(x, aff = "boy", carrier = "mo")
 
 # Label only some members
-plot(x, labs = c("fa", "boy"))
-
-# Label only some members; rename the father
-plot(x, labs = c(FATHER = "fa", "boy"))
+plot(x, labs = c("fa", "mo"))
 
 # Label males only
 plot(x, labs = males)
 
+# Rename some individuals
+plot(x, labs = c(FATHER = "fa", "boy"))
+
 # Colours
-plot(x, col = list(red = "fa", green = "boy"), hatched = "boy")
+plot(x, col = list(red = "fa", blue = "boy"), hatched = "boy")
+
+# Include genotypes
+x = addMarker(x, fa = "1/1", boy = "1/2", name = "SNP")
+plot(x, marker = 1)
+
+# Markers can also be called by name
+plot(x, marker = "SNP")
+
+# Plot as DAG (directed acyclic graph)
+plot(x, arrows = TRUE, title = "DAG")
 
 # Founder inbreeding is shown by default
 founderInbreeding(x, "mo") = 0.1
@@ -206,10 +114,17 @@ plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
                            id2 = c("tw2", "tw3"),
                            code = 2))
 
+# Selfing
+plot(selfingPed(2))
+
+# Complex pedigree: Quadruple half first cousins
+plot(quadHalfFirstCousins())
+
+# Use of `drawPed()`
+dat = plot(nuclearPed(), draw = FALSE)
+drawPed(dat$alignment, dat$annotation, dat$scaling)
+
 }
 \seealso{
-\code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}
-}
-\author{
-Magnus Dehli Vigeland
+\code{\link[=plotPedList]{plotPedList()}}, \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}, \link{internalplot}
 }
