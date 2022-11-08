@@ -3,11 +3,14 @@
 \name{founderInbreeding}
 \alias{founderInbreeding}
 \alias{founderInbreeding<-}
+\alias{setFounderInbreeding}
 \title{Inbreeding coefficients of founders}
 \usage{
 founderInbreeding(x, ids, named = FALSE, chromType = "autosomal")
 
 founderInbreeding(x, ids, chromType = "autosomal") <- value
+
+setFounderInbreeding(x, ids = NULL, value, chromType = "autosomal")
 }
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
@@ -29,7 +32,10 @@ case, the \code{ids} argument should not be used. (See examples.)}
 For \code{founderInbreeding}, a numeric vector of the same length as
 \code{ids}, containing the founder inbreeding coefficients.
 
-For \verb{founderInbreeding<-} the updated \code{ped} object is returned.
+For \code{setFounderInbreeding()}, a copy of \code{x} with modified founder
+inbreeding.
+
+\verb{founderInbreeding<-} is an in-place version of \code{setFounderInbreeding()}.
 }
 \description{
 Functions to get or set inbreeding coefficients for the pedigree founders.

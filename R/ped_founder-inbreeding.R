@@ -12,8 +12,10 @@
 #' @return For `founderInbreeding`, a numeric vector of the same length as
 #'   `ids`, containing the founder inbreeding coefficients.
 #'
-#'   For `setFounderInbreeding()`, a copy of `x` with modified
-#'   For `founderInbreeding<-` the updated `ped` object is returned.
+#'   For `setFounderInbreeding()`, a copy of `x` with modified founder
+#'   inbreeding.
+#'
+#'   `founderInbreeding<-` is an in-place version of `setFounderInbreeding()`.
 #'
 #'
 #'
@@ -116,6 +118,74 @@ founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
     stop2("Duplicated ID label: ", ids[duplicated(ids)])
 
   fou = founders(x)
+  if(any(!ids %in% fou)) {
+    internalID(x, ids) # quick hack to catch unknown labels
+    stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
+  }
+
+  chromType = match.arg(tolower(chromType), c("autosomal", "x"))
+  if(chromType =="x" && any(value[ids %in% males(x)] < 1))
+    stop2("X chromosomal inbreeding coefficient of males cannot be less than 1: ", value[ids %in% males(x)])
+
+  finb = x$FOUNDER_INBREEDING
+
+  # Back compatibility: In previous versions FOUNDER_INBREEDING was a just a (autosomal) vector
+  if(!is.list(finb) && is.numeric(finb))
+    finb = list(autosomal = finb, x = NULL)
+
+  # Get current value. If NULL, initialise as vector
+  current = finb[[chromType]]
+  if(is.null(current))
+    current = switch(chromType,
+                     autosomal = rep(0, length(fou)),
+                     x = ifelse(getSex(x, fou) == 1, 1, 0))
+
+  # Update coefficients
+  current[match(ids, fou)] = value
+  x$FOUNDER_INBREEDING[chromType] = list(chromType = current)
+
+  x
+}
+
+
+
+#' @rdname founderInbreeding
+#' @export
+setFounderInbreeding = function(x, ids = NULL, value, chromType = "autosomal") {
+
+  if(is.pedList(x)) {
+    y = lapply(x, function(comp)
+      setFounderInbreeding(comp, intersect(ids, labels(comp)), value, chromType = chromType))
+    return(y)
+  }
+
+  if(!is.ped(x))
+    stop2("Input is not a `ped` object")
+
+  if(!is.numeric(value))
+    stop2("Inbreeding coefficients must be numeric: ", value)
+
+  illegal = value < 0 | value > 1
+  if(any(illegal))
+    stop2("Inbreeding coefficients must be in the interval [0, 1]: ", value[illegal])
+
+  fou = founders(x)
+  nms = names(value)
+
+  ids = ids %||% intersect(nms, fou) %||% fou
+
+  if(is.null(nms) && length(value) == 1)
+    value = rep_len(value, length(ids))
+
+  if(is.null(nms) && length(ids) != length(value))
+    stop2("When `value` is unnamed, its length must equal 1 or `length(ids)`")
+
+  if(!is.null(nms) && !all(ids %in% nms))
+    stop2("Individual not included in `value`: ", setdiff(ids, nms))
+
+  if(anyDuplicated.default(ids) > 0)
+    stop2("Duplicated ID label: ", ids[duplicated(ids)])
+
   if(any(!ids %in% fou)) {
     internalID(x, ids) # quick hack to catch unknown labels
     stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
