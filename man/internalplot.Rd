@@ -72,7 +72,8 @@
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
 
-\item{plist}{Alignment list with format similar to \code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}.}
+\item{plist}{Alignment list with format similar to
+\code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}.}
 
 \item{arrows}{A logical (default = FALSE). If TRUE, the pedigree is plotted
 as a DAG, i.e., with arrows connecting parent-child pairs.}
@@ -178,10 +179,21 @@ front-end for most users. The various plot options are documented here.
 \details{
 The workflow of \code{plot.ped(x, ...)} is approximately as follows:
 
-\if{html}{\out{<div class="sourceCode # Calculate plot parameters align = .pedAlignment(x, ...) annot =">}}\preformatted{.pedAnnotation(x, ...) scale = .pedScaling(align, annot, ...)
+\if{html}{\out{<div class="sourceCode">}}\preformatted{
+# Calculate plot parameters
 
-# Produce plot .drawPed(align, annot, scale) .annotatePed(align, annot,
-scale) ```
+align = .pedAlignment(x, ...)
+
+annot = .pedAnnotation(x, ...)
+
+scale = .pedScaling(align, annot, ...)
+
+# Produce plot
+
+.drawPed(align, annot, scale)
+
+.annotatePed(align, annot, scale)
+
 }\if{html}{\out{</div>}}
 }
 \examples{

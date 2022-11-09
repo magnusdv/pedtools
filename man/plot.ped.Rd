@@ -120,6 +120,9 @@ plot(selfingPed(2))
 # Complex pedigree: Quadruple half first cousins
 plot(quadHalfFirstCousins())
 
+# Straight legs
+plot(quadHalfFirstCousins(), align = c(0,0))
+
 # Use of `drawPed()`
 dat = plot(nuclearPed(), draw = FALSE)
 drawPed(dat$alignment, dat$annotation, dat$scaling)

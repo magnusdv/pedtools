@@ -32,14 +32,27 @@
 #'
 #' The workflow of `plot.ped(x, ...)` is approximately as follows:
 #'
-#' ``` # Calculate plot parameters align = .pedAlignment(x, ...) annot =
-#' .pedAnnotation(x, ...) scale = .pedScaling(align, annot, ...)
+#' ```
 #'
-#' # Produce plot .drawPed(align, annot, scale) .annotatePed(align, annot,
-#' scale) ```
+#' # Calculate plot parameters
+#'
+#' align = .pedAlignment(x, ...)
+#'
+#' annot = .pedAnnotation(x, ...)
+#'
+#' scale = .pedScaling(align, annot, ...)
+#'
+#' # Produce plot
+#'
+#' .drawPed(align, annot, scale)
+#'
+#' .annotatePed(align, annot, scale)
+#'
+#' ```
 #'
 #' @param x A [ped()] object.
-#' @param plist Alignment list with format similar to [kinship2::align.pedigree()].
+#' @param plist Alignment list with format similar to
+#'   [kinship2::align.pedigree()].
 #' @param arrows A logical (default = FALSE). If TRUE, the pedigree is plotted
 #'   as a DAG, i.e., with arrows connecting parent-child pairs.
 #' @param labs A vector or function controlling the individual labels included
@@ -160,10 +173,10 @@ NULL
 
   # Ad hoc fix for 3/4 siblings and similar
   if(is.null(hints))
-    plist = .fix34(x, k2ped, plist, packed, width, align)
+    plist = .fix34(x, k2ped = k2ped, plist = plist, packed = packed, width = width, align = align)
 
-  # Fix annoying rounding error in first column of `pos`
-  plist$pos[, 1] = round(plist$pos[, 1], 6)
+  # Fix annoying rounding errors in first column of `pos`
+  plist$pos[] = round(plist$pos[], 6)
 
   # Add further parameters
   .extendPlist(x, plist)
