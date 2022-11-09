@@ -94,6 +94,9 @@
 #' # Complex pedigree: Quadruple half first cousins
 #' plot(quadHalfFirstCousins())
 #'
+#' # Straight legs
+#' plot(quadHalfFirstCousins(), align = c(0,0))
+#'
 #' # Use of `drawPed()`
 #' dat = plot(nuclearPed(), draw = FALSE)
 #' drawPed(dat$alignment, dat$annotation, dat$scaling)
@@ -112,7 +115,7 @@ plot.ped = function(x, draw = TRUE, keep.par = FALSE, ...) {
   frame()
 
   # Scaling parameters
-  scaling = .pedScaling(alignment, annotation = annotation, ...)
+  scaling = .pedScaling(alignment = alignment, annotation = annotation, ...)
 
   if(!keep.par)
     on.exit(par(scaling$oldpar))
@@ -122,7 +125,7 @@ plot.ped = function(x, draw = TRUE, keep.par = FALSE, ...) {
     .drawPed(alignment, annotation, scaling)
 
     # Annotation
-    .annotatePed(alignment, annotation, scaling, ...)
+    .annotatePed(alignment = alignment, annotation = annotation, scaling = scaling, ...)
   }
 
   # Prepare output
