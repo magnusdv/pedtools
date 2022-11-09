@@ -57,11 +57,13 @@
 #'
 #'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
 #'   above. (See Examples.)
-#' @param margins A numeric indicating the plot margins. If a single number is
-#'   given, it is recycled to length 4.
 #' @param cex Expansion factor controlling font size. This also affects symbol
 #'   sizes, which by default have the width of 2.5 characters. Default: 1.
 #' @param symbolsize Expansion factor for pedigree symbols. Default: 1.
+#' @param margins A numeric indicating the plot margins. If a single number is
+#'   given, it is recycled to length 4.
+#' @param addSpace A numeric of length 4, indicating extra padding (in inches)
+#'   around the pedigree inside the plot region. Default: 0.
 #' @param marker Either a vector of names or indices referring to markers
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
@@ -174,7 +176,6 @@ NULL
 
   nInd = max(nid)
   maxlev = nrow(pos)
-  xrange = range(pos[nid > 0])
 
   id = as.vector(nid)
   plotord = id[id > 0]
@@ -183,6 +184,9 @@ NULL
   xall = pos[id > 0]
   yall = row(pos)[id > 0]
 
+  xrange = range(xall)
+  yrange = range(yall)
+
   # For completeness: Kinship2 order (1st instance of each only!)
   # Including this for completeness
   tmp = match(1:nInd, nid)
@@ -190,7 +194,7 @@ NULL
   ypos = row(pos)[tmp]
 
   list(plist = plist, x = xpos, y = ypos, nInd = nInd, sex = getSex(x), ped = x, arrows = arrows,
-       plotord = plotord, xall = xall, yall = yall, maxlev = maxlev, xrange = xrange)
+       plotord = plotord, xall = xall, yall = yall, maxlev = maxlev, xrange = xrange, yrange = yrange)
 }
 
 
@@ -381,7 +385,7 @@ NULL
 #' @rdname internalplot
 #' @importFrom graphics frame strheight strwidth
 #' @export
-.pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1, ...) {
+.pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1, addSpace = 0, ...) {
 
   textUnder = annotation$textUnder
   textAbove = annotation$textAbove
@@ -389,6 +393,7 @@ NULL
 
   maxlev = alignment$maxlev
   xrange = alignment$xrange
+  yrange = alignment$yrange
   nid = alignment$plist$nid
   nid1 = nid[1, ][nid[1, ] > 0] # ids in first generation
 
@@ -396,12 +401,16 @@ NULL
   if(maxlev == 1 || xrange[1] == xrange[2])
     xrange = xrange + c(-0.5, 0.5)
 
-  yrange = if(maxlev == 1) c(0.5, 1.5) else c(1, maxlev)
+  if(maxlev == 1)
+    yrange = yrange + c(-0.5, 0.5)
 
   # Margins
   mar = margins
   if(length(mar) == 1)
     mar = if(!is.null(title)) c(mar, mar, mar + 2.1, mar) else rep(mar, 4)
+
+  if(length(addSpace) == 1)
+    addSpace = rep(addSpace, 4)
 
   # Set margin and xpd
   oldpar = par(mar = mar, xpd = TRUE)
@@ -431,6 +440,8 @@ NULL
   if(abovetop_in > 0)
     abovetop_in = abovetop_in + strwidth("W", units = "inches")/2
 
+  abovetop_in = abovetop_in + addSpace[3]
+
   # Separation above/below labels
   labsep1_in = 0.7*labh_in  # above text
   labsep2_in = labh_in  # below text
@@ -445,6 +456,8 @@ NULL
   # Everything below bottom symbol (label + space above and below)
   if(belowlast_in > 0)
     belowlast_in = belowlast_in + labsep1_in + labsep3_in
+
+  belowlast_in = belowlast_in + addSpace[1]
 
   # KEY TO LAYOUT: Complete y-range (psize[2]) in inches corresponds to:
   # abovetop_in + (labsep1_in + h + maxlabh_nolast_in + labsep2_in) * (maxlev - 1) + (h + belowlast_in)
@@ -473,7 +486,7 @@ NULL
   boxsize = symbolsize * min(ht1, ht2, wd1, wd2)
 
   # Segments of length 1 inch
-  hscale = (psize[1] - boxsize)/diff(xrange)
+  hscale = (psize[1] - boxsize - addSpace[2] - addSpace[4])/diff(xrange)
   denom = if(maxlev == 1) 1 else maxlev - 1 + curvAdj
   vscale = (psize[2] - (abovetop_in + boxsize + belowlast_in)) / denom
 
@@ -484,8 +497,8 @@ NULL
   boxh = boxsize/vscale  # box height in user units
 
   # User coordinates
-  left   = xrange[1] - 0.5*boxw
-  right  = xrange[2] + 0.5*boxw
+  left   = xrange[1] - 0.5*boxw - addSpace[2]/hscale
+  right  = xrange[2] + 0.5*boxw + addSpace[4]/hscale
   top    = yrange[1] - abovetop_in/vscale - curvAdj
   bottom = yrange[2] + (boxsize + belowlast_in)/vscale
   usr = c(left, right, bottom, top)
@@ -494,7 +507,8 @@ NULL
   legh = min(1/4, boxh * 1.5)  # how tall are the 'legs' up from a child
 
   # Return plotting/scaling parameters
-  list(boxw = boxw, boxh = boxh, labh = labh, legh = legh, cex = cex, mar = mar, usr = usr, oldpar = oldpar)
+  list(boxw = boxw, boxh = boxh, labh = labh, legh = legh,
+       cex = cex, mar = mar, usr = usr, oldpar = oldpar)
 }
 
 

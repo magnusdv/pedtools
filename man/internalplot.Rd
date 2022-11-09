@@ -41,7 +41,15 @@
   ...
 )
 
-.pedScaling(alignment, annotation, cex = 1, symbolsize = 1, margins = 1, ...)
+.pedScaling(
+  alignment,
+  annotation,
+  cex = 1,
+  symbolsize = 1,
+  margins = 1,
+  addSpace = 0,
+  ...
+)
 
 .drawPed(alignment, annotation, scaling)
 
@@ -150,6 +158,9 @@ sizes, which by default have the width of 2.5 characters. Default: 1.}
 
 \item{margins}{A numeric indicating the plot margins. If a single number is
 given, it is recycled to length 4.}
+
+\item{addSpace}{A numeric of length 4, indicating extra padding (in inches)
+around the pedigree inside the plot region. Default: 0.}
 
 \item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
 
