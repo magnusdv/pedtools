@@ -509,7 +509,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   if(hasTitles) {
     midpoints = if(!is.null(grouptitles)) (grStart + grStop)/2 else ratios[1:N] + diff(ratios)/2
     cex.title = extra.args$cex.main %||% NA
-    mtext(finalTitles, outer = TRUE, at = midpoints, cex = cex.title)
+    mtext(finalTitles, outer = TRUE, at = midpoints, cex = cex.title, font = 2) # bold
   }
 }
 
