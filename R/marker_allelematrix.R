@@ -184,7 +184,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
 
 
 # For internal use
-allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0, sep = NULL) {
+allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0, sep = NULL, validate = TRUE) {
 
   if(!is.matrix(alleleMatrix) && !is.data.frame(alleleMatrix))
     stop2("Argument `alleleMatrix` must be either a matrix or a data.frame")
@@ -221,14 +221,20 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     if (ncol(m) %% 2 != 0)
       stop2("Uneven number of marker allele columns")
 
-    # Marker names: Use odd numbered columns; delete from last period
-    # e.g. M1.1, M1.2, M2.1, M2.2, ... --> M1, M2, ...
+    # Marker names: Use odd numbered columns
     if(hasMatrixNames) {
-      nms = sub("\\.[^.]*$", "", nms[seq(1, length(nms), by = 2)])
+      newnms = nms[seq.int(1, length(nms), by = 2)]
 
+      # M1.1, M1.2, M2.1, M2.2, ... --> M1, M2, ...
+      if(all(endsWith(nms, ".1") | endsWith(nms, ".2")))
+        newnms = substr(newnms, 1, nchar(newnms) - 2)
+
+      nms = newnms
+
+      # Skipping this: Time consuming and probably irrelevant (?)
       # Convert numerical names to NA
-      if (isTRUE(any(suppressWarnings(nms == as.integer(nms)))))
-        hasMatrixNames = FALSE
+      # if (isTRUE(any(suppressWarnings(nms == as.integer(nms)))))
+      #  hasMatrixNames = FALSE
     }
   }
 
@@ -306,9 +312,8 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     attri = locusAttributes[[i]]
     attri$x = x
     attri$allelematrix = m[, c(2*i - 1, 2*i), drop = FALSE]
-
-    # Create marker object
-    do.call(marker, attri)
+    attri$validateMut = FALSE
+    do.call(marker, attri) # create marker object
   })
 
   class(mlist) = "markerList"

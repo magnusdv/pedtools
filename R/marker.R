@@ -1,38 +1,39 @@
 #' Marker objects
 #'
 #' Creating a marker object associated with a pedigree. The function `marker()`
-#' returns a marker object, while `addMarker()` first creates the marker
-#' and then attaches it to `x`.
+#' returns a marker object, while `addMarker()` first creates the marker and
+#' then attaches it to `x`.
 #'
-#' @param x a [`ped`] object
-#' @param ... one or more expressions of the form `id = genotype`, where `id` is
+#' @param x A `ped` object.
+#' @param ... One or more expressions of the form `id = genotype`, where `id` is
 #'   the ID label of a member of `x`, and `genotype` is a numeric or character
 #'   vector of length 1 or 2 (see Examples).
-#' @param geno a character vector of length `pedsize(x)`, with genotypes written
+#' @param geno A character vector of length `pedsize(x)`, with genotypes written
 #'   in the format "a/b".
-#' @param allelematrix a matrix with 2 columns and `pedsize(x)` rows. If this is
+#' @param allelematrix A matrix with 2 columns and `pedsize(x)` rows. If this is
 #'   non-NULL, then `...` must be empty.
-#' @param alleles a character (or coercible to character) containing allele
-#'   names. If not given, and `afreq` is named, `names(afreq)` is used. The
-#'   default action is to take the sorted vector of distinct alleles occurring
-#'   in `allelematrix`, `geno` or `...`.
-#' @param afreq a numeric of the same length as `alleles`, indicating the
+#' @param alleles A character containing allele names. If not given, and `afreq`
+#'   is named, `names(afreq)` is used. The default action is to take the sorted
+#'   vector of distinct alleles occurring in `allelematrix`, `geno` or `...`.
+#' @param afreq A numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
 #'   don't sum to 1 after rounding to 3 decimals. If the vector is named, and
 #'   `alleles` is not NULL, an error is raised if `setequal(names(afreq),
 #'   alleles)` is not TRUE. If `afreq` is not specified, all alleles are given
 #'   equal frequencies.
-#' @param chrom a single integer: the chromosome number. Default: NA.
-#' @param posMb a nonnegative real number: the physical position of the marker,
+#' @param chrom A single integer: the chromosome number. Default: NA.
+#' @param posMb A nonnegative real number: the physical position of the marker,
 #'   in megabases. Default: NA.
-#' @param name a character string: the name of the marker. Default: NA.
+#' @param name A character string: the name of the marker. Default: NA.
 #' @param NAstrings A character vector containing strings to be treated as
 #'   missing alleles. Default: `c("", "0", NA, "-")`.
-#' @param mutmod,rate mutation model parameters. These are passed directly to
+#' @param mutmod,rate Mutation model parameters to be passed on to
 #'   [pedmut::mutationModel()]; see there for details. Note: `mutmod`
 #'   corresponds to the `model` parameter. Default: NULL (no mutation model).
-#' @param validate if TRUE, the validity of the created `marker` object is
-#'   checked.
+#' @param validate A logical indicating if the validity of the marker object
+#'   should be checked. Default: TRUE.
+#' @param validateMut A logical indicating if the mutation model (if present)
+#'   should be checked.
 #'
 #' @return An object of class `marker`. This is an integer matrix with 2 columns
 #'   and one row per individual, and the following attributes:
@@ -51,7 +52,7 @@
 #'   * `mutmod` (a list of two (male and female) mutation matrices; default =
 #'   NULL)
 #'
-#' @seealso [marker_attach]
+#' @seealso [addMarker()], [marker_attach]
 #'
 #' @examples
 #' x = nuclearPed(father = "fa", mother = "mo", children = "child")
@@ -90,7 +91,7 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
                   chrom = NA, posMb = NA, name = NA,
                   NAstrings = c(0, "", NA, "-"),
                   mutmod = NULL, rate = NULL,
-                  validate = TRUE) {
+                  validate = TRUE, validateMut = validate) {
 
   # Some parameters cannot have length 0 or be ""
   if(length(chrom) == 0) chrom = NA
@@ -109,7 +110,8 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   m = allelematrix %||% glist2amat(glist, labs)
 
   # Trim whitespace of alleles
-  m[] = trimws(m)
+  # Assumption to avoid trimws (slow!): At most 1 space, no linebreaks
+  m[] = sub(" ", "", m, fixed = TRUE)
 
   ### Alleles and frequencies
   if(!is.null(alleles) && !is.null(names(afreq)))
@@ -140,7 +142,8 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   if(!is.null(mutmod)) {
     if (!requireNamespace("pedmut", quietly = TRUE))
       stop2("Package `pedmut` must be installed in order to include mutation models")
-    mutmod = pedmut::mutationModel(mutmod, alleles = ALS, afreq = AFR, rate = rate)
+    # Create model (postpone validation)
+    mutmod = pedmut::mutationModel(mutmod, alleles = ALS, afreq = AFR, rate = rate, validate = FALSE)
   }
 
   ### Internal allele matrix
@@ -314,7 +317,7 @@ newMarker = function(alleleMatrixInt, alleles, afreq, name = NA_character_,
   x
 }
 
-validateMarker = function(x) {
+validateMarker = function(x, validateMut = TRUE) {
   attrs = attributes(x)
 
   ## alleles
@@ -356,7 +359,7 @@ validateMarker = function(x) {
 
   # mutation model
   mutmod = attrs$mutmod
-  if(!is.null(mutmod)) {
+  if(validateMut && !is.null(mutmod)) {
     if (!requireNamespace("pedmut", quietly = TRUE))
       stop2("Package `pedmut` is not installed")
 

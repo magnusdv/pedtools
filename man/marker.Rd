@@ -18,7 +18,8 @@ marker(
   NAstrings = c(0, "", NA, "-"),
   mutmod = NULL,
   rate = NULL,
-  validate = TRUE
+  validate = TRUE,
+  validateMut = validate
 )
 
 addMarker(
@@ -38,45 +39,47 @@ addMarker(
 )
 }
 \arguments{
-\item{x}{a \code{\link{ped}} object}
+\item{x}{A \code{ped} object.}
 
-\item{...}{one or more expressions of the form \code{id = genotype}, where \code{id} is
+\item{...}{One or more expressions of the form \code{id = genotype}, where \code{id} is
 the ID label of a member of \code{x}, and \code{genotype} is a numeric or character
 vector of length 1 or 2 (see Examples).}
 
-\item{geno}{a character vector of length \code{pedsize(x)}, with genotypes written
+\item{geno}{A character vector of length \code{pedsize(x)}, with genotypes written
 in the format "a/b".}
 
-\item{allelematrix}{a matrix with 2 columns and \code{pedsize(x)} rows. If this is
+\item{allelematrix}{A matrix with 2 columns and \code{pedsize(x)} rows. If this is
 non-NULL, then \code{...} must be empty.}
 
-\item{alleles}{a character (or coercible to character) containing allele
-names. If not given, and \code{afreq} is named, \code{names(afreq)} is used. The
-default action is to take the sorted vector of distinct alleles occurring
-in \code{allelematrix}, \code{geno} or \code{...}.}
+\item{alleles}{A character containing allele names. If not given, and \code{afreq}
+is named, \code{names(afreq)} is used. The default action is to take the sorted
+vector of distinct alleles occurring in \code{allelematrix}, \code{geno} or \code{...}.}
 
-\item{afreq}{a numeric of the same length as \code{alleles}, indicating the
+\item{afreq}{A numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
 don't sum to 1 after rounding to 3 decimals. If the vector is named, and
 \code{alleles} is not NULL, an error is raised if \code{setequal(names(afreq), alleles)} is not TRUE. If \code{afreq} is not specified, all alleles are given
 equal frequencies.}
 
-\item{chrom}{a single integer: the chromosome number. Default: NA.}
+\item{chrom}{A single integer: the chromosome number. Default: NA.}
 
-\item{posMb}{a nonnegative real number: the physical position of the marker,
+\item{posMb}{A nonnegative real number: the physical position of the marker,
 in megabases. Default: NA.}
 
-\item{name}{a character string: the name of the marker. Default: NA.}
+\item{name}{A character string: the name of the marker. Default: NA.}
 
 \item{NAstrings}{A character vector containing strings to be treated as
 missing alleles. Default: \code{c("", "0", NA, "-")}.}
 
-\item{mutmod, rate}{mutation model parameters. These are passed directly to
+\item{mutmod, rate}{Mutation model parameters to be passed on to
 \code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}; see there for details. Note: \code{mutmod}
 corresponds to the \code{model} parameter. Default: NULL (no mutation model).}
 
-\item{validate}{if TRUE, the validity of the created \code{marker} object is
-checked.}
+\item{validate}{A logical indicating if the validity of the marker object
+should be checked. Default: TRUE.}
+
+\item{validateMut}{A logical indicating if the mutation model (if present)
+should be checked.}
 }
 \value{
 An object of class \code{marker}. This is an integer matrix with 2 columns
@@ -93,8 +96,8 @@ NULL)
 }
 \description{
 Creating a marker object associated with a pedigree. The function \code{marker()}
-returns a marker object, while \code{addMarker()} first creates the marker
-and then attaches it to \code{x}.
+returns a marker object, while \code{addMarker()} first creates the marker and
+then attaches it to \code{x}.
 }
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "child")
@@ -129,5 +132,5 @@ marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
 
 }
 \seealso{
-\link{marker_attach}
+\code{\link[=addMarker]{addMarker()}}, \link{marker_attach}
 }

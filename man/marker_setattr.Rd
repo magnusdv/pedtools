@@ -27,10 +27,10 @@ to \code{x}.}
 
 \item{id}{The ID label of a single pedigree member.}
 
-\item{geno}{a character vector of length \code{pedsize(x)}, with genotypes written
+\item{geno}{A character vector of length \code{pedsize(x)}, with genotypes written
 in the format "a/b".}
 
-\item{afreq}{a numeric of the same length as \code{alleles}, indicating the
+\item{afreq}{A numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
 don't sum to 1 after rounding to 3 decimals. If the vector is named, and
 \code{alleles} is not NULL, an error is raised if \code{setequal(names(afreq), alleles)} is not TRUE. If \code{afreq} is not specified, all alleles are given
