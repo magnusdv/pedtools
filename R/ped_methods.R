@@ -75,8 +75,20 @@ questionMaleHetX = function(x, df) {
 #' @export
 summary.ped = function(object, ...) {
   x = object
-  cat(sprintf("Pedigree with %d members.\n", pedsize(x)))
-  cat(nMarkers(x), "attached markers.\n")
+  cat(sprintf("Pedigree with %d members (%d males, %d females, %d unknown).\n",
+              pedsize(x), sum(x$SEX == 1), sum(x$SEX == 2), sum(x$SEX == 0)))
+  cat(sprintf("%d generations, %d founders, %d leaves.\n",
+              generations(x, maxOnly = TRUE), length(founders(x)), length(leaves(x))))
+  nm = nMarkers(x)
+  na = nAlleles.ped(x)
+  if(nm == 0)
+    cat("0 attached markers.\n")
+  else if(nm == 1)
+    cat(sprintf("1 attached marker (%d alleles).\n", na))
+  else if(min(na) == max(na))
+    cat(sprintf("%d attached markers (all with %d alleles).\n", nm, min(na)))
+  else
+    cat(sprintf("%d attached markers (%d - %d alleles).\n", nm, min(na), max(na)))
   cat(length(typedMembers(x)), "typed members.\n")
 }
 
@@ -84,32 +96,57 @@ summary.ped = function(object, ...) {
 summary.singleton = function(object, ...) {
   x = object
   SX = c("sex unknown", "male", "female")
-  cat(sprintf("Singleton (%s) labelled `%s`.\n", SX[x$SEX + 1], x$ID))
-  cat(nMarkers(object), "attached markers.\n")
+  cat(sprintf("Singleton (%s) labelled '%s'.\n", SX[x$SEX + 1], x$ID))
+
+  nm = nMarkers(x)
+  na = nAlleles.ped(x)
+  if(nm == 0)
+    cat("0 attached markers.\n")
+  else if(nm == 1)
+    cat(sprintf("1 attached marker (%d alleles).\n", na))
+  else if(min(na) == max(na))
+    cat(sprintf("%d attached markers (all with %d alleles).\n", nm, min(na)))
+  else
+    cat(sprintf("%d attached markers (%d - %d alleles).\n", nm, min(na), max(na)))
 }
 
 #' @export
 summary.list = function(object, ...) {
   x = object
+
   if(!is.pedList(x))
     return(summary.default(x))
+
   nInd = pedsize(x)
+  nTot = sum(nInd)
   nMark = sapply(x, nMarkers)
 
   # Special treatment if all singletons
   if (all(nInd == 1) && all(nMark == nMark[1])) {
-    ids = unlist(labels(x), use.names = FALSE)
-    sex = c("sex unknown", "male", "female")[getSex(x) + 1]
-    lbs = toString(sprintf("%s (%s)", ids, sex))
-    cat(sprintf("List of %d singletons.\n", length(x)))
-    cat(sprintf("Labels: %s.\n", lbs))
+    cat(sprintf("List of %d singletons.\n", nTot))
+    if(nTot < 10) {
+      ids = unlist(labels(x), use.names = FALSE)
+      sex = c("sex unknown", "male", "female")[getSex(x) + 1]
+      lbs = toString(sprintf("%s (%s)", ids, sex))
+      cat(sprintf("Labels: %s.\n", lbs))
+    }
     cat(nMark[1], "attached markers.\n")
     return(invisible(NULL))
   }
 
-  cat("List of", length(x), "`ped` objects:\n")
-  for(i in seq_along(x)) {
-    cat(sprintf("\n--- component %d ---\n", i))
-    summary(x[[i]])
+  cat("List of", length(x), "connected pedigrees")
+  if(all(nInd == nInd[1]))
+    cat(sprintf(" (each with %d members).\n"), nInd[1])
+  else
+    cat(sprintf(" (%d - %d members).\n", min(nInd), max(nInd)))
+
+  sex = getSex(x)
+  cat(sprintf("In total %d individuals (%d males, %d females, %d unknown).\n",
+              nTot, sum(sex == 1), sum(sex == 2), sum(sex == 0)))
+  if(length(x) < 5) {
+    for(i in seq_along(x)) {
+      cat(sprintf("\n--- component %d ---\n", i))
+      summary(x[[i]])
+    }
   }
 }
