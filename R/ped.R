@@ -13,24 +13,28 @@
 #' If the pedigree is disconnected, it is split into its connected components
 #' and returned as a list of `ped` objects.
 #'
-#' @param id a vector (numeric or character) of individual ID labels.
-#' @param fid a vector of the same length as `id`, containing the labels of the
+#' @param id A vector (numeric or character) of individual ID labels.
+#' @param fid A vector of the same length as `id`, containing the labels of the
 #'   fathers. In other words `fid[i]` is the father of `id[i]`, or 0 if `id[i]`
 #'   is a founder.
-#' @param mid a vector of the same length as `id`, containing the labels of the
+#' @param mid A vector of the same length as `id`, containing the labels of the
 #'   mothers. In other words `mid[i]` is the mother of `id[i]`, or 0 if `id[i]`
 #'   is a founder.
-#' @param sex a numeric of the same length as `id`, describing the genders of
+#' @param sex A numeric of the same length as `id`, describing the genders of
 #'   the individuals (in the same order as `id`.) Each entry must be either 1
 #'   (=male), 2 (=female) or 0 (=unknown).
-#' @param famid a character string. Default: An empty string.
-#' @param reorder a logical. If TRUE, the pedigree is reordered so that all
-#'   parents precede their children.
-#' @param validate a logical. If TRUE, [validatePed()] is run before returning
-#'   the pedigree.
-#' @param isConnected a logical, by default FALSE. If it is known that the input
-#'   is connected, setting this to TRUE speeds up the processing.
-#' @param verbose a logical.
+#' @param famid A character string. Default: An empty string.
+#' @param reorder A logical indicating if the pedigree should be reordered so
+#'   that all parents precede their children. Default: TRUE.
+#' @param detectLoops A logical indicating if the presence of loops should be
+#'   detected. Setting this to FALSE may speed up the processing of large
+#'   pedigrees. Default: TRUE.
+#' @param validate A logical indicating if a validation of the pedigree
+#'   structure should be performed. Default: TRUE.
+#' @param isConnected A logical indicating if the input is known to be a
+#'   connected pedigree. Setting this to TRUE speeds up the processing. Default:
+#'   FALSE.
+#' @param verbose A logical.
 #'
 #' @return A `ped` object, which is essentially a list with the following
 #'   entries:
@@ -51,7 +55,8 @@
 #'
 #'   * `FAMID` : The family ID.
 #'
-#'   * `UNBROKEN_LOOPS` : A logical: TRUE if the pedigree is inbred.
+#'   * `UNBROKEN_LOOPS` : A logical indicating if the pedigree has unbroken
+#'   loops, or NA if the status is currently unknown.
 #'
 #'   * `LOOP_BREAKERS` : A matrix with loop breaker ID's in the first column and
 #'   their duplicates in the second column. All entries refer to the internal
@@ -65,7 +70,7 @@
 #'   * `MARKERS` : A list of `marker` objects, or NULL.
 #'
 #' @author Magnus Dehli Vigeland
-#' @seealso [ped_basic], [ped_modify], [ped_subgroups], [relabel()]
+#' @seealso [newPed()], [ped_basic], [ped_modify], [ped_subgroups], [relabel()]
 #'
 #' @examples
 #' # Trio
@@ -83,7 +88,8 @@
 #' stopifnot(is.pedList(w), length(w) == 2)
 #'
 #' @export
-ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, isConnected = FALSE, verbose = FALSE) {
+ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
+               detectLoops = TRUE, isConnected = FALSE, verbose = FALSE) {
 
   # Check input
   n = length(id)
@@ -147,7 +153,11 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE, i
   }
 
   # Initialise ped object
-  x = newPed(id, FIDX, MIDX, sex, famid)
+  x = newPed(id, FIDX, MIDX, sex, famid, detectLoops = FALSE) # TODO
+
+  # Detect loops (by trying to find a peeling order)
+  if(detectLoops)
+    x$UNBROKEN_LOOPS = hasUnbrokenLoops(x)
 
   if(validate)
     validatePed(x)
@@ -185,6 +195,7 @@ singleton = function(id = 1, sex = 1, famid = "") {
 #' @param MIDX An integer vector.
 #' @param SEX An integer vector.
 #' @param FAMID A string.
+#' @param detectLoops A logical.
 #'
 #' @return A `ped` object.
 #'
@@ -193,7 +204,7 @@ singleton = function(id = 1, sex = 1, famid = "") {
 #' newPed("a", 0L, 0L, 1L, "")
 #'
 #' @export
-newPed = function(ID, FIDX, MIDX, SEX, FAMID) {
+newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = TRUE) {
   if(!all(is.character(ID), is.integer(FIDX), is.integer(MIDX),
           is.integer(SEX), is.character(FAMID)))
     stop2("Type error in the creation of `ped` object")
@@ -204,22 +215,20 @@ newPed = function(ID, FIDX, MIDX, SEX, FAMID) {
            MIDX = MIDX,
            SEX = SEX,
            FAMID = FAMID,
-           UNBROKEN_LOOPS = FALSE,
+           UNBROKEN_LOOPS = NA,
            LOOP_BREAKERS = NULL,
            FOUNDER_INBREEDING = NULL,
            MARKERS = NULL)
 
   if(length(ID) == 1) {
     class(x) = c("singleton", "ped")
+    x$UNBROKEN_LOOPS = FALSE
     return(x)
   }
 
   class(x) = "ped"
-
-  # Detect loops (by trying to find a peeling order)
-  nucs = peelingOrder(x)
-  lastnuc_link = nucs[[length(nucs)]]$link
-  x$UNBROKEN_LOOPS = is.null(lastnuc_link)
+  if(detectLoops)
+    x$UNBROKEN_LOOPS = hasUnbrokenLoops(x)
 
   x
 }

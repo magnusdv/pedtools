@@ -4,7 +4,7 @@
 \alias{newPed}
 \title{Internal ped constructor}
 \usage{
-newPed(ID, FIDX, MIDX, SEX, FAMID)
+newPed(ID, FIDX, MIDX, SEX, FAMID, detectLoops = TRUE)
 }
 \arguments{
 \item{ID}{A character vector.}
@@ -16,6 +16,8 @@ newPed(ID, FIDX, MIDX, SEX, FAMID)
 \item{SEX}{An integer vector.}
 
 \item{FAMID}{A string.}
+
+\item{detectLoops}{A logical.}
 }
 \value{
 A \code{ped} object.

@@ -13,6 +13,7 @@ ped(
   famid = "",
   reorder = TRUE,
   validate = TRUE,
+  detectLoops = TRUE,
   isConnected = FALSE,
   verbose = FALSE
 )
@@ -20,32 +21,37 @@ ped(
 singleton(id = 1, sex = 1, famid = "")
 }
 \arguments{
-\item{id}{a vector (numeric or character) of individual ID labels.}
+\item{id}{A vector (numeric or character) of individual ID labels.}
 
-\item{fid}{a vector of the same length as \code{id}, containing the labels of the
+\item{fid}{A vector of the same length as \code{id}, containing the labels of the
 fathers. In other words \code{fid[i]} is the father of \code{id[i]}, or 0 if \code{id[i]}
 is a founder.}
 
-\item{mid}{a vector of the same length as \code{id}, containing the labels of the
+\item{mid}{A vector of the same length as \code{id}, containing the labels of the
 mothers. In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]}
 is a founder.}
 
-\item{sex}{a numeric of the same length as \code{id}, describing the genders of
+\item{sex}{A numeric of the same length as \code{id}, describing the genders of
 the individuals (in the same order as \code{id}.) Each entry must be either 1
 (=male), 2 (=female) or 0 (=unknown).}
 
-\item{famid}{a character string. Default: An empty string.}
+\item{famid}{A character string. Default: An empty string.}
 
-\item{reorder}{a logical. If TRUE, the pedigree is reordered so that all
-parents precede their children.}
+\item{reorder}{A logical indicating if the pedigree should be reordered so
+that all parents precede their children. Default: TRUE.}
 
-\item{validate}{a logical. If TRUE, \code{\link[=validatePed]{validatePed()}} is run before returning
-the pedigree.}
+\item{validate}{A logical indicating if a validation of the pedigree
+structure should be performed. Default: TRUE.}
 
-\item{isConnected}{a logical, by default FALSE. If it is known that the input
-is connected, setting this to TRUE speeds up the processing.}
+\item{detectLoops}{A logical indicating if the presence of loops should be
+detected. Setting this to FALSE may speed up the processing of large
+pedigrees. Default: TRUE.}
 
-\item{verbose}{a logical.}
+\item{isConnected}{A logical indicating if the input is known to be a
+connected pedigree. Setting this to TRUE speeds up the processing. Default:
+FALSE.}
+
+\item{verbose}{A logical.}
 }
 \value{
 A \code{ped} object, which is essentially a list with the following
@@ -62,7 +68,8 @@ pedigree; otherwise \code{ID[MIDX[j]]} is the mother of \code{ID[j]}.
 \item \code{SEX} : An integer vector with gender codes. Unless the pedigree is
 reordered, this equals \code{as.integer(sex)}.
 \item \code{FAMID} : The family ID.
-\item \code{UNBROKEN_LOOPS} : A logical: TRUE if the pedigree is inbred.
+\item \code{UNBROKEN_LOOPS} : A logical indicating if the pedigree has unbroken
+loops, or NA if the status is currently unknown.
 \item \code{LOOP_BREAKERS} : A matrix with loop breaker ID's in the first column and
 their duplicates in the second column. All entries refer to the internal
 IDs. This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
@@ -105,7 +112,7 @@ stopifnot(is.pedList(w), length(w) == 2)
 
 }
 \seealso{
-\link{ped_basic}, \link{ped_modify}, \link{ped_subgroups}, \code{\link[=relabel]{relabel()}}
+\code{\link[=newPed]{newPed()}}, \link{ped_basic}, \link{ped_modify}, \link{ped_subgroups}, \code{\link[=relabel]{relabel()}}
 }
 \author{
 Magnus Dehli Vigeland

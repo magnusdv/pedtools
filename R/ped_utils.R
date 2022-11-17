@@ -125,7 +125,15 @@ hasUnbrokenLoops = function(x) {
   if(is.pedList(x))
     return(any(vapply(x, hasUnbrokenLoops, logical(1))))
 
-  isTRUE(x$UNBROKEN_LOOPS)
+  unbrokenLoops = x$UNBROKEN_LOOPS
+  if(length(unbrokenLoops) == 1 && is.na(unbrokenLoops)) {
+    # Detect loop by trying to find a peeling order
+    nucs = peelingOrder(x)
+    lastnuc_link = nucs[[length(nucs)]]$link
+    unbrokenLoops = is.null(lastnuc_link)
+  }
+
+  isTRUE(unbrokenLoops)
 }
 
 
