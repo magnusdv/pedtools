@@ -231,10 +231,9 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
       nms = newnms
 
-      # Skipping this: Time consuming and probably irrelevant (?)
-      # Convert numerical names to NA
-      # if (isTRUE(any(suppressWarnings(nms == as.integer(nms)))))
-      #  hasMatrixNames = FALSE
+      # Convert numerical names to NA NB: Skipping this caused problems in pedbuildr
+      if (isTRUE(any(suppressWarnings(nms == as.integer(nms)))))
+        hasMatrixNames = FALSE
     }
   }
 
