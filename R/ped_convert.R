@@ -60,9 +60,9 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
   m = c(seq_along(x$ID), x$FIDX, x$MIDX, x$SEX, unlist(x$MARKERS))
   attrs = list(dim = c(length(x$ID), 4 + 2*length(x$MARKERS)))
   if (include.attrs) {
-    attrs$FAMID = famid(x)
-    attrs$LABELS = labels(x)
-    attrs$UNBROKEN_LOOPS = hasUnbrokenLoops(x)
+    attrs$FAMID = x$FAMID
+    attrs$LABELS = x$ID
+    attrs$UNBROKEN_LOOPS = x$UNBROKEN_LOOPS
     attrs$LOOP_BREAKERS = x$LOOP_BREAKERS
     attrs$FOUNDER_INBREEDING =
       if(is.null(x$FOUNDER_INBREEDING)) NULL
@@ -79,8 +79,11 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
 restorePed = function(x, attrs = NULL, validate = TRUE) {
   if (is.null(attrs))
     attrs = attributes(x)
+
   p = ped(id = x[,1], fid = x[,2], mid = x[,3], sex = x[,4],
-          famid = attrs$FAMID, validate = validate, reorder = FALSE)
+          famid = attrs$FAMID, validate = validate,
+          detectLoops = !is.na(attrs$UNBROKEN_LOOPS),
+          reorder = FALSE)
 
   if(is.pedList(p))
     stop2("Cannot restore to `ped` object: Disconnected input")

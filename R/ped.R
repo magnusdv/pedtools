@@ -145,7 +145,8 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
         idx = match(comps[[i]], id)
         ped(id = id[idx], fid = fid[idx], mid = mid[idx],
             sex = sex[idx], famid = famids[i], reorder = reorder,
-            validate = validate, isConnected = TRUE, verbose = verbose)
+            validate = validate, detectLoops = detectLoops,
+            isConnected = TRUE, verbose = verbose)
       })
 
       return(structure(pedlist, names = famids, class = c("pedList", "list")))
