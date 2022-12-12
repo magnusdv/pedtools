@@ -162,7 +162,13 @@ drawPed = function(alignment, annotation = NULL, scaling = NULL, keep.par = FALS
   # Annotation
   .annotatePed(alignment, annotation, scaling, ...)
 
-  invisible(list(alignment = alignment, annotation = annotation, scaling = scaling))
+  # Prepare output
+  output = list(alignment = alignment, annotation = annotation, scaling = scaling)
+
+  # For back compatibility
+  output = c(output, alignment[c("plist", "x", "y")], scaling[c("boxw", "boxh")])
+
+  invisible(output)
 }
 
 
