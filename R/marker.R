@@ -341,7 +341,7 @@ validateMarker = function(x, validateMut = TRUE) {
   name = attrs$name
   if(length(name) != 1)
     stop2("Length of `name` must be 1: ", name)
-  if (isTRUE(suppressWarnings(name == as.integer(name))))
+  if (all(strsplit(name, "", fixed = TRUE)[[1]] %in% 0:9))
     stop2("Attribute `name` cannot consist entirely of digits: ", name)
 
   # chrom
