@@ -6,7 +6,7 @@
 \alias{labels.list}
 \title{Get or modify pedigree labels}
 \usage{
-relabel(x, new = "asPlot", old = labels(x), reorder = FALSE)
+relabel(x, new = "asPlot", old = labels(x), reorder = FALSE, .alignment = NULL)
 
 \method{labels}{ped}(object, ...)
 
@@ -16,14 +16,18 @@ relabel(x, new = "asPlot", old = labels(x), reorder = FALSE)
 \item{x}{A \code{ped} object or a list of such.}
 
 \item{new}{Either a character vector containing new labels, or one of the
-special words "asPlot" or "generations". Default: "asPlot", which produces
-numeric labels following the plot (top to bottom; left to right).}
+special words "asPlot" (default) or "generations". See Details and
+Examples.}
 
 \item{old}{A vector of ID labels, of the same length as \code{new}. (Ignored if
 \code{new} is one of the special words.)}
 
 \item{reorder}{A logical. If TRUE, \code{\link[=reorderPed]{reorderPed()}} is called on \code{x} after
 relabelling. Default: FALSE.}
+
+\item{.alignment}{A list of alignment details for \code{x}, used if \code{new} equals
+"asPlot" or "generations". If not supplied, this is computed internally
+with \code{\link[=.pedAlignment]{.pedAlignment()}}.}
 
 \item{object}{A \code{ped} object}
 
@@ -34,12 +38,18 @@ relabelling. Default: FALSE.}
 \item \code{labels()} returns a character vector containing the ID labels of all
 pedigree members. If the input is a list of ped objects, the output is a list
 of character vectors.
-\item \code{relabel()} returns \code{ped} object similar to the input except for the
-labels.
+\item \code{relabel()} returns a \code{ped} object similar to \code{x} but with modified labels.
 }
 }
 \description{
 Functions for getting or changing the ID labels of pedigree members.
+}
+\details{
+By default, \code{relabel(x)} relabels everyone as 1, 2, ..., in the order given
+by the plot (top to bottom; left to right).
+
+Alternatively, \code{relabel(x, "generations")} labels the members in the top
+generation I-1, I-2, ..., in the second generation II-1, II-2, ..., etc.
 }
 \examples{
 
@@ -54,10 +64,10 @@ y
 z = relabel(y)
 stopifnot(identical(x,z))
 
+# Generation labels
+relabel(x, "generations")
+
 }
 \seealso{
 \code{\link[=ped]{ped()}}
-}
-\author{
-Magnus Dehli Vigeland
 }
