@@ -77,6 +77,8 @@
 #'   given, it is recycled to length 4.
 #' @param addSpace A numeric of length 4, indicating extra padding (in inches)
 #'   around the pedigree inside the plot region. Default: 0.
+#' @param xlim,ylim Numeric vectors of length 2, used to set `par("usr")`
+#'   explicitly. Rarely needed by end users.
 #' @param marker Either a vector of names or indices referring to markers
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
@@ -398,7 +400,8 @@ NULL
 #' @rdname internalplot
 #' @importFrom graphics frame strheight strwidth
 #' @export
-.pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1, addSpace = 0, ...) {
+.pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1,
+                       addSpace = 0, xlim = NULL, ylim = NULL, ...) {
 
   textUnder = annotation$textUnder
   textAbove = annotation$textAbove
@@ -422,6 +425,7 @@ NULL
   if(length(mar) == 1)
     mar = if(!is.null(title)) c(mar, mar, mar + 2.1, mar) else rep(mar, 4)
 
+  # Extra padding (e.g. for ribd::ibdDraw() and ibdsim2::haploDraw())
   if(length(addSpace) == 1)
     addSpace = rep(addSpace, 4)
 
@@ -498,10 +502,23 @@ NULL
   # Box size in inches
   boxsize = symbolsize * min(ht1, ht2, wd1, wd2)
 
-  # Segments of length 1 inch
-  hscale = (psize[1] - boxsize - addSpace[2] - addSpace[4])/diff(xrange)
-  denom = if(maxlev == 1) 1 else maxlev - 1 + curvAdj
-  vscale = (psize[2] - (abovetop_in + boxsize + belowlast_in)) / denom
+  # Horizontal scaling factor
+  if(is.null(xlim)) {
+    # Segment corresponding to 1 unit
+    hscale = (psize[1] - boxsize - addSpace[2] - addSpace[4])/diff(xrange)
+  }
+  else { # override if xlim provided!
+    hscale = psize[1]/diff(xlim)
+  }
+
+  # Vertical scaling factor
+  if(is.null(ylim)) {
+    denom = if(maxlev == 1) 1 else maxlev - 1 + curvAdj
+    vscale = (psize[2] - (abovetop_in + boxsize + belowlast_in)) / denom
+  }
+  else {
+    vscale = psize[2]/diff(ylim)
+  }
 
   if(hscale <= 0 || vscale <= 0)
     stop2("Cannot fit the graph; please increase plot region or reduce cex and/or symbolsize")
@@ -510,10 +527,22 @@ NULL
   boxh = boxsize/vscale  # box height in user units
 
   # User coordinates
-  left   = xrange[1] - 0.5*boxw - addSpace[2]/hscale
-  right  = xrange[2] + 0.5*boxw + addSpace[4]/hscale
-  top    = yrange[1] - abovetop_in/vscale - curvAdj
-  bottom = yrange[2] + (boxsize + belowlast_in)/vscale
+  if(is.null(xlim)) {
+    left   = xrange[1] - 0.5*boxw - addSpace[2]/hscale
+    right  = xrange[2] + 0.5*boxw + addSpace[4]/hscale
+  }
+  else {
+    left = xlim[1]
+    right = xlim[2]
+  }
+  if(is.null(ylim)) {
+    top    = yrange[1] - abovetop_in/vscale - curvAdj
+    bottom = yrange[2] + (boxsize + belowlast_in)/vscale
+  }
+  else {
+    top = min(ylim)
+    bottom = max(ylim)
+  }
   usr = c(left, right, bottom, top)
 
   labh = labh_in/vscale        # height of a text string

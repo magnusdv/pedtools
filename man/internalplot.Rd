@@ -48,6 +48,8 @@
   symbolsize = 1,
   margins = 1,
   addSpace = 0,
+  xlim = NULL,
+  ylim = NULL,
   ...
 )
 
@@ -162,6 +164,9 @@ given, it is recycled to length 4.}
 
 \item{addSpace}{A numeric of length 4, indicating extra padding (in inches)
 around the pedigree inside the plot region. Default: 0.}
+
+\item{xlim, ylim}{Numeric vectors of length 2, used to set \code{par("usr")}
+explicitly. Rarely needed by end users.}
 
 \item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
 
