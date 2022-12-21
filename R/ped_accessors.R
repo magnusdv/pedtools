@@ -16,6 +16,8 @@
 #'   `new` is one of the special words.)
 #' @param reorder A logical. If TRUE, [reorderPed()] is called on `x` after
 #'   relabelling. Default: FALSE.
+#' @param returnLabs A logical. If TRUE, the new labels are returned as a named
+#'   character vector.
 #' @param .alignment A list of alignment details for `x`, used if `new` equals
 #'   "asPlot" or "generations". If not supplied, this is computed internally
 #'   with [.pedAlignment()].
@@ -26,7 +28,9 @@
 #' pedigree members. If the input is a list of ped objects, the output is a list
 #' of character vectors.
 #'
-#' * `relabel()` returns a `ped` object similar to `x` but with modified labels.
+#' * `relabel()` by default returns a `ped` object similar to `x`, but with
+#'   modified labels. If `returnLabs` is TRUE, the new labels are returned as a
+#'   named hcaracter vector
 #'
 #' @seealso [ped()]
 #'
@@ -48,13 +52,18 @@
 #'
 #' @importFrom utils as.roman
 #' @export
-relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE, .alignment = NULL) {
+relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE, returnLabs = FALSE, .alignment = NULL) {
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 
   if(identical(new, "asPlot") || identical(new, "generations")) {
+
     if(is.pedList(x))
       stop2("`asPlot` cannot be used with ped lists")
+
+    # Always reorder in this case
+    reorder = TRUE
+
     p = .alignment$plist %||% .pedAlignment(x)$plist
 
     oldIdx = unlist(lapply(seq_along(p$n), function(i) p$nid[i, 1:p$n[i]]))
@@ -64,7 +73,7 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE, .alignme
     if(any(dups))
       oldIdx = oldIdx[!dups]
 
-    old = labels(x)[oldIdx]
+    old = x$ID[oldIdx]
 
     if(identical(new, "generations")) {
       gen = rep(seq_along(p$n), p$n)
@@ -76,10 +85,12 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE, .alignme
       new = paste(as.roman(gen), idx, sep = "-")
     }
     else {
-      new = seq_along(old)
+      new = as.character(seq_along(old))
     }
 
-    reorder = TRUE
+    names(new) = old
+    if(returnLabs)
+      return(new)
   }
 
   if(length(new) != length(old))
@@ -102,7 +113,7 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE, .alignme
     stop2("Input is not a `ped` object or a list of such")
 
   # Build new ID vector
-  id = labels.ped(x)
+  id = x$ID
   old_int = internalID(x, old)
   id[old_int] = new
 

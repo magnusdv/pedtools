@@ -6,7 +6,14 @@
 \alias{labels.list}
 \title{Get or modify pedigree labels}
 \usage{
-relabel(x, new = "asPlot", old = labels(x), reorder = FALSE, .alignment = NULL)
+relabel(
+  x,
+  new = "asPlot",
+  old = labels(x),
+  reorder = FALSE,
+  returnLabs = FALSE,
+  .alignment = NULL
+)
 
 \method{labels}{ped}(object, ...)
 
@@ -25,6 +32,9 @@ Examples.}
 \item{reorder}{A logical. If TRUE, \code{\link[=reorderPed]{reorderPed()}} is called on \code{x} after
 relabelling. Default: FALSE.}
 
+\item{returnLabs}{A logical. If TRUE, the new labels are returned as a named
+character vector.}
+
 \item{.alignment}{A list of alignment details for \code{x}, used if \code{new} equals
 "asPlot" or "generations". If not supplied, this is computed internally
 with \code{\link[=.pedAlignment]{.pedAlignment()}}.}
@@ -38,7 +48,9 @@ with \code{\link[=.pedAlignment]{.pedAlignment()}}.}
 \item \code{labels()} returns a character vector containing the ID labels of all
 pedigree members. If the input is a list of ped objects, the output is a list
 of character vectors.
-\item \code{relabel()} returns a \code{ped} object similar to \code{x} but with modified labels.
+\item \code{relabel()} by default returns a \code{ped} object similar to \code{x}, but with
+modified labels. If \code{returnLabs} is TRUE, the new labels are returned as a
+named hcaracter vector
 }
 }
 \description{
