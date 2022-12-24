@@ -30,7 +30,7 @@ addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
 removeIndividuals(
   x,
   ids,
-  include = c("descendants", "ancestors"),
+  remove = c("descendants", "ancestors"),
   returnLabs = FALSE,
   verbose = TRUE
 )
@@ -68,7 +68,7 @@ existing member of \code{x}.}
 
 \item{parent}{Deprecated; renamed to \code{parents}.}
 
-\item{include}{Either "ancestors" or "descendants" (default), dictating the
+\item{remove}{Either "ancestors" or "descendants" (default), dictating the
 method of removing pedigree members. Abbreviations are allowed.}
 
 \item{returnLabs}{A logical, by default FALSE. If TRUE, \code{removeIndividuals()}
@@ -101,7 +101,7 @@ parents can be given in any order. If only one parent is supplied, the other
 is created as a new individual.
 
 \code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
-all of their ancestors OR descendants, depending on the \code{include} argument.
+all of their ancestors OR descendants, depending on the \code{remove} argument.
 Leftover spouses disconnected to the remaining pedigree are also removed. An
 error is raised if result is a disconnected pedigree.
 
@@ -115,12 +115,16 @@ may lead to obscure errors.)
 }
 \examples{
 
-x = nuclearPed(1)
+x = nuclearPed(1) |>
+  addSon(3) |>
+  addParents(4, father = 6, mother = 7) |>
+  addChildren(father = 6, mother = 7, nch = 3, sex = c(2,1,2))
 
-# To see the effect of each command below, use plot(x) in between.
-x = addSon(x, 3)
-x = addParents(x, id = 4, father = 6, mother = 7)
-x = removeIndividuals(x, 4)
+# Remove 6 and 7 and their descendants
+y1 = removeIndividuals(x, 6:7)
+
+# Remove 8-10 and their parents
+y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 
 }
 \seealso{

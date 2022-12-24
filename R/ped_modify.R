@@ -16,7 +16,7 @@
 #' is created as a new individual.
 #'
 #' `removeIndividuals()` removes the individuals indicated with `ids` along with
-#' all of their ancestors OR descendants, depending on the `include` argument.
+#' all of their ancestors OR descendants, depending on the `remove` argument.
 #' Leftover spouses disconnected to the remaining pedigree are also removed. An
 #' error is raised if result is a disconnected pedigree.
 #'
@@ -33,7 +33,7 @@
 #'   `addChildren` the (optional) `ids` argument is used to specify labels for
 #'   the created children. If given, its length must equal `nch`. If not given,
 #'   labels are assigned automatically as explained in Details.
-#' @param include Either "ancestors" or "descendants" (default), dictating the
+#' @param remove Either "ancestors" or "descendants" (default), dictating the
 #'   method of removing pedigree members. Abbreviations are allowed.
 #' @param returnLabs A logical, by default FALSE. If TRUE, `removeIndividuals()`
 #'   returns only the labels of all members to be removed, instead of actually
@@ -58,12 +58,16 @@
 #'
 #' @examples
 #'
-#' x = nuclearPed(1)
+#' x = nuclearPed(1) |>
+#'   addSon(3) |>
+#'   addParents(4, father = 6, mother = 7) |>
+#'   addChildren(father = 6, mother = 7, nch = 3, sex = c(2,1,2))
 #'
-#' # To see the effect of each command below, use plot(x) in between.
-#' x = addSon(x, 3)
-#' x = addParents(x, id = 4, father = 6, mother = 7)
-#' x = removeIndividuals(x, 4)
+#' # Remove 6 and 7 and their descendants
+#' y1 = removeIndividuals(x, 6:7)
+#'
+#' # Remove 8-10 and their parents
+#' y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 #'
 #' @name ped_modify
 NULL
@@ -309,7 +313,7 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
 
 #' @rdname ped_modify
 #' @export
-removeIndividuals = function(x, ids, include = c("descendants", "ancestors"),
+removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
                              returnLabs = FALSE, verbose = TRUE) {
   if(!is.ped(x))
     stop2("Input is not a `ped` object")
@@ -323,19 +327,19 @@ removeIndividuals = function(x, ids, include = c("descendants", "ancestors"),
   ids_int = internalID(x, ids, errorIfUnknown = TRUE)
   labs = x$ID
 
-  include = match.arg(include)
+  remove = match.arg(remove)
 
   if(verbose)
-    message(sprintf("Removing individual(s) and their %s: %s", include, toString(ids)))
+    message(sprintf("Removing individual(s) and their %s: %s", remove, toString(ids)))
 
   # Descendants OR ancestors.
-  remov = switch(include,
+  remov = switch(remove,
                 ancestors = ancestors(x, ids_int, inclusive = TRUE, internal = TRUE),
                 descendants = descendants(x, ids_int, inclusive = TRUE, internal = TRUE))
 
   makeFounderIdx = integer(0)
 
-  if(include == "descendants") {
+  if(remove == "descendants") {
     # Remove founders that are NOT parents of any remaining
     FOU = founders(x, internal = TRUE)
     leftovers = .mysetdiff(FOU, c(remov, x$FIDX[-remov], x$MIDX[-remov]))
@@ -343,7 +347,7 @@ removeIndividuals = function(x, ids, include = c("descendants", "ancestors"),
     if(length(leftovers))
       remov = unique.default(c(remov, leftovers))
   }
-  else if(include == "ancestors") {
+  else if(remove == "ancestors") {
     while(TRUE) {
       # Remaining parents (idx) - includes zeroes
       remainFidx = x$FIDX[-remov]
