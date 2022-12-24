@@ -163,9 +163,9 @@ trio3 = nuclearPed(father = "fa", mother = "mo", children = "girl", sex = 2)
 **Alternative C**  
 Here is another possibility. We start by creating the father as a singleton, and then add the daughter:
 ```{r}
-trio4 = singleton("fa")
-trio4 = addDaughter(trio4, parent = "fa", id = "girl")
-trio4 = relabel(trio4, old = "NN_1", new = "mo")
+trio4 = singleton("fa") |> 
+  addDaughter("fa", id = "girl") |> 
+  relabel(old = "NN_1", new = "mo")
 ```
 
 Note that `addDaughter()` automatically created the mother as "NN_1", so we needed to relabel her.  
