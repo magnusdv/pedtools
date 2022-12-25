@@ -1,3 +1,20 @@
+# pedtools 2.1.0
+
+## New features
+
+* The `plot.ped()` method has been internally refactored into 5 functions. Three of these, `.pedAlignment()`, `.pedScaling()` and `.pedAnnotation()`, calculate various parameters, while the remaining two, `.drawPed()` and `annotatePed()` actually draw stuff on the graphics device. As indicated by the dot prefix, these functions are primarily intended for internal use. Nevertheless, they are documented and exported, facilitating their use in other packages. (For example, see the latest version of `haploDraw()`.)
+
+* `removeIndividuals()` gains an argument `remove`, taking as value either "ancestors" or "descendants" (possibly abbreviated. The default value ("descendants") behaves as the previous version. A typical application of `remove = "ancestors"` is to remove founders, as in `linearPed(2) |> removeIndividuals(1, remove = "anc")`. 
+
+* Both `relabel()` and `removeIndividuals()` gain an argument `returnLabs`. If TRUE, the functions return a vector of the pedigree members about to be modified/removed, instead of actually performing any changes.
+
+* Pedigree construction is generally faster, due to various code improvements. Also, `ped()` gains an argument `detectLoops`, which if set to FALSE may cut runtime significantly in some cases. 
+
+* New function `setFounderInbreeding()`, which is more flexible (and pipe friendly!) than the previous `founderInbreeding<-()`. The latter will continue to exist. 
+
+* More informative `summary()` for pedigrees.
+
+
 # pedtools 2.0.0
 
 This version introduces a number of changes in the pedigree plotting. The alignment of individuals is still done with `kinship2`, but the calculation of scaling, margins and symbol sizes are now done in pedtools. As a result, pedigrees plotted with old code may look slightly different.
