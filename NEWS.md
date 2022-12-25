@@ -2,7 +2,7 @@
 
 ## New features
 
-* The `plot.ped()` method has been internally refactored into 5 functions. Three of these, `.pedAlignment()`, `.pedScaling()` and `.pedAnnotation()`, calculate various parameters, while the remaining two, `.drawPed()` and `annotatePed()` actually draw stuff on the graphics device. As indicated by the dot prefix, these functions are primarily intended for internal use. Nevertheless, they are documented and exported, facilitating their use in other packages. (For example, see the latest version of `haploDraw()`.)
+* The `plot.ped()` method has been internally refactored into 5 functions. Three of these calculate various parameters: `.pedAlignment()`, `.pedScaling()` and `.pedAnnotation()`. The remaining two, `drawPed()` and `.annotatePed()` actually draw stuff on the graphics device. As indicated by the dot prefixes, these functions are primarily intended for internal use. Nevertheless, they are documented and exported, facilitating their use in other packages. (For example, see the latest version of `haploDraw()`, where sensible margins are now computed automatically.)
 
 * `removeIndividuals()` gains an argument `remove`, taking as value either "ancestors" or "descendants" (possibly abbreviated. The default value ("descendants") behaves as the previous version. A typical application of `remove = "ancestors"` is to remove founders, as in `linearPed(2) |> removeIndividuals(1, remove = "anc")`. 
 
