@@ -50,7 +50,7 @@ pedigree members. If the input is a list of ped objects, the output is a list
 of character vectors.
 \item \code{relabel()} by default returns a \code{ped} object similar to \code{x}, but with
 modified labels. If \code{returnLabs} is TRUE, the new labels are returned as a
-named hcaracter vector
+named character vector
 }
 }
 \description{

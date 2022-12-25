@@ -30,7 +30,7 @@
 #'
 #' * `relabel()` by default returns a `ped` object similar to `x`, but with
 #'   modified labels. If `returnLabs` is TRUE, the new labels are returned as a
-#'   named hcaracter vector
+#'   named character vector
 #'
 #' @seealso [ped()]
 #'

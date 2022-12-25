@@ -27,9 +27,9 @@ other folder may be included, e.g. \code{prefix = "path-to-my-dir/myped"}.}
 
 \item{famid}{A logical indicating if family ID should be included as the
 first column in the ped file. The family ID is taken from \code{famid(x)}. If
-\code{x} is a pedlist, the family IDs are taken from \code{names(x)}, or if this is
-NULL, the component-wise \code{famid()} values. Missing values are replaced by
-natural numbers. This option is ignored if \code{merlin = TRUE}.}
+\code{x} is a list of pedigrees, the family IDs are taken from \code{names(x)}, or if
+this is NULL, the component-wise \code{famid()} values. Missing values are
+replaced by natural numbers. This option is ignored if \code{merlin = TRUE}.}
 
 \item{header}{A logical indicating if column names should be included in the
 ped file. This option is ignored if \code{merlin = TRUE}.}

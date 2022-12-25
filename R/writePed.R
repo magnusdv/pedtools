@@ -10,9 +10,9 @@
 #'   "ped" file is created. This option is ignored if `merlin = TRUE`.
 #' @param famid A logical indicating if family ID should be included as the
 #'   first column in the ped file. The family ID is taken from `famid(x)`. If
-#'   `x` is a pedlist, the family IDs are taken from `names(x)`, or if this is
-#'   NULL, the component-wise `famid()` values. Missing values are replaced by
-#'   natural numbers. This option is ignored if `merlin = TRUE`.
+#'   `x` is a list of pedigrees, the family IDs are taken from `names(x)`, or if
+#'   this is NULL, the component-wise `famid()` values. Missing values are
+#'   replaced by natural numbers. This option is ignored if `merlin = TRUE`.
 #' @param header A logical indicating if column names should be included in the
 #'   ped file. This option is ignored if `merlin = TRUE`.
 #' @param merlin A logical. If TRUE, "ped", "map", "dat" and "freq" files are
