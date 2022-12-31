@@ -7,21 +7,28 @@
 #' matings is performed. The sampling of parents in each mating is set up to
 #' ensure that the final result is connected.
 #'
-#' @param n A positive integer: The total number of individuals. Must be at
+#' @param n A positive integer: the total number of individuals. Must be at
 #'   least 3.
-#' @param f A positive integer: The number of founders. Must be at least 2
+#' @param f A positive integer: the number of founders. Must be at least 2
 #'   unless selfing is allowed.
 #' @param selfing A logical indicating if selfing is allowed. Default: FALSE.
-#' @param seed A numerical seed for random number generation. (Optional.)
+#' @param seed An integer seed for the random number generator (optional).
+#' @param g,founders Deprecated arguments.
 #'
-#' @return A connected `ped` object.
+#' @return A connected pedigree returned as a `ped` object.
 #'
 #' @examples
 #' randomPed(8, f = 3, seed = 11)
 #' randomPed(8, f = 3, seed = 11, selfing = TRUE)
 #'
 #' @export
-randomPed = function(n, f = 2, selfing = FALSE, seed = NULL) {
+randomPed = function(n, f = 2, selfing = FALSE, seed = NULL, g = NULL, founders = NULL) {
+  # TODO: Remove
+  if(!is.null(g)) {
+    message("Switching to the old version, using deprecated argument `g`.")
+    return(.randomPed(g, founders %||% f, selfing = selfing, seed = seed))
+  }
+
   if(!is.null(seed))
     set.seed(seed)
 

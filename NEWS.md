@@ -2,7 +2,9 @@
 
 ## New features
 
-* The `plot.ped()` method has been internally refactored into 5 functions. Three of these calculate various parameters: `.pedAlignment()`, `.pedScaling()` and `.pedAnnotation()`. The remaining two, `drawPed()` and `.annotatePed()` actually draw stuff on the graphics device. As indicated by the dot prefixes, these functions are primarily intended for internal use. Nevertheless, they are documented and exported, facilitating their use in other packages. (For example, see the latest version of `haploDraw()`, where sensible margins are now computed automatically.)
+* The `plot.ped()` method has been internally refactored into 5 functions. Three of these calculate various parameters: `.pedAlignment()`, `.pedScaling()` and `.pedAnnotation()`. The remaining two, `drawPed()` and `.annotatePed()` actually draw stuff on the graphics device. As indicated by the dot prefixes, these functions are primarily intended for internal use. Nevertheless, they are documented and exported, to make them available for other packages requiring special plot methods. (For example, the latest version of `ibdsim2::haploDraw()` use this to compute automatic margins.)
+
+* The function `randomPed()` has been completely rewritten, ensuring that the output is always a connected pedigree. The new version takes as input the total pedigree size (n) and the number of founders (f).
 
 * `removeIndividuals()` gains an argument `remove`, taking as value either "ancestors" or "descendants" (possibly abbreviated. The default value ("descendants") behaves as the previous version. A typical application of `remove = "ancestors"` is to remove founders, as in `linearPed(2) |> removeIndividuals(1, remove = "anc")`. 
 

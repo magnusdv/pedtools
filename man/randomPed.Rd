@@ -4,21 +4,23 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(n, f = 2, selfing = FALSE, seed = NULL)
+randomPed(n, f = 2, selfing = FALSE, seed = NULL, g = NULL, founders = NULL)
 }
 \arguments{
-\item{n}{A positive integer: The total number of individuals. Must be at
+\item{n}{A positive integer: the total number of individuals. Must be at
 least 3.}
 
-\item{f}{A positive integer: The number of founders. Must be at least 2
+\item{f}{A positive integer: the number of founders. Must be at least 2
 unless selfing is allowed.}
 
 \item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
-\item{seed}{A numerical seed for random number generation. (Optional.)}
+\item{seed}{An integer seed for the random number generator (optional).}
+
+\item{g, founders}{Deprecated arguments.}
 }
 \value{
-A connected \code{ped} object.
+A connected pedigree returned as a \code{ped} object.
 }
 \description{
 Generate a random connected pedigree by applying random mating starting from
