@@ -4,34 +4,33 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(g, founders = rpois(1, 3) + 1, selfing = FALSE, seed = NULL)
+randomPed(n, f = 2, selfing = FALSE, seed = NULL)
 }
 \arguments{
-\item{g}{A positive integer: The number of matings.}
+\item{n}{A positive integer: The total number of individuals. Must be at
+least 3.}
 
-\item{founders}{A positive integer: The size of the initial population.}
+\item{f}{A positive integer: The number of founders. Must be at least 2
+unless selfing is allowed.}
 
-\item{selfing}{A logical indicating if selfing is allowed.}
+\item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
 \item{seed}{A numerical seed for random number generation. (Optional.)}
 }
 \value{
-A \code{ped} object.
+A connected \code{ped} object.
 }
 \description{
-Generate a random pedigree by applying random mating starting from a finite
-population. The resulting pedigree will have \code{f + g} members, where \code{f} is
-the number of founders and \code{g} is the number of matings.
+Generate a random connected pedigree by applying random mating starting from
+a finite population.
 }
 \details{
-The sampling scheme for choosing parents in each mating depends on the
-\code{selfing} parameter. If \code{selfing = FALSE}, a father is randomly sampled from
-the existing males, and a mother from the existing females. If \code{selfing = TRUE} then one parent P1 is sampled first (among all members), and then a
-second parent from the set consisting of P1 and all members of the opposite
-sex. The gender of the child is randomly chosen with equal probabilities.
+Starting from an initial set of \code{f} singletons, a sequence of \code{n-f} random
+matings is performed. The sampling of parents in each mating is set up to
+ensure that the final result is connected.
 }
 \examples{
-randomPed(3, 3)
-randomPed(3, 3, selfing = TRUE)
+randomPed(8, f = 3, seed = 11)
+randomPed(8, f = 3, seed = 11, selfing = TRUE)
 
 }

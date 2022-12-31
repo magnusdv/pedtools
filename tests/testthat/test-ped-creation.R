@@ -58,14 +58,14 @@ test_that("simple ped", {
 })
 
 
-test_that("random ped", {
-  x = randomPed(3, 3, seed = 3)
+test_that("randomPed works", {
+  x = randomPed(6, 3, seed = 3)
   expect_is(x, "ped")
   expect_equal(pedsize(x), 6)
 
-  y = randomPed(3, 3, seed = 5)
-  expect_true(is.pedList(y))
-  expect_equal(length(y), 2)
+  expect_error(randomPed(2), "The total number of individuals must be at least 3")
+  expect_error(randomPed(3,1), "When selfing is disallowed, the number of founders must be at least 2")
+  expect_error(randomPed(3,3), "Too many founders")
 })
 
 test_that("singleton creation works as expected", {
