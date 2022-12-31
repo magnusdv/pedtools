@@ -21,17 +21,17 @@ stopifnot2 = function(...) {
 
 # Test that input is a single integer.
 isCount = function(x, minimum = 1, maximum = NA) {
-  isTRUE(length(x) == 1 &&
-         (is.integer(x) || (is.numeric(x) && x == as.integer(x))) &&
-         x >= minimum && (is.na(maximum) || x <= maximum))
+  length(x) == 1 &&
+    (is.integer(x) || (is.numeric(x) && x == as.integer(x))) &&
+    x >= minimum && (is.na(maximum) || x <= maximum)
 }
 
 # Test that input is a single number, with optional range constraints
 isNumber = function(x, minimum = NA, maximum = NA) {
-  isTRUE(length(x) == 1 &&
-         is.numeric(x) &&
-         (is.na(minimum) || x >= minimum) &&
-         (is.na(maximum) || x <= maximum))
+  length(x) == 1 &&
+    is.numeric(x) &&
+    (is.na(minimum) || x >= minimum) &&
+    (is.na(maximum) || x <= maximum)
 }
 
 `%||%` = function(x, y) {
