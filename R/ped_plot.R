@@ -4,8 +4,14 @@
 #' controlling the appearance of pedigree symbols and accompanying labels. The
 #' main pedigree layout is calculated with the `kinship2` package, see
 #' [kinship2::align.pedigree] for details. Unlike `kinship2`, the implementation
-#' here also supports plotting singletons. In addition, some minor adjustments
-#' have been made to improve scaling and avoid unneeded duplications.
+#' here also supports singletons, and plotting pedigrees as DAGs. In addition,
+#' some minor adjustments have been made to improve scaling and avoid unneeded
+#' duplications.
+#'
+#' For an overview of all plotting options, see the separate page
+#' [internalplot], which documents the internal plotting procedure in more
+#' detail.
+#'
 #' @param x A [ped()] object.
 #' @param draw A logical, by default TRUE. If FALSE, no plot is produced, only
 #'   the plotting parameters are returned.
@@ -16,10 +22,11 @@
 #'   list of parameters, see [internalplot]. The most important ones are
 #'   illustrated in the Examples below.
 #'
-#' @return A list of three lists with various plot details: `alignment`, `annotation`,
-#'   `scaling`.
+#' @return A list of three lists with various plot details: `alignment`,
+#'   `annotation`, `scaling`.
 #'
-#' @seealso [plotPedList()], [kinship2::plot.pedigree()], [internalplot]
+#' @seealso [plotPedList()], [kinship2::plot.pedigree()]. Plot options are
+#'   documented in [internalplot].
 #'
 #' @examples
 #'

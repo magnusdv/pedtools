@@ -26,9 +26,10 @@
 
 #' Internal plot methods
 #'
-#' These functions provide the machinery for pedigree plotting. Their main
-#' purpose is to be called internally by [plot.ped()], which is the recommended
-#' front-end for most users. The various plot options are documented here.
+#' The main purpose of this page is to document the procedure and options for
+#' plotting pedigrees. Most of the arguments shown here may be supplied directly
+#' in `plot(x, ...)`, when `x` is a pedigree. See [plot.ped()] for many
+#' examples.
 #'
 #' The workflow of `plot.ped(x, ...)` is approximately as follows:
 #'

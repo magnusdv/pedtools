@@ -177,9 +177,10 @@ explicitly. Rarely needed by end users.}
 \item{cex.main, col.main, font.main}{Parameters passed on to \code{\link[=title]{title()}}.}
 }
 \description{
-These functions provide the machinery for pedigree plotting. Their main
-purpose is to be called internally by \code{\link[=plot.ped]{plot.ped()}}, which is the recommended
-front-end for most users. The various plot options are documented here.
+The main purpose of this page is to document the procedure and options for
+plotting pedigrees. Most of the arguments shown here may be supplied directly
+in \code{plot(x, ...)}, when \code{x} is a pedigree. See \code{\link[=plot.ped]{plot.ped()}} for many
+examples.
 }
 \details{
 The workflow of \code{plot.ped(x, ...)} is approximately as follows:

@@ -36,16 +36,22 @@ illustrated in the Examples below.}
 \item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
 }
 \value{
-A list of three lists with various plot details: \code{alignment}, \code{annotation},
-\code{scaling}.
+A list of three lists with various plot details: \code{alignment},
+\code{annotation}, \code{scaling}.
 }
 \description{
 This is the main function for pedigree plotting, with many options for
 controlling the appearance of pedigree symbols and accompanying labels. The
 main pedigree layout is calculated with the \code{kinship2} package, see
 \link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike \code{kinship2}, the implementation
-here also supports plotting singletons. In addition, some minor adjustments
-have been made to improve scaling and avoid unneeded duplications.
+here also supports singletons, and plotting pedigrees as DAGs. In addition,
+some minor adjustments have been made to improve scaling and avoid unneeded
+duplications.
+}
+\details{
+For an overview of all plotting options, see the separate page
+\link{internalplot}, which documents the internal plotting procedure in more
+detail.
 }
 \examples{
 
@@ -129,5 +135,6 @@ drawPed(dat$alignment, dat$annotation, dat$scaling)
 
 }
 \seealso{
-\code{\link[=plotPedList]{plotPedList()}}, \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}, \link{internalplot}
+\code{\link[=plotPedList]{plotPedList()}}, \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}. Plot options are
+documented in \link{internalplot}.
 }
