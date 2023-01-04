@@ -52,7 +52,8 @@
 #'
 #' @importFrom utils as.roman
 #' @export
-relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE, returnLabs = FALSE, .alignment = NULL) {
+relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
+                   returnLabs = FALSE, .alignment = NULL) {
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 
@@ -72,6 +73,12 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE, returnLa
     dups = duplicated(oldIdx)
     if(any(dups))
       oldIdx = oldIdx[!dups]
+
+    # Check for misalignment
+    if(length(oldIdx) != length(x$ID)) {
+      warning("Alignment error; cannot relabel this pedigree according to plot order")
+      return(x)
+    }
 
     old = x$ID[oldIdx]
 
