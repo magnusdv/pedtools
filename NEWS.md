@@ -1,4 +1,4 @@
-# pedtools 2.1.0
+# pedtools 2.1.1
 
 ## New features
 
