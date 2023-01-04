@@ -18,8 +18,8 @@ tool set for creating, manipulating and visualizing pedigrees with or
 without marker data. Common pedigree structures are quickly produced
 with tailor-made functions, while a range of utilities enable
 modifications like adding or removing individuals, extracting subsets,
-loop breaking, and merging pedigrees. The plotting functionality is
-imported from the
+loop breaking, and merging pedigrees. The plotting feature imports
+machinery from the
 [kinship2](https://CRAN.R-project.org/package=kinship2) package.
 
 **pedtools** is the hub of the **ped suite**, a collection of R packages
@@ -44,7 +44,6 @@ install.packages("pedtools")
 Alternatively, fetch the latest development version from GitHub:
 
 ``` r
-# install.packages("devtools") # install devtools if needed
 devtools::install_github("magnusdv/pedtools")
 ```
 
@@ -75,7 +74,7 @@ x = addMarker(x, "7" = "a/b")
 plot(x, marker = 1, hatched = 7)
 ```
 
-<img src="man/figures/README-example-1.png" width="40%" />
+<img src="man/figures/README-example-1.png" width="40%" style="display: block; margin: auto;" />
 
 The process of building pedigrees is perfectly suited for the pipe
 operator `|>` recently introduced in R. For example, the above pedigree
