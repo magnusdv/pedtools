@@ -4,7 +4,15 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(n, f = 2, selfing = FALSE, seed = NULL, g = NULL, founders = NULL)
+randomPed(
+  n,
+  f = 2,
+  maxGenerationGap = 1,
+  selfing = FALSE,
+  seed = NULL,
+  g = NULL,
+  founders = NULL
+)
 }
 \arguments{
 \item{n}{A positive integer: the total number of individuals. Must be at
@@ -12,6 +20,10 @@ least 3.}
 
 \item{f}{A positive integer: the number of founders. Must be at least 2
 unless selfing is allowed.}
+
+\item{maxGenerationGap}{An integer; the maximum distance in direct
+descendence allowed in a mating. for example, the default value of 1 allows
+parent-child mating, but not grandparent-grandchild.}
 
 \item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
