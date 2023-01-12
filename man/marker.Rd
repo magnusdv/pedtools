@@ -15,9 +15,9 @@ marker(
   chrom = NA,
   posMb = NA,
   name = NA,
-  NAstrings = c(0, "", NA, "-"),
   mutmod = NULL,
   rate = NULL,
+  NAstrings = c(0, "", NA, "-"),
   validate = TRUE,
   validateMut = validate
 )
@@ -32,9 +32,10 @@ addMarker(
   chrom = NA,
   posMb = NA,
   name = NA,
-  NAstrings = c(0, "", NA, "-"),
   mutmod = NULL,
   rate = NULL,
+  locusAttr = NULL,
+  NAstrings = c(0, "", NA, "-"),
   validate = TRUE
 )
 }
@@ -68,18 +69,22 @@ in megabases. Default: NA.}
 
 \item{name}{A character string: the name of the marker. Default: NA.}
 
-\item{NAstrings}{A character vector containing strings to be treated as
-missing alleles. Default: \code{c("", "0", NA, "-")}.}
-
 \item{mutmod, rate}{Mutation model parameters to be passed on to
 \code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}; see there for details. Note: \code{mutmod}
 corresponds to the \code{model} parameter. Default: NULL (no mutation model).}
+
+\item{NAstrings}{A character vector containing strings to be treated as
+missing alleles. Default: \code{c("", "0", NA, "-")}.}
 
 \item{validate}{A logical indicating if the validity of the marker object
 should be checked. Default: TRUE.}
 
 \item{validateMut}{A logical indicating if the mutation model (if present)
 should be checked.}
+
+\item{locusAttr}{A list with names \code{alleles}, \code{afreq}, \code{chrom}, \code{name},
+\code{posMb}, \code{mutmod}, \code{rate} (or a subset of these). This can be used as an
+alternative to entering the arguments as function parameters.}
 }
 \value{
 An object of class \code{marker}. This is an integer matrix with 2 columns
@@ -132,5 +137,11 @@ marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
 
 }
 \seealso{
-\code{\link[=addMarker]{addMarker()}}, \link{marker_attach}
+Get/set marker attributes: \link{marker_getattr}, \link{marker_setattr}.
+
+Retrieve various marker properties: \link{marker_prop}, \code{\link[=nMarkers]{nMarkers()}},
+
+Add alleles to an existing marker: \code{\link[=addAllele]{addAllele()}}
+
+Attach multiple markers: \link{marker_attach}
 }

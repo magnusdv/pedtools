@@ -25,11 +25,14 @@
 #' @param posMb A nonnegative real number: the physical position of the marker,
 #'   in megabases. Default: NA.
 #' @param name A character string: the name of the marker. Default: NA.
-#' @param NAstrings A character vector containing strings to be treated as
-#'   missing alleles. Default: `c("", "0", NA, "-")`.
 #' @param mutmod,rate Mutation model parameters to be passed on to
 #'   [pedmut::mutationModel()]; see there for details. Note: `mutmod`
 #'   corresponds to the `model` parameter. Default: NULL (no mutation model).
+#' @param locusAttr A list with names `alleles`, `afreq`, `chrom`, `name`,
+#'   `posMb`, `mutmod`, `rate` (or a subset of these). This can be used as an
+#'    alternative to entering the arguments as function parameters.
+#' @param NAstrings A character vector containing strings to be treated as
+#'   missing alleles. Default: `c("", "0", NA, "-")`.
 #' @param validate A logical indicating if the validity of the marker object
 #'   should be checked. Default: TRUE.
 #' @param validateMut A logical indicating if the mutation model (if present)
@@ -52,7 +55,15 @@
 #'   * `mutmod` (a list of two (male and female) mutation matrices; default =
 #'   NULL)
 #'
-#' @seealso [addMarker()], [marker_attach]
+#' @seealso Get/set marker attributes: [marker_getattr], [marker_setattr].
+#'
+#' Retrieve various marker properties: [marker_prop], [nMarkers()],
+#'
+#' Add alleles to an existing marker: [addAllele()]
+#'
+#' Attach multiple markers: [marker_attach]
+#'
+#'
 #'
 #' @examples
 #' x = nuclearPed(father = "fa", mother = "mo", children = "child")
@@ -89,8 +100,8 @@
 marker = function(x, ...,  geno = NULL, allelematrix = NULL,
                   alleles = NULL, afreq = NULL,
                   chrom = NA, posMb = NA, name = NA,
-                  NAstrings = c(0, "", NA, "-"),
                   mutmod = NULL, rate = NULL,
+                  NAstrings = c(0, "", NA, "-"),
                   validate = TRUE, validateMut = validate) {
 
   # Some parameters cannot have length 0 or be ""
@@ -234,12 +245,25 @@ glist2amat = function(glist, labs) {
 #' @export
 addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
                      afreq = NULL, chrom = NA, posMb = NA, name = NA,
-                     NAstrings = c(0, "", NA, "-"), mutmod = NULL, rate = NULL,
-                     validate = TRUE) {
+                     mutmod = NULL, rate = NULL, locusAttr = NULL,
+                     NAstrings = c(0, "", NA, "-"), validate = TRUE) {
 
   if(is.pedList(x)) {
     if(!is.null(allelematrix))
       stop2("The argument `allelematrix` cannot be used when `x` is a list of pedigrees")
+
+    # If attributes given as list, use these
+    if(!is.null(locusAttr)) {
+      locusAttr = checkLocusAttribs(locusAttr)[[1]] # NB: returns list of lists
+      alleles = locusAttr$alleles %||% alleles
+      afreq = locusAttr$afreq %||% afreq
+      chrom = locusAttr$chrom %||% chrom
+      name = locusAttr$name %||% name
+      posMb = locusAttr$posMb %||% posMb
+      mutmod = locusAttr$mutmod %||% mutmod
+      rate = locusAttr$rate %||% rate
+    }
+
     if(is.null(alleles) && is.null(afreq))
       stop2("Either `alleles` or `afreq` must be specified when `x` is a list of pedigrees")
 
@@ -258,8 +282,8 @@ addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
       mi = if(hasGeno) glist2amat(glist[intersect(nms, labsi)], labsi) else NULL
       addMarker(comp, allelematrix = mi, alleles = alleles,
                 afreq = afreq, chrom = chrom, posMb = posMb, name = name,
-                NAstrings = NAstrings, mutmod = mutmod, rate = rate,
-                validate = validate)
+                mutmod = mutmod, rate = rate, locusAttr = locusAttr,
+                NAstrings = NAstrings, validate = validate)
     })
     return(y)
   }
@@ -267,11 +291,22 @@ addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
   if(!is.ped(x))
     stop2("Input to `addMarker()` must be a `ped` object or a list of such")
 
-  # Otherwise
+  # If attributes given as list, use these
+  if(!is.null(locusAttr)) {
+    locusAttr = checkLocusAttribs(locusAttr)
+    alleles = locusAttr$alleles %||% alleles
+    afreq = locusAttr$afreq %||% afreq
+    chrom = locusAttr$chrom %||% chrom
+    name = locusAttr$name %||% name
+    posMb = locusAttr$posMb %||% posMb
+    mutmod = locusAttr$mutmod %||% mutmod
+    rate = locusAttr$rate %||% rate
+  }
+
   m = marker(x, ..., geno = geno, allelematrix = allelematrix,
              alleles = alleles, afreq = afreq,
              chrom = chrom, posMb = posMb, name = name,
-             NAstrings = NAstrings, mutmod = mutmod, rate = rate,
+             mutmod = mutmod, rate = rate, NAstrings = NAstrings,
              validate = validate)
   addMarkers(x, m)
 }
