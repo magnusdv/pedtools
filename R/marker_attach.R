@@ -202,7 +202,10 @@ addMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
 
 
 checkLocusAttribs = function(a) {
-  if(length(a) == 0) return(a)
+  if(length(a) == 0)
+    return(a)
+
+  attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")
 
   # Shortcut for SNPs
   if(length(a) == 1 && is.character(a) && isTRUE(startsWith(tolower(a), "snp"))) {
@@ -211,7 +214,6 @@ checkLocusAttribs = function(a) {
       stop2("Shortcut code for SNP markers must be of the form 'snpAB' or 'snp-AB': ", a)
     a = list(alleles = strsplit(a, "")[[1]][c(nch - 1, nch)])
   }
-  attribNames = c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")
 
   # Format 1: List of lists
   if(is.list(a) && all(sapply(a, is.list))) {
@@ -222,22 +224,26 @@ checkLocusAttribs = function(a) {
       if(!all(nms %in% attribNames))
         stop2("Entry ", i, " of `locusAttributes` has illegal entries: ", setdiff(nms, attribNames))
     }
-    return(a)
+    res = a
   }
+  else if (is.list(a) && any(attribNames %in% names(a))) {
+    # Format 2: Single list of attributes
+    nms = names(a)
+    if(!all(nms %in% attribNames))
+      stop2("Illegal locus attribute: ", setdiff(nms, attribNames))
 
-  # Format 2: Single list of attributes
-  if(is.list(a) && !is.list(a[[1]]) && !is.null(names(a)) && all(names(a) %in% attribNames)) {
-    return(list(a))
+    res = list(a)
   }
-
-  # Format 3: Allelic ladder as data.frame or matrix
-  if(is.data.frame(a) || is.matrix(a)) {
-    return(freqDb2attribList(a, format = "allelicLadder"))
+  else if(is.data.frame(a) || is.matrix(a)) {
+    # Format 3: Allelic ladder as data.frame or matrix
+    res = freqDb2attribList(a, format = "allelicLadder")
   }
-
-  # Format 4: Frequency database as a list of frequency vectors
-  if(is.list(a) && all(sapply(a, function(aa) !is.null(names(aa))))) {
-    return(freqDb2attribList(a, format = "list"))
+  else if(is.list(a) && all(sapply(a, is.numeric))) {
+    # Format 4: Frequency database as a list of frequency vectors
+    res = freqDb2attribList(a, format = "list")
   }
+  else
+    stop2("Unknown format of `locusAttributes")
 
+  res
 }
