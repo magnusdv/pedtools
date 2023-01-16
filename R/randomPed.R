@@ -11,9 +11,10 @@
 #'   least 3.
 #' @param f A positive integer: the number of founders. Must be at least 2
 #'   unless selfing is allowed.
-#' @param maxGenerationGap An integer; the maximum distance in direct
-#'   descendence allowed in a mating. for example, the default value of 1 allows
-#'   parent-child mating, but not grandparent-grandchild.
+#' @param maxDirectGap An integer; the maximum distance between direct
+#'   descendants allowed to mate. For example, the default value of 1 allows
+#'   parent-child mating, but not grandparent-grandchild. Set to `Inf` or `NULL`
+#'   to remove all restrictions.
 #' @param selfing A logical indicating if selfing is allowed. Default: FALSE.
 #' @param seed An integer seed for the random number generator (optional).
 #' @param g,founders Deprecated arguments.
@@ -21,11 +22,23 @@
 #' @return A connected pedigree returned as a `ped` object.
 #'
 #' @examples
-#' randomPed(8, f = 3, seed = 11)
-#' randomPed(8, f = 3, seed = 11, selfing = TRUE)
+#' plot(randomPed(7, f = 2, seed = 12))
+#'
+#' # Disallow mating between direct discendants
+#' plot(randomPed(7, f = 2, seed = 12, maxDirectGap = 0))
+#'
+#' # No restrictions on mating between direct discendants
+#' plot(randomPed(7, f = 2, seed = 12, maxDirectGap = Inf))
+#'
+#' # Allow selfing
+#' y = randomPed(5, f = 2, seed = 2, selfing = TRUE)
+#' hasSelfing(y)
+#' y
+#' plot(y, arrows = TRUE)
 #'
 #' @export
-randomPed = function(n, f = 2, maxGenerationGap = 1, selfing = FALSE, seed = NULL, g = NULL, founders = NULL) {
+randomPed = function(n, f = 2, maxDirectGap = 1, selfing = FALSE,
+                     seed = NULL, g = NULL, founders = NULL) {
   # TODO: Remove
   if(!is.null(g)) {
     message("Switching to the old version, using deprecated argument `g`.")
@@ -92,8 +105,23 @@ randomPed = function(n, f = 2, maxGenerationGap = 1, selfing = FALSE, seed = NUL
     w1 = wComp[compvec[sq]]
     w1 = w1/sum(w1)
 
+    # Candidates to avoid for first parent (maxDirectGap may be prohibitive)
+    if(!selfing && !is.null(maxDirectGap) && maxDirectGap == 0) {
+       avoid = sapply(sq, function(i) {
+         gapsi = pmax(gengap[sq, i], gengap[i, sq], na.rm = TRUE)
+         toofar = !is.na(gapsi) & gapsi > maxDirectGap
+         samesex = sex[sq] == sex[i]
+         all(toofar | samesex)
+       })
+    }
+    else {
+      avoid = rep(FALSE, k-1)
+    }
+
     # Sample first parent!
-    par1 = sample.int(k-1, 1, prob = w1)
+    cand1 = sq[!avoid]
+    prob1 = w1[!avoid]
+    par1 = sample(cand1, size = 1, prob = prob1)
     comp1 = compvec[par1]
 
     # Candidates for the other parent: Any of opposite sex
@@ -108,12 +136,13 @@ randomPed = function(n, f = 2, maxGenerationGap = 1, selfing = FALSE, seed = NUL
       isCand[compvec[sq] == comp1] = FALSE
 
     # Apply generation gap limit if given
-    if(maxGenerationGap < Inf) {
+    if(!is.null(maxDirectGap) && maxDirectGap < Inf) {
       gaps = pmax(gengap[sq, par1], gengap[par1, sq], na.rm = TRUE)
-      toofar = !is.na(gaps) & gaps > maxGenerationGap
+      toofar = !is.na(gaps) & gaps > maxDirectGap
       isCand[toofar] = FALSE
     }
 
+    # If no candidates, plot (for debugging)
     if(!any(isCand)) {
       p = ped(id[sq], fid[sq], mid[sq], sex[sq])
       plot(p, hatched = par1)
