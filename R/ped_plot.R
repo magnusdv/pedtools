@@ -363,14 +363,21 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     frames = TRUE
   }
 
+  # Check each entry for explicit plot args
+  hasArgs = function(p) !is.ped(p) && !is.pedList(p)
+
   # If explicit source given, transfer marker data to all
   if(!is.null(source)) {
     srcPed = plots[[source]]
+    if(hasArgs(srcPed))
+      srcPed = srcPed[[1]]
     if(is.null(srcPed))
       stop2("Unknown source pedigree: ", source)
     if(nMarkers(srcPed) == 0)
       stop2("The source pedigree has no attached markers")
-    plots = lapply(plots, transferMarkers, from = srcPed)
+    plots = lapply(plots, function(p)
+      if(hasArgs(p)) {p[[1]] = transferMarkers(from = srcPed, to = p[[1]]); p}
+      else transferMarkers(from = srcPed, to = p))
   }
 
   deduceGroups = is.null(groups)
