@@ -325,6 +325,10 @@ swapSex = function(x, ids, verbose = TRUE) {
   # Swap sex
   x$SEX[idsInt] = 3L - x$SEX[idsInt]
 
+  # Update 'sex' attribute of each marker
+  for(i in seq_along(x$MARKERS))
+    attr(x$MARKERS[[i]], "sex") = x$SEX
+
   # # Swap parents wherever any of the 'ids' occur as parents
   ids_as_parents = FIDX %in% idsInt # same with MIDX!
   FIDX[ids_as_parents] = x$MIDX[ids_as_parents]
