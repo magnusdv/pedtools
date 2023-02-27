@@ -4,10 +4,24 @@
 \alias{validatePed}
 \title{Pedigree errors}
 \usage{
-validatePed(x)
+validatePed(x = NULL, id = NULL, fid = NULL, mid = NULL, sex = NULL)
 }
 \arguments{
-\item{x}{object of class \code{ped}.}
+\item{x}{A \code{ped} object.}
+
+\item{id}{A vector (numeric or character) of individual ID labels.}
+
+\item{fid}{A vector of the same length as \code{id}, containing the labels of the
+fathers. In other words \code{fid[i]} is the father of \code{id[i]}, or 0 if \code{id[i]}
+is a founder.}
+
+\item{mid}{A vector of the same length as \code{id}, containing the labels of the
+mothers. In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]}
+is a founder.}
+
+\item{sex}{A numeric of the same length as \code{id}, describing the genders of
+the individuals (in the same order as \code{id}.) Each entry must be either 1
+(=male), 2 (=female) or 0 (=unknown).}
 }
 \value{
 If no errors are detected, the function returns NULL invisibly.
@@ -15,5 +29,14 @@ Otherwise, messages describing the errors are printed to the screen and an
 error is raised.
 }
 \description{
-Validate the internal structure of a \code{ped} object.
+Validate the internal pedigree structure. The input may be either a (possibly
+malformed) \code{\link[=ped]{ped()}} object, or its defining vectors \code{id}, \code{fid}, \code{mid}, \code{sex}.
+}
+\examples{
+x = nuclearPed()
+validatePed(x)
+
+# Various errors
+# validatePed(id = c(1,2), fid = c(2,0), mid = c(0,1), sex = c(1,2))
+
 }

@@ -93,6 +93,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
 
   # Check input
   n = length(id)
+
   if(n == 0)
     stop2("`id` vector has length 0")
   if(length(fid) != n)
@@ -237,17 +238,34 @@ newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = TRUE) {
 
 #' Pedigree errors
 #'
-#' Validate the internal structure of a `ped` object.
+#' Validate the internal pedigree structure. The input may be either a (possibly
+#' malformed) [ped()] object, or its defining vectors `id`, `fid`, `mid`, `sex`.
 #'
-#' @param x object of class `ped`.
+#' @param x A `ped` object.
+#' @inheritParams ped
 #'
 #' @return If no errors are detected, the function returns NULL invisibly.
 #'   Otherwise, messages describing the errors are printed to the screen and an
 #'   error is raised.
 #'
+#' @examples
+#' x = nuclearPed()
+#' validatePed(x)
+#'
+#' # Various errors
+#' # validatePed(id = c(1,2), fid = c(2,0), mid = c(0,1), sex = c(1,2))
+#'
 #' @export
-validatePed = function(x) {
-  ID = x$ID; FIDX = x$FIDX; MIDX = x$MIDX; SEX = x$SEX; FAMID = x$FAMID
+#'
+validatePed = function(x = NULL, id = NULL, fid = NULL, mid = NULL, sex = NULL) {
+  if(!is.null(x)) {
+    ID = x$ID; FIDX = x$FIDX; MIDX = x$MIDX; SEX = x$SEX; FAMID = x$FAMID
+  }
+  else {
+    ID = as.character(id); FIDX = match(fid, id, nomatch = 0L); MIDX = match(mid, id, nomatch = 0L);
+    SEX = as.integer(sex); FAMID = ""
+  }
+
   n = length(ID)
 
   # Type verification (mainly for developer)
@@ -272,7 +290,7 @@ validatePed = function(x) {
     errs = c(errs, paste("Illegal sex:", unique(setdiff(SEX, 0:2))))
 
   # Self ancestry
-  self_anc = any_self_ancestry(x)
+  self_anc = any_self_ancestry(list(ID = ID, FIDX = FIDX, MIDX = MIDX))
   if(length(self_anc) > 0)
     errs = c(errs, paste("Individual", self_anc, "is their own ancestor"))
 
@@ -313,23 +331,24 @@ validatePed = function(x) {
 
 
 any_self_ancestry = function(x) {
-  n = pedsize(x)
-  nseq = 1:n
+  ID = x$ID
   FIDX = x$FIDX
   MIDX = x$MIDX
 
+  n = length(ID)
+  nseq = seq_len(n)
 
   # Quick check if anyone is their own parent
   self_parent = (nseq == FIDX) | (nseq == MIDX)
   if(any(self_parent))
-    return(labels(x)[self_parent])
+    return(ID[self_parent])
 
-  fou_int = founders(x, internal = TRUE)
+  fou_int = which(FIDX == 0)
   OK = rep(FALSE, n)
   OK[fou_int] = TRUE
 
   # TODO: works, but not optimised for speed
-  for(i in 1:n) {
+  for(i in nseq) { # note that i is not used
     parents = which(OK)
     children = which(FIDX %in% parents | MIDX %in% parents)
 
@@ -343,5 +362,5 @@ any_self_ancestry = function(x) {
 
     OK[childrenOK] = TRUE
   }
-  labels(x)[!OK]
+  ID[!OK]
 }
