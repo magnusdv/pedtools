@@ -293,7 +293,7 @@ addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
 
   # If attributes given as list, use these
   if(!is.null(locusAttr)) {
-    locusAttr = checkLocusAttribs(locusAttr)
+    locusAttr = checkLocusAttribs(locusAttr)[[1]]
     alleles = locusAttr$alleles %||% alleles
     afreq = locusAttr$afreq %||% afreq
     chrom = locusAttr$chrom %||% chrom

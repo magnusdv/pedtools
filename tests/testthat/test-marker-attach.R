@@ -1,4 +1,16 @@
+test_that("addMarker() works with `locusAttr` list", {
+  attr = list(name = "M1", afreq = c(a = .2, b= .3, c = .5), chrom = "X")
+  x = nuclearPed() |> addMarker(locusAttr = attr)
+  expect_equal(afreq(x, 1), attr$afreq)
+  expect_equal(name(x, 1), "M1")
+  expect_equal(chrom(x, 1), "X")
 
+  # ped list
+  y = list(nuclearPed(), singleton(1)) |> addMarker(locusAttr = attr)
+  expect_equal(afreq(y, 1), attr$afreq)
+  expect_equal(name(y, 1), "M1")
+  expect_equal(chrom(y, 1), "X")
+})
 
 test_that("addMarker() works on ped list", {
   x = list(nuclearPed(), singleton(4))
