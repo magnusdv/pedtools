@@ -111,6 +111,8 @@
 #' @export
 plot.ped = function(x, draw = TRUE, keep.par = FALSE, ...) {
 
+  if(!(is.logical(draw) && length(draw) == 1))
+    stop2("Illegal plot command.\n\nHint: As of version 2.0.0, plot arguments must be named, e.g. `plot(x, marker = ...)` to include genotypes")
 
   # Alignment parameters
   alignment = .pedAlignment(x, ...)
