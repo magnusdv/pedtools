@@ -187,7 +187,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
 allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0, sep = NULL, validate = TRUE) {
 
   if(!is.matrix(alleleMatrix) && !is.data.frame(alleleMatrix))
-    stop2("Argument `alleleMatrix` must be either a matrix or a data.frame")
+    stop2("Argument `alleleMatrix` must be either a matrix or a data frame")
 
   m = as.matrix(alleleMatrix)
 

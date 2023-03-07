@@ -151,8 +151,16 @@ setFreqDatabase = function(x, database, format = c("list", "ladder"), ...) {
 freqDb2attribList = function(database, format = c("list", "ladder")) {
 
   format = match.arg(format)
+
   if(format == "list") {
-    attrList = lapply(names(database), function(nm) {
+
+    nms = names(database)
+    if(is.null(nms))
+      stop2("Frequency database does not include marker names")
+    if(dup <- anyDuplicated(nms))
+      stop2("Duplicated marker name in frequency database: ", nms[dup])
+
+    attrList = lapply(nms, function(nm) {
       v = database[[nm]]
       als = names(v)
       if(is.null(als) || !is.numeric(v)) {
