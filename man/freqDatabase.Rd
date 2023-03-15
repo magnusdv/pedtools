@@ -12,7 +12,7 @@ getFreqDatabase(x, markers = NULL, format = c("list", "ladder"))
 
 setFreqDatabase(x, database, format = c("list", "ladder"), ...)
 
-readFreqDatabase(filename, format = c("list", "ladder"), ...)
+readFreqDatabase(filename, format = c("list", "ladder"), fixNames = FALSE, ...)
 
 writeFreqDatabase(x, filename, markers = NULL, format = c("list", "ladder"))
 }
@@ -31,6 +31,10 @@ or a file path (to be passed on to \code{readFreqDatabase()}).}
 
 \item{filename}{The path to a text file containing allele frequencies either
 in "list" or "allelic ladder" format.}
+
+\item{fixNames}{A logical (default: FALSE). If TRUE all marker names are
+converted to upper case and "." and space characters are replaced with
+"_" (underscore).}
 }
 \value{
 \itemize{
@@ -66,8 +70,8 @@ a2 0.1
 }
 
 A database in "allelic ladder" format is rectangular, i.e., a numeric matrix
-(or data frame), with allele labels as row names and markers as column
-names. \code{NA} entries correspond to unobserved alleles.
+(or data frame), with allele labels as row names and markers as column names.
+\code{NA} entries correspond to unobserved alleles.
 }
 \examples{
 loc1 = list(name = "m1", afreq = c(a = .1, b = .9))

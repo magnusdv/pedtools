@@ -207,8 +207,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     m = tmp
   }
-  else {  # If no rownames - dimensions must be correct
-    if(nrow(m) != pedsize(x))
+  else if(nrow(m) != pedsize(x)) {   # If no rownames - dimensions must be correct
     stop2(sprintf("Incompatible input.\n  Pedigree size = %d\n  Allele matrix rows = %d",
                   pedsize(x), nrow(m)))
   }

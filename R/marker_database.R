@@ -23,8 +23,8 @@
 #' }
 #'
 #' A database in "allelic ladder" format is rectangular, i.e., a numeric matrix
-#' (or data frame), with allele labels as row names and markers as column
-#' names. `NA` entries correspond to unobserved alleles.
+#' (or data frame), with allele labels as row names and markers as column names.
+#' `NA` entries correspond to unobserved alleles.
 #'
 #' @param x	A ped object, or a list of such.
 #' @param markers	A character vector (with marker names) or a numeric vector
@@ -32,6 +32,9 @@
 #' @param database Either a list or matrix/data frame with allele frequencies,
 #'   or a file path (to be passed on to `readFreqDatabase()`).
 #' @param format Either "list" or "ladder".
+#' @param fixNames A logical (default: FALSE). If TRUE all marker names are
+#'   converted to upper case and "." and space characters are replaced with
+#'   "_" (underscore).
 #' @param filename The path to a text file containing allele frequencies either
 #'   in "list" or "allelic ladder" format.
 #' @param ... Optional arguments passed on to [read.table()].
@@ -190,7 +193,7 @@ freqDb2attribList = function(database, format = c("list", "ladder")) {
 
 #' @rdname freqDatabase
 #' @export
-readFreqDatabase = function(filename, format = c("list", "ladder"), ...) {
+readFreqDatabase = function(filename, format = c("list", "ladder"), fixNames = FALSE, ...) {
 
   format = match.arg(format)
 
@@ -226,6 +229,11 @@ readFreqDatabase = function(filename, format = c("list", "ladder"), ...) {
       idx = !is.na(frqs)   # Index of rows with non-missing entries
       setNames(frqs[idx], als[idx])
       })
+  }
+
+  if(isTRUE(fixNames)) {
+    # Default fixes: (i) convert all to upper case, (ii) replace space and "." with "_"
+    nms = sub(" ", "_", sub(".", "_", toupper(nms), fixed = TRUE), fixed = TRUE)
   }
 
   # Add marker names
