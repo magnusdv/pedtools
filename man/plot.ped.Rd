@@ -88,7 +88,19 @@ plot(x, labs = males)
 plot(x, labs = c(FATHER = "fa", "boy"))
 
 # Colours
-plot(x, col = list(red = "fa", blue = "boy"), hatched = "boy")
+plot(x, col = c(fa = "red"), fill = c(mo = "green", boy = "blue"))
+
+# Non-black hatch colours are specified with the `fill` argument
+plot(x, hatched = labels, fill = c(boy = "red"))
+
+# Use functions to specify colours
+plot(x, fill = list(red = leaves, blue = ancestors(x, "boy")))
+
+# Line type and width
+plot(x, lty = 2, lwd = 3, cex = 2)
+
+# Detailed line type and width
+plot(x, lty = list(dashed = founders), lwd = c(boy = 4))
 
 # Include genotypes
 x = addMarker(x, fa = "1/1", boy = "1/2", name = "SNP")

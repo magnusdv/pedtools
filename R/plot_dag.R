@@ -36,23 +36,28 @@
 
 .plotDAG = function(alignment, annotation, scaling) {
 
-  aff = annotation$aff01
-  density = annotation$density
-  angle = annotation$angle
-  col = annotation$colvec
-
-  # Colour vector
-  if (length(col) == 1)
-    col = rep(col, n)
-
-  branch = 0.6
-  pconnect = .5
-
   n = alignment$nInd
   sex = alignment$sex
   plotord = alignment$plotord
   xall = alignment$xall
   yall = alignment$yall
+
+  COL = annotation$colvec %||% 1
+  FILL = annotation$fillvec %||% NA
+  LTY = annotation$ltyvec %||% 1
+  DENS = annotation$densvec %||% 0
+  LWD = annotation$lwdvec %||% 1
+
+  if (length(COL) == 1)
+    COL = rep(COL, n)
+  if (length(FILL) == 1)
+    FILL = rep(FILL, n)
+  if (length(LTY) == 1)
+    LTY = rep(LTY, n)
+  if (length(DENS) == 1)
+    DENS = rep(DENS, n)
+  if (length(LWD) == 1)
+    LWD = rep(LWD, n)
 
   # Set user coordinates
   par(mar = scaling$mar, usr = scaling$usr, xpd = TRUE)
@@ -62,6 +67,9 @@
   boxh = scaling$boxh
   rx = boxw/2
   ry = boxh/2
+
+  branch = 0.6
+  pconnect = .5
 
   # Shapes
   POLYS = list(list(x = c(0, -0.5, 0, 0.5), y = c(0, 0.5, 1, 0.5)), # diamond
@@ -73,9 +81,12 @@
   for(k in seq_along(plotord)) {
     id = plotord[k]
     poly = POLYS[[sex[id] + 1]]
-    polygon(xall[k] + poly$x * boxw, yall[k] + poly$y * boxh,
-            col = if(aff[id]) col[id] else NA, border = col[id],
-            density = if(aff[id]) density else NULL, angle = angle)
+    dens = if(DENS[id] == 0) NULL else DENS[id]
+    polygon(xall[k] + poly$x * boxw,
+            yall[k] + poly$y * boxh,
+            border = COL[id], col = FILL[id],
+            lty = LTY[id], lwd = LWD[id],
+            angle = 45, density = dens)
   }
 
   # Arrows

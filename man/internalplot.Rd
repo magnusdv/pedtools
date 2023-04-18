@@ -30,9 +30,13 @@
   showEmpty = FALSE,
   labs = labels(x),
   col = 1,
+  fill = NA,
+  lty = 1,
+  lwd = 1,
+  hatched = NULL,
+  hatchDensity = 25,
   aff = NULL,
   carrier = NULL,
-  hatched = NULL,
   deceased = NULL,
   starred = NULL,
   textInside = NULL,
@@ -120,11 +124,22 @@ labelled following the internal ordering.
 above. (See Examples.)
 }}
 
-\item{col}{A vector of colours for the pedigree members, recycled if
-necessary. Alternatively, \code{col} can be a list assigning colours to specific
-members. For example if \code{col = list(red = "a", blue = c("b", "c"))} then
-individual "a" will be red, "b" and "c" blue, and everyone else black. By
-default everyone is black.}
+\item{col}{A vector or list specifying outline colours for the pedigree
+members. See Details for valid formats.}
+
+\item{fill}{A vector or list specifying fill/hatch colours for the pedigree
+members. See Details for valid formats. Note that if \code{fill} is unnamed, and
+either \code{aff} or \code{hatched} are given, then the fill colour is applied only
+to those.}
+
+\item{lty, lwd}{Vectors or lists specifying linetype and width of pedigree
+symbol outlines. See Details for valid formats.}
+
+\item{hatched}{A vector of labels identifying members whose plot symbols
+should be hatched.}
+
+\item{hatchDensity}{A number specifying the hatch density in lines per inch.
+Default: 25.}
 
 \item{aff}{A vector of labels identifying members whose plot symbols should
 be filled. (This is typically used in medical pedigrees to indicate
@@ -133,9 +148,6 @@ affected members.)}
 \item{carrier}{A vector of labels identifying members whose plot symbols
 should be marked with a dot. (This is typically used in medical pedigrees
 to indicate unaffected carriers of the disease allele.)}
-
-\item{hatched}{A vector of labels identifying members whose plot symbols
-should be hatched.}
 
 \item{deceased}{A vector of labels indicating deceased pedigree members.}
 
@@ -201,6 +213,21 @@ scale = .pedScaling(align, annot, ...)
 .annotatePed(align, annot, scale)
 
 }\if{html}{\out{</div>}}
+
+The arguments \code{col}, \code{fill}, \code{lty} and \code{lwd} can all be indicated in a number
+of ways:
+\itemize{
+\item An unnamed vector. This will be recycled and applied to all members. For
+example, \code{lty = 2} gives everyone a dashed outline.
+\item A named vector. Only pedigree members appearing in the names are affected.
+Example: \code{fill = c("1" = "red", foo = "blue")} fills individual \code{1} red and
+\code{foo} blue.
+\item A list of ID vectors, where the list names indicate the parameter values.
+Example: \code{col = list(red = 1:2, blue = 3:5)}.
+\item List entries may also be functions, taking the pedigree \code{x} as input and
+producing a vector of ID labels. The many built-in functions in
+\link{ped_subgroups} are particularly handy here, e.g.: \code{fill = list(red = founders, blue = leaves)}.
+}
 }
 \examples{
 x = nuclearPed()

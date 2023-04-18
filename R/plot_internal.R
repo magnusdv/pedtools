@@ -51,6 +51,24 @@
 #'
 #' ```
 #'
+#' The arguments `col`, `fill`, `lty` and `lwd` can all be indicated in a number
+#' of ways:
+#'
+#' * An unnamed vector. This will be recycled and applied to all members. For
+#' example, `lty = 2` gives everyone a dashed outline.
+#'
+#' * A named vector. Only pedigree members appearing in the names are affected.
+#' Example: `fill = c("1" = "red", foo = "blue")` fills individual `1` red and
+#' `foo` blue.
+#'
+#' * A list of ID vectors, where the list names indicate the parameter values.
+#' Example: `col = list(red = 1:2, blue = 3:5)`.
+#'
+#' * List entries may also be functions, taking the pedigree `x` as input and
+#' producing a vector of ID labels. The many built-in functions in
+#' [ped_subgroups] are particularly handy here, e.g.: `fill = list(red =
+#' founders, blue = leaves)`.
+#'
 #' @param x A [ped()] object.
 #' @param plist Alignment list with format similar to
 #'   [kinship2::align.pedigree()].
@@ -90,19 +108,24 @@
 #' @param showEmpty A logical, indicating if empty genotypes should be included.
 #' @param title The plot title. If NULL (default) or '', no title is added to
 #'   the plot.
-#' @param col A vector of colours for the pedigree members, recycled if
-#'   necessary. Alternatively, `col` can be a list assigning colours to specific
-#'   members. For example if `col = list(red = "a", blue = c("b", "c"))` then
-#'   individual "a" will be red, "b" and "c" blue, and everyone else black. By
-#'   default everyone is black.
+#' @param col A vector or list specifying outline colours for the pedigree
+#'   members. See Details for valid formats.
+#' @param fill A vector or list specifying fill/hatch colours for the pedigree
+#'   members. See Details for valid formats. Note that if `fill` is unnamed, and
+#'   either `aff` or `hatched` are given, then the fill colour is applied only
+#'   to those.
+#' @param lty,lwd Vectors or lists specifying linetype and width of pedigree
+#'   symbol outlines. See Details for valid formats.
+#' @param hatched A vector of labels identifying members whose plot symbols
+#'   should be hatched.
+#' @param hatchDensity A number specifying the hatch density in lines per inch.
+#'   Default: 25.
 #' @param aff A vector of labels identifying members whose plot symbols should
 #'   be filled. (This is typically used in medical pedigrees to indicate
 #'   affected members.)
 #' @param carrier A vector of labels identifying members whose plot symbols
 #'   should be marked with a dot. (This is typically used in medical pedigrees
 #'   to indicate unaffected carriers of the disease allele.)
-#' @param hatched A vector of labels identifying members whose plot symbols
-#'   should be hatched.
 #' @param deceased A vector of labels indicating deceased pedigree members.
 #' @param starred A vector of labels indicating pedigree members that should be
 #'   marked with a star in the pedigree plot.
@@ -218,9 +241,10 @@ NULL
 
 #' @rdname internalplot
 #' @export
-.pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-",
-                          showEmpty = FALSE, labs = labels(x), col = 1, aff = NULL, carrier = NULL,
-                          hatched = NULL, deceased = NULL, starred = NULL,
+.pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
+                          labs = labels(x), col = 1, fill = NA, lty = 1, lwd = 1,
+                          hatched = NULL, hatchDensity = 25, aff = NULL, carrier = NULL,
+                          deceased = NULL, starred = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal", ...) {
 
   res = list()
@@ -318,23 +342,6 @@ NULL
 
   res$textInside = textInside
 
-  # Colours -----------------------------------------------------------------
-
-  if(!is.list(col))
-    colvec = rep(col, length = nInd)
-  else { # E.g. list(red = 1:2, blue = 3:4)
-    colvec = rep(1, nInd)
-    for(cc in names(col)) {
-      thiscol = col[[cc]]
-      if(is.function(thiscol))
-        idscol = thiscol(x)
-      else
-        idscol = intersect(x$ID, thiscol)
-      colvec[internalID(x, idscol)] = cc
-    }
-  }
-
-  res$colvec = colvec
 
   # Affected/hathced --------------------------------------------------------
 
@@ -342,19 +349,52 @@ NULL
     aff = aff(x)
   if(is.function(hatched))
     hatched = hatched(x)
-  if(!is.null(aff) && !is.null(hatched))
-    stop2("Both `aff` and `hatched` cannot both be used")
+  isaff = x$ID %in% aff
+  ishatch = x$ID %in% hatched
 
-  # filling density and angle
-  density = if(!is.null(aff)) -1 else if(!is.null(hatched)) 25 else NULL
-  angle = if(!is.null(aff)) 90 else if(!is.null(hatched)) 45 else NULL
+  # filling density (-1 = fill; 25 = hatch)
+  densvec = integer(nInd)
+  densvec[isaff] = -1
+  densvec[ishatch] = hatchDensity
+  res$densvec = densvec
 
-  if(!is.null(hatched))
-    aff = hatched # for kinship2
+  # See fill color below!
 
-  res$aff01 = ifelse(x$ID %in% aff, 1, 0)
-  res$density = density
-  res$angle = angle
+  # Colours (border)----------------------------------------------------------
+
+  res$colvec = .prepPlotarg(x, col, default = 1)
+
+  # Fill color --------------------------------------------------------------
+
+  affORhatch = isaff | ishatch
+
+  # If aff/hatch given apply simple fill only to those
+  if(any(affORhatch) && !is.list(fill) && is.null(names(fill)) && !identical(fill, NA)) {
+    fillvec = rep(NA, length = nInd)
+    fillvec[affORhatch] = fill
+  }
+  else
+    fillvec = .prepPlotarg(x, fill, default = NA)
+
+  # Ensure aff/hatch are filled
+  fillvec[affORhatch & is.na(fillvec)] = 1
+
+  res$fillvec = fillvec
+
+
+  # Linetype ----------------------------------------------------------------
+  ltyvec = .prepPlotarg(x, lty, default = 1)
+
+  if(any(badlty <- !ltyvec %in% 0:6)) {
+    ltynames = c("blank", "solid", "dashed", "dotted", "dotdash", "longdash", "twodash")
+    ltyvec[badlty] = match(ltyvec[badlty], ltynames, nomatch = 2) - 1
+    ltyvec = as.integer(ltyvec)
+  }
+  res$ltyvec = ltyvec
+
+  # Line width ----------------------------------------------------------------
+
+  res$lwdvec = .prepPlotarg(x, lwd, default = 1)
 
   # Carriers ----------------------------------------------------------------
 
@@ -563,11 +603,6 @@ NULL
   if(isTRUE(alignment$arrows))
     return(.plotDAG(alignment, annotation, scaling))
 
-  AFF = annotation$aff01 %||% 0
-  COL = annotation$colvec %||% 1
-  density = annotation$density %||% -1
-  angle = annotation$angle %||% 90
-
   n = alignment$nInd
   plotord = alignment$plotord
   xall = alignment$xall
@@ -586,13 +621,22 @@ NULL
   branch = 0.6
   pconnect = .5
 
-  # Colour vector
+  COL = annotation$colvec %||% 1
+  FILL = annotation$fillvec %||% NA
+  LTY = annotation$ltyvec %||% 1
+  DENS = annotation$densvec %||% 0
+  LWD = annotation$lwdvec %||% 1
+
   if (length(COL) == 1)
     COL = rep(COL, n)
-
-  # Aff vector
-  if (length(AFF) == 1)
-    AFF = rep(AFF, n)
+  if (length(FILL) == 1)
+    FILL = rep(FILL, n)
+  if (length(LTY) == 1)
+    LTY = rep(LTY, n)
+  if (length(DENS) == 1)
+    DENS = rep(DENS, n)
+  if (length(LWD) == 1)
+    LWD = rep(LWD, n)
 
   # Set user coordinates
   par(mar = scaling$mar, usr = scaling$usr, xpd = TRUE)
@@ -603,21 +647,16 @@ NULL
                list(x = 0.5 * cos(seq(0, 2 * pi, length = 50)),     # circle
                     y = 0.5 * sin(seq(0, 2 * pi, length = 50)) + 0.5))
 
-  # Function for drawing a single symbol
-  drawbox = function(xpos, ypos, sex, aff, col) {
-    poly = POLYS[[sex + 1]]
-
-    polygon(xpos + poly$x * boxw, ypos + poly$y * boxh, border = col,
-            col = if(aff == 1) col else NA, angle = angle,
-            density = if(aff == 1) density else NULL)
-  }
-
   # Draw all the symbols
   for (k in seq_along(plotord)) {
     id = plotord[k]
-    drawbox(xpos = xall[k], ypos = yall[k],
-            sex = SEX[id], aff = AFF[id],
-            col = COL[id])
+    poly = POLYS[[SEX[id] + 1]]
+    dens = if(DENS[id] == 0) NULL else DENS[id]
+    polygon(xall[k] + poly$x * boxw,
+            yall[k] + poly$y * boxh,
+            border = COL[id], col = FILL[id],
+            lty = LTY[id], lwd = LWD[id],
+            angle = 45, density = dens)
   }
 
   ## Add lines between spouses (MDV: Vectorized/simplified)
@@ -847,4 +886,32 @@ NULL
   plist
 }
 
+# Convert plot parameter (col/fill/lty/lwd) to full vector in pedigree order
+.prepPlotarg = function(x, par, default) {
+  nInd = length(x$ID)
+  nms = names(par)
 
+  if(!is.list(par)) {
+    if(!is.null(nms)) {
+      vec = rep(default, length = nInd)
+      ids = intersect(x$ID, nms)
+      vec[internalID(x, ids)] = par[ids]
+    }
+    else {
+      vec = rep(par, length = nInd)
+    }
+  }
+  else { # E.g. list(red = 1:2, "3" = males)
+    vec = rep(default, nInd)
+    for(cc in nms) {
+      v = par[[cc]]
+      if(is.function(v))
+        ids = v(x)
+      else
+        ids = intersect(x$ID, v)
+      vec[internalID(x, ids)] = cc
+    }
+  }
+
+  vec
+}
