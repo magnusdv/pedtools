@@ -388,13 +388,13 @@ NULL
   if(any(badlty <- !ltyvec %in% 0:6)) {
     ltynames = c("blank", "solid", "dashed", "dotted", "dotdash", "longdash", "twodash")
     ltyvec[badlty] = match(ltyvec[badlty], ltynames, nomatch = 2) - 1
-    ltyvec = as.integer(ltyvec)
+    ltyvec = as.numeric(ltyvec)
   }
   res$ltyvec = ltyvec
 
   # Line width ----------------------------------------------------------------
 
-  res$lwdvec = .prepPlotarg(x, lwd, default = 1)
+  res$lwdvec = as.numeric(.prepPlotarg(x, lwd, default = 1))
 
   # Carriers ----------------------------------------------------------------
 
