@@ -78,7 +78,7 @@ summary.ped = function(object, ...) {
   cat(sprintf("Pedigree with %d members (%d males, %d females, %d unknown).\n",
               pedsize(x), sum(x$SEX == 1), sum(x$SEX == 2), sum(x$SEX == 0)))
   cat(sprintf("%d generations, %d founders, %d leaves.\n",
-              generations(x, maxOnly = TRUE), length(founders(x)), length(leaves(x))))
+              generations(x, "max"), length(founders(x)), length(leaves(x))))
   nm = nMarkers(x)
   na = nAlleles.ped(x)
   if(nm == 0)

@@ -3,8 +3,8 @@
 #' Various utility functions for `ped` objects.
 #'
 #' @param x A `ped` object, or (in some functions - see Details) a list of such.
-#' @param maxOnly A logical, by default TRUE. (See Value.)
-#' @param maxComp A logical, by default TRUE. (See Value.)
+#' @param what Either "max", "compMax", "indiv" or "depth" (See Value.)
+#' @param maxOnly,maxComp Deprecated; use `what instead.
 #' @param chromType Either "autosomal" (default) or "x".
 #'
 #' @return
@@ -14,12 +14,12 @@
 #'
 #' * `generations(x)` by default returns the number of generations in `x`,
 #' defined as the number of individuals in the longest line of parent-child
-#' links. (Note that this definition is valid also if `x` has loops and/or
-#' cross-generational marriages.) If `maxOnly = FALSE`, the output is a named
-#' integer vector, showing the generation number of each pedigree member. If `x`
-#' has multiple components, the output depends on the parameter `maxComp`. If
-#' this is FALSE, the output is a vector containing the result for each
-#' component. If TRUE (default), only the highest number is returned.
+#' links. (Note that this is well-defined also if `x` has loops and/or
+#' cross-generational marriages.) For individual generation numbers, use `what =
+#' "indiv"` (generation numbering as in the plot) or `what = "depth" (length of
+#' the longest chain up to a founder). Finally, if `x` has multiple components,
+#' and what = "compMax"`, the function returns a vector with the generation
+#' count from each component.
 #'
 #' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of
@@ -74,6 +74,15 @@
 #' stopifnot(length(subnucs(z1)) == 0)
 #' peelingOrder(cousinPed(1))
 #'
+#' # Plot with generation numbers as labels
+#' w = cousinPed(1)
+#' g = generations(w, what = "indiv")
+#' labs = setNames(labels(w), g)
+#' plot(w, labs = labs)
+#'
+#' # ... compare with
+#' plot(relabel(w, "generations"))
+#'
 #' @name ped_utils
 NULL
 
@@ -90,32 +99,75 @@ pedsize = function(x) {
 
 #' @rdname ped_utils
 #' @export
-generations = function(x, maxOnly = TRUE, maxComp = TRUE) {
+generations = function(x, what = c("max", "compMax", "indiv", "depth"),
+                       maxOnly = TRUE, maxComp = TRUE) {
+
+  if(!maxOnly || !maxComp) {
+    message("Arguments `maxOnly` and `maxComp` are deprecated; use `what` instead.")
+
+    if(!maxOnly)
+      what = "depth"
+    if(!maxComp)
+      what = "compMax"
+  }
 
   if(is.pedList(x)) {
-    gens = sapply(x, generations)
-    return(if(maxComp) max(gens) else gens)
+    what = match.arg(what)
+    usewhat = if(what == "compMax") "max" else what
+    res = lapply(x, function(comp) generations(comp, what = usewhat))
+    return(switch(what,
+                  max = max(unlist(res)),
+                  compMax = unlist(res),
+                  indiv = , depth = res))
   }
+
+  what = match.arg(what)
+
+  if(what == "indiv") {
+    p = .pedAlignment(x)$plist
+    gen = rep(seq_along(p$n), p$n)
+
+    oldIdx = unlist(lapply(seq_along(p$n), function(i) p$nid[i, 1:p$n[i]]))
+    dups = duplicated(oldIdx)
+    if(any(dups)) {
+      oldIdx = oldIdx[!dups]
+      gen = gen[!dups]
+    }
+
+    # Check for error
+    if(length(oldIdx) != length(x$ID)) {
+      warning("Alignment error; cannot find generation numbers")
+      return(NULL)
+    }
+
+    names(gen) = x$ID[oldIdx]
+    return(gen[x$ID])
+  }
+
+  # Depth definition: dp[i] = 1 + max(dp[parents])
+  # NB: Algorithm requires "parentsBeforeChildren".
+  # Iteration starting with depth = 1 for founders
 
   xorig = x
   x = parentsBeforeChildren(x)
 
+  N = length(x$ID)
   FIDX = x$FIDX
   MIDX = x$MIDX
-  NONFOU = nonfounders(x, internal = TRUE)
-  N = pedsize(x)
+  FOU = which(FIDX == 0) # founders(x, internal = TRUE)
+  NONFOU = which(FIDX > 0)
 
-  # Vector of (maximal) generation number of each ID: dp[i] = 1 + max(dp[parents])
-  # NB: Requires "parentsBeforeChildren".
-  dp = rep(1L, N)
+  dp = rep(1L, N) # depth = 1 for founders
   for(i in NONFOU)
     dp[i] = 1L + max(dp[c(FIDX[i], MIDX[i])])
 
-  if(maxOnly)
+  if(what == "max")
     return(max(dp))
 
-  names(dp) = x$ID
-  dp[xorig$ID]
+  if(what == "depth") {
+    names(dp) = x$ID
+    dp[xorig$ID]
+  }
 }
 
 

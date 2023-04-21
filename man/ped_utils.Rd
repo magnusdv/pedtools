@@ -14,7 +14,12 @@
 \usage{
 pedsize(x)
 
-generations(x, maxOnly = TRUE, maxComp = TRUE)
+generations(
+  x,
+  what = c("max", "compMax", "indiv", "depth"),
+  maxOnly = TRUE,
+  maxComp = TRUE
+)
 
 hasUnbrokenLoops(x)
 
@@ -31,9 +36,9 @@ peelingOrder(x)
 \arguments{
 \item{x}{A \code{ped} object, or (in some functions - see Details) a list of such.}
 
-\item{maxOnly}{A logical, by default TRUE. (See Value.)}
+\item{what}{Either "max", "compMax", "indiv" or "depth" (See Value.)}
 
-\item{maxComp}{A logical, by default TRUE. (See Value.)}
+\item{maxOnly, maxComp}{Deprecated; use `what instead.}
 
 \item{chromType}{Either "autosomal" (default) or "x".}
 }
@@ -43,12 +48,9 @@ peelingOrder(x)
 \code{x}.
 \item \code{generations(x)} by default returns the number of generations in \code{x},
 defined as the number of individuals in the longest line of parent-child
-links. (Note that this definition is valid also if \code{x} has loops and/or
-cross-generational marriages.) If \code{maxOnly = FALSE}, the output is a named
-integer vector, showing the generation number of each pedigree member. If \code{x}
-has multiple components, the output depends on the parameter \code{maxComp}. If
-this is FALSE, the output is a vector containing the result for each
-component. If TRUE (default), only the highest number is returned.
+links. (Note that this is well-defined also if \code{x} has loops and/or
+cross-generational marriages.) For individual generation numbers, use \code{what = "indiv"} (generation numbering as in the plot) or \verb{what = "depth" (length of the longest chain up to a founder). Finally, if }x\verb{ has multiple components, and what = "compMax"}, the function returns a vector with the generation
+count from each component.
 \item \code{hasUnbrokenLoops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
 computation is done here; the function simply returns the value of
 \code{x$UNBROKEN_LOOPS}).
@@ -100,5 +102,14 @@ stopifnot(!hasSelfing(z1), hasSelfing(z2))
 # Nucleus sub-pedigrees
 stopifnot(length(subnucs(z1)) == 0)
 peelingOrder(cousinPed(1))
+
+# Plot with generation numbers as labels
+w = cousinPed(1)
+g = generations(w, what = "indiv")
+labs = setNames(labels(w), g)
+plot(w, labs = labs)
+
+# ... compare with
+plot(relabel(w, "generations"))
 
 }

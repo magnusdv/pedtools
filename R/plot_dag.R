@@ -2,8 +2,9 @@
 .alignDAG = function(x) {
 
   # Generation number of each
-  gvec = generations(x, maxOnly = FALSE)
-  gvec = as.integer(gvec) # remove names
+  # TODO: Change to `what = "indiv"` when this gets a proper implementation
+  gvec = generations(x, what = "depth")
+  gvec = as.integer(unlist(gvec)) # remove names
 
   # Founders: Place with earliest spouse
   fou = founders(x, internal = TRUE)
@@ -42,22 +43,11 @@
   xall = alignment$xall
   yall = alignment$yall
 
-  COL = annotation$colvec %||% 1
-  FILL = annotation$fillvec %||% NA
-  LTY = annotation$ltyvec %||% 1
-  DENS = annotation$densvec %||% 0
-  LWD = annotation$lwdvec %||% 1
-
-  if (length(COL) == 1)
-    COL = rep(COL, n)
-  if (length(FILL) == 1)
-    FILL = rep(FILL, n)
-  if (length(LTY) == 1)
-    LTY = rep(LTY, n)
-  if (length(DENS) == 1)
-    DENS = rep(DENS, n)
-  if (length(LWD) == 1)
-    LWD = rep(LWD, n)
+  COL = annotation$colvec %||% rep(1, n)
+  FILL = annotation$fillvec %||% rep(NA, n)
+  LTY = annotation$ltyvec %||% rep(1, n)
+  DENS = annotation$densvec %||% rep(0, n)
+  LWD = annotation$lwdvec %||% rep(1, n)
 
   # Set user coordinates
   par(mar = scaling$mar, usr = scaling$usr, xpd = TRUE)
@@ -67,9 +57,6 @@
   boxh = scaling$boxh
   rx = boxw/2
   ry = boxh/2
-
-  branch = 0.6
-  pconnect = .5
 
   # Shapes
   POLYS = list(list(x = c(0, -0.5, 0, 0.5), y = c(0, 0.5, 1, 0.5)), # diamond
@@ -102,8 +89,8 @@
 
 #' @importFrom graphics arrows
 shortArrows = function(x0, y0, x1, y1, sex0, sex1, rx, ry, sex, length = 0.1, ...) {
-  # NB: Points are given for top center of symbol!
-  # Adjusting to mid center
+  # NB: Points are given for top centre of symbol!
+  # Adjusting to mid centre
   y0 = y0 + ry
   y1 = y1 + ry
 
