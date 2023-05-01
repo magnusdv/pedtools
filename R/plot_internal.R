@@ -388,9 +388,8 @@ NULL
   if(any(badlty <- !ltyvec %in% 0:6)) {
     ltynames = c("blank", "solid", "dashed", "dotted", "dotdash", "longdash", "twodash")
     ltyvec[badlty] = match(ltyvec[badlty], ltynames, nomatch = 2) - 1
-    ltyvec = as.numeric(ltyvec)
   }
-  res$ltyvec = ltyvec
+  res$ltyvec = as.numeric(ltyvec)
 
   # Line width ----------------------------------------------------------------
 
@@ -909,7 +908,10 @@ NULL
         ids = v(x)
       else
         ids = intersect(x$ID, v)
-      vec[internalID(x, ids)] = cc
+
+      idsInt = internalID(x, ids)
+      if(length(idsInt))
+        vec[idsInt] = cc
     }
   }
 
