@@ -146,6 +146,10 @@ setFreqDatabase = function(x, database, format = c("list", "ladder"), ...) {
     message("Skipping marker not found in database: ", toString(xMarkers[mtch == 0]))
 
   useLoci = loci[mtch]
+
+
+
+
   setLocusAttributes(x, locusAttributes = useLoci, matchNames = TRUE, erase = FALSE)
 }
 

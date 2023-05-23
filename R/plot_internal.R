@@ -196,6 +196,7 @@ NULL
 
   k2ped = as_kinship2_pedigree(x, twins = twins)
   plist = kinship2::align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
+  # plist = align.pedigree.kinship2.v185(k2ped, packed = packed, width = width, align = align, hints = hints)
 
   # Ad hoc fix for 3/4 siblings and similar
   if(is.null(hints))
