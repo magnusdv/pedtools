@@ -106,7 +106,7 @@ randomPed = function(n, f = 2, maxDirectGap = 1, selfing = FALSE,
     w1 = w1/sum(w1)
 
     # Candidates to avoid for first parent (maxDirectGap may be prohibitive)
-    if(!selfing && !is.null(maxDirectGap) && maxDirectGap == 0) {
+    if(!selfing && !is.null(maxDirectGap) && maxDirectGap < Inf) {
        avoid = sapply(sq, function(i) {
          gapsi = pmax(gengap[sq, i], gengap[i, sq], na.rm = TRUE)
          toofar = !is.na(gapsi) & gapsi > maxDirectGap
