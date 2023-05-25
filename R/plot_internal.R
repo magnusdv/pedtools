@@ -196,7 +196,13 @@ NULL
 
   k2ped = as_kinship2_pedigree(x, twins = twins)
   plist = kinship2::align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
-  # plist = align.pedigree.kinship2.v185(k2ped, packed = packed, width = width, align = align, hints = hints)
+
+  # Catch missing persons (kindepth bug!)
+  ERR = sum(plist$n) < length(x$ID)
+  if(ERR) {
+    warning("Alignment failed; switching to simple DAG alignment", call. = FALSE)
+    return(.alignDAG(x))
+  }
 
   # Ad hoc fix for 3/4 siblings and similar
   if(is.null(hints))
