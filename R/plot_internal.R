@@ -1,5 +1,4 @@
-# Modified from `kinship2::plot.pedigree()`.
-# The main changes are:
+# Modified from `kinship2::plot.pedigree()`. The main changes are:
 #
 # * Separate setup (dimensions and scaling), drawing and annotation (see below)
 # * Fixed scaling bugs, documented here: https://github.com/mayoverse/kinship2/pull/10
@@ -14,7 +13,8 @@
 #     - branch = 0.6
 #     - packed = TRUE
 #
-# Internally, the previous single `plot()` function has been refactored into the following steps:
+# Internally, the previous single `plot()` function has been refactored into the
+# following steps:
 # * .pedAlignment(): Builds on `kinship2::align.pedigree(), but also handles singletons and DAGs
 # * .pedAnnotation(): Prepare and collect annotation variables
 # * .pedScaling(): Calculate symbol sizes and scaling variables
@@ -886,7 +886,7 @@ NULL
   # If hints added, redo alignment
   if(!is.null(SP)) {
     hints = list(order = seq_along(x$ID), spouses = SP)
-    plist = align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
+    plist = kinship2::align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
   }
 
   plist

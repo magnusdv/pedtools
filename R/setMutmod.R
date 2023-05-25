@@ -97,7 +97,7 @@ setMutmod = function(x, markers = NULL, ..., update = FALSE) {
     useopts = opts
 
     if(update && !is.null(oldmut <- mutmod(x, i))) {
-      oldpar = getParams(oldmut)
+      oldpar = pedmut::getParams(oldmut)
       oldparList = lapply(oldpar, function(v) list(female = v[1], male = v[2]))
       useopts = modifyList(oldparList, opts)
     }

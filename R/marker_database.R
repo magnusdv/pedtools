@@ -147,9 +147,6 @@ setFreqDatabase = function(x, database, format = c("list", "ladder"), ...) {
 
   useLoci = loci[mtch]
 
-
-
-
   setLocusAttributes(x, locusAttributes = useLoci, matchNames = TRUE, erase = FALSE)
 }
 
