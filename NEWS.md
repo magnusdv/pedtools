@@ -1,3 +1,26 @@
+# pedtools 2.2.0
+
+## New features
+
+* The **pedprobr** function `setMutationModel()` has been moved to **pedtools** and renamed to `setMutmod()`. Unlike its predecessor, this has a new argument `update`, allowing to update existing models (i.e., leaving unspecified parameters unchanged) instead of creating new models from scratch.
+
+* In `swapSex()` and `setSex()`, the `ids` parameter may now be the name of a selector function operating on the input pedigree. This is convenient when piping; for example, `x |> setSex(ids = leaves, sex = 0)` sets unknown sex for all leaves of `x`.
+
+* `print.ped()` now returns the `ped` object (not the data frame, as before) invisibly.
+
+* `plot.ped()` gains new arguments `fill`, `lty`, `lwd` and `hatchDensity`.
+
+* `generations()` have been rewritten, with new parameter `what`.
+
+* `addMarker()` gains argument `locusAttr`.
+ 
+## Bug fixes
+
+* Fixed a bug in `randomPed()`, which caused the function to run out of mating options sometimes.
+
+* The pedigree plot alignment fails in some cases (see https://github.com/mayoverse/kinship2/issues/13). When this happens the plot method reverts to DAG mode and gives a warning.
+
+
 # pedtools 2.1.1
 
 ## New features
