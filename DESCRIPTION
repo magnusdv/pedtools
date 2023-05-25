@@ -22,12 +22,12 @@ URL: https://github.com/magnusdv/pedtools,
 Depends: 
     R (>= 4.1)
 Imports: 
-    kinship2
+    kinship2,
+    pedmut
 Suggests: 
     igraph,
     kableExtra,
     knitr,
-    pedmut,
     rmarkdown,
     testthat
 VignetteBuilder: 
