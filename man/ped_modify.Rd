@@ -21,9 +21,9 @@ addChildren(
   verbose = TRUE
 )
 
-addSon(x, parents, id = NULL, verbose = TRUE, parent = NULL)
+addSon(x, parents, id = NULL, verbose = TRUE)
 
-addDaughter(x, parents, id = NULL, verbose = TRUE, parent = NULL)
+addDaughter(x, parents, id = NULL, verbose = TRUE)
 
 addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
 
@@ -65,8 +65,6 @@ labels are assigned automatically as explained in Details.}
 existing member of \code{x}.}
 
 \item{id}{The ID label of a pedigree member.}
-
-\item{parent}{Deprecated; renamed to \code{parents}.}
 
 \item{remove}{Either "ancestors" or "descendants" (default), dictating the
 method of removing pedigree members. Abbreviations are allowed.}

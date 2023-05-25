@@ -51,7 +51,6 @@
 #' @param verbose A logical: Verbose output or not.
 #' @param parents A vector of 1 or 2 ID labels, of which at least one must be an
 #'   existing member of `x`.
-#' @param parent Deprecated; renamed to `parents`.
 #'
 #' @return The modified `ped` object.
 #' @seealso [ped()], [relabel()], [swapSex()]
@@ -185,9 +184,7 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
 
 #' @rdname ped_modify
 #' @export
-addSon = function(x, parents, id = NULL, verbose = TRUE, parent = NULL) {
-  if(!is.null(parent))
-    parents = parent
+addSon = function(x, parents, id = NULL, verbose = TRUE) {
 
   npar = length(parents)
   if(npar == 0 || npar > 2)
@@ -212,9 +209,7 @@ addSon = function(x, parents, id = NULL, verbose = TRUE, parent = NULL) {
 
 #' @rdname ped_modify
 #' @export
-addDaughter = function(x, parents, id = NULL, verbose = TRUE, parent = NULL) {
-  if(!is.null(parent))
-    parents = parent
+addDaughter = function(x, parents, id = NULL, verbose = TRUE) {
 
   npar = length(parents)
   if(npar == 0 || npar > 2)
