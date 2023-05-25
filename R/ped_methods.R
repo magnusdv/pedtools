@@ -12,6 +12,7 @@
 #'   markers, the first 5 are displayed.
 #' @param verbose If TRUE, a message is printed if only the first 5 markers are
 #'   printed. (See above).
+#'
 #' @export
 print.ped = function(x, ..., markers, verbose = TRUE) {
   nm = nMarkers(x)
@@ -39,7 +40,7 @@ print.ped = function(x, ..., markers, verbose = TRUE) {
   if(showmess && verbose)
     message("Only 5 (out of ", nm, ") markers are shown.")
 
-  invisible(datafr)
+  invisible(x)
 }
 
 
