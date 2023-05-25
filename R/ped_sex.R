@@ -1,10 +1,17 @@
 #' Get or set the sex of pedigree members
 #'
 #' Functions for retrieving or changing the sex of specified pedigree members.
+#' When used in pedigree constructions, `swapSex()` is usually more convenient
+#' than `setSex()`, since it deals with spouses automatically.
+#'
+#' To set unknown sex, use `setSex(x, ids, sex = 0)`. Note that if a nonfounder
+#' has unknown sex the pedigree cannot be plotted in the usual way, only with
+#' `plot(x, arrows = TRUE)`.
 #'
 #' @param x A `ped` object or a list of such.
-#' @param ids A character vector (or coercible to one) containing ID labels. If
-#'   NULL, defaults to all members of `x`.
+#' @param ids A vector identifying members of `x`, or a function, in which case
+#'   it is replaced with `ids(x)` labels. If NULL, defaults to all members of
+#'   `x`.
 #' @param named A logical: return a named vector or not.
 #' @param sex A numeric vector with entries 1 (= male), 2 (= female) or 0 (=
 #'   unknown). If `ids` is NULL, `sex` must be named with ID labels. If `sex` is
@@ -22,7 +29,8 @@
 #' sex of `ids` is set according to the entries of `sex`
 #'
 #' * `swapSex(x, ids)` returns a ped object identical to `x`, but where the sex
-#' of `ids` (and their spouses) are swapped (1 <-> 2).
+#' of `ids` (and their spouses) are swapped (1 <-> 2). Individuals of unknown
+#' sex are ignored.
 #'
 #' @examples
 #' x = nuclearPed(father = "fa", mother = "mo", children = "ch")
@@ -38,8 +46,10 @@
 #' # Same, using a named vector
 #' setSex(x, sex = c(ch = 2))
 #'
-#' # Swapping sex is sometimes easier,
-#' # since spouses are dealt with automatically
+#' # Same, using a function (setting all leaves to be female)
+#' setSex(x, ids = leaves, sex = 2)
+#'
+#' # swapSex() deals with spouses automatically
 #' swapSex(x, ids = "fa")
 #'
 #' # setting/getting sex in a pedlist
@@ -82,16 +92,17 @@ getSex = function(x, ids = NULL, named = FALSE) {
 #' @rdname getSex
 #' @export
 setSex = function(x, ids = NULL, sex) {
-  if(!is.ped(x) && !is.pedList(x))
+
+  ispedlist <- is.pedList(x)
+  if(!is.ped(x) && !ispedlist)
     stop2("Input is not a `ped` object or a list of such")
 
-  if(is.null(ids))
-    ids = names(sex)
+  if(is.function(ids))
+    ids = ids(x)
+  else
+    ids = ids %||% names(sex) %||% stop2("If `ids` is NULL, then `sex` must be named")
 
-  if(is.null(ids))
-    stop2("If `ids` is NULL, then `sex` must be named")
-
-  sex = as.integer(sex) # strips names, but ok since ids is already defined
+  sex = as.integer(sex) # strip names
 
   idsL = length(ids)
   sexL = length(sex)
@@ -100,7 +111,7 @@ setSex = function(x, ids = NULL, sex) {
   else if(sexL > idsL)
     stop2("Argument `sex` is longer than `ids`")
 
-  if(is.pedList(x)) {
+  if(ispedlist) {
     y = lapply(x, function(comp) {
       idsInt = internalID(comp, ids, errorIfUnknown = FALSE)
       notNA = !is.na(idsInt)
@@ -123,7 +134,14 @@ setSex = function(x, ids = NULL, sex) {
 #' @export
 swapSex = function(x, ids, verbose = TRUE) {
 
-  if(is.pedList(x)) {
+  ispedlist <- is.pedList(x)
+  if(!is.ped(x) && !ispedlist)
+    stop2("Input is not a `ped` object or a list of such")
+
+  if(is.function(ids))
+    ids = ids(x)
+
+  if(ispedlist) {
     y = lapply(x, function(comp) {
       idsComp = intersect(comp$ID, ids)
       if(!length(idsComp))
@@ -132,8 +150,6 @@ swapSex = function(x, ids, verbose = TRUE) {
     })
     return(y)
   }
-  else if(!is.ped(x))
-    stop2("Input is not a `ped` object or a list of such")
 
   # Ignore individuals with unknown sex
   ids = ids[getSex(x, ids) != 0]

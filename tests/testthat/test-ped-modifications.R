@@ -36,6 +36,11 @@ test_that("setSex() recycles sex", {
   expect_identical(setSex(y, ids = 3:6, sex = 2:1), y2)
 })
 
+test_that("setSex() and swapSex() works with selectors", {
+  x = nuclearPed(1) |> setSex(ids = leaves, sex = 0) |> swapSex(ids = males)
+  y = nuclearPed(fa = 2, mo = 1, ch = 3, sex = 0) |> reorderPed(c(2,1,3))
+  expect_identical(x, y)
+})
 
 test_that("swapSex() works with trivial labels", {
   x = swapSex(nuclearPed(1, sex=1), 3)

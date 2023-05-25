@@ -15,8 +15,9 @@ swapSex(x, ids, verbose = TRUE)
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
 
-\item{ids}{A character vector (or coercible to one) containing ID labels. If
-NULL, defaults to all members of \code{x}.}
+\item{ids}{A vector identifying members of \code{x}, or a function, in which case
+it is replaced with \code{ids(x)} labels. If NULL, defaults to all members of
+\code{x}.}
 
 \item{named}{A logical: return a named vector or not.}
 
@@ -33,11 +34,19 @@ with entries 0 (unknown), 1 (male) or 2 (female).
 \item \code{setSex(x, ids, sex)} returns a ped object similar to \code{x}, but where the
 sex of \code{ids} is set according to the entries of \code{sex}
 \item \code{swapSex(x, ids)} returns a ped object identical to \code{x}, but where the sex
-of \code{ids} (and their spouses) are swapped (1 <-> 2).
+of \code{ids} (and their spouses) are swapped (1 <-> 2). Individuals of unknown
+sex are ignored.
 }
 }
 \description{
 Functions for retrieving or changing the sex of specified pedigree members.
+When used in pedigree constructions, \code{swapSex()} is usually more convenient
+than \code{setSex()}, since it deals with spouses automatically.
+}
+\details{
+To set unknown sex, use \code{setSex(x, ids, sex = 0)}. Note that if a nonfounder
+has unknown sex the pedigree cannot be plotted in the usual way, only with
+\code{plot(x, arrows = TRUE)}.
 }
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "ch")
@@ -53,8 +62,10 @@ setSex(x, ids = "ch", sex = 2)
 # Same, using a named vector
 setSex(x, sex = c(ch = 2))
 
-# Swapping sex is sometimes easier,
-# since spouses are dealt with automatically
+# Same, using a function (setting all leaves to be female)
+setSex(x, ids = leaves, sex = 2)
+
+# swapSex() deals with spouses automatically
 swapSex(x, ids = "fa")
 
 # setting/getting sex in a pedlist
