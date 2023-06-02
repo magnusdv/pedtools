@@ -321,33 +321,34 @@ NULL
     textAbove = sprintf("f = %.4g", finb)
     names(textAbove) = names(finb)
   }
-  if(!is.null(textAbove))
-    mode(textAbove) = "character"
+  # if(!is.null(textAbove))
+  #   mode(textAbove) = "character"
+  #
+  # nmsAbove = names(textAbove)
+  # if(!is.null(nmsAbove)) {
+  #   tmp = character(nInd)
+  #   tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
+  #   textAbove = tmp
+  # }
 
-  nmsAbove = names(textAbove)
-  if(!is.null(nmsAbove)) {
-    tmp = character(nInd)
-    tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
-    textAbove = tmp
-  }
-
-  res$textAbove = textAbove
+  res$textAbove = .prepLabs2(x, textAbove)
 
   # Text inside symbols ------------------------------------------------------
 
   if(is.function(textInside))
     textInside = textInside(x)
-  if(!is.null(textInside))
-    mode(textInside) = "character"
+  # if(!is.null(textInside))
+  #   mode(textInside) = "character"
+  #
+  # nmsInside = names(textInside)
+  # if(!is.null(nmsInside)) {
+  #   tmp = character(nInd)
+  #   tmp[internalID(x, nmsInside, errorIfUnknown = FALSE)] = textInside
+  #   textInside = tmp
+  # }
 
-  nmsInside = names(textInside)
-  if(!is.null(nmsInside)) {
-    tmp = character(nInd)
-    tmp[internalID(x, nmsInside, errorIfUnknown = FALSE)] = textInside
-    textInside = tmp
-  }
+  res$textInside = .prepLabs2(x, textInside)
 
-  res$textInside = textInside
 
 
   # Affected/hathced --------------------------------------------------------
@@ -431,7 +432,8 @@ NULL
   showIdx = mtch > 0
   showLabs = labs[mtch]
 
-  if(!is.null(nms <- names(labs))) { # use names(labs) if present
+  # Use names(labs) if present
+  if(!is.null(nms <- names(labs))) {
     newnames = nms[mtch]
     goodIdx = newnames != "" & !is.na(newnames)
     showLabs[goodIdx] = newnames[goodIdx]
@@ -439,6 +441,21 @@ NULL
 
   id[showIdx] = showLabs
   id
+}
+
+# Alternative to .prepLabs (used above/inside): If vector has names, match these to x$ID.
+.prepLabs2 = function(x, labs) {
+  mode(labs) = "character"
+
+  if(is.null(names(labs)) && length(labs) == length(x$ID))
+    return(labs)
+
+  ids = names(labs) %||% labs
+  mtch = match(x$ID, ids, nomatch = 0L)
+
+  txt = rep("", length(x$ID)) # Initialise
+  txt[mtch > 0] = labs[mtch]
+  txt
 }
 
 
