@@ -300,8 +300,13 @@ NULL
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
-    if (!showEmpty)
-      geno[rowSums(do.call(cbind, mlist)) == 0] = ""
+    if(is.logical(showEmpty) && length(showEmpty) == 1)
+      showEmpty = if(showEmpty) x$ID else NULL
+    hideEmpty = match(x$ID, showEmpty, nomatch = 0L) == 0
+    if (any(hideEmpty)) {
+      isEmpty = rowSums(do.call(cbind, mlist)) == 0
+      geno[isEmpty & hideEmpty] = ""
+    }
 
     textu = if (!any(nzchar(textu))) geno else paste(textu, geno, sep = "\n")
   }
