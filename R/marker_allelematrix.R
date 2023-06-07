@@ -222,10 +222,11 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     # Marker names: Use odd numbered columns
     if(hasMatrixNames) {
-      newnms = nms[seq.int(1, length(nms), by = 2)]
+      odd = seq.int(1, length(nms), by = 2)
+      newnms = nms[odd]
 
       # M1.1, M1.2, M2.1, M2.2, ... --> M1, M2, ...
-      if(all(endsWith(nms, ".1") | endsWith(nms, ".2")))
+      if(all(endsWith(nms[odd], "1")) && all(endsWith(nms[odd+1], "2")))
         newnms = substr(newnms, 1, nchar(newnms) - 2)
 
       nms = newnms
