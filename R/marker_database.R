@@ -33,22 +33,24 @@
 #'   or a file path (to be passed on to `readFreqDatabase()`).
 #' @param format Either "list" or "ladder".
 #' @param fixNames A logical (default: FALSE). If TRUE all marker names are
-#'   converted to upper case and "." and space characters are replaced with
-#'   "_" (underscore).
+#'   converted to upper case and "." and space characters are replaced with "_"
+#'   (underscore).
 #' @param filename The path to a text file containing allele frequencies either
 #'   in "list" or "allelic ladder" format.
+#' @param df A data frame of allele frequencies in either "list" or "allelic
+#'   ladder" format. This can be supplied instead of `filename`.
 #' @param ... Optional arguments passed on to [read.table()].
+#'
 #' @return
 #'
 #' * `getFreqDatabase`: either a list (if `format = "list"`) or a data
-#' frame (if `format = "ladder"`)
+#' frame (if `format = "ladder"`).
 #'
-#' * `readFreqDatabase`: a list (also if `format = "ladder"`) of named
-#' numeric vectors
+#' * `readFreqDatabase`: a list of named numeric vectors.
 #'
-#' * `setFreqDatabase`: a modified version of `x`
+#' * `setFreqDatabase`: a modified version of `x`.
 #'
-#' @seealso  [setLocusAttributes()], [setMarkers()], [setAlleles()]
+#' @seealso  [setLocusAttributes()], [setMarkers()], [setAlleles()].
 #'
 #' @examples
 #' loc1 = list(name = "m1", afreq = c(a = .1, b = .9))
@@ -194,53 +196,81 @@ freqDb2attribList = function(database, format = c("list", "ladder")) {
 
 #' @rdname freqDatabase
 #' @export
-readFreqDatabase = function(filename, format = c("list", "ladder"), fixNames = FALSE, ...) {
+readFreqDatabase = function(filename = NULL, df = NULL, format = c("list", "ladder"), fixNames = FALSE, ...) {
 
   format = match.arg(format)
 
-  if(format == "list") {
-    # Read as table with two columns
-    raw = read.table(filename, colClasses = c("character", "numeric"),
-                     header = FALSE, fill = TRUE, blank.lines.skip = FALSE, ...)
-    raw = raw[raw$V1 != "", 1:2, drop = FALSE]
-
-    # First/last lines numbers for each marker
-    newM = which(is.na(raw$V2))
-    stops = c(newM[-1] -  1, nrow(raw))
-    nms = raw[newM, 1]
-
-    # Convert to list of named frequency vectors
-    res = lapply(seq_along(nms), function(i) {
-      m = raw[newM[i]:stops[i], , drop = FALSE]
-      als = m[-1, 1]
-      afr = m[-1, 2]
-      setNames(afr, als)
-    })
+  if(is.null(df)) {
+    df = switch(format,
+      list = read.table(filename, colClasses = c("character", "numeric"),
+                       header = FALSE, fill = TRUE, blank.lines.skip = FALSE, ...),
+      ladder = read.table(filename, header = TRUE, row.names = 1,
+                            as.is = TRUE, check.names = FALSE, ...)
+    )
   }
-  else if(format == "ladder") {
 
-    # Read entire data frame
-    database = read.table(filename, header = TRUE, row.names = 1,
-                          as.is = TRUE, check.names = FALSE, ...)
-    als = rownames(database)
-    nms = colnames(database)
+  db = switch(format,
+    list = { # data frame with 2 columns
 
-    res = lapply(seq_along(nms), function(i) {
-      frqs = database[, i] # Column of frequencies
-      idx = !is.na(frqs)   # Index of rows with non-missing entries
-      setNames(frqs[idx], als[idx])
+      # Skip blank lines
+      blank = df[[1]] == "" | is.na(df[[1]])
+      df = df[!blank, 1:2, drop = FALSE]
+
+      # First/last lines numbers for each marker
+      labs = df[[1]]
+      freqs = df[[2]]
+
+      # New marker starts where freq column is empty (1st col = marker name)
+      nameRow = which(is.na(freqs))
+      nms = labs[nameRow]
+
+      freqStart = nameRow + 1
+      freqStop = c(nameRow[-1] -  1, length(freqs))
+
+      # Convert to list of named frequency vectors
+      lapply(seq_along(nms), function(i) {
+        rws = freqStart[i]:freqStop[i]
+        setNames(freqs[rws], labs[rws])
       })
-  }
+    },
+    ladder = {  # allelic ladder
+      mat = as.matrix(df)
+      als = rownames(mat)
+      nms = colnames(mat)
 
-  if(isTRUE(fixNames)) {
+      lapply(seq_along(nms), function(i) {
+        frqs = mat[, i]    # column of frequencies
+        idx = !is.na(frqs) # rows with non-missing entries
+        setNames(frqs[idx], als[idx])
+      })
+    })
+
+  if(fixNames) {
     # Default fixes: (i) convert all to upper case, (ii) replace space and "." with "_"
     nms = sub(" ", "_", sub(".", "_", toupper(nms), fixed = TRUE), fixed = TRUE)
   }
 
   # Add marker names
-  names(res) = nms
-  res
+  names(db) = nms
+
+  # Ensure numeric frequencies
+  db = lapply(db, function(afr) {
+    num = suppressWarnings(as.numeric(afr))
+    if(anyNA(num))
+      stop2("Non-numeric frequency detected: ", afr[is.na(num)])
+    afr[] = num
+
+    # Fix bad microvariant labels, e.g. "9.30000000007"
+    numals = suppressWarnings(as.numeric(names(afr)))
+    if(!anyNA(numals))
+      names(afr) = as.character(numals)
+
+    afr
+  })
+
+  db
 }
+
 
 #' @rdname freqDatabase
 #' @export

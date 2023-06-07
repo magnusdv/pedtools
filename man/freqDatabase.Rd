@@ -12,7 +12,13 @@ getFreqDatabase(x, markers = NULL, format = c("list", "ladder"))
 
 setFreqDatabase(x, database, format = c("list", "ladder"), ...)
 
-readFreqDatabase(filename, format = c("list", "ladder"), fixNames = FALSE, ...)
+readFreqDatabase(
+  filename = NULL,
+  df = NULL,
+  format = c("list", "ladder"),
+  fixNames = FALSE,
+  ...
+)
 
 writeFreqDatabase(x, filename, markers = NULL, format = c("list", "ladder"))
 }
@@ -32,17 +38,19 @@ or a file path (to be passed on to \code{readFreqDatabase()}).}
 \item{filename}{The path to a text file containing allele frequencies either
 in "list" or "allelic ladder" format.}
 
+\item{df}{A data frame of allele frequencies in either "list" or "allelic
+ladder" format. This can be supplied instead of \code{filename}.}
+
 \item{fixNames}{A logical (default: FALSE). If TRUE all marker names are
-converted to upper case and "." and space characters are replaced with
-"_" (underscore).}
+converted to upper case and "." and space characters are replaced with "_"
+(underscore).}
 }
 \value{
 \itemize{
 \item \code{getFreqDatabase}: either a list (if \code{format = "list"}) or a data
-frame (if \code{format = "ladder"})
-\item \code{readFreqDatabase}: a list (also if \code{format = "ladder"}) of named
-numeric vectors
-\item \code{setFreqDatabase}: a modified version of \code{x}
+frame (if \code{format = "ladder"}).
+\item \code{readFreqDatabase}: a list of named numeric vectors.
+\item \code{setFreqDatabase}: a modified version of \code{x}.
 }
 }
 \description{
@@ -92,5 +100,5 @@ stopifnot(all.equal(x, z))
 
 }
 \seealso{
-\code{\link[=setLocusAttributes]{setLocusAttributes()}}, \code{\link[=setMarkers]{setMarkers()}}, \code{\link[=setAlleles]{setAlleles()}}
+\code{\link[=setLocusAttributes]{setLocusAttributes()}}, \code{\link[=setMarkers]{setMarkers()}}, \code{\link[=setAlleles]{setAlleles()}}.
 }
