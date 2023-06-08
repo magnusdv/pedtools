@@ -621,7 +621,8 @@ plot.list = function(x, ...) {
   mrg = function(a, def)
     c(annot1[[a]] %||% rep(def, nInd1), annot2[[a]] %||% rep(def, nInd2))
 
-  annot = list(textUnder = mrg("textUnder", ""),
+  annot = list(title = annot1$title,
+               textUnder = mrg("textUnder", ""),
                textAbove = mrg("textAbove", ""),
                textInside = mrg("textInside", ""),
                colvec = mrg("colvec", 1),
