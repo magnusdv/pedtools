@@ -9,7 +9,7 @@
 \alias{setPosition}
 \title{Set marker attributes}
 \usage{
-setGenotype(x, marker = NULL, id, geno)
+setGenotype(x, marker = NULL, ids = NULL, geno = NULL, id = NULL)
 
 setAfreq(x, marker, afreq, strict = TRUE)
 
@@ -25,10 +25,11 @@ setPosition(x, marker = NULL, posMb)
 \item{marker}{A vector of indices or names of one or several markers attached
 to \code{x}.}
 
-\item{id}{The ID label of a single pedigree member.}
-
 \item{geno}{A character vector of length \code{pedsize(x)}, with genotypes written
 in the format "a/b".}
+
+\item{id, ids}{A vector naming one or several pedigree members, or a function
+(e.g., \code{\link[=founders]{founders()}}).}
 
 \item{afreq}{A numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
@@ -60,14 +61,18 @@ in-place modifiers described in \link{marker_inplace}.
 x = nuclearPed(1) |>
   addMarker(alleles = 1:2) |>
   setMarkername(marker = 1, name = "M") |>
-  setGenotype(marker = "M", id = 1, geno = "1/2") |>
+  setGenotype(marker = "M", ids = 1, geno = "1/2") |>
   setAfreq(marker = "M", afreq = c(`1` = 0.1, `2` = 0.9)) |>
   setChrom(marker = "M", chrom = 1) |>
   setPosition(marker = "M", posMb = 123.45)
 
 # Of course, all of this could have been done on creation:
-y = addMarker(nuclearPed(), `1` = "1/2", afreq = c(`1` = 0.1, `2` = 0.9),
-              name = "M", chrom = 1, posMb = 123.45)
+y = addMarker(nuclearPed(),
+              `1` = "1/2",
+              afreq = c(`1` = 0.1, `2` = 0.9),
+              name = "M",
+              chrom = 1,
+              posMb = 123.45)
 stopifnot(identical(x, y))
 
 }

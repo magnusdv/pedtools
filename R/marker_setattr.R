@@ -6,7 +6,8 @@
 #'
 #' @inheritParams marker
 #' @param x A `ped` object or a list of `ped` objects.
-#' @param id The ID label of a single pedigree member.
+#' @param id,ids A vector naming one or several pedigree members, or a function
+#'   (e.g., [founders()]).
 #' @param marker A vector of indices or names of one or several markers attached
 #'   to `x`.
 #' @param name A character of the same length as `marker`, containing marker
@@ -24,14 +25,18 @@
 #' x = nuclearPed(1) |>
 #'   addMarker(alleles = 1:2) |>
 #'   setMarkername(marker = 1, name = "M") |>
-#'   setGenotype(marker = "M", id = 1, geno = "1/2") |>
+#'   setGenotype(marker = "M", ids = 1, geno = "1/2") |>
 #'   setAfreq(marker = "M", afreq = c(`1` = 0.1, `2` = 0.9)) |>
 #'   setChrom(marker = "M", chrom = 1) |>
 #'   setPosition(marker = "M", posMb = 123.45)
 #'
 #' # Of course, all of this could have been done on creation:
-#' y = addMarker(nuclearPed(), `1` = "1/2", afreq = c(`1` = 0.1, `2` = 0.9),
-#'               name = "M", chrom = 1, posMb = 123.45)
+#' y = addMarker(nuclearPed(),
+#'               `1` = "1/2",
+#'               afreq = c(`1` = 0.1, `2` = 0.9),
+#'               name = "M",
+#'               chrom = 1,
+#'               posMb = 123.45)
 #' stopifnot(identical(x, y))
 #'
 #' @name marker_setattr
@@ -39,14 +44,14 @@ NULL
 
 # Set genotype ------------------------------------------------------------
 
-setGenotypeMarker = function(m, id, geno) {
+setGenotypeMarker = function(m, ids, geno) {
   pedlabels = attr(m, 'pedmembers')
-  id_int = match(id, pedlabels)
+  id_int = match(ids, pedlabels)
 
   if (anyNA(id_int))
-    stop2("Unknown ID label: ", setdiff(id, pedlabels))
+    stop2("Unknown ID label: ", setdiff(ids, pedlabels))
 
-  nid = length(id)
+  nid = length(ids)
   als = alleles(m)
 
   # Special case: geno gives two separate alleles
@@ -59,7 +64,7 @@ setGenotypeMarker = function(m, id, geno) {
   if(nid > 1 && ng == 1)
     geno = rep(geno, nid)
   else if(nid != ng)
-    stop2("When setting the genotype of multiple individuals, `geno` must have length either 1 or `length(id)`")
+    stop2("When setting the genotype of multiple individuals, `geno` must have length either 1 or `length(ids)`")
 
   genoList = strsplit(as.character(geno), "/", fixed = TRUE)
 
@@ -68,13 +73,13 @@ setGenotypeMarker = function(m, id, geno) {
   # Error if no alleles
   empt = lg == 0
   if(any(empt))
-    stop2("No alleles given for individual ", id[which(empt)])
+    stop2("No alleles given for individual ", ids[which(empt)])
 
   # Error if too many alleles
   bad = lg > 2
   if(any(bad)) {
     idx = which(bad)[1]
-    stop2(sprintf("Too many alleles given for individual '%s': ", id[idx]), genoList[[idx]])
+    stop2(sprintf("Too many alleles given for individual '%s': ", ids[idx]), genoList[[idx]])
   }
 
   # Error if only 1 allele given (except X males)
@@ -82,7 +87,7 @@ setGenotypeMarker = function(m, id, geno) {
   if(isXmarker.marker(m))
     short[attr(m, "sex")[id_int] == 1] = FALSE
   if(any(short))
-    stop2("Only one allele given for individual ", id[which(short)])
+    stop2("Only one allele given for individual ", ids[which(short)])
 
   # Remaining short (X males!): Duplicate
   genoList[lg == 1] = lapply(genoList[lg == 1], rep_len, 2)
@@ -109,46 +114,53 @@ setGenotypeMarker = function(m, id, geno) {
 
 #' @rdname marker_setattr
 #' @export
-setGenotype = function(x, marker = NULL, id, geno) {
+setGenotype = function(x, marker = NULL, ids = NULL, geno = NULL, id = NULL) {
+  if(!is.null(id))
+    ids = id
+
   if(is.null(marker))
     marker = seq_len(nMarkers(x))
 
   nma = length(marker)
-  nid = length(id)
+
+  if(is.function(ids))
+    ids = ids(x)
+
+  nid = length(ids)
   if(nma != 1 && nid != 1)
-    stop2("Either `marker` or `id` must have length 1")
+    stop2("Either `marker` or `ids` must have length 1")
 
   if(nma == 1 && nid == 1) {
 
     if(is.pedList(x)) {
-      comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-      x[[comp]] = setGenotype(x[[comp]], marker = marker, id = id, geno = geno)
+      comp = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
+      x[[comp]] = setGenotype(x[[comp]], marker = marker, ids = ids, geno = geno)
       return(x)
     }
 
     midx = whichMarkers(x, markers = marker)
-    x$MARKERS[[midx]] = setGenotypeMarker(x$MARKERS[[midx]], id = id, geno = geno)
+    x$MARKERS[[midx]] = setGenotypeMarker(x$MARKERS[[midx]], ids = ids, geno = geno)
     return(x)
   }
 
-  if(nma == 1 ) { # length(id) > 1
+  if(nma == 1 ) { # length(ids) > 1
     if(length(geno) == 1)
       geno = rep(geno, nid)
     else if(length(geno) != nid)
-      stop("When setting the genotype of multiple individuals, `geno` must have length either 1 or `length(id)`")
+      stop("When setting the genotype of multiple individuals, `geno` must have length either 1 or `length(ids)`")
 
     if(is.pedList(x)) {
-      comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
+      comp = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
       x[[comp]] = lapply(x[[comp]], function(y) {
-        idx = match(id, y$ID, nomatch = 0)
-        setGenotype(y, marker = marker, id = id[idx], geno = geno[idx])
+        idx = match(ids, y$ID, nomatch = 0)
+        setGenotype(y, marker = marker, ids = ids[idx], geno = geno[idx])
       })
 
       return(x)
     }
 
     midx = whichMarkers(x, markers = marker)
-    x$MARKERS[[midx]] = setGenotypeMarker(x$MARKERS[[midx]], id = id, geno = geno)
+    x$MARKERS[[midx]] = setGenotypeMarker(x$MARKERS[[midx]], ids = ids, geno = geno)
     return(x)
   }
 
@@ -160,15 +172,15 @@ setGenotype = function(x, marker = NULL, id, geno) {
       stop("When setting the genotype for multiple markers, `geno` must have length either 1 or `length(marker)`")
 
     if(is.pedList(x)) {
-      comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-      x[[comp]] = setGenotype(x[[comp]], marker = marker, id = id, geno = geno)
+      comp = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
+      x[[comp]] = setGenotype(x[[comp]], marker = marker, ids = ids, geno = geno)
       return(x)
     }
 
     midx = whichMarkers(x, markers = marker)
     x$MARKERS[midx] = lapply(seq_along(midx), function(k) {
       m = x$MARKERS[[midx[k]]]
-      setGenotypeMarker(m, id = id, geno = geno[k])
+      setGenotypeMarker(m, ids = ids, geno = geno[k])
     })
     return(x)
   }
