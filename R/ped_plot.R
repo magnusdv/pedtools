@@ -1,16 +1,16 @@
 #' Plot pedigree
 #'
-#' This is the main function for pedigree plotting, with many options for
-#' controlling the appearance of pedigree symbols and accompanying labels. The
-#' main pedigree layout is calculated with the `kinship2` package, see
+#' This is the main function for plotting pedigrees. Many options are available
+#' for controlling the appearance of pedigree symbols and accompanying labels.
+#' The most important ones are illustrated in the Examples section below; for a
+#' complete overview, see the separate page [internalplot], which also explains
+#' the plotting procedure in more detail.
+#'
+#' The main pedigree layout is calculated with the `kinship2` package, see
 #' [kinship2::align.pedigree] for details. Unlike `kinship2`, the implementation
 #' here also supports singletons, and plotting pedigrees as DAGs. In addition,
 #' some minor adjustments have been made to improve scaling and avoid unneeded
 #' duplications.
-#'
-#' For an overview of all plotting options, see the separate page
-#' [internalplot], which documents the internal plotting procedure in more
-#' detail.
 #'
 #' @param x A [ped()] object.
 #' @param draw A logical, by default TRUE. If FALSE, no plot is produced, only
@@ -47,7 +47,7 @@
 #' # Enlarge symbols only
 #' plot(x, symbolsize = 1.5)
 #'
-#' # Other options
+#' # Various annotations
 #' plot(x, hatched = "boy", starred = "fa", deceased = "mo", title = "Fam 1")
 #'
 #' # Medical pedigree

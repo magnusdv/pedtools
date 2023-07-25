@@ -40,18 +40,18 @@ A list of three lists with various plot details: \code{alignment},
 \code{annotation}, \code{scaling}.
 }
 \description{
-This is the main function for pedigree plotting, with many options for
-controlling the appearance of pedigree symbols and accompanying labels. The
-main pedigree layout is calculated with the \code{kinship2} package, see
+This is the main function for plotting pedigrees. Many options are available
+for controlling the appearance of pedigree symbols and accompanying labels.
+The most important ones are illustrated in the Examples section below; for a
+complete overview, see the separate page \link{internalplot}, which also explains
+the plotting procedure in more detail.
+}
+\details{
+The main pedigree layout is calculated with the \code{kinship2} package, see
 \link[kinship2:align.pedigree]{kinship2::align.pedigree} for details. Unlike \code{kinship2}, the implementation
 here also supports singletons, and plotting pedigrees as DAGs. In addition,
 some minor adjustments have been made to improve scaling and avoid unneeded
 duplications.
-}
-\details{
-For an overview of all plotting options, see the separate page
-\link{internalplot}, which documents the internal plotting procedure in more
-detail.
 }
 \examples{
 
@@ -72,7 +72,7 @@ plot(x, cex = 1.5)
 # Enlarge symbols only
 plot(x, symbolsize = 1.5)
 
-# Other options
+# Various annotations
 plot(x, hatched = "boy", starred = "fa", deceased = "mo", title = "Fam 1")
 
 # Medical pedigree
