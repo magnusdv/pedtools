@@ -29,6 +29,7 @@
   missing = "-",
   showEmpty = FALSE,
   labs = labels(x),
+  trimLabs = TRUE,
   col = 1,
   fill = NA,
   lty = 1,
@@ -123,6 +124,9 @@ labelled following the internal ordering.
 \item If \code{labs} is a function, it is replaced with \code{labs(x)} and handled as
 above. (See Examples.)
 }}
+
+\item{trimLabs}{A logical, by default TRUE. Removes line breaks and tabs from
+both ends of the labels (after adding genotypes, if \code{marker} is not NULL).}
 
 \item{col}{A vector or list specifying outline colours for the pedigree
 members. See Details for valid formats.}

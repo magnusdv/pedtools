@@ -89,6 +89,8 @@
 #'
 #'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
 #'   above. (See Examples.)
+#' @param trimLabs A logical, by default TRUE. Removes line breaks and tabs from
+#'   both ends of the labels (after adding genotypes, if `marker` is not NULL).
 #' @param cex Expansion factor controlling font size. This also affects symbol
 #'   sizes, which by default have the width of 2.5 characters. Default: 1.
 #' @param symbolsize Expansion factor for pedigree symbols. Default: 1.
@@ -249,7 +251,7 @@ NULL
 #' @rdname internalplot
 #' @export
 .pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
-                          labs = labels(x), col = 1, fill = NA, lty = 1, lwd = 1,
+                          labs = labels(x), trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
                           hatched = NULL, hatchDensity = 25, aff = NULL, carrier = NULL,
                           deceased = NULL, starred = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal", ...) {
@@ -311,7 +313,10 @@ NULL
     textu = if (!any(nzchar(textu))) geno else paste(textu, geno, sep = "\n")
   }
 
-  res$textUnder = trimws(textu, "right", whitespace = "[\t\r\n]")
+  if(trimLabs)
+    textu = trimws(textu, which = "both", whitespace = "[\t\r\n]")
+
+  res$textUnder = textu
 
 
   # Text above symbols ------------------------------------------------------

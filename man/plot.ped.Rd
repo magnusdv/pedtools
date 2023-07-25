@@ -87,6 +87,12 @@ plot(x, labs = males)
 # Rename some individuals
 plot(x, labs = c(FATHER = "fa", "boy"))
 
+# By default, labels are trimmed for initial/trailing line breaks ...
+plot(x, labs = c("\nFA" = "fa"))
+
+# ... but this can be overridden
+plot(x, labs = c("\nFA" = "fa"), trimLabs = FALSE)
+
 # Colours
 plot(x, col = c(fa = "red"), fill = c(mo = "green", boy = "blue"))
 
