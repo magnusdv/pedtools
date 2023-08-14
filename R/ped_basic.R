@@ -22,7 +22,8 @@
 #' all ancestors `g` generations back.
 #'
 #' `selfingPed(s)` returns a line of `s` consecutive selfings.
-
+#'
+#'
 #' @param nch The number of children, by default 1. If `children` is not NULL,
 #'   `nch` is set to `length(children)`
 #' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).

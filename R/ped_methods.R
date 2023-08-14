@@ -112,17 +112,30 @@ summary.singleton = function(object, ...) {
 }
 
 #' @export
-summary.list = function(object, ...) {
+summary.list = function(object, ..., detailed = TRUE) {
   x = object
+  n = length(x)
 
-  if(!is.pedList(x))
-    return(summary.default(x))
+  if(!is.pedList(x)) {
+    if(all(unlist(lapply(x, function(y) is.ped(y) || is.pedList(y))))) {
+      cat(sprintf("List of %d pedigrees.\n", n))
+      if(n < 10) {
+        for(i in 1:n) {
+          cat(sprintf("\n[%d]\n", i))
+          summary(x[[i]], detailed = FALSE)
+        }
+      }
+      return(invisible(NULL))
+    }
+    else
+      return(summary.default(x))
+  }
 
   nInd = pedsize(x)
   nTot = sum(nInd)
   nMark = sapply(x, nMarkers)
 
-  # Special treatment if all singletons
+  # Special case: all singletons
   if (all(nInd == 1) && all(nMark == nMark[1])) {
     cat(sprintf("List of %d singletons.\n", nTot))
     if(nTot < 10) {
@@ -131,20 +144,22 @@ summary.list = function(object, ...) {
       lbs = toString(sprintf("%s (%s)", ids, sex))
       cat(sprintf("Labels: %s.\n", lbs))
     }
+
     cat(nMark[1], "attached markers.\n")
     return(invisible(NULL))
   }
 
-  cat("List of", length(x), "connected pedigrees")
-  if(all(nInd == nInd[1]))
+  cat(sprintf("Ped list with %d connected component%s", n, if(n>1) "s" else "\n"))
+  if(n > 1 && all(nInd == nInd[1]))
     cat(sprintf(" (each with %d members).\n"), nInd[1])
-  else
-    cat(sprintf(" (%d - %d members).\n", min(nInd), max(nInd)))
+  else if(n > 1)
+    cat(sprintf(" (# members = %s).\n", toString(nInd[1:min(10, n)])))
 
   sex = getSex(x)
   cat(sprintf("In total %d individuals (%d males, %d females, %d unknown).\n",
               nTot, sum(sex == 1), sum(sex == 2), sum(sex == 0)))
-  if(length(x) < 5) {
+
+  if(detailed && length(x) < 5) {
     for(i in seq_along(x)) {
       cat(sprintf("\n--- component %d ---\n", i))
       summary(x[[i]])

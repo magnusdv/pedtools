@@ -3,6 +3,7 @@
 \name{ped}
 \alias{ped}
 \alias{singleton}
+\alias{singletons}
 \title{Pedigree construction}
 \usage{
 ped(
@@ -19,6 +20,8 @@ ped(
 )
 
 singleton(id = 1, sex = 1, famid = "")
+
+singletons(id, sex = 1)
 }
 \arguments{
 \item{id}{A vector (numeric or character) of individual ID labels.}
@@ -85,15 +88,18 @@ This is the basic constructor of \code{ped} objects. Utility functions for
 creating many common pedigree structures are described in \link{ped_basic}.
 }
 \details{
+If the pedigree is disconnected, it is split into its connected components
+and returned as a list of \code{ped} objects.
+
 A singleton is a special \code{ped} object whose pedigree contains 1 individual.
 The class attribute of a singleton is \code{c('singleton', 'ped')}.
+
+\code{singletons()} creates a list of singletons with the indicated labels and
+sexes.
 
 Selfing, i.e. the presence of pedigree members whose father and mother are
 the same individual, is allowed in \code{ped} objects. Any such "self-fertilizing"
 parent must have undecided sex (\code{sex = 0}).
-
-If the pedigree is disconnected, it is split into its connected components
-and returned as a list of \code{ped} objects.
 }
 \examples{
 # Trio
@@ -107,8 +113,10 @@ z = ped(id = 1:2, fid = 0:1, mid = 0:1, sex = 0:1)
 stopifnot(hasSelfing(z))
 
 # Disconnected pedigree: Trio + singleton
-w = ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))
-stopifnot(is.pedList(w), length(w) == 2)
+ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))
+
+# List of singletons
+singletons(1:2)
 
 }
 \seealso{

@@ -3,15 +3,18 @@
 #' This is the basic constructor of `ped` objects. Utility functions for
 #' creating many common pedigree structures are described in [ped_basic].
 #'
+#' If the pedigree is disconnected, it is split into its connected components
+#' and returned as a list of `ped` objects.
+#'
 #' A singleton is a special `ped` object whose pedigree contains 1 individual.
 #' The class attribute of a singleton is `c('singleton', 'ped')`.
+#'
+#' `singletons()` creates a list of singletons with the indicated labels and
+#' sexes.
 #'
 #' Selfing, i.e. the presence of pedigree members whose father and mother are
 #' the same individual, is allowed in `ped` objects. Any such "self-fertilizing"
 #' parent must have undecided sex (`sex = 0`).
-#'
-#' If the pedigree is disconnected, it is split into its connected components
-#' and returned as a list of `ped` objects.
 #'
 #' @param id A vector (numeric or character) of individual ID labels.
 #' @param fid A vector of the same length as `id`, containing the labels of the
@@ -84,8 +87,10 @@
 #' stopifnot(hasSelfing(z))
 #'
 #' # Disconnected pedigree: Trio + singleton
-#' w = ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))
-#' stopifnot(is.pedList(w), length(w) == 2)
+#' ped(id = 1:4, fid = c(2,0,0,0), mid = c(3,0,0,0), sex = c(1,1,2,1))
+#'
+#' # List of singletons
+#' singletons(1:2)
 #'
 #' @export
 ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
@@ -171,15 +176,29 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
   x
 }
 
+
 #' @export
 #' @rdname ped
 singleton = function(id = 1, sex = 1, famid = "") {
   if (length(id) != 1)
     stop2("`id` must have length 1")
   sex = validate_sex(sex, nInd = 1)
-  ped(id = id, fid = 0, mid = 0, sex = sex, famid = famid)
+  newPed(ID = as.character(id), FIDX = 0L, MIDX = 0L, SEX = sex,
+         FAMID = famid, detectLoops = FALSE)
 }
 
+
+#' @export
+#' @rdname ped
+singletons = function(id, sex = 1) {
+  n = length(id)
+  id = as.character(id)
+  sex = validate_sex(sex, nInd = n)
+
+  lapply(seq_len(n), function(i)
+    newPed(ID = id[i], FIDX = 0L, MIDX = 0L, SEX = sex[i],
+           FAMID = "", detectLoops = FALSE))
+}
 
 
 #' Internal ped constructor
