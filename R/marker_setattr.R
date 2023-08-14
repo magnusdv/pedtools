@@ -200,7 +200,7 @@ setAfreq = function(x, marker, afreq, strict = TRUE) {
     stop2("Frequency replacement can only be done for a single marker")
 
   if(is.pedList(x)) { # leads to lots of redundant tests, but no big deal
-    y = lapply(x, setAfreq, marker = marker, afreq = afreq)
+    y = lapply(x, setAfreq, marker = marker, afreq = afreq, strict = strict)
     return(y)
   }
 
