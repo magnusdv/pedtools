@@ -145,7 +145,7 @@ plot.ped = function(x, draw = TRUE, keep.par = FALSE, ...) {
   scaling = .pedScaling(alignment = alignment, annotation = annotation, ...)
 
   if(!keep.par)
-    on.exit(par(scaling$oldpar))
+    on.exit(par(scaling$oldpar), add = TRUE)
 
   if(draw) {
     # Symbols and connectors
@@ -181,7 +181,7 @@ drawPed = function(alignment, annotation = NULL, scaling = NULL, keep.par = FALS
     scaling = .pedScaling(alignment, annotation, ...)
 
   if(!keep.par)
-    on.exit(par(scaling$oldpar))
+    on.exit(par(scaling$oldpar), add = TRUE)
 
   # Symbols and connectors
   .drawPed(alignment, annotation, scaling)
@@ -500,7 +500,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 
   new.oma = if (hasTitles) c(0, 0, 3, 0) else c(0, 0, 0, 0)
   opar = par(oma = new.oma, xpd = NA, mfrow = c(1,1), mar = c(0,0,0,0)) # include mfrow to ensure layout is reverted on exit
-  on.exit(par(opar))
+  on.exit(par(opar), add = TRUE)
 
   if(verbose) {
     message("Group structure: ", toString(groups))
