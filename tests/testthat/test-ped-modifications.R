@@ -22,13 +22,13 @@ test_that("setSex() reverses getSex()", {
   expect_identical(y, setSex(y, labels(y), getSex(y)))
   expect_identical(y, setSex(y, sex = getSex(y, named = T)))
 
-  z = list(singleton(4), nuclearPed(1))
+  z = singletons(c(4,1))
   expect_identical(z, setSex(z, sex = getSex(z, named = T)))
 })
 
 test_that("setSex() recycles sex", {
-  x.male = list(singleton(1), singleton(2))
-  x.female = list(singleton(1, sex=2), singleton(2, sex=2))
+  x.male = singletons(1:2)
+  x.female = singletons(1:2, sex = 2)
   expect_identical(setSex(x.male, ids = 1:2, sex = 2), x.female)
 
   y = nuclearPed(nch = 4)

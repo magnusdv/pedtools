@@ -53,7 +53,7 @@
 #' swapSex(x, ids = "fa")
 #'
 #' # setting/getting sex in a pedlist
-#' y = list(singleton(1, sex = 2), singleton(2), singleton(3))
+#' y = singletons(id = 1:3, sex = c(2,1,1))
 #' sx = getSex(y, named = TRUE)
 #' y2 = setSex(y, sex = sx)
 #'

@@ -99,7 +99,7 @@ dev.off()
 # Example of automatic grouping #
 #################################
 H1 = nuclearPed()
-H2 = list(singleton(1), singleton(3))  # grouped!
+H2 = singletons(id = c(1,3))
 
 plotPedList(list(H1, H2), dev.height = 3, dev.width = 4,
             titles = c(expression(H[1]), expression(H[2])),
