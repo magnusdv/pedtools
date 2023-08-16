@@ -115,13 +115,18 @@ summary.singleton = function(object, ...) {
 summary.list = function(object, ..., detailed = TRUE) {
   x = object
   n = length(x)
+  if(n == 0)
+    return(invisible())
 
   if(!is.pedList(x)) {
     if(all(unlist(lapply(x, function(y) is.ped(y) || is.pedList(y))))) {
       cat(sprintf("List of %d pedigrees.\n", n))
       if(n < 10) {
+        nms = names(x) %||% character(n)
+        nms[nms == ""] = seq_len(n)[nms == ""]
+
         for(i in 1:n) {
-          cat(sprintf("\n[%d]\n", i))
+          cat(sprintf("\n[[%s]]\n", nms[i]))
           summary(x[[i]], detailed = FALSE)
         }
       }
