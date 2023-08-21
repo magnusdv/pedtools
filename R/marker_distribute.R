@@ -38,7 +38,7 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
   if(any(chromNames == ""))
     stop2("Irregular chromosome names")
   if(dup <- anyDuplicated(chromNames))
-    stop("Duplicated chromosome name: ", chromNames[dup])
+    stop2("Duplicated chromosome name: ", chromNames[dup])
 
   # Total genome length
   L = sum(chromLen)

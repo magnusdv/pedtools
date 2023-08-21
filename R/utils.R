@@ -5,7 +5,7 @@ stop2 = function(...) {
   do.call(stop, a)
 }
 
-#Preferred version of stopifnot()
+# Preferred version of stopifnot()
 stopifnot2 = function(...) {
   exprs = list(...)
 

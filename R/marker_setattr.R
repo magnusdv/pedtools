@@ -143,11 +143,11 @@ setGenotype = function(x, marker = NULL, ids = NULL, geno = NULL, id = NULL) {
     return(x)
   }
 
-  if(nma == 1 ) { # length(ids) > 1
+  if(nma == 1) { # length(ids) > 1
     if(length(geno) == 1)
       geno = rep(geno, nid)
     else if(length(geno) != nid)
-      stop("When setting the genotype of multiple individuals, `geno` must have length either 1 or `length(ids)`")
+      stop2("Incompatible lengths of arguments `geno` and `ids`")
 
     if(is.pedList(x)) {
       comp = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
@@ -169,7 +169,7 @@ setGenotype = function(x, marker = NULL, ids = NULL, geno = NULL, id = NULL) {
     if(length(geno) == 1)
       geno = rep(geno, nma)
     else if(length(geno) != nma)
-      stop("When setting the genotype for multiple markers, `geno` must have length either 1 or `length(marker)`")
+      stop2("Incompatible lengths of arguments `geno` and `marker`")
 
     if(is.pedList(x)) {
       comp = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
