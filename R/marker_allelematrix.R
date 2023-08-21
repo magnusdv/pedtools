@@ -189,7 +189,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
   if(!is.matrix(alleleMatrix) && !is.data.frame(alleleMatrix))
     stop2("Argument `alleleMatrix` must be either a matrix or a data frame")
 
-  m = as.matrix(alleleMatrix)
+  m = as.matrix(alleleMatrix, rownames.force = TRUE)
 
   # Marker names in matrix (if present)
   hasMatrixNames = !is.null(nms <- colnames(m)) && !any(is.na(nms))
