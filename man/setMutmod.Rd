@@ -28,30 +28,28 @@ This function offers a convenient way to set or modify mutation models to
 markers attached to a pedigree. It wraps \code{\link[pedmut:mutationModel]{pedmut::mutationModel()}}, which
 does the main work of creating the models, but relieves the user from having
 to loop through the markers in order to supply the correct alleles and
-frequencies for each marker. (This function supersedes
-\code{pedprobr::setMutationModel()}.)
+frequencies for each marker.
 }
 \details{
-Currently, the following models are implemented in the \code{pedmut} package:
+Currently, the following models are supported:
 \itemize{
-\item \code{equal} :  All mutations equally likely; probability \eqn{1-rate} of no
+\item \code{equal}:  All mutations equally likely; probability \code{1 - rate} of no
 mutation
-\item \code{proportional} : Mutation probabilities are proportional to the target
+\item \code{proportional}: Mutation probabilities are proportional to the target
 allele frequencies
-\item \code{onestep}: A mutation model for microsatellite markers, allowing mutations
-only to the nearest neighbours in the allelic ladder. For example, '10' may
-mutate to either '9' or '11', unless '10' is the lowest allele, in which case
-'11' is the only option. This model is not applicable to loci with
+\item \code{onestep}: A simple model for microsatellite markers, in which mutations
+are only allowed to the nearest neighbours in the allelic ladder. For
+example, '10' may mutate to either '9' or '11' (unless '10' is the lowest
+allele, in which case '11' is the only option). Not applicable to loci with
 non-integral microvariants.
-\item \code{stepwise}: A common model in forensic genetics, allowing different
-mutation rates between integer alleles (like '16') and non-integer
-"microvariants" like '9.3'). Mutations also depend on the size of the
-mutation if the parameter 'range' differs from 1.
-\item \code{custom} : Allows any mutation matrix to be provided by the user, in the
+\item \code{stepwise}: A common model for microsatellite markers. Mutation rates
+depend on the step size in the allelic ladder, and also the allelic classes:
+integral repeats like '16', versus non-integer microvariants like '16.3'.
+\item \code{custom}: Allows any mutation matrix to be provided by the user, in the
 \code{matrix} parameter
-\item \code{random} : This produces a matrix of random numbers, where each row is
+\item \code{random}: This produces a matrix of random numbers, where each row is
 normalised so that it sums to 1
-\item \code{trivial} : The identity matrix; i.e. no mutations are possible.
+\item \code{trivial}: The identity matrix; no mutations are possible
 }
 }
 \examples{

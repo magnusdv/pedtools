@@ -4,35 +4,33 @@
 #' markers attached to a pedigree. It wraps [pedmut::mutationModel()], which
 #' does the main work of creating the models, but relieves the user from having
 #' to loop through the markers in order to supply the correct alleles and
-#' frequencies for each marker. (This function supersedes
-#' `pedprobr::setMutationModel()`.)
+#' frequencies for each marker.
 #'
-#' Currently, the following models are implemented in the `pedmut` package:
+#' Currently, the following models are supported:
 #'
-#' * `equal` :  All mutations equally likely; probability \eqn{1-rate} of no
+#' * `equal`:  All mutations equally likely; probability `1 - rate` of no
 #' mutation
 #'
-#' * `proportional` : Mutation probabilities are proportional to the target
+#' * `proportional`: Mutation probabilities are proportional to the target
 #' allele frequencies
 #'
-#' * `onestep`: A mutation model for microsatellite markers, allowing mutations
-#' only to the nearest neighbours in the allelic ladder. For example, '10' may
-#' mutate to either '9' or '11', unless '10' is the lowest allele, in which case
-#' '11' is the only option. This model is not applicable to loci with
+#' * `onestep`: A simple model for microsatellite markers, in which mutations
+#' are only allowed to the nearest neighbours in the allelic ladder. For
+#' example, '10' may mutate to either '9' or '11' (unless '10' is the lowest
+#' allele, in which case '11' is the only option). Not applicable to loci with
 #' non-integral microvariants.
 #'
-#' * `stepwise`: A common model in forensic genetics, allowing different
-#' mutation rates between integer alleles (like '16') and non-integer
-#' "microvariants" like '9.3'). Mutations also depend on the size of the
-#' mutation if the parameter 'range' differs from 1.
+#' * `stepwise`: A common model for microsatellite markers. Mutation rates
+#' depend on the step size in the allelic ladder, and also the allelic classes:
+#' integral repeats like '16', versus non-integer microvariants like '16.3'.
 #'
-#' * `custom` : Allows any mutation matrix to be provided by the user, in the
+#' * `custom`: Allows any mutation matrix to be provided by the user, in the
 #' `matrix` parameter
 #'
-#' * `random` : This produces a matrix of random numbers, where each row is
+#' * `random`: This produces a matrix of random numbers, where each row is
 #' normalised so that it sums to 1
 #'
-#' * `trivial` : The identity matrix; i.e. no mutations are possible.
+#' * `trivial`: The identity matrix; no mutations are possible
 #'
 #' @param x A `ped` object or a list of such.
 #' @param markers A vector of names or indices referring to markers attached to
