@@ -3,40 +3,48 @@
 #' Generate a random connected pedigree by applying random mating starting from
 #' a finite population.
 #'
-#' Starting from an initial set of `f` founders, a sequence of `n-f` random
+#' Starting from an initial set of founders, a sequence of `n - founders` random
 #' matings is performed. The sampling of parents in each mating is set up to
 #' ensure that the final result is connected.
 #'
 #' @param n A positive integer: the total number of individuals. Must be at
 #'   least 3.
-#' @param f A positive integer: the number of founders. Must be at least 2
-#'   unless selfing is allowed.
+#' @param founders A positive integer: the number of founders. Must be at least
+#'   2 unless selfing is allowed.
 #' @param maxDirectGap An integer; the maximum distance between direct
 #'   descendants allowed to mate. For example, the default value of 1 allows
 #'   parent-child mating, but not grandparent-grandchild. Set to `Inf` or `NULL`
 #'   to remove all restrictions.
 #' @param selfing A logical indicating if selfing is allowed. Default: FALSE.
 #' @param seed An integer seed for the random number generator (optional).
+#' @param f Deprecated: synonym for `founders`.
 #'
 #' @return A connected pedigree returned as a `ped` object.
 #'
 #' @examples
-#' plot(randomPed(7, f = 2, seed = 12))
+#' plot(randomPed(n = 7, seed = 12))
 #'
-#' # Disallow mating between direct discendants
-#' plot(randomPed(7, f = 2, seed = 12, maxDirectGap = 0))
+#' # Disallow mating between direct descendants
+#' plot(randomPed(n = 7, seed = 12, maxDirectGap = 0))
 #'
-#' # No restrictions on mating between direct discendants
-#' plot(randomPed(7, f = 2, seed = 12, maxDirectGap = Inf))
+#' # No restrictions on mating between direct descendants
+#' plot(randomPed(n = 7, seed = 12, maxDirectGap = Inf))
 #'
 #' # Allow selfing
-#' y = randomPed(5, f = 2, seed = 2, selfing = TRUE)
+#' y = randomPed(5, seed = 2, selfing = TRUE)
 #' hasSelfing(y)
 #' y
 #' plot(y, arrows = TRUE)
 #'
 #' @export
-randomPed = function(n, f = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL) {
+randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL, f = NULL) {
+
+  # TODO: remove when possible
+  if(!is.null(f))
+    founders = f
+
+  # For brevity
+  f = founders
 
   if(!is.null(seed))
     set.seed(seed)
@@ -181,45 +189,3 @@ randomPed = function(n, f = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL) {
   newPed(as.character(id), as.integer(fid), as.integer(mid), sex, FAMID = "")
 }
 
-#' @importFrom stats rpois
-.randomPed = function(g, founders = rpois(1,3)+1, selfing = FALSE, seed = NULL) {
-  if(!is.null(seed)) set.seed(seed)
-  if(!selfing) founders = max(2, founders)
-  id = seq_len(founders + g)
-  fid = mid = numeric(founders + g)
-
-
-  foundersM = ceiling(founders/2)
-  foundersF = founders - foundersM
-  sex = c(rep(1:2, c(foundersM, foundersF)), sample.int(2, size = g, replace = TRUE))
-  males = (sex == 1)
-  females = (sex == 2)
-
-  for(k in seq(founders+1, length = g)) {
-
-    if(selfing) {
-      # First parent: Any member
-      par1 = sample.int(k-1, 1)
-
-      # Second parent: Either par1 or any of opposite sex. Note: k > 1.
-      par2_candidates = c(par1, which(sex[1:(k-1)] != sex[par1]))
-      par2 = safe_sample(par2_candidates, 1)
-
-      # Swap if par1 female & par2 male
-      if(sex[par1] > sex[par2]) {
-        fid[k] = par2
-        mid[k] = par1
-      } else {
-        fid[k] = par1
-        mid[k] = par2
-      }
-      if(par1 == par2) sex[k] = 0
-    } else {
-      potential_fathers = which(males[1:(k-1)])
-      potential_mothers = which(females[1:(k-1)])
-      fid[k] = safe_sample(potential_fathers, 1)
-      mid[k] = safe_sample(potential_mothers, 1)
-    }
-  }
-  ped(id, fid, mid, sex, validate = FALSE, reorder = FALSE)
-}

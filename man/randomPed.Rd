@@ -4,14 +4,21 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(n, f = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL)
+randomPed(
+  n,
+  founders = 2,
+  maxDirectGap = 1,
+  selfing = FALSE,
+  seed = NULL,
+  f = NULL
+)
 }
 \arguments{
 \item{n}{A positive integer: the total number of individuals. Must be at
 least 3.}
 
-\item{f}{A positive integer: the number of founders. Must be at least 2
-unless selfing is allowed.}
+\item{founders}{A positive integer: the number of founders. Must be at least
+2 unless selfing is allowed.}
 
 \item{maxDirectGap}{An integer; the maximum distance between direct
 descendants allowed to mate. For example, the default value of 1 allows
@@ -21,6 +28,8 @@ to remove all restrictions.}
 \item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
 \item{seed}{An integer seed for the random number generator (optional).}
+
+\item{f}{Deprecated: synonym for \code{founders}.}
 }
 \value{
 A connected pedigree returned as a \code{ped} object.
@@ -30,21 +39,21 @@ Generate a random connected pedigree by applying random mating starting from
 a finite population.
 }
 \details{
-Starting from an initial set of \code{f} founders, a sequence of \code{n-f} random
+Starting from an initial set of founders, a sequence of \code{n - founders} random
 matings is performed. The sampling of parents in each mating is set up to
 ensure that the final result is connected.
 }
 \examples{
-plot(randomPed(7, f = 2, seed = 12))
+plot(randomPed(n = 7, seed = 12))
 
-# Disallow mating between direct discendants
-plot(randomPed(7, f = 2, seed = 12, maxDirectGap = 0))
+# Disallow mating between direct descendants
+plot(randomPed(n = 7, seed = 12, maxDirectGap = 0))
 
-# No restrictions on mating between direct discendants
-plot(randomPed(7, f = 2, seed = 12, maxDirectGap = Inf))
+# No restrictions on mating between direct descendants
+plot(randomPed(n = 7, seed = 12, maxDirectGap = Inf))
 
 # Allow selfing
-y = randomPed(5, f = 2, seed = 2, selfing = TRUE)
+y = randomPed(5, seed = 2, selfing = TRUE)
 hasSelfing(y)
 y
 plot(y, arrows = TRUE)
