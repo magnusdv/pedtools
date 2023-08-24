@@ -4,7 +4,6 @@
 #'
 #' @param x A `ped` object, or (in some functions - see Details) a list of such.
 #' @param what Either "max", "compMax", "indiv" or "depth" (See Value.)
-#' @param maxOnly,maxComp Deprecated; use `what instead.
 #' @param chromType Either "autosomal" (default) or "x".
 #'
 #' @return
@@ -99,17 +98,7 @@ pedsize = function(x) {
 
 #' @rdname ped_utils
 #' @export
-generations = function(x, what = c("max", "compMax", "indiv", "depth"),
-                       maxOnly = TRUE, maxComp = TRUE) {
-
-  if(!maxOnly || !maxComp) {
-    message("Arguments `maxOnly` and `maxComp` are deprecated; use `what` instead.")
-
-    if(!maxOnly)
-      what = "depth"
-    if(!maxComp)
-      what = "compMax"
-  }
+generations = function(x, what = c("max", "compMax", "indiv", "depth")) {
 
   if(is.pedList(x)) {
     what = match.arg(what)

@@ -4,15 +4,7 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(
-  n,
-  f = 2,
-  maxDirectGap = 1,
-  selfing = FALSE,
-  seed = NULL,
-  g = NULL,
-  founders = NULL
-)
+randomPed(n, f = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL)
 }
 \arguments{
 \item{n}{A positive integer: the total number of individuals. Must be at
@@ -29,8 +21,6 @@ to remove all restrictions.}
 \item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
 \item{seed}{An integer seed for the random number generator (optional).}
-
-\item{g, founders}{Deprecated arguments.}
 }
 \value{
 A connected pedigree returned as a \code{ped} object.
@@ -40,7 +30,7 @@ Generate a random connected pedigree by applying random mating starting from
 a finite population.
 }
 \details{
-Starting from an initial set of \code{f} singletons, a sequence of \code{n-f} random
+Starting from an initial set of \code{f} founders, a sequence of \code{n-f} random
 matings is performed. The sampling of parents in each mating is set up to
 ensure that the final result is connected.
 }

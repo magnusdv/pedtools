@@ -3,7 +3,7 @@
 #' Generate a random connected pedigree by applying random mating starting from
 #' a finite population.
 #'
-#' Starting from an initial set of `f` singletons, a sequence of `n-f` random
+#' Starting from an initial set of `f` founders, a sequence of `n-f` random
 #' matings is performed. The sampling of parents in each mating is set up to
 #' ensure that the final result is connected.
 #'
@@ -17,7 +17,6 @@
 #'   to remove all restrictions.
 #' @param selfing A logical indicating if selfing is allowed. Default: FALSE.
 #' @param seed An integer seed for the random number generator (optional).
-#' @param g,founders Deprecated arguments.
 #'
 #' @return A connected pedigree returned as a `ped` object.
 #'
@@ -37,13 +36,7 @@
 #' plot(y, arrows = TRUE)
 #'
 #' @export
-randomPed = function(n, f = 2, maxDirectGap = 1, selfing = FALSE,
-                     seed = NULL, g = NULL, founders = NULL) {
-  # TODO: Remove
-  if(!is.null(g)) {
-    message("Switching to the old version, using deprecated argument `g`.")
-    return(.randomPed(g, founders %||% f, selfing = selfing, seed = seed))
-  }
+randomPed = function(n, f = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL) {
 
   if(!is.null(seed))
     set.seed(seed)

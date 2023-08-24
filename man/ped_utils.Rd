@@ -14,12 +14,7 @@
 \usage{
 pedsize(x)
 
-generations(
-  x,
-  what = c("max", "compMax", "indiv", "depth"),
-  maxOnly = TRUE,
-  maxComp = TRUE
-)
+generations(x, what = c("max", "compMax", "indiv", "depth"))
 
 hasUnbrokenLoops(x)
 
@@ -37,8 +32,6 @@ peelingOrder(x)
 \item{x}{A \code{ped} object, or (in some functions - see Details) a list of such.}
 
 \item{what}{Either "max", "compMax", "indiv" or "depth" (See Value.)}
-
-\item{maxOnly, maxComp}{Deprecated; use `what instead.}
 
 \item{chromType}{Either "autosomal" (default) or "x".}
 }
