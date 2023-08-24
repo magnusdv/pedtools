@@ -1,3 +1,29 @@
+# pedtools 2.3.0
+
+## New features
+
+*	New function `singletons()` for creating a list of singletons.
+
+*	New S3 `summary()` method handling lists of (possibly disconnected) pedigrees.
+
+*	`setGenotype()` can set the genotype of multiple individuals *or* markers in the same call. Also, individuals can be specified with selector functions like `leaves()` and `founders()`, as in: `nuclearPed() |> addMarker() |> setGenotype(ids = founders, geno = "1/2")`.
+
+*	`plot.ped()` gains argument `trimLabs`, defaulting to TRUE, which removes line breaks at the start of ID labels. For example: `nuclearPed() |> addMarker(geno = c("a/a", "b/b", NA)) |> plot(marker = 1, labs = "1")`. (Compare with `plot(..., trimLabs = F)`.)
+
+*	The `showEmpty` argument of `plot.ped()` is more user friendly, allowing for instance: `nuclearPed() |> addMarker() |> plot(marker = 1, showEmpty = "1")`.
+
+*	`readFreqDatabase()` gains an optional argument `df`, a data frame of allele frequencies in either "list" or "allelic ladder" format. This is useful in cases where the raw data must be read or modified manually for some reason.
+
+*	Add CITATION file.
+
+## Bug fixes
+
+*	Forgotten argument `strict` in `setAfreq()` for pedlists.
+*	Fix glitch affecting `textAbove` and `textInside`.
+*	Fix `title` in (still experimental) `plot.list()`.
+* Fixed interpretation of marker names in `setMarkers(x, alleleMatrix)`.
+
+
 # pedtools 2.2.0
 
 ## New features
