@@ -508,7 +508,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     message("Default margins: ", toString(marLR))
     message("Indiv. margins:")
     for(p in plotlist) message("  ", toString(p$margins))
-    message("Input width/height: ", toString(c(dev.width, dev.height)))
+    message("Input width/height: ", toString(c(dev.width %||% NA, dev.height %||% NA)))
     message("Actual dimensions: ", toString(round(dev.size(),3)))
   }
 
