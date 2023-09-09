@@ -16,7 +16,7 @@ drawPed(alignment, annotation = NULL, scaling = NULL, keep.par = FALSE, ...)
 \method{plot}{list}(x, ...)
 }
 \arguments{
-\item{x}{A \code{\link[=ped]{ped()}} object.}
+\item{x}{A \code{\link[=ped]{ped()}} object or a list of such.}
 
 \item{draw}{A logical, by default TRUE. If FALSE, no plot is produced, only
 the plotting parameters are returned.}
@@ -52,6 +52,10 @@ The main pedigree layout is calculated with the \code{kinship2} package, see
 here also supports singletons, and plotting pedigrees as DAGs. In addition,
 some minor adjustments have been made to improve scaling and avoid unneeded
 duplications.
+
+If \code{x} is a list of \code{ped} objects these are plotted next to each other,
+vertically centered in the plot window. For finer control, and possibly
+nested lists of pedigrees, use \code{\link[=plotPedList]{plotPedList()}}.
 }
 \examples{
 
@@ -127,6 +131,9 @@ plot(x, fouInb = NULL)
 
 # Other text above and inside symbols
 plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+
+# Plotting lists of pedigrees
+plot(list(singleton(1), nuclearPed(1), linearPed(2)))
 
 # Twins
 x = nuclearPed(children = c("tw1", "tw2", "tw3"))

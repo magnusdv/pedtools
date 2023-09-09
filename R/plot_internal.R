@@ -100,6 +100,7 @@
 #'   around the pedigree inside the plot region. Default: 0.
 #' @param xlim,ylim Numeric vectors of length 2, used to set `par("usr")`
 #'   explicitly. Rarely needed by end users.
+#' @param vsep2 A logical; for internal use.
 #' @param marker Either a vector of names or indices referring to markers
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
@@ -331,15 +332,6 @@ NULL
     textAbove = sprintf("f = %.4g", finb)
     names(textAbove) = names(finb)
   }
-  # if(!is.null(textAbove))
-  #   mode(textAbove) = "character"
-  #
-  # nmsAbove = names(textAbove)
-  # if(!is.null(nmsAbove)) {
-  #   tmp = character(nInd)
-  #   tmp[internalID(x, nmsAbove, errorIfUnknown = FALSE)] = textAbove
-  #   textAbove = tmp
-  # }
 
   res$textAbove = .prepLabs2(x, textAbove)
 
@@ -347,18 +339,8 @@ NULL
 
   if(is.function(textInside))
     textInside = textInside(x)
-  # if(!is.null(textInside))
-  #   mode(textInside) = "character"
-  #
-  # nmsInside = names(textInside)
-  # if(!is.null(nmsInside)) {
-  #   tmp = character(nInd)
-  #   tmp[internalID(x, nmsInside, errorIfUnknown = FALSE)] = textInside
-  #   textInside = tmp
-  # }
 
   res$textInside = .prepLabs2(x, textInside)
-
 
 
   # Affected/hathced --------------------------------------------------------
@@ -475,7 +457,7 @@ NULL
 #' @importFrom graphics frame strheight strwidth
 #' @export
 .pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1,
-                       addSpace = 0, xlim = NULL, ylim = NULL, ...) {
+                       addSpace = 0, xlim = NULL, ylim = NULL, vsep2 = FALSE, ...) {
 
   textUnder = annotation$textUnder
   textAbove = annotation$textAbove
@@ -623,7 +605,7 @@ NULL
   legh = min(1/4, boxh * 1.5)  # how tall are the 'legs' up from a child
 
   # Return plotting/scaling parameters
-  list(boxw = boxw, boxh = boxh, labh = labh, legh = legh,
+  list(boxw = boxw, boxh = boxh, labh = labh, legh = legh, vsep2 = vsep2,
        cex = cex, mar = mar, usr = usr, oldpar = oldpar)
 }
 
@@ -650,6 +632,7 @@ NULL
   boxh = scaling$boxh
   boxw = scaling$boxw
   legh = scaling$legh
+  vsep2 = scaling$vsep2
 
   branch = 0.6
   pconnect = .5
@@ -710,12 +693,15 @@ NULL
   }
 
   ## Lines from offspring to parents
-  for(i in seq_len(maxlev-1) + 1) {       # MDV: safer than 2:maxlev
+  ## NB: If vsep2 = T, parents are two rows above (Hack used in plot.list().)
+  chRows = if(vsep2 && maxlev > 1) seq_len(maxlev-2) + 2 else seq_len(maxlev-1) + 1
+  for(i in chRows) {
+    parentRow = if(vsep2) i-2 else i-1
     zed = unique.default(plist$fam[i,  ]) # MDV: use unique.default
     zed = zed[zed > 0]  #list of family ids
 
     for(fam in zed) {
-      xx = pos[i - 1, fam + 0:1]
+      xx = pos[parentRow, fam + 0:1]
       parentx = mean(xx)   #midpoint of parents
 
       # Draw the uplines
@@ -763,7 +749,7 @@ NULL
 
       # MDV: `branch` set to 0.6
       y1 = i - legh
-      y2 = (i-1) + boxh/2
+      y2 = parentRow + boxh/2
       x2 = parentx
       ydelta = ((y2 - y1) * branch)/2
       segments(c(x1, x1, x2), c(y1, y1 + ydelta, y2 - ydelta),

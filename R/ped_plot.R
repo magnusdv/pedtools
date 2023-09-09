@@ -12,7 +12,11 @@
 #' some minor adjustments have been made to improve scaling and avoid unneeded
 #' duplications.
 #'
-#' @param x A [ped()] object.
+#' If `x` is a list of `ped` objects these are plotted next to each other,
+#' vertically centered in the plot window. For finer control, and possibly
+#' nested lists of pedigrees, use [plotPedList()].
+#'
+#' @param x A [ped()] object or a list of such.
 #' @param draw A logical, by default TRUE. If FALSE, no plot is produced, only
 #'   the plotting parameters are returned.
 #' @param keep.par A logical, by default FALSE. If TRUE, the graphical
@@ -102,6 +106,9 @@
 #'
 #' # Other text above and inside symbols
 #' plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+#'
+#' # Plotting lists of pedigrees
+#' plot(list(singleton(1), nuclearPed(1), linearPed(2)))
 #'
 #' # Twins
 #' x = nuclearPed(children = c("tw1", "tw2", "tw3"))
@@ -554,78 +561,101 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
 #' @export
 #' @importFrom graphics plot.default
 plot.list = function(x, ...) {
+  L = length(x)
 
-  if(!is.pedList(x))
-    return(plot.default(x, ...))
+  if(L == 0)
+    stop2("Empty list, nothing to plot")
 
-  x1 = x[[1]]
-  x2 = x[[2]]
+  # Variant of is.pedList() for finer control
+  for(i in 1:L) {
+    if(is.pedList(x[[i]]))
+      stop2(sprintf("Nested ped list in component %d. This is not supported by `plot()`; try `plotPedList()` instead.", i))
 
-  # Compute and merge plists
-  p1 = .pedAlignment(x1, ...)$plist
-  p2 = .pedAlignment(x2, ...)$plist
+    if(!is.ped(x[[i]]))
+      return(plot.default(x, ...))
+  }
 
-  r1 = length(p1$n)
-  c1 = max(p1$n)
-  r2 = length(p2$n)
-  c2 = max(p2$n)
+  # Individual alignment data
+  plists = lapply(x, function(y) .pedAlignment(y, ...)$plist)
 
-  nid = pos = fam = sp = matrix(0, nrow = max(r1, r2), ncol = c1 + c2)
+  # Disallow arrows
+  if(is.null(plists[[1]]$fam)) {
+    stop2("`arrows = TRUE` is not supported for lists; use `plotPedList()` instead")
+  }
 
-  # n
-  n1 = p1$n
-  n2 = p2$n
-  nid1 = p1$nid
-  nid2 = p2$nid
-  pos1 = p1$pos
-  pos2 = p2$pos
-  fam1 = p1$fam
-  fam2 = p2$fam
-  sp1 = p1$spouse
-  sp2 = p2$spouse
+  nlst = lapply(plists, function(pl) pl$n)
+  nInd = vapply(nlst, sum, FUN.VALUE = 1)
 
-  nInd1 = max(nid1)
-  nInd2 = max(nid2)
+  # Total number of generations (G)
+  mx = max(lengths(nlst))
+  G = 2 * mx - 1
 
-  # Merge n
-  n1pad = n2pad = integer(max(r1, r2))
-  n1pad[seq_along(n1)] = n1
-  n2pad[seq_along(n2)] = n2
-  n = n1pad + n2pad
-  n
+  # Each pedigree uses only a subset of rows
+  rws = lapply(nlst, function(ni) mx + seq(from = -length(ni)+1, to = length(ni)-1, by = 2))
 
-  # Merge matrices
-  for(i in seq_along(n)) {
-    if(i <= r1) {
-      seq1 = seq_len(n1[i])
-      nid[i, seq1] = nid1[i, seq1]
-      pos[i, seq1] = pos1[i, seq1]
-      if(i>1) fam[i, seq1] = fam1[i, seq1]
-      sp[i, seq1] = sp1[i, seq1]
-    }
-    if(i <= r2) {
-      seq2 = seq_len(n2[i])
-      nid[i, n1pad[i] + seq2] = nid2[i, seq2] + nInd1
-      pos[i, n1pad[i] + seq2] = pos2[i, seq2] + max(pos1) + 1
-      if(i>1) fam[i, n1pad[i] + seq2] = fam2[i, seq2] + n1pad[i-1] * (fam2[i, seq2] > 0)
-      sp[i, n1pad[i] + seq2] = sp2[i, seq2]
-    }
+  # Merge n (= # indivs in each grid row)
+  n = integer(G)
+  for(i in 1:L) {
+    n[rws[[i]]] = n[rws[[i]]] + nlst[[i]]
+  }
+
+  # Create empty plist matrices
+  nid = pos = fam = sp = matrix(0, nrow = G, ncol = max(n))
+
+  # Storage for rightmost column used in each row (updated in each iter)
+  maxcol.tmp = integer(G)
+
+  # Storage for highest id used (updated in each iter)
+  maxid.tmp = 0L
+
+  for(i in 1:L) {
+    rwi = rws[[i]]
+    pl = plists[[i]]
+    ni = pl$n
+    nidi = pl$nid
+    posi = pl$pos
+    fami = pl$fam
+    spi = pl$spouse
+    nipad = `[<-`(integer(G), rwi, ni)
+
+    # Matrix entry indices of ped i (original and in big)
+    e = ebig = which(nidi > 0, arr.ind = TRUE)
+
+    # Entry indices in merged matrix
+    ebig[, 'row'] = rwi[ebig[, 'row']]
+    ebig[, 'col'] = ebig[, 'col'] + maxcol.tmp[ebig[,'row']]
+
+    # Merge nid
+    nid[ebig] = nidi[e] + maxid.tmp
+
+    # Merge pos
+    pos[ebig] = posi[e] + max(pos) + 1
+
+    # Merge fam: Only consider positive entries
+    e.fam = e[fami[e] > 0, , drop = FALSE]
+    ebig.fam = ebig[fami[e] > 0, , drop = FALSE]
+    fam[ebig.fam] = fami[e.fam] + maxcol.tmp[ebig.fam[, "row"] - 2]
+
+    # Merge spouse
+    sp[ebig] = spi[e]
+
+    # Update tmps
+    maxcol.tmp = maxcol.tmp + nipad
+    maxid.tmp = maxid.tmp + nInd[i]
+
   }
 
   # Collect into plist
   plist = list(n = n, nid = nid, pos = pos, fam = fam, spouse = sp)
   align = .extendPlist(x, plist)
 
-  # Adjust y positions
-  #idx = match(6:8, plist2$plotord)
-  #plist2$yall[idx] = plist2$yall[idx] + 0.5
+  annotList = lapply(x, function(y) .pedAnnotation(y, ...))
+  annot1 = annotList[[1]]
 
-  # Merge annotations
-  annot1 = .pedAnnotation(x1, ...)
-  annot2 = .pedAnnotation(x2, ...)
-
-  mrg = function(a, def)
-    c(annot1[[a]] %||% rep(def, nInd1), annot2[[a]] %||% rep(def, nInd2))
+  mrg = function(a, def) {
+    vecs = lapply(1:L, function(i) annotList[[i]][[a]] %||% rep(def, nInd[i]))
+    unlist(vecs)
+  }
 
   annot = list(title = annot1$title,
                textUnder = mrg("textUnder", ""),
@@ -641,6 +671,6 @@ plot.list = function(x, ...) {
                carrierTF = mrg("carrierTF", FALSE),
                deceasedTF = mrg("deceasedTF", FALSE))
 
-  drawPed(align, annot, scaling = NULL, ...)
+  drawPed(align, annot, scaling = NULL, vsep2 = TRUE, ...)
 }
 
