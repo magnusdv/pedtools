@@ -55,6 +55,7 @@
   addSpace = 0,
   xlim = NULL,
   ylim = NULL,
+  vsep2 = FALSE,
   ...
 )
 
@@ -183,6 +184,8 @@ around the pedigree inside the plot region. Default: 0.}
 
 \item{xlim, ylim}{Numeric vectors of length 2, used to set \code{par("usr")}
 explicitly. Rarely needed by end users.}
+
+\item{vsep2}{A logical; for internal use.}
 
 \item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
 
