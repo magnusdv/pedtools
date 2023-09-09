@@ -5,20 +5,37 @@
 \alias{hasMarkers}
 \title{The number of markers attached to a pedigree}
 \usage{
-nMarkers(x)
+nMarkers(x, compwise = FALSE)
 
-hasMarkers(x)
+hasMarkers(x, compwise = FALSE)
 }
 \arguments{
-\item{x}{A \code{ped} object or a list of such (see Value).}
+\item{x}{A \code{ped} object or a list of such.}
+
+\item{compwise}{A logical, only relevant if \code{x} is a ped list. Default FALSE.}
 }
 \value{
-The function \code{nMarkers} returns the number of marker objects attached
-to \code{x}. If \code{x} is a list of pedigrees, an error is raised unless all of
-them have the same number of markers.
+\code{nMarkers()} by default returns a single number; the number of marker
+objects attached to \code{x}. If \code{x} is a ped list, an error is raised if the
+components have different numbers of markers. This check can be skipped by
+setting \code{compwise = TRUE}, in which case the function returns a vector of
+the component-wise marker numbers.
 
-The function \code{hasMarkers} returns TRUE if \code{nMarkers(x) > 0}.
+The function \code{hasMarkers(x)} returns TRUE if (at least component of) \code{x}
+has attached markers, otherwise FALSE. If \code{compwise = TRUE}, a logical
+vector of the same length as \code{x}.
 }
 \description{
 The number of markers attached to a pedigree
+}
+\examples{
+x = nuclearPed() |> addMarker()
+nMarkers(x) # = 1
+
+y = list(x, singleton(1))
+nMarkers(y, compwise = TRUE) # c(1,0)
+
+hasMarkers(y) # TRUE
+hasMarkers(y, compwise = TRUE) # c(TRUE, FALSE)
+
 }

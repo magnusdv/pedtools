@@ -30,21 +30,41 @@ is.markerList = function(x) {
 
 #' The number of markers attached to a pedigree
 #'
-#' @param x A `ped` object or a list of such (see Value).
-#' @return The function `nMarkers` returns the number of marker objects attached
-#'   to `x`. If `x` is a list of pedigrees, an error is raised unless all of
-#'   them have the same number of markers.
+#' @param x A `ped` object or a list of such.
+#' @param compwise A logical, only relevant if `x` is a ped list. Default FALSE.
 #'
-#'   The function `hasMarkers` returns TRUE if `nMarkers(x) > 0`.
+#' @return `nMarkers()` by default returns a single number; the number of marker
+#'   objects attached to `x`. If `x` is a ped list, an error is raised if the
+#'   components have different numbers of markers. This check can be skipped by
+#'   setting `compwise = TRUE`, in which case the function returns a vector of
+#'   the component-wise marker numbers.
+#'
+#'   The function `hasMarkers(x)` returns TRUE if (at least component of) `x`
+#'   has attached markers, otherwise FALSE. If `compwise = TRUE`, a logical
+#'   vector of the same length as `x`.
+#'
+#' @examples
+#' x = nuclearPed() |> addMarker()
+#' nMarkers(x) # = 1
+#'
+#' y = list(x, singleton(1))
+#' nMarkers(y, compwise = TRUE) # c(1,0)
+#'
+#' hasMarkers(y) # TRUE
+#' hasMarkers(y, compwise = TRUE) # c(TRUE, FALSE)
 #'
 #' @export
-nMarkers = function(x) {
+nMarkers = function(x, compwise = FALSE) {
   if(is.ped(x))
     return(length(x$MARKERS))
   else if(is.pedList(x)) {
     nvec = vapply(x, function(comp) length(comp$MARKERS), 1L)
+
+    if(compwise)
+      return(nvec)
+
     if(!listIdentical(nvec))
-      stop2("The pedigree components have different number of markers attached")
+      stop2("Pedigree components have different number of markers")
     return(nvec[[1]])
   }
   stop2("Input to `nMarkers()` must be a `ped` object or a list of such")
@@ -52,8 +72,9 @@ nMarkers = function(x) {
 
 #' @export
 #' @rdname nMarkers
-hasMarkers = function(x) {
-  nMarkers(x) > 0
+hasMarkers = function(x, compwise = FALSE) {
+  nm = nMarkers(x, compwise = TRUE)
+  if(compwise) nm > 0 else any(nm > 0)
 }
 
 checkDupNames = function(x) {
