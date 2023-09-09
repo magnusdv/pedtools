@@ -164,6 +164,9 @@ linearPed = function(n, sex = 1) {
   if(!isCount(n, minimum = 0))
     stop2("`n` must be a nonnegative integer: ", n)
 
+  if(n == 0)
+    return(singleton(1, sex))
+
   sex = validate_sex(sex, nInd = n)
 
   nInd = 1 + 2*n
