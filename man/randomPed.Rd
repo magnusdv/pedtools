@@ -4,14 +4,7 @@
 \alias{randomPed}
 \title{Random pedigree}
 \usage{
-randomPed(
-  n,
-  founders = 2,
-  maxDirectGap = 1,
-  selfing = FALSE,
-  seed = NULL,
-  f = NULL
-)
+randomPed(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL)
 }
 \arguments{
 \item{n}{A positive integer: the total number of individuals. Must be at
@@ -28,8 +21,6 @@ to remove all restrictions.}
 \item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
 \item{seed}{An integer seed for the random number generator (optional).}
-
-\item{f}{Deprecated: synonym for \code{founders}.}
 }
 \value{
 A connected pedigree returned as a \code{ped} object.

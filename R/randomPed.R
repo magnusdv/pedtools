@@ -17,7 +17,6 @@
 #'   to remove all restrictions.
 #' @param selfing A logical indicating if selfing is allowed. Default: FALSE.
 #' @param seed An integer seed for the random number generator (optional).
-#' @param f Deprecated: synonym for `founders`.
 #'
 #' @return A connected pedigree returned as a `ped` object.
 #'
@@ -37,11 +36,7 @@
 #' plot(y, arrows = TRUE)
 #'
 #' @export
-randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL, f = NULL) {
-
-  # TODO: remove when possible
-  if(!is.null(f))
-    founders = f
+randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = NULL) {
 
   # For brevity
   f = founders
