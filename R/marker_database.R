@@ -1,25 +1,37 @@
 #' Allele frequency database
 #'
 #' Functions for reading, setting and extracting allele frequency databases, in
-#' either "list" format or "allelic ladder" format.
+#' either "list" format, "merlin" format or "allelic ladder" format.
 #'
 #' A frequency database in "list" format is a list of numeric vectors; each
 #' vector named with the allele labels, and the list itself named with the
 #' marker names.
 #'
 #' Text files containing frequencies in "list" format should look as follows,
-#' where "marker1" and "marker2" are marker names, and "a1","a2",... are allele
-#' labels (which may be characters or numeric, but will always be converted to
+#' where "M1" and "M2" are marker names, and "a1","a2",... are allele labels
+#' (which may be characters or numeric, but will always be converted to
 #' characters):
 #' \preformatted{
-#' marker1
+#' M1
 #' a1 0.2
 #' a2 0.5
 #' a3 0.3
 #'
-#' marker2
+#' M2
 #' a1 0.9
 #' a2 0.1
+#' }
+#'
+#' In "merlin" format, used by the software MERLIN (Abecasis et. al, 2002), the
+#' same frequency data would be presented as follows:
+#' \preformatted{
+#' M M1
+#' A a1 0.2
+#' A a2 0.5
+#' A a3 0.3
+#' M M2
+#' A a1 0.9
+#' A a2 0.1
 #' }
 #'
 #' A database in "allelic ladder" format is rectangular, i.e., a numeric matrix
@@ -31,10 +43,11 @@
 #'   (with marker indices).
 #' @param database Either a list or matrix/data frame with allele frequencies,
 #'   or a file path (to be passed on to `readFreqDatabase()`).
-#' @param format Either "list" or "ladder".
 #' @param fixNames A logical (default: FALSE). If TRUE all marker names are
 #'   converted to upper case and "." and space characters are replaced with "_"
 #'   (underscore).
+#' @param format Either "list", "ladder" or "merlin" (only in
+#'   `readFreqDatabase()`).
 #' @param filename The path to a text file containing allele frequencies either
 #'   in "list" or "allelic ladder" format.
 #' @param df A data frame of allele frequencies in either "list" or "allelic
@@ -196,21 +209,24 @@ freqDb2attribList = function(database, format = c("list", "ladder")) {
 
 #' @rdname freqDatabase
 #' @export
-readFreqDatabase = function(filename = NULL, df = NULL, format = c("list", "ladder"), fixNames = FALSE, ...) {
+readFreqDatabase = function(filename = NULL, df = NULL, format = c("list", "ladder", "merlin"),
+                            fixNames = FALSE, scale1 = FALSE, verbose = TRUE, ...) {
 
   format = match.arg(format)
 
-  if(is.null(df)) {
-    df = switch(format,
-      list = read.table(filename, colClasses = c("character", "numeric"),
-                       header = FALSE, fill = TRUE, blank.lines.skip = FALSE, ...),
-      ladder = read.table(filename, header = TRUE, row.names = 1,
-                            as.is = TRUE, check.names = FALSE, ...)
-    )
+  if(verbose) {
+    if(is.null(df))
+      cat("Reading frequency file:", filename, "\n")
+    cat("Database format:", format, "\n")
   }
 
   db = switch(format,
     list = { # data frame with 2 columns
+
+      if(is.null(df)) {
+        df = read.table(filename, colClasses = c("character", "numeric"),
+                        header = FALSE, fill = TRUE, blank.lines.skip = FALSE, ...)
+      }
 
       # Skip blank lines
       blank = df[[1]] == "" | is.na(df[[1]])
@@ -233,7 +249,32 @@ readFreqDatabase = function(filename = NULL, df = NULL, format = c("list", "ladd
         setNames(freqs[rws], labs[rws])
       })
     },
+    merlin = { # Similar to above, but 3 columns; first column contains "M", "A"
+
+      if(is.null(df)) {
+        df = read.table(filename, colClasses = c("character", "character", "numeric"),
+                        header = FALSE, fill = TRUE, ...)
+      }
+
+      # New marker starts where first column has "M"
+      nameRow = which(df$V1 == "M")
+      nms = df$V2[nameRow]
+
+      freqStart = nameRow + 1
+      freqStop = c(nameRow[-1] -  1, nrow(df))
+
+      # Convert to list of named frequency vectors
+      lapply(seq_along(nms), function(i) {
+        rws = freqStart[i]:freqStop[i]
+        setNames(df$V3[rws], df$V2[rws])
+      })
+    },
     ladder = {  # allelic ladder
+
+      if(is.null(df)) {
+        df = read.table(filename, header = TRUE, row.names = 1, as.is = TRUE,
+                        check.names = FALSE, ...)
+      }
       mat = as.matrix(df)
       als = rownames(mat)
       nms = colnames(mat)
@@ -247,7 +288,18 @@ readFreqDatabase = function(filename = NULL, df = NULL, format = c("list", "ladd
 
   if(fixNames) {
     # Default fixes: (i) convert all to upper case, (ii) replace space and "." with "_"
-    nms = sub(" ", "_", sub(".", "_", toupper(nms), fixed = TRUE), fixed = TRUE)
+    if(verbose)
+      cat("Fixing names:\n")
+
+    oldnms = nms
+    nms = sub(" ", "_", sub(".", "_", toupper(oldnms), fixed = TRUE), fixed = TRUE)
+    if(verbose) {
+      changed = which(nms != oldnms)
+      for(i in changed)
+        cat(sprintf(" %s -> %s\n", oldnms[i], nms[i]))
+      if(!length(changed))
+        cat(" No changes done")
+    }
   }
 
   # Add marker names

@@ -15,7 +15,7 @@ setFreqDatabase(x, database, format = c("list", "ladder"), ...)
 readFreqDatabase(
   filename = NULL,
   df = NULL,
-  format = c("list", "ladder"),
+  format = c("list", "ladder", "merlin"),
   fixNames = FALSE,
   ...
 )
@@ -28,7 +28,7 @@ writeFreqDatabase(x, filename, markers = NULL, format = c("list", "ladder"))
 \item{markers}{A character vector (with marker names) or a numeric vector
 (with marker indices).}
 
-\item{format}{Either "list" or "ladder".}
+\item{format}{Either "list", "merlin" or "ladder".}
 
 \item{database}{Either a list or matrix/data frame with allele frequencies,
 or a file path (to be passed on to \code{readFreqDatabase()}).}
@@ -55,7 +55,7 @@ frame (if \code{format = "ladder"}).
 }
 \description{
 Functions for reading, setting and extracting allele frequency databases, in
-either "list" format or "allelic ladder" format.
+either "list" format, "merlin" format or "allelic ladder" format.
 }
 \details{
 A frequency database in "list" format is a list of numeric vectors; each
@@ -63,18 +63,30 @@ vector named with the allele labels, and the list itself named with the
 marker names.
 
 Text files containing frequencies in "list" format should look as follows,
-where "marker1" and "marker2" are marker names, and "a1","a2",... are allele
-labels (which may be characters or numeric, but will always be converted to
+where "M1" and "M2" are marker names, and "a1","a2",... are allele labels
+(which may be characters or numeric, but will always be converted to
 characters):
 \preformatted{
-marker1
+M1
 a1 0.2
 a2 0.5
 a3 0.3
 
-marker2
+M2
 a1 0.9
 a2 0.1
+}
+
+In "merlin" format, used by the software MERLIN (Abecasis et. al, 2002), the
+same frequency data would be presented as follows:
+\preformatted{
+M M1
+A a1 0.2
+A a2 0.5
+A a3 0.3
+M M2
+A a1 0.9
+A a2 0.1
 }
 
 A database in "allelic ladder" format is rectangular, i.e., a numeric matrix
