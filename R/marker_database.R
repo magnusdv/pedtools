@@ -43,16 +43,20 @@
 #'   (with marker indices).
 #' @param database Either a list or matrix/data frame with allele frequencies,
 #'   or a file path (to be passed on to `readFreqDatabase()`).
-#' @param fixNames A logical (default: FALSE). If TRUE all marker names are
-#'   converted to upper case and "." and space characters are replaced with "_"
-#'   (underscore).
 #' @param format Either "list", "ladder" or "merlin" (only in
 #'   `readFreqDatabase()`).
+#' @param fixNames A logical, by default FALSE. If TRUE all marker names are
+#'   converted to upper case, and all periods and space characters are replaced
+#'   with "_" (underscore).
+#' @param scale1 A logical, by default FALSE. If TRUE, all frequency vectors are
+#'   scaled to ensure that it sums to 1.
 #' @param filename The path to a text file containing allele frequencies either
 #'   in "list" or "allelic ladder" format.
 #' @param df A data frame of allele frequencies in either "list" or "allelic
 #'   ladder" format. This can be supplied instead of `filename`.
-#' @param ... Optional arguments passed on to [read.table()].
+#' @param verbose A logical.
+#' @param ... Optional arguments passed on to [read.table()], e.g. `sep = "\t"`
+#'   if the file is tab separated.
 #'
 #' @return
 #'
@@ -305,11 +309,13 @@ readFreqDatabase = function(filename = NULL, df = NULL, format = c("list", "ladd
   # Add marker names
   names(db) = nms
 
-  # Ensure numeric frequencies
-  db = lapply(db, function(afr) {
+  # Check frequencies
+  db = lapply(nms, function(m) {
+    afr = db[[m]]
+
     num = suppressWarnings(as.numeric(afr))
     if(anyNA(num))
-      stop2("Non-numeric frequency detected: ", afr[is.na(num)])
+      stop2(sprintf("Non-numeric frequency detected for `%s`: %s", m, afr[is.na(num)]))
     afr[] = num
 
     # Fix bad microvariant labels, e.g. "9.30000000007"
@@ -317,8 +323,20 @@ readFreqDatabase = function(filename = NULL, df = NULL, format = c("list", "ladd
     if(!anyNA(numals))
       names(afr) = as.character(numals)
 
+    # Scale to sum 1
+    if(scale1) {
+      sm = sum(afr)
+      if(sm != 1) {
+        if(verbose) cat(sprintf("Scaling `%s` to 1. Original sum: %g\n", m, sm))
+        afr = afr/sm
+      }
+    }
+
     afr
   })
+
+  # Add marker names (again...)
+  names(db) = nms
 
   db
 }

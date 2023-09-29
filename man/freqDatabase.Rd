@@ -17,6 +17,8 @@ readFreqDatabase(
   df = NULL,
   format = c("list", "ladder", "merlin"),
   fixNames = FALSE,
+  scale1 = FALSE,
+  verbose = TRUE,
   ...
 )
 
@@ -28,12 +30,14 @@ writeFreqDatabase(x, filename, markers = NULL, format = c("list", "ladder"))
 \item{markers}{A character vector (with marker names) or a numeric vector
 (with marker indices).}
 
-\item{format}{Either "list", "merlin" or "ladder".}
+\item{format}{Either "list", "ladder" or "merlin" (only in
+\code{readFreqDatabase()}).}
 
 \item{database}{Either a list or matrix/data frame with allele frequencies,
 or a file path (to be passed on to \code{readFreqDatabase()}).}
 
-\item{...}{Optional arguments passed on to \code{\link[=read.table]{read.table()}}.}
+\item{...}{Optional arguments passed on to \code{\link[=read.table]{read.table()}}, e.g. \code{sep = "\\t"}
+if the file is tab separated.}
 
 \item{filename}{The path to a text file containing allele frequencies either
 in "list" or "allelic ladder" format.}
@@ -41,9 +45,14 @@ in "list" or "allelic ladder" format.}
 \item{df}{A data frame of allele frequencies in either "list" or "allelic
 ladder" format. This can be supplied instead of \code{filename}.}
 
-\item{fixNames}{A logical (default: FALSE). If TRUE all marker names are
-converted to upper case and "." and space characters are replaced with "_"
-(underscore).}
+\item{fixNames}{A logical, by default FALSE. If TRUE all marker names are
+converted to upper case, and all periods and space characters are replaced
+with "_" (underscore).}
+
+\item{scale1}{A logical, by default FALSE. If TRUE, all frequency vectors are
+scaled to ensure that it sums to 1.}
+
+\item{verbose}{A logical.}
 }
 \value{
 \itemize{
