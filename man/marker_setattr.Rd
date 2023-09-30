@@ -66,7 +66,7 @@ x = nuclearPed(1) |>
   setChrom(marker = "M", chrom = 1) |>
   setPosition(marker = "M", posMb = 123.45)
 
-# Of course, all of this could have been done on creation:
+# Alternatively, all of this could have been done on creation:
 y = addMarker(nuclearPed(),
               `1` = "1/2",
               afreq = c(`1` = 0.1, `2` = 0.9),

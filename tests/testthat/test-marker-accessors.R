@@ -162,3 +162,21 @@ test_that("setGenotype() works", {
 
   expect_equal(y1, y2)
 })
+
+
+test_that("setAfreq() updates the mutation model", {
+  x = nuclearPed() |>
+    addMarker(alleles = 1:2, afreq = c(0.5, 0.5)) |>
+    setMutmod(model = "prop", rate = 0.1)
+
+  newfr = c("1" = 0.2, "2" = 0.8)
+  y = setAfreq(x, marker = 1, afreq = newfr)
+
+  z =  nuclearPed() |> addMarker(afreq = newfr) |>
+    setMutmod(model = "prop", rate = 0.1)
+
+  expect_equal(y, z)
+})
+
+
+

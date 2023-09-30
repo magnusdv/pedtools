@@ -30,7 +30,7 @@
 #'   setChrom(marker = "M", chrom = 1) |>
 #'   setPosition(marker = "M", posMb = 123.45)
 #'
-#' # Of course, all of this could have been done on creation:
+#' # Alternatively, all of this could have been done on creation:
 #' y = addMarker(nuclearPed(),
 #'               `1` = "1/2",
 #'               afreq = c(`1` = 0.1, `2` = 0.9),
@@ -227,8 +227,6 @@ setAfreq = function(x, marker, afreq, strict = TRUE) {
     attr(m, "afreq") = as.numeric(afreq)
   }
   else {
-    if(allowsMutations(m))
-      warning("Mutation models may be invalidated by frequency change")
 
     # Sort (numerically if appropriate)
     if (!anyNA(suppressWarnings(as.numeric(freqnames))))
@@ -249,6 +247,11 @@ setAfreq = function(x, marker, afreq, strict = TRUE) {
   }
 
   x$MARKERS[[idx]] = m
+
+  # Update mutation model
+  if(allowsMutations(m))
+    x = setMutmod(x, markers = marker, update = TRUE)
+
   x
 }
 
