@@ -1,10 +1,19 @@
-# Development version
+# pedtools 2.4.0
 
-* `plot.list()` now handles general (unnested) lists of `ped` objects. This means that, for instance, with `x = list(nuclearPed(1), cousinPed(1))`, the command `plot(x)` simply works. Previously all ped lists had to be handled by `plotPedList()`. (This is still needed for finer control of each component, and with nested lists.)
+## New features
+
+* The `plot()` method now handles general (unnested) lists of `ped` objects. This means that, for instance, with `x = list(nuclearPed(1), cousinPed(1), singleton(1))`, the command `plot(x)` simply works. Previously all ped lists had to be handled by `plotPedList()`. (This is still needed for finer control of each component, and with nested lists.)
 
 * `nMarkers()` and `hasMarkers()` have a new argument `compwise` for more detailed output for ped lists.
 
 * `linearPed(0)` now produces a singleton (instead of an error).
+
+* `setAfreq()` now automatically updates the mutation model of the affected marker, if present.
+
+* `readFreqDatabase()` now accepts frequency files using the *long format* of MERLIN.
+
+* `readFreqDatabase()` gains a logical argument `scale1`, which, if TRUE, scales all vectors to sum 1.
+
 
 # pedtools 2.3.1
 
