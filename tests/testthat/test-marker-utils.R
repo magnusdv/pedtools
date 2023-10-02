@@ -15,10 +15,10 @@ test_that("isXmarker() works", {
 
 test_that("nMarkers() and hasMarkers() works with multiple comps", {
   x = list(singleton(1), singleton(2) |> addMarker())
-  expect_error(nMarkers(x), "Pedigree components have different number of markers")
+  expect_error(nMarkers(x), "pedigree components have different number of markers")
   expect_identical(nMarkers(x, compwise = T), 0:1)
 
-  expect_true(hasMarkers(x), "Pedigree components have different number of markers")
+  expect_true(hasMarkers(x), "pedigree components have different number of markers")
   expect_identical(hasMarkers(x, compwise = T), c(F,T))
 })
 

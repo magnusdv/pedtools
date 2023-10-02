@@ -64,7 +64,7 @@ nMarkers = function(x, compwise = FALSE) {
       return(nvec)
 
     if(!listIdentical(nvec))
-      stop2("Pedigree components have different number of markers")
+      stop2("The pedigree components have different number of markers")
     return(nvec[[1]])
   }
   stop2("Input to `nMarkers()` must be a `ped` object or a list of such")
