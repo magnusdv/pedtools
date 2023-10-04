@@ -32,6 +32,9 @@
 #' @param header A logical. If NA, the program will interpret the first line as
 #'   a header line it contains both "id" and "sex" as part of some entries
 #'   (ignoring case).
+#' @param colSkip Columns to skip, given as a vector of indices or columns
+#'   names. If given, these columns are removed directly after `read.table()`,
+#'   before any other processing.
 #' @param ... Further parameters passed on to [read.table()], e.g.
 #'   `comment.char` and `quote`.
 #'
@@ -84,7 +87,7 @@ readPed = function(pedfile, colSep = "", header = NA,
                    famid_col = NA, id_col = NA, fid_col = NA,
                    mid_col = NA, sex_col = NA, marker_col = NA,
                    locusAttributes = NULL, missing = 0,
-                   sep = NULL, validate = TRUE, ...) {
+                   sep = NULL, colSkip = NULL, validate = TRUE, ...) {
 
   # If header = NA, check first line
   if(is.na(header)) {
@@ -97,6 +100,11 @@ readPed = function(pedfile, colSep = "", header = NA,
 
   ped.df = read.table(pedfile, sep = colSep, header = header,
                       colClasses = "character", check.names = FALSE, ...)
+  if(!is.null(colSkip)) {
+    if(is.character(colSkip))
+      colSkip = match(colSkip, names(ped.df))
+    ped.df = ped.df[, -colSkip, drop = FALSE]
+  }
 
   # guess columns if no header info
   if(!header && isTRUE(all(is.na(c(famid_col, id_col, fid_col, mid_col, sex_col, marker_col))))) {

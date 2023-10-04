@@ -17,6 +17,7 @@ readPed(
   locusAttributes = NULL,
   missing = 0,
   sep = NULL,
+  colSkip = NULL,
   validate = TRUE,
   ...
 )
@@ -60,6 +61,10 @@ and split into separate alleles with \code{strsplit(..., split = sep, fixed = TR
 \item{missing}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
 \item{sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+
+\item{colSkip}{Columns to skip, given as a vector of indices or columns
+names. If given, these columns are removed directly after \code{read.table()},
+before any other processing.}
 
 \item{validate}{A logical indicating if the pedigree structure should be validated.}
 
