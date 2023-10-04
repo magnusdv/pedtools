@@ -22,12 +22,18 @@ relabel(
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
 
-\item{new}{Either a character vector containing new labels, or one of the
-special words "asPlot" (default) or "generations". See Details and
-Examples.}
+\item{new}{The following values are valid (see Details and Examples):
+\itemize{
+\item a character vector containing new labels. If named, interpreted as
+\code{old = new}
+\item a function, which should take the old labels as input and output a
+character of the same length
+\item one of the special keywords "asPlot" (default) or "generations"
+}}
 
 \item{old}{A vector of ID labels, of the same length as \code{new}. (Ignored if
-\code{new} is one of the special words.)}
+\code{new} is one of the special words.) If not given, taken from the names of
+\code{new} if these exist.}
 
 \item{reorder}{A logical. If TRUE, \code{\link[=reorderPed]{reorderPed()}} is called on \code{x} after
 relabelling. Default: FALSE.}
