@@ -102,8 +102,9 @@ readPed = function(pedfile, colSep = "", header = NA,
                       colClasses = "character", check.names = FALSE, ...)
   if(!is.null(colSkip)) {
     if(is.character(colSkip))
-      colSkip = match(colSkip, names(ped.df))
-    ped.df = ped.df[, -colSkip, drop = FALSE]
+      colSkip = match(colSkip, names(ped.df), nomatch = 0)
+    if(is.numeric(colSkip) && any(colSkip > 0))
+      ped.df = ped.df[, -colSkip[colSkip > 0], drop = FALSE]
   }
 
   # guess columns if no header info
