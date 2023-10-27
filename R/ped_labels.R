@@ -58,6 +58,10 @@
 #' @export
 relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
                    returnLabs = FALSE, .alignment = NULL) {
+
+  # Missing explicit `old`? (Must check before modifying defaults)
+  missingOld = missing(old)
+
   if(is.list(old))
     old = unlist(old, use.names = FALSE)
 
@@ -104,7 +108,7 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
       return(new)
   }
 
-  if(missing(old) && !is.null(names(new)))
+  if(missingOld && !is.null(names(new)))
     old = names(new)
 
   if(is.function(new))
