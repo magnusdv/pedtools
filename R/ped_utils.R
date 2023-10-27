@@ -392,8 +392,10 @@ nextNN = function(labs) { # labs a character vector
 getComponent = function(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE) {
   if(is.ped(x))
     x = list(x)
-  else if(!is.pedList(x))
-    stop2("Input is not a (list of) ped objects")
+  else if(!is.pedList(x)) {
+    print(x)
+    stop2("Input is not a `ped` object (or a list of such)")
+  }
 
   # List labels of each component
   labList = labels(x)
