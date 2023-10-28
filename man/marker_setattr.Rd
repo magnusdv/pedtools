@@ -4,6 +4,7 @@
 \alias{marker_setattr}
 \alias{setGenotype}
 \alias{setAfreq}
+\alias{setAlleleLabels}
 \alias{setMarkername}
 \alias{setChrom}
 \alias{setPosition}
@@ -12,6 +13,8 @@
 setGenotype(x, marker = NULL, ids = NULL, geno = NULL, id = NULL)
 
 setAfreq(x, marker, afreq, strict = TRUE)
+
+setAlleleLabels(x, marker, alleles)
 
 setMarkername(x, marker = NULL, name)
 
@@ -40,6 +43,10 @@ equal frequencies.}
 \item{strict}{A logical. If TRUE (default) the new frequencies cannot remove
 or add any alleles.}
 
+\item{alleles}{A character containing allele names. If not given, and \code{afreq}
+is named, \code{names(afreq)} is used. The default action is to take the sorted
+vector of distinct alleles occurring in \code{allelematrix}, \code{geno} or \code{...}.}
+
 \item{name}{A character of the same length as \code{marker}, containing marker
 names.}
 
@@ -58,7 +65,7 @@ pedigree. They are sometimes more convenient (and pipe-friendly) than the
 in-place modifiers described in \link{marker_inplace}.
 }
 \examples{
-x = nuclearPed(1) |>
+x = nuclearPed() |>
   addMarker(alleles = 1:2) |>
   setMarkername(marker = 1, name = "M") |>
   setGenotype(marker = "M", ids = 1, geno = "1/2") |>

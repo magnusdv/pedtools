@@ -22,7 +22,7 @@
 #' @return A copy of `x` with modified attributes.
 #'
 #' @examples
-#' x = nuclearPed(1) |>
+#' x = nuclearPed() |>
 #'   addMarker(alleles = 1:2) |>
 #'   setMarkername(marker = 1, name = "M") |>
 #'   setGenotype(marker = "M", ids = 1, geno = "1/2") |>
@@ -255,6 +255,76 @@ setAfreq = function(x, marker, afreq, strict = TRUE) {
   x
 }
 
+# Set allele labels --------------------------------------------------
+
+#' @rdname marker_setattr
+#' @export
+setAlleleLabels = function(x, marker, alleles) {
+
+  if(missing(marker) || length(marker) == 0)
+    stop2("Argument `marker` cannot be empty")
+  if(length(marker) > 1)
+    stop2("Frequency replacement can only be done for a single marker")
+  if(anyDuplicated.default(alleles))
+    stop2("Duplicated alleles in frequency vector: ", alleles[duplicated(alleles)])
+  NAstrings = c(0, "", NA, "-")
+  if(any(alleles %in% NAstrings))
+    stop2("Invalid allele: ", intersect(NAstrings, alleles))
+
+  if(is.pedList(x)) { # leads to lots of redundant tests, but no big deal
+    y = lapply(x, setAlleleLabels, marker = marker, alleles = alleles)
+    return(y)
+  }
+
+  idx = whichMarkers(x, markers = marker)
+  m = x$MARKERS[[idx]]
+  oldals = attr(m, "alleles")
+  oldafr = attr(m, "afreq")
+
+  # If named (old = new) use these
+  if(!is.null(nms <- names(alleles))) {
+    aidx = match(nms, oldals, nomatch = 0L)
+    if(any(aidx == 0))
+      stop2("Unknown allele: ", setdiff(nms, oldals))
+
+    newals = oldals
+    newals[aidx] = alleles
+  }
+  else {
+    newals = alleles
+    if(length(newals) != length(oldals))
+      stop2("Wrong length of allele replacement vector")
+  }
+
+  # Observed alleles (used to re-index after sorting)
+  obs = newals[m[m > 0]] # observed alleles
+
+  # Sort (numerically if appropriate)
+  if (!anyNA(suppressWarnings(as.numeric(newals))))
+    ord = order(as.numeric(newals))
+  else
+    ord = order(newals)
+
+  # Reorder everything with new order
+  newals_sorted = newals[ord]
+  afr_sorted = oldafr[ord]
+  attr(m, "alleles") = newals_sorted
+  attr(m, "afreq") = afr_sorted
+  m[m > 0] = match(obs, newals_sorted)
+
+  # Mutation model
+  if(!is.null(mut <- mutmod(m))) {
+    mutpar = pedmut::getParams(mut)
+    parlist = lapply(mutpar, function(v) list(female = v[1], male = v[2]))
+    args = c(list(alleles = newals_sorted, afreq = afr_sorted), parlist)
+    attr(m, "mutmod") = do.call(pedmut::mutationModel, args)
+  }
+
+  # Set modified marker object
+  x$MARKERS[[idx]] = m
+
+  x
+}
 
 
 # Set marker name ---------------------------------------------------------
