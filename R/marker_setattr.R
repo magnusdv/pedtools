@@ -312,6 +312,10 @@ setAlleleLabels = function(x, marker, alleles) {
   attr(m, "afreq") = afr_sorted
   m[m > 0] = match(obs, newals_sorted)
 
+  # Sort genotypes
+  if(any(swap <- m[,1] > m[,2]))
+    m[swap, ] = m[swap, 2:1]
+
   # Mutation model
   if(!is.null(mut <- mutmod(m))) {
     mutpar = pedmut::getParams(mut)
@@ -338,7 +342,7 @@ setMarkername = function(x, marker = NULL, name) {
     return(y)
   }
 
-  marker = marker %||% seq_markers(x)
+  marker = marker %||% names(name) %||% seq_markers(x)
   if(length(marker) == 0)
     stop2("Argument `marker` cannot be empty")
 
