@@ -42,8 +42,12 @@ selectMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos
     return(y)
   }
 
+  cl = class(x$MARKERS)
+
   idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS = x$MARKERS[idx]
+  class(x$MARKERS) = cl
+
   x
 }
 

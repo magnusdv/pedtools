@@ -156,7 +156,7 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
 
   # Replace `pedmembers` attribute of each marker
   if(hasMarkers(x))
-    x$MARKERS = lapply(x$MARKERS, `attr<-`, 'pedmembers', id)
+    x$MARKERS[] = lapply(x$MARKERS, `attr<-`, 'pedmembers', id)
 
   if(reorder)
     x = reorderPed(x)
