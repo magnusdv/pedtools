@@ -5,16 +5,24 @@
 \alias{unmaskPed}
 \title{Mask and unmask pedigree datasets}
 \usage{
-maskPed(x, seed = NULL)
+maskPed(x, ids = NULL, markerNames = NULL, alleleLabels = NULL, seed = NULL)
 
 unmaskPed(x, keys)
 }
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
 
+\item{ids}{(Optional) A named character with the new IDs, written as \code{c(old = new, ...)}. By default: 1, 2, ... .}
+
+\item{markerNames}{(Optional) A named character with the new marker names (and order),
+written as \code{c(old = new, ...)}. By default: M1, M2, ... .}
+
+\item{alleleLabels}{(Optional) A list of character vectors. The list names should be the
+original marker names. Each vector gives the new allele labels, as \code{c(old = new, ...)}. By default, each marker gets alleles 1, 2, ... .}
+
 \item{seed}{An optional seed for the random number generator.}
 
-\item{keys}{A list with entries \code{ids}, \code{markers}, \code{alleles}.}
+\item{keys}{A list with entries \code{ids}, \code{markerNames}, \code{alleleLabels}.}
 }
 \value{
 An object similar to \code{x} but with replaced ID labels, marker names
@@ -22,15 +30,16 @@ and allele labels.
 }
 \description{
 The \code{maskPed()} function replaces the individual IDs, marker names and allele
-labels with generic sequences like 1, 2, ... For markers with stepwise
-mutation models, the allelic ladder is simply translated to start at 1,
-thereby preserving the intra-allelic differences.
+names with generic labels, and randomly changes their internal order. For
+markers with stepwise mutation models, the allelic ladder is simply
+translated to start at 1, thereby preserving the intra-allelic differences.
 }
 \details{
-It should be noted that when the masking procedure is applied to a dataset
-using publicly available frequency databases, the result cannot be considered
-to be fully anonymised. (In theory, one could deduce the original marker
-names and alleles from the frequencies.)
+Note that in order to preserve likelihoods, the allele frequencies are not
+modified. Thus, if the data uses a publicly available frequency databases,
+the result cannot be considered to be fully anonymised, since one could (at
+least in theory) deduce the original marker names and alleles from the
+frequencies.)
 }
 \examples{
 x = nuclearPed(father = "fa", mother = "mo", children = "ch") |>
