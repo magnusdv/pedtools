@@ -50,7 +50,7 @@ x = nuclearPed(father = "fa", mother = "mo", children = "ch") |>
 y = maskPed(x, seed = 1729)
 
 # Unmask
-z = unmaskPed(y$maskedPed, y$keys)
+z = unmaskPed(y$maskedPed, keys = y$keys)
 stopifnot(identical(x, z))
 
 # With stepwise model
@@ -62,7 +62,7 @@ x2 = x |>
 
 y2 = maskPed(x2, seed = 1729)
 
-z2 = unmaskPed(y2$maskedPed, y2$keys)
+z2 = unmaskPed(y2$maskedPed, keys = y2$keys)
 
 stopifnot(identical(x2, z2))
 

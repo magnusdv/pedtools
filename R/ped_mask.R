@@ -34,7 +34,7 @@
 #' y = maskPed(x, seed = 1729)
 #'
 #' # Unmask
-#' z = unmaskPed(y$maskedPed, y$keys)
+#' z = unmaskPed(y$maskedPed, keys = y$keys)
 #' stopifnot(identical(x, z))
 #'
 #' # With stepwise model
@@ -46,7 +46,7 @@
 #'
 #' y2 = maskPed(x2, seed = 1729)
 #'
-#' z2 = unmaskPed(y2$maskedPed, y2$keys)
+#' z2 = unmaskPed(y2$maskedPed, keys = y2$keys)
 #'
 #' stopifnot(identical(x2, z2))
 #'
@@ -81,7 +81,7 @@ maskPed = function(x, ids = NULL, markerNames = NULL, alleleLabels = NULL, seed 
     alleleLabels = lapply(1:nm, function(i) {
       alsOld = alleles(y, marker = i)
       alsNum = suppressWarnings(as.numeric(alsOld))
-      if(!any(is.na(alsNum)))
+      if(!any(is.na(alsNum)) && .hasStepwiseModel(y, i))
         als = round(alsNum - round(min(alsNum)) + 1, 1)
       else
         als = sample.int(length(alsOld))
@@ -137,4 +137,12 @@ unmaskPed = function(x, keys) {
 # Swap elements and names of a vector
 .flipNames = function(v) {
   setNames(names(v), v)
+}
+
+.hasStepwiseModel = function(x, marker) {
+  mut = mutmod(x, marker = marker)
+  if(is.null(mut))
+    return(FALSE)
+  params = pedmut::getParams(mut, format = 1)
+  any(params$model %in% c("stepwise", "onestep"))
 }
