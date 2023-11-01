@@ -27,9 +27,8 @@
 #' Internal plot methods
 #'
 #' The main purpose of this page is to document the many options for pedigree
-#' plotting. Most of the arguments shown here may be supplied directly
-#' in `plot(x, ...)`, where `x` is a pedigree. See [plot.ped()] for many
-#' examples.
+#' plotting. Most of the arguments shown here may be supplied directly in
+#' `plot(x, ...)`, where `x` is a pedigree. See [plot.ped()] for many examples.
 #'
 #' The workflow of `plot.ped(x, ...)` is approximately as follows:
 #'
@@ -101,6 +100,9 @@
 #' @param xlim,ylim Numeric vectors of length 2, used to set `par("usr")`
 #'   explicitly. Rarely needed by end users.
 #' @param vsep2 A logical; for internal use.
+#' @param autoScale A logical. It TRUE, an attempt is made to adjust `cex` so
+#'   that the symbol dimensions are at least `minsize` inches. Default: FALSE.
+#' @param minsize A positive number, by default 0.15. (See `autoScale`.)
 #' @param marker Either a vector of names or indices referring to markers
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
@@ -457,7 +459,8 @@ NULL
 #' @importFrom graphics frame strheight strwidth
 #' @export
 .pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1,
-                       addSpace = 0, xlim = NULL, ylim = NULL, vsep2 = FALSE, ...) {
+                       addSpace = 0, xlim = NULL, ylim = NULL, vsep2 = FALSE,
+                       autoScale = FALSE, minsize = 0.15, ...) {
 
   textUnder = annotation$textUnder
   textAbove = annotation$textAbove
@@ -557,6 +560,18 @@ NULL
 
   # Box size in inches
   boxsize = symbolsize * min(ht1, ht2, wd1, wd2)
+
+  if(autoScale && boxsize < minsize) {
+    if(minsize > ht2 | cex < 0.2)
+      stop2("autoScale error: `minsize` is too large for the current window")
+
+    trycex = round(0.9 * cex, 2)
+    message("autoScale: Reducing to cex = ", trycex)
+
+    return(.pedScaling(alignment, annotation, cex = trycex, symbolsize = symbolsize,
+                       margins = margins, addSpace = addSpace, xlim = xlim,
+                       ylim = ylim, vsep2 = vsep2, autoScale = TRUE, minsize = minsize))
+  }
 
   # Horizontal scaling factor
   if(is.null(xlim)) {

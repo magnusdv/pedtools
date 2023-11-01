@@ -56,6 +56,8 @@
   xlim = NULL,
   ylim = NULL,
   vsep2 = FALSE,
+  autoScale = FALSE,
+  minsize = 0.15,
   ...
 )
 
@@ -187,6 +189,11 @@ explicitly. Rarely needed by end users.}
 
 \item{vsep2}{A logical; for internal use.}
 
+\item{autoScale}{A logical. It TRUE, an attempt is made to adjust \code{cex} so that
+the symbol dimensions are at least \code{minsize} inches. Default: FALSE.}
+
+\item{minsize}{A positive number, by default 0.15. (See \code{autoScale}.)}
+
 \item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
 
 \item{font, fam}{Arguments passed on to \code{\link[=text]{text()}}.}
@@ -197,9 +204,8 @@ explicitly. Rarely needed by end users.}
 }
 \description{
 The main purpose of this page is to document the many options for pedigree
-plotting. Most of the arguments shown here may be supplied directly
-in \code{plot(x, ...)}, where \code{x} is a pedigree. See \code{\link[=plot.ped]{plot.ped()}} for many
-examples.
+plotting. Most of the arguments shown here may be supplied directly in
+\code{plot(x, ...)}, where \code{x} is a pedigree. See \code{\link[=plot.ped]{plot.ped()}} for many examples.
 }
 \details{
 The workflow of \code{plot.ped(x, ...)} is approximately as follows:
