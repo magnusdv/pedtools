@@ -189,8 +189,8 @@ explicitly. Rarely needed by end users.}
 
 \item{vsep2}{A logical; for internal use.}
 
-\item{autoScale}{A logical. It TRUE, an attempt is made to adjust \code{cex} so that
-the symbol dimensions are at least \code{minsize} inches. Default: FALSE.}
+\item{autoScale}{A logical. It TRUE, an attempt is made to adjust \code{cex} so
+that the symbol dimensions are at least \code{minsize} inches. Default: FALSE.}
 
 \item{minsize}{A positive number, by default 0.15. (See \code{autoScale}.)}
 

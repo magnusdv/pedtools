@@ -561,6 +561,7 @@ NULL
   # Box size in inches
   boxsize = symbolsize * min(ht1, ht2, wd1, wd2)
 
+  # Autoscale if too small
   if(autoScale && boxsize < minsize) {
     if(minsize > ht2 | cex < 0.2)
       stop2("autoScale error: `minsize` is too large for the current window")
