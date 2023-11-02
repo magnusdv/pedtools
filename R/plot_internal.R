@@ -566,10 +566,11 @@ NULL
     if(minsize > ht2 | cex < 0.2)
       stop2("autoScale error: `minsize` is too large for the current window")
 
-    trycex = round(0.9 * cex, 2)
-    message("autoScale: Reducing to cex = ", trycex)
+    trycex = round(0.95 * cex, 2)
+    trysymbolsize = round(1.05 * symbolsize, 2)
+    message(sprintf("autoScale: cex = %g, symbolsize = %g", trycex, trysymbolsize))
 
-    return(.pedScaling(alignment, annotation, cex = trycex, symbolsize = symbolsize,
+    return(.pedScaling(alignment, annotation, cex = trycex, symbolsize = trysymbolsize,
                        margins = margins, addSpace = addSpace, xlim = xlim,
                        ylim = ylim, vsep2 = vsep2, autoScale = TRUE, minsize = minsize))
   }
