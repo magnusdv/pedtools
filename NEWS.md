@@ -1,3 +1,22 @@
+# pedtools 2.5.0
+
+## New features
+
+* New functions `maskPed()` and `unmaskPed()` for anonymising pedigree data, and restoring them.
+
+* New function `setAlleleLabels()` for changing the allele labels of a marker.
+
+* The `.pedScaling()` gains arguments `autoScale` and `minsize`.
+
+* `readPed()` gains argument `colSkip`, useful e.g., when reading .ped files with an AFF column.
+
+* The `relabel()` function for relabelling individuals now allows the argument `new` to be a function, taking the `old` labels as input. For instance, `relabel(x, toupper)` gives upper-case labels for everyone.
+
+## Bug fixes
+
+* Preserve the class attribute of `MARKERS` when subsetting.
+
+
 # pedtools 2.4.0
 
 ## New features
