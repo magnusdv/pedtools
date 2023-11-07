@@ -546,9 +546,6 @@ NULL
   else
     ht1 = psize[2] - abovetop_in - belowlast_in
 
-  if (ht1 <= 0)
-    stop2("Labels leave no room for the graph, reduce cex")
-
   # Height restriction 2
   ht2 = psize[2]/(maxlev + (maxlev-1)/2)
 
@@ -574,6 +571,9 @@ NULL
                        margins = margins, addSpace = addSpace, xlim = xlim,
                        ylim = ylim, vsep2 = vsep2, autoScale = TRUE, minsize = minsize))
   }
+
+  if (ht1 <= 0)
+    stop2("Labels leave no room for the graph, reduce cex")
 
   # Horizontal scaling factor
   if(is.null(xlim)) {
