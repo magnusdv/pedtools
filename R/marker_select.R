@@ -42,12 +42,13 @@ selectMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos
     return(y)
   }
 
-  cl = class(x$MARKERS)
-
   idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS = x$MARKERS[idx]
-  class(x$MARKERS) = cl
 
+  if(length(x$MARKERS))
+    class(x$MARKERS) = "markerList"
+  else
+    x$MARKERS = NULL   # rather than list()
   x
 }
 
@@ -72,6 +73,12 @@ removeMarkers = function(x, markers = NULL, chroms = NULL, fromPos = NULL, toPos
 
   idx = whichMarkers(x, markers = markers, chroms = chroms, fromPos = fromPos, toPos = toPos)
   x$MARKERS[idx] = NULL
+
+  if(length(x$MARKERS))
+    class(x$MARKERS) = "markerList"
+  else
+    x$MARKERS = NULL   # rather than list()
+
   x
 }
 
