@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-A comprehensive collection of tools for creating, manipulating and visualising pedigrees and genetic marker data. Pedigrees can be read from text files or created on the fly with built-in functions. A range of utilities enable modifications like adding or removing individuals, breaking loops, and merging pedigrees. An online tool for creating pedigrees interactively, based on 'pedtools', is available at \url{https://magnusdv.shinyapps.io/quickped}. 'pedtools' is the hub of the 'ped suite', a collection of packages for pedigree analysis. A detailed presentation of the 'ped suite' is given in the book 'Pedigree Analysis in R' (Vigeland, 2021, ISBN:9780128244302).
+A comprehensive collection of tools for creating, manipulating and visualising pedigrees and genetic marker data. Pedigrees can be read from text files or created on the fly with built-in functions. A range of utilities enable modifications like adding or removing individuals, breaking loops, and merging pedigrees. An online tool for creating pedigrees interactively, based on 'pedtools', is available at \url{https://magnusdv.shinyapps.io/quickped}. 'pedtools' is the hub of the 'pedsuite', a collection of packages for pedigree analysis. A detailed presentation of the 'pedsuite' is given in the book 'Pedigree Analysis in R' (Vigeland, 2021, ISBN:9780128244302).
 }
 \seealso{
 Useful links:
