@@ -12,13 +12,16 @@
 #' frequencies.)
 #'
 #' @param x A `ped` object or a list of such.
-#' @param ids (Optional) A named character with the new IDs, written as `c(old = new,
-#'   ...)`. By default: 1, 2, ... .
-#' @param markerNames (Optional) A named character with the new marker names (and order),
-#'   written as `c(old = new, ...)`. By default: M1, M2, ... .
-#' @param alleleLabels (Optional) A list of character vectors. The list names should be the
-#'   original marker names. Each vector gives the new allele labels, as `c(old =
-#'   new, ...)`. By default, each marker gets alleles 1, 2, ... .
+#' @param ids (Optional) A named character with the new IDs, written as `c(old =
+#'   new, ...)`. By default: 1, 2, ... .
+#' @param markerNames (Optional) A named character with the new marker names
+#'   (and order), written as `c(old = new, ...)`. By default: M1, M2, ... .
+#' @param markerShuffle A logical: Randomly reorder the markers? (Default: TRUE)
+#' @param alleleLabels (Optional) A list of character vectors. The list names
+#'   should be the original marker names. Each vector gives the new allele
+#'   labels, as `c(old = new, ...)`. By default, each marker gets alleles 1, 2,
+#'   ... .
+#' @param alleleShuffle A logical: Randomly reorder the alleles? (Default: TRUE)
 #' @param seed An optional seed for the random number generator.
 #' @param keys A list with entries `ids`, `markerNames`, `alleleLabels`.
 #'
@@ -55,7 +58,8 @@
 #'
 #' @importFrom stats setNames
 #' @export
-maskPed = function(x, ids = NULL, markerNames = NULL, alleleLabels = NULL, seed = NULL) {
+maskPed = function(x, ids = NULL, markerNames = NULL, markerShuffle = TRUE,
+                   alleleLabels = NULL, alleleShuffle = TRUE, seed = NULL) {
 
   if(!is.null(seed))
     set.seed(seed)
@@ -83,27 +87,33 @@ maskPed = function(x, ids = NULL, markerNames = NULL, alleleLabels = NULL, seed 
       alsNum = suppressWarnings(as.numeric(alsOld))
       if(!any(is.na(alsNum)) && .hasStepwiseModel(y, i))
         als = round(alsNum - round(min(alsNum)) + 1, 1)
-      else
+      else if(alleleShuffle)
         als = sample.int(length(alsOld))
+      else
+        als = seq_along(alsOld)
       setNames(as.character(als), alsOld)
     })
     names(alleleLabels) = oldnames
   }
 
   # Apply new allele labels
-  for(m in oldnames)
-    y = setAlleleLabels(y, marker = m, alleles = alleleLabels[[m]])
+  # NB: Do this before shuffling (much faster to supply idx than name)
+  for(i in seq_along(oldnames))
+    y = setAlleleLabels(y, marker = i, alleles = alleleLabels[[i]])
 
-  # Shuffle and rename markers (default: M1, M2, ...)
-  if(is.null(markerNames)) {
-    shuffle = sample(oldnames)
-    markerNames = setNames(paste0("M", 1:nm), shuffle)
-  }
-  else {
-    shuffle = names(markerNames)
-  }
+  # Marker order
+  if(!is.null(markerNames))
+    mOrder = names(markerNames)
+  else if(markerShuffle)
+    mOrder =  sample(oldnames)
+  else
+    mOrder = oldnames
 
-  y = selectMarkers(y, markers = shuffle)
+  # Rename markers (default: M1, M2, ...)
+  if(is.null(markerNames))
+    markerNames = setNames(paste0("M", 1:nm), mOrder)
+
+  y = selectMarkers(y, markers = mOrder)
   y = setMarkername(y, name = markerNames)
 
   # For key: sort markerNames in original order

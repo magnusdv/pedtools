@@ -5,7 +5,15 @@
 \alias{unmaskPed}
 \title{Mask and unmask pedigree datasets}
 \usage{
-maskPed(x, ids = NULL, markerNames = NULL, alleleLabels = NULL, seed = NULL)
+maskPed(
+  x,
+  ids = NULL,
+  markerNames = NULL,
+  markerShuffle = TRUE,
+  alleleLabels = NULL,
+  alleleShuffle = TRUE,
+  seed = NULL
+)
 
 unmaskPed(x, keys)
 }
@@ -14,11 +22,17 @@ unmaskPed(x, keys)
 
 \item{ids}{(Optional) A named character with the new IDs, written as \code{c(old = new, ...)}. By default: 1, 2, ... .}
 
-\item{markerNames}{(Optional) A named character with the new marker names (and order),
-written as \code{c(old = new, ...)}. By default: M1, M2, ... .}
+\item{markerNames}{(Optional) A named character with the new marker names
+(and order), written as \code{c(old = new, ...)}. By default: M1, M2, ... .}
 
-\item{alleleLabels}{(Optional) A list of character vectors. The list names should be the
-original marker names. Each vector gives the new allele labels, as \code{c(old = new, ...)}. By default, each marker gets alleles 1, 2, ... .}
+\item{markerShuffle}{A logical: Randomly reorder the markers? (Default: TRUE)}
+
+\item{alleleLabels}{(Optional) A list of character vectors. The list names
+should be the original marker names. Each vector gives the new allele
+labels, as \code{c(old = new, ...)}. By default, each marker gets alleles 1, 2,
+... .}
+
+\item{alleleShuffle}{A logical: Randomly reorder the alleles? (Default: TRUE)}
 
 \item{seed}{An optional seed for the random number generator.}
 
