@@ -198,3 +198,40 @@ setSNPs = function(x, snpData) {
   class(mlist) = "markerList"
   setMarkers(x, mlist, checkCons = FALSE)
 }
+
+
+
+.setSNPfreqs = function(x, freq1) {
+  if(!is.numeric(freq1))
+    stop2("Argument `freq1` must be numeric, not ", class(freq1)[1])
+
+  if(any(bad <- (freq1 < 0 | freq1 > 1)))
+    stop2("Element of `freq1` outside interval [0,1]: ", freq1[bad])
+
+  nm = nMarkers(x)
+  if(length(freq1) == 1)
+    freq1 = rep(freq1, nm)
+  else if(length(freq1) != nm)
+    stop2("Length of `freq1` must equal the number of markers (or 1)")
+
+  for(idx in seq_len(nMarkers(x))) {
+    m = x$MARKERS[[idx]]
+
+    # Check diallelic
+    if(length(attr(m, "alleles")) != 2) {
+      mname = attr(m, 'name')
+      if(is.na(mname))
+        mname = sprintf("<%d>", idx)
+      stop2("Marker does not have exactly 2 alleles: ", mname)
+    }
+
+    fr = as.numeric(freq1[idx])
+    attr(m, "afreq") = c(fr, 1 - fr)
+    x$MARKERS[[idx]] = m
+
+    if(allowsMutations(m))
+      x = setMutmod(x, markers = idx, update = TRUE)
+  }
+
+  x
+}
