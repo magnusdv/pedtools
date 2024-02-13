@@ -60,13 +60,13 @@ siblings(x, id, half = NA, internal = FALSE)
 
 nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
 
-ancestors(x, id, inclusive = FALSE, internal = FALSE)
+ancestors(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
-commonAncestors(x, ids, inclusive = FALSE, internal = FALSE)
+commonAncestors(x, ids, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
-descendants(x, id, inclusive = FALSE, internal = FALSE)
+descendants(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
-commonDescendants(x, ids, inclusive = FALSE, internal = FALSE)
+commonDescendants(x, ids, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
 descentPaths(x, ids = founders(x), internal = FALSE)
 }
@@ -85,6 +85,8 @@ labels.}
 siblings/cousins/nephews/nieces are returned. If NA, both categories are
 included.}
 
+\item{maxGen}{The number of generations to include. Default: Inf (no limit).}
+
 \item{inclusive}{A logical indicating whether an individual should be counted
 among his or her own ancestors/descendants}
 }
@@ -95,17 +97,18 @@ wanted property. (Recall that a founder is a member without parents in the
 pedigree, and that a leaf is a member without children in the pedigree.)
 
 The functions \code{father}, \code{mother}, \code{cousins}, \code{grandparents},
-\code{nephews_nieces}, \code{children}, \code{parents}, \code{siblings}, \code{spouses}, \code{unrelated},
-each returns a vector containing the IDs of all pedigree members having the
-specified relationship with \code{id}.
+\code{nephews_nieces}, \code{children}, \code{parents}, \code{siblings}, \code{spouses},
+\code{unrelated}, each returns a vector containing the IDs of all pedigree
+members having the specified relationship with \code{id}.
 
 The commands \code{ancestors(x, id)} and \code{descendants(x, id)} return vectors
 containing the IDs of all ancestors (resp. descendants) of the individual
-\code{id} within the pedigree \code{x}. If \code{inclusive = TRUE}, \code{id} is included in the
-output, otherwise not.
+\code{id} within the pedigree \code{x}. If \code{inclusive = TRUE}, \code{id} is included in
+the output, otherwise not. To cut off at a specific number of generations,
+use \code{maxGen}.
 
-For \code{commonAncestors(x, ids)} and \code{commonDescendants(x, ids)}, the output is
-a vector containing the IDs of common ancestors (descendants) to all of
+For \code{commonAncestors(x, ids)} and \code{commonDescendants(x, ids)}, the output
+is a vector containing the IDs of common ancestors (descendants) to all of
 \code{ids}.
 
 Finally, \code{descentPaths(x, ids)} returns a list of lists, containing all
@@ -119,13 +122,12 @@ certain properties.
 \examples{
 
 x = ped(id = 2:9,
-         fid = c(0,0,2,0,4,4,0,2),
-         mid = c(0,0,3,0,5,5,0,8),
-         sex = c(1,2,1,2,1,2,2,2))
+        fid = c(0,0,2,0,4,4,0,2),
+        mid = c(0,0,3,0,5,5,0,8),
+        sex = c(1,2,1,2,1,2,2,2))
 
 spouses(x, id = 2) # 3, 8
 children(x, 2)     # 4, 9
-descendants(x, 2)  # 4, 6, 7, 9
 siblings(x, 4)     # 9 (full or half)
 unrelated(x, 4)    # 5, 8
 father(x, 4)       # 2
@@ -133,6 +135,12 @@ mother(x, 4)       # 3
 
 siblings(x, 4, half = FALSE) # none
 siblings(x, 4, half = TRUE)  # 9
+
+ancestors(x, 6)                               # 2, 3, 4, 5
+ancestors(x, 6, maxGen = 2, inclusive = TRUE) # 4, 5, 6
+
+descendants(x, 2)                                # 4, 6, 7, 9
+descendants(x, 2, maxGen = 2, inclusive = TRUE)  # 2, 4, 9
 
 leaves(x)          # 6, 7, 9
 founders(x)        # 2, 3, 5, 8

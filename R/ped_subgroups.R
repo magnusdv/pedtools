@@ -6,6 +6,7 @@
 #' @param x A [ped()] object or a list of such.
 #' @param id,ids A character (or coercible to such) with one or several ID
 #'   labels.
+#' @param maxGen The number of generations to include. Default: Inf (no limit).
 #' @param inclusive A logical indicating whether an individual should be counted
 #'   among his or her own ancestors/descendants
 #' @param internal A logical indicating whether `id` (or `ids`) refers to the
@@ -16,40 +17,40 @@
 #'   included.
 #'
 #' @return The functions `founders`, `nonfounders`, `males`, `females`, `leaves`
-#' each return a vector containing the IDs of all pedigree members with the
-#' wanted property. (Recall that a founder is a member without parents in the
-#' pedigree, and that a leaf is a member without children in the pedigree.)
+#'   each return a vector containing the IDs of all pedigree members with the
+#'   wanted property. (Recall that a founder is a member without parents in the
+#'   pedigree, and that a leaf is a member without children in the pedigree.)
 #'
-#' The functions `father`, `mother`, `cousins`, `grandparents`,
-#' `nephews_nieces`, `children`, `parents`, `siblings`, `spouses`, `unrelated`,
-#' each returns a vector containing the IDs of all pedigree members having the
-#' specified relationship with `id`.
+#'   The functions `father`, `mother`, `cousins`, `grandparents`,
+#'   `nephews_nieces`, `children`, `parents`, `siblings`, `spouses`,
+#'   `unrelated`, each returns a vector containing the IDs of all pedigree
+#'   members having the specified relationship with `id`.
 #'
-#' The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
-#' containing the IDs of all ancestors (resp. descendants) of the individual
-#' `id` within the pedigree `x`. If `inclusive = TRUE`, `id` is included in the
-#' output, otherwise not.
+#'   The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
+#'   containing the IDs of all ancestors (resp. descendants) of the individual
+#'   `id` within the pedigree `x`. If `inclusive = TRUE`, `id` is included in
+#'   the output, otherwise not. To cut off at a specific number of generations,
+#'   use `maxGen`.
 #'
-#' For `commonAncestors(x, ids)` and `commonDescendants(x, ids)`, the output is
-#' a vector containing the IDs of common ancestors (descendants) to all of
-#' `ids`.
+#'   For `commonAncestors(x, ids)` and `commonDescendants(x, ids)`, the output
+#'   is a vector containing the IDs of common ancestors (descendants) to all of
+#'   `ids`.
 #'
-#' Finally, `descentPaths(x, ids)` returns a list of lists, containing all
-#' pedigree paths descending from each individual in `ids` (by default all
-#' founders).
+#'   Finally, `descentPaths(x, ids)` returns a list of lists, containing all
+#'   pedigree paths descending from each individual in `ids` (by default all
+#'   founders).
 
 #' @author Magnus Dehli Vigeland
 #'
 #' @examples
 #'
 #' x = ped(id = 2:9,
-#'          fid = c(0,0,2,0,4,4,0,2),
-#'          mid = c(0,0,3,0,5,5,0,8),
-#'          sex = c(1,2,1,2,1,2,2,2))
+#'         fid = c(0,0,2,0,4,4,0,2),
+#'         mid = c(0,0,3,0,5,5,0,8),
+#'         sex = c(1,2,1,2,1,2,2,2))
 #'
 #' spouses(x, id = 2) # 3, 8
 #' children(x, 2)     # 4, 9
-#' descendants(x, 2)  # 4, 6, 7, 9
 #' siblings(x, 4)     # 9 (full or half)
 #' unrelated(x, 4)    # 5, 8
 #' father(x, 4)       # 2
@@ -57,6 +58,12 @@
 #'
 #' siblings(x, 4, half = FALSE) # none
 #' siblings(x, 4, half = TRUE)  # 9
+#'
+#' ancestors(x, 6)                               # 2, 3, 4, 5
+#' ancestors(x, 6, maxGen = 2, inclusive = TRUE) # 4, 5, 6
+#'
+#' descendants(x, 2)                                # 4, 6, 7, 9
+#' descendants(x, 2, maxGen = 2, inclusive = TRUE)  # 2, 4, 9
 #'
 #' leaves(x)          # 6, 7, 9
 #' founders(x)        # 2, 3, 5, 8
@@ -382,7 +389,7 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
-ancestors = function(x, id, inclusive = FALSE, internal = FALSE) {
+ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   if(is.pedList(x)) {
     if(internal)
       stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
@@ -390,7 +397,7 @@ ancestors = function(x, id, inclusive = FALSE, internal = FALSE) {
     comps = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
     ancList = lapply(unique.default(comps), function(co) {
       idsComp = id[comps == co]
-      ancestors(x[[co]], idsComp, inclusive = inclusive, internal = FALSE)
+      ancestors(x[[co]], idsComp, maxGen = maxGen, inclusive = inclusive, internal = FALSE)
     })
     return(unlist(ancList))
   }
@@ -402,11 +409,14 @@ ancestors = function(x, id, inclusive = FALSE, internal = FALSE) {
   FIDX = x$FIDX
   MIDX = x$MIDX
   ancest = if(inclusive) id else integer(0)
+  g = 1 # generation number
 
   up1 = c(FIDX[id], MIDX[id])
   up1 = up1[up1 > 0]
-  while (length(up1)) {
+
+  while (g < maxGen && length(up1)) {
     ancest = c(ancest, up1)
+    g = g + 1
     up1 = c(FIDX[up1], MIDX[up1])
     up1 = up1[up1 > 0]
   }
@@ -416,15 +426,15 @@ ancestors = function(x, id, inclusive = FALSE, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
-commonAncestors = function(x, ids, inclusive = FALSE, internal = FALSE) {
+commonAncestors = function(x, ids, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   if(length(ids) < 2)
     stop2("Argument `ids` must have length at least 2")
 
-  anc = ancestors(x, ids[1], inclusive = inclusive, internal = internal)
+  anc = ancestors(x, ids[1], maxGen = maxGen, inclusive = inclusive, internal = internal)
   for(id in ids[-1]) {
     if(length(anc) == 0)
       break
-    newanc = ancestors(x, id, inclusive = inclusive, internal = internal)
+    newanc = ancestors(x, id, maxGen = maxGen, inclusive = inclusive, internal = internal)
     anc = .myintersect(anc, newanc)
   }
 
@@ -433,7 +443,7 @@ commonAncestors = function(x, ids, inclusive = FALSE, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
-descendants = function(x, id, inclusive = FALSE, internal = FALSE) {
+descendants = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   if(is.pedList(x)) {
     if(internal)
       stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
@@ -441,7 +451,7 @@ descendants = function(x, id, inclusive = FALSE, internal = FALSE) {
     comps = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
     ancList = lapply(unique.default(comps), function(co) {
       idsComp = id[comps == co]
-      descendants(x[[co]], idsComp, inclusive = inclusive, internal = FALSE)
+      descendants(x[[co]], idsComp, maxGen = maxGen, inclusive = inclusive, internal = FALSE)
     })
     return(unlist(ancList))
   }
@@ -452,27 +462,30 @@ descendants = function(x, id, inclusive = FALSE, internal = FALSE) {
   FIDX = x$FIDX
   MIDX = x$MIDX
   desc = if(inclusive) id else integer()
+  g = 1 # generation number
 
   nextoffs = id
-  while(length(nextoffs)) {
+  while(g < maxGen && length(nextoffs)) {
       nextoffs = which(FIDX %in% nextoffs | MIDX %in% nextoffs)
       desc = c(desc, nextoffs)
+      g = g + 1
   }
+
   desc = .mysortInt(unique.default(desc))
   if(internal) desc else labels.ped(x)[desc]
 }
 
 #' @rdname ped_subgroups
 #' @export
-commonDescendants = function(x, ids, inclusive = FALSE, internal = FALSE) {
+commonDescendants = function(x, ids, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   if(length(ids) < 2)
     stop2("Argument `ids` must have length at least 2")
 
-  desc = descendants(x, ids[1], inclusive = inclusive, internal = internal)
+  desc = descendants(x, ids[1], maxGen = maxGen, inclusive = inclusive, internal = internal)
   for(id in ids[-1]) {
     if(length(desc) == 0)
       break
-    newdesc = descendants(x, id, inclusive = inclusive, internal = internal)
+    newdesc = descendants(x, id, maxGen = maxGen, inclusive = inclusive, internal = internal)
     desc = .myintersect(desc, newdesc)
   }
 
