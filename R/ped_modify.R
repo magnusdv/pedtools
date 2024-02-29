@@ -190,6 +190,9 @@ addSon = function(x, parents, id = NULL, verbose = TRUE) {
   if(npar == 0 || npar > 2)
     stop2("Argument `parents` must have length 1 or 2: ", parents)
 
+  if(npar == 2 && parents[1] == parents[2])
+    stop2("Duplicated parent: ", parents[1])
+
   parents = as.character(parents) # remove potential names etc
   existing = parents %in% unlist(labels(x))
   if(!any(existing))
@@ -214,6 +217,9 @@ addDaughter = function(x, parents, id = NULL, verbose = TRUE) {
   npar = length(parents)
   if(npar == 0 || npar > 2)
     stop2("Argument `parents` must have length 1 or 2: ", parents)
+
+  if(npar == 2 && parents[1] == parents[2])
+    stop2("Duplicated parent: ", parents[1])
 
   parents = as.character(parents) # remove potential names etc
   existing = parents %in% unlist(labels(x))
