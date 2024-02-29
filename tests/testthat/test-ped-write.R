@@ -46,6 +46,6 @@ test_that("writePed is reversed by readPed - ped+freq", {
 
   # Without famid
   ff = wrped(x, famid = F, header = T, what = c("ped", "freq"))
-  expect_identical(x, readPed(ff[1], locus = readFreqDatabase(ff[2])))
+  expect_identical(x, readPed(ff[1], locus = readFreqDatabase(ff[2], verbose = F)))
 })
 

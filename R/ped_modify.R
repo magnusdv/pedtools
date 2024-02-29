@@ -242,9 +242,9 @@ addDaughter = function(x, parents, id = NULL, verbose = TRUE) {
 #' @export
 addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
   if (length(id) > 1)
-      stop2("Parents cannot be added to multiple individuals at once: ", id)
+      stop2("Cannot add parents to multiple individuals: ", id)
   if (id %in% nonfounders(x))
-    stop2("Individual ", id, " already has parents in the pedigree")
+    stop2(sprintf("Individual '%s' already has parents in the pedigree", id))
 
   id_int = internalID(x, id)
   labs = labels(x)
