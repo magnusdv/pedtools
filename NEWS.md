@@ -1,3 +1,22 @@
+# dev
+
+## New features
+
+* `plot.ped()` gains argument `textGeneral` allowing highly customisable text annotations around and inside pedigree symbols.
+
+* `ancestors()`, `descendants()`, `commonAncestors()` and `commonDescendants()` gain a new argument `maxGen` indicating to limit the analysis to a given number of generations.
+
+* `transferMarkers()` gains argument `checkAttrs` for checking consitency of marker attributes across pedigree components.
+
+* New function `.setSNPfreqs()` for modifying allele frequencies when all markers are biallelic. (Experimental; not yet exported.)
+
+
+## Bug fixes
+
+* `addSon()` and `addDaughter()` now fail more gracefully if a parent ID is duplicated.
+
+* Fixed regression error in `selectMarkers()`.
+
 # pedtools 2.5.0
 
 ## New features
