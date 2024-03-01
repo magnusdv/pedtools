@@ -33,6 +33,8 @@
 #' @param markers A character vector (with marker names) or a numeric vector
 #'   (with marker indices). If NULL (default), the behaviour depends on
 #'   `matchNames`, see Details.
+#' @param checkComps A logical. If TRUE, and `x` is a list of pedigrees, an
+#'   error is raised if marker attributes differ between components.
 #' @param attribs A subset of the character vector `c("alleles", "afreq", "name"
 #'   ,"chrom" ,"posMb", "mutmod", "rate")`.
 #' @param locusAttributes A list of lists, with attributes for each marker.
@@ -83,12 +85,21 @@ NULL
 
 #' @rdname locusAttributes
 #' @export
-getLocusAttributes = function(x, markers = NULL,
+getLocusAttributes = function(x, markers = NULL, checkComps = FALSE,
                               attribs = c("alleles", "afreq", "name", "chrom",
                                           "posMb", "mutmod")) {
 
-  if(is.pedList(x))
-    x = x[[1]]
+  if(is.pedList(x)) {
+    if(checkComps) {
+      compWise = lapply(x, function(comp)
+        getLocusAttributes(comp, markers = markers, attribs = attribs))
+      if(!listIdentical(compWise))
+        stop2("Marker attributes differ between pedigree components")
+      return(compWise[[1]])
+    }
+    else
+      return(getLocusAttributes(x[[1]], markers = markers, attribs = attribs))
+  }
 
   if(!is.ped(x))
     stop2("Input must be a `ped` object or a list of such")

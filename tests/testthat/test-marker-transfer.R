@@ -1,33 +1,21 @@
 
-test_that("single ped is unchaged after self-transfer of markers", {
-  x = nuclearPed(1)
-  m = marker(x, '1' = "1/2")
-  x = setMarkers(x, m)
-
+test_that("ped is unchanged after self-transfer of markers", {
+  x = nuclearPed(1) |> addMarker("1" = "1/2")
   expect_identical(transferMarkers(x,x), x)
-})
-test_that("singleton is unchaged after self-transfer of markers", {
-  x = singleton(1)
-  m = marker(x, '1' = "1/2")
-  x = setMarkers(x, m)
 
-  expect_identical(transferMarkers(x,x), x)
+  # Singleton
+  s = singleton(1) |> addMarker("1" = "1/2")
+  expect_identical(transferMarkers(s,s), s)
 })
 
 test_that("ped is unchanged after back-and-fourth transfer to singleton", {
-  x = nuclearPed(1)
-  m = marker(x, '1'=1:2)
-  x = setMarkers(x, m)
+  x = nuclearPed(1) |> addMarker("1" = "1/2")
 
-  y = transferMarkers(x, singleton(id = '1'))
-  z = transferMarkers(y, x)
-  expect_identical(x,z)
-
-  w = transferMarkers(z, y)
-  expect_identical(y,w)
+  y = x |> transferMarkers(to = singleton(1)) |> transferMarkers(to = x)
+  expect_identical(x,y)
 })
 
-test_that("pedlist is unchaged after self-transfer of markers", {
+test_that("pedlist is unchanged after self-transfer of markers", {
 
   x = nuclearPed(children="boy") |>
     addMarker(boy="a", alleles=c("a", "b"))

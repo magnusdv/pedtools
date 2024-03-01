@@ -26,6 +26,9 @@
 #'   in the same order. (An error is raised if the markers are not named.)
 #' @param checkSex A logical. If TRUE, it is checked that `fromIds` and `toIds`
 #'   have the same sex. Default: FALSE.
+#' @param checkAttrs A logical. If TRUE, and `from` is a list of pedigrees, an
+#'   error is raised if marker attributes differ between components. Default:
+#'   TRUE.
 #'
 #' @return A `ped` object (or a list of such) similar to `to`, but where all
 #'   individuals also present in `from` have marker genotypes copied over.  Any
@@ -53,10 +56,19 @@
 #'
 #' @export
 transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
-                           erase = TRUE, matchNames = TRUE, checkSex = FALSE) {
+                           erase = TRUE, matchNames = TRUE, checkSex = FALSE,
+                           checkAttrs = TRUE) {
 
-  allFrom = unlist(labels(from))
-  allTo = unlist(labels(to))
+  fromSimple = is.ped(from)
+  if(!fromSimple && !is.pedList(from))
+    stop2("Argument `from` must be a `ped` object or a list of such. Received: ", class(from)[1])
+
+  toSimple = is.ped(to)
+  if(!toSimple && !is.pedList(to))
+    stop2("Argument `to` must be a `ped` object or a list of such. Received: ", class(to)[1])
+
+  allFrom = if(fromSimple) from$ID else unlist(labels(from))
+  allTo = if(toSimple) to$ID else unlist(labels(to))
 
   # If ids not given: use all shared individuals
   if(is.null(idsFrom) && is.null(idsTo))
@@ -82,13 +94,12 @@ transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
     }
   }
 
-  if (is.ped(from) && is.ped(to)) {
+  if (fromSimple && toSimple) {
     return(.transferSimple(from, to, idsFrom = idsFrom, idsTo = idsTo,
                            erase = erase, matchNames = matchNames))
   }
 
-  if (is.ped(from) && is.pedList(to)) {
-
+  if (fromSimple && !toSimple) {
     to = lapply(to, function(comp) {
       idx = which(idsTo %in% labels(comp))
       .transferSimple(from, comp, idsFrom = idsFrom[idx], idsTo[idx],
@@ -97,7 +108,13 @@ transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
     return(to)
   }
 
-  if (is.pedList(from) && is.ped(to)) {
+  ### At this point `from` is a ped list
+
+  # Raise error if marker attributes differ between components
+  if(checkAttrs)
+    getLocusAttributes(from, checkComps = TRUE)
+
+  if(toSimple) {
 
     # Transfer from first component
     idx1 = which(idsFrom %in% labels(from[[1]]))
@@ -113,7 +130,7 @@ transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
     return(to)
   }
 
-  if (is.pedList(from) && is.pedList(to)) {
+  if(!toSimple) {
     to = lapply(to, function(comp) {
       idx = which(idsTo %in% labels(comp))
       transferMarkers(from, comp, idsFrom = idsFrom[idx], idsTo[idx],

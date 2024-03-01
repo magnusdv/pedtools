@@ -12,7 +12,8 @@ transferMarkers(
   idsTo = ids,
   erase = TRUE,
   matchNames = TRUE,
-  checkSex = FALSE
+  checkSex = FALSE,
+  checkAttrs = TRUE
 )
 }
 \arguments{
@@ -41,6 +42,10 @@ in the same order. (An error is raised if the markers are not named.)}
 
 \item{checkSex}{A logical. If TRUE, it is checked that \code{fromIds} and \code{toIds}
 have the same sex. Default: FALSE.}
+
+\item{checkAttrs}{A logical. If TRUE, and \code{from} is a list of pedigrees, an
+error is raised if marker attributes differ between components. Default:
+TRUE.}
 }
 \value{
 A \code{ped} object (or a list of such) similar to \code{to}, but where all

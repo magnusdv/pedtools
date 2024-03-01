@@ -9,6 +9,7 @@
 getLocusAttributes(
   x,
   markers = NULL,
+  checkComps = FALSE,
   attribs = c("alleles", "afreq", "name", "chrom", "posMb", "mutmod")
 )
 
@@ -26,6 +27,9 @@ setLocusAttributes(
 \item{markers}{A character vector (with marker names) or a numeric vector
 (with marker indices). If NULL (default), the behaviour depends on
 \code{matchNames}, see Details.}
+
+\item{checkComps}{A logical. If TRUE, and \code{x} is a list of pedigrees, an
+error is raised if marker attributes differ between components.}
 
 \item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")}.}
 
