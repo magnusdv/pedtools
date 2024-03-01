@@ -40,6 +40,7 @@
   carrier = NULL,
   deceased = NULL,
   starred = NULL,
+  textGeneral = NULL,
   textInside = NULL,
   textAbove = NULL,
   fouInb = "autosomal",
@@ -114,19 +115,8 @@ the format determined by \code{sep} and \code{missing}. See also \code{showEmpty
 
 \item{showEmpty}{A logical, indicating if empty genotypes should be included.}
 
-\item{labs}{A vector or function controlling the individual labels included
-in the plot. Alternative forms:
-\itemize{
-\item If \code{labs} is a vector with nonempty intersection with \code{labels(x)}, these
-individuals will be labelled. If the vector is named, then the (non-empty)
-names are used instead of the ID label. (See Examples.)
-\item If \code{labs} is NULL, or has empty intersection with \code{labels(x)}, then no
-labels are drawn.
-\item If \code{labs} is the word "num", then all individuals are numerically
-labelled following the internal ordering.
-\item If \code{labs} is a function, it is replaced with \code{labs(x)} and handled as
-above. (See Examples.)
-}}
+\item{labs}{A vector or function controlling the individual labels in the
+plot. By default, \code{labels(x)} are used. See Details for valid formats.}
 
 \item{trimLabs}{A logical, by default TRUE. Removes line breaks and tabs from
 both ends of the labels (after adding genotypes, if \code{marker} is not NULL).}
@@ -161,8 +151,11 @@ to indicate unaffected carriers of the disease allele.)}
 \item{starred}{A vector of labels indicating pedigree members that should be
 marked with a star in the pedigree plot.}
 
+\item{textGeneral}{A list specifying further text annotation around or inside
+the pedigree symbols. See Details for more information.}
+
 \item{textInside, textAbove}{Character vectors of text to be printed inside or
-above pedigree symbols.}
+above pedigree symbols. [Soft deprecated; replaced by \code{textGeneral}.]}
 
 \item{fouInb}{Either "autosomal" (default), "x" or NULL. If "autosomal" or
 "x", inbreeding coefficients are added to the plot above the inbred
@@ -226,6 +219,29 @@ scale = .pedScaling(align, annot, ...)
 .annotatePed(align, annot, scale)
 
 }\if{html}{\out{</div>}}
+
+The \code{labs} argument control the individual ID labels printed below the
+pedigree symbols. By default the output of \code{labels(x)} is used, but there are
+several alternative forms:
+\itemize{
+\item If \code{labs} is a vector with nonempty intersection with \code{labels(x)}, only
+these individuals will be labelled. If the vector is named, then the names
+are used instead of the ID label. (See Examples.)
+\item If \code{labs} is the word "num", then all individuals are numerically
+labelled following the internal ordering.
+\item Use \code{labs = NULL} to remove all labels.
+\item If \code{labs} is a function, it is replaced with \code{labs(x)} and handled as
+above. (See Examples.)
+}
+
+The argument \code{textGeneral} allows customised annotation around and inside
+each symbol. This takes a list of lists, whose names may include "topleft",
+"topright", "left", "right", "bottomleft", "bottom", "bottomright" and
+"inside". Each inner list should contain a character vector as its first
+element (with the text to printed), followed by further arguments passed to
+\code{\link[=text]{text()}}. For example, \code{textGeneral = list(left = list(c(A = "1"), cex = 2))}
+prints a large number "1" to the left of individual A (if such an individual
+exists in the pedigree. See Examples.
 
 The arguments \code{col}, \code{fill}, \code{lty} and \code{lwd} can all be indicated in a number
 of ways:

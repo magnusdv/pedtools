@@ -54,8 +54,7 @@
 #' # Various annotations
 #' plot(x, hatched = "boy", starred = "fa", deceased = "mo", title = "Fam 1")
 #'
-#' # Medical pedigree
-#' plot(x, aff = "boy", carrier = "mo")
+#' #----- ID labels -----
 #'
 #' # Label only some members
 #' plot(x, labs = c("fa", "mo"))
@@ -72,7 +71,8 @@
 #' # ... but this can be overridden
 #' plot(x, labs = c("\nFA" = "fa"), trimLabs = FALSE)
 #'
-#' # Colours
+#' #----- Colours -----
+#'
 #' plot(x, col = c(fa = "red"), fill = c(mo = "green", boy = "blue"))
 #'
 #' # Non-black hatch colours are specified with the `fill` argument
@@ -87,15 +87,25 @@
 #' # Detailed line type and width
 #' plot(x, lty = list(dashed = founders), lwd = c(boy = 4))
 #'
-#' # Include genotypes
-#' x = addMarker(x, fa = "1/1", boy = "1/2", name = "SNP")
+#' #----- Genotypes -----
+#'
+#' x = nuclearPed(father = "fa", mother = "mo", child = "boy") |>
+#'   addMarker(fa = "1/1", boy = "1/2", name = "SNP") |>
+#'   addMarker(boy = "a/b")
+#'
+#' # Show genotypes for first marker
 #' plot(x, marker = 1)
+#'
+#' # Show empty genotypes for untyped individuas
+#' plot(x, marker = 1, showEmpty = TRUE)
 #'
 #' # Markers can also be called by name
 #' plot(x, marker = "SNP")
 #'
-#' # Plot as DAG (directed acyclic graph)
-#' plot(x, arrows = TRUE, title = "DAG")
+#' # Multiple markers
+#' plot(x, marker = 1:2)
+#'
+#' #----- Further tex annotation -----
 #'
 #' # Founder inbreeding is shown by default
 #' founderInbreeding(x, "mo") = 0.1
@@ -104,11 +114,26 @@
 #' # ... but can be suppressed
 #' plot(x, fouInb = NULL)
 #'
-#' # Other text above and inside symbols
-#' plot(x, textAbove = letters[1:3], textInside = LETTERS[1:3])
+#' # Text can be placed around and inside symbols
+#' plot(x, textGeneral = list(topright = 1:3, inside = LETTERS[1:3]))
 #'
-#' # Plotting lists of pedigrees
-#' plot(list(singleton(1), nuclearPed(1), linearPed(2)))
+#' # Use lists to add further options; see `?text()`
+#' plot(x, margin = 2, textGeneral = list(
+#'   topright = list(1:3, cex = 0.8, col = 2, font = 2, offset = 0.1),
+#'   left = list(c(boy = "comment"), cex = 2, col = 4, offset = 2, srt = 20)))
+#'
+#' # Exhaustive list of annotation positions
+#' plot(singleton(1), cex = 3, textGeneral = list(top="top", left="left",
+#'   right="right", bottom="bottom", topleft="topleft", topright="topright",
+#'   bottomleft="bottomleft", bottomright="bottomright", inside="inside"))
+#'
+#' #----- Special pedigrees -----
+#'
+#' # Plot as DAG (directed acyclic graph)
+#' plot(x, arrows = TRUE, title = "DAG")
+#'
+#' # Medical pedigree
+#' plot(x, aff = "boy", carrier = "mo")
 #'
 #' # Twins
 #' x = nuclearPed(children = c("tw1", "tw2", "tw3"))
@@ -128,6 +153,9 @@
 #'
 #' # Straight legs
 #' plot(quadHalfFirstCousins(), align = c(0,0))
+#'
+#' # Lists of multiple pedigree
+#' plot(list(singleton(1), nuclearPed(1), linearPed(2)))
 #'
 #' # Use of `drawPed()`
 #' dat = plot(nuclearPed(), draw = FALSE)
@@ -418,7 +446,10 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
     else if (is.pedList(p))
       newpeds = lapply(p, list)
     else { # if list of ped with plot arguments
-      if (!is.ped(p[[1]]))
+      p1 = p[[1]]
+      if(inherits(p[[1]], "pedList"))
+        class(p[[1]]) = "list"
+      else if (!is.ped(p[[1]]))
         stop2("First element must be a `ped` object", p[[1]])
       newpeds = list(p)
     }
@@ -652,15 +683,26 @@ plot.list = function(x, ...) {
   annotList = lapply(x, function(y) .pedAnnotation(y, ...))
   annot1 = annotList[[1]]
 
+  # Merge vectors
   mrg = function(a, def) {
     vecs = lapply(1:L, function(i) annotList[[i]][[a]] %||% rep(def, nInd[i]))
     unlist(vecs)
+  }
+
+  # Merge lists
+  mrgTxtGen = function() {
+    res1 = annotList[[1]]$textGeneral
+    for(nm in names(res1))
+      res1[[nm]][[1]] = unlist(lapply(1:L, function(i) annotList[[i]]$textGeneral[[nm]][[1]]))
+
+    res1
   }
 
   annot = list(title = annot1$title,
                textUnder = mrg("textUnder", ""),
                textAbove = mrg("textAbove", ""),
                textInside = mrg("textInside", ""),
+               textGeneral = mrgTxtGen(),
                colvec = mrg("colvec", 1),
                densvec = mrg("densvec", 0),
                fillvec =  mrg("fillvec", NA),
