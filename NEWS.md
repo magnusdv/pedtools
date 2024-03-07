@@ -6,7 +6,7 @@
 
 * `ancestors()`, `descendants()`, `commonAncestors()` and `commonDescendants()` gain a new argument `maxGen` indicating to limit the analysis to a given number of generations.
 
-* `transferMarkers()` gains argument `checkAttrs` for checking consitency of marker attributes across pedigree components.
+* `transferMarkers()` gains argument `checkAttrs` for checking consistency of marker attributes across pedigree components.
 
 * New function `.setSNPfreqs()` for modifying allele frequencies when all markers are biallelic. (Experimental; not yet exported.)
 
