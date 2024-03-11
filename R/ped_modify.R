@@ -3,17 +3,16 @@
 #' Functions for adding or removing individuals in a 'ped' object.
 #'
 #' In `addChildren()` and `addParents()`, labels of added individuals are
-#' created automatically if they are not specified by the user. In the automatic
-#' case, the labelling depends on whether the existing labels are integer-like
-#' or not (i.e. if `labels(x)` equals `as.character(as.integer(labels(x)))`.) If
-#' so, the new labels are integers subsequent to the largest of the existing
-#' labels. If not, the new labels are "NN_1", "NN_2", ... If any such label
-#' already exists, the numbers are adjusted accordingly.
+#' generated automatically if they are not specified by the user. In the
+#' automatic case, the labelling depends on whether the existing labels are
+#' integer-like or not. If so, the new labels are integers subsequent to the
+#' largest of the existing labels. If not, the new labels are "NN_1", "NN_2",
+#' ... If any such label already exists, the numbers are adjusted accordingly.
 #'
-#' `addSon()` and `addDaughter()` are wrappers for the most common use of
-#' `addChildren()`, namely adding a single child to a pedigree. Note that the
-#' parents can be given in any order. If only one parent is supplied, the other
-#' is created as a new individual.
+#' `addChild()`, `addSon()` and `addDaughter()` are convenient wrappers for the
+#' most common use of `addChildren()`, namely adding a single child to a
+#' pedigree. Note that the parents can be given in any order. If only one parent
+#' is supplied, the other is created as a new individual.
 #'
 #' `removeIndividuals()` removes the individuals indicated with `ids` along with
 #' all of their ancestors OR descendants, depending on the `remove` argument.
@@ -179,7 +178,7 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
     stop2("Duplicated ID label: ", labs[duplicated(labs)])
 
   children_pedcols = cbind(nrow(p) + (1:nch), father_int, mother_int, sex)
-  children_markers = matrix(0, nrow = nch, ncol = nmark*2)
+  children_markers = matrix(0L, nrow = nch, ncol = nmark*2)
   p = rbind(p, cbind(children_pedcols, children_markers))
 
   attrs$LABELS = as.character(labs)
@@ -190,9 +189,12 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   stop2("Adding children across components is not implemented yet")
 }
 
+
 #' @rdname ped_modify
 #' @export
-addSon = function(x, parents, id = NULL, verbose = TRUE) {
+addChild = function(x, parents, id = NULL, sex = 1, verbose = TRUE) {
+  # Convenience function for a single child of sex 0, 1 or 2.
+  # Note: The implementation actually allows multiple children
 
   npar = length(parents)
   if(npar == 0 || npar > 2)
@@ -210,40 +212,25 @@ addSon = function(x, parents, id = NULL, verbose = TRUE) {
   par2 = if(npar == 2) setdiff(parents, par1) else NULL
 
   sex1 = getSex(x, par1)
-  if(sex1 == 1)
-    addChildren(x, father = par1, mother = par2, nch = 1, sex = 1, ids = id, verbose = verbose)
-  else if(sex1 == 2)
-    addChildren(x, father = par2, mother = par1, nch = 1, sex = 1, ids = id, verbose = verbose)
+  if(sex1 == 1)      { fa = par1; mo = par2 }
+  else if(sex1 == 2) { mo = par1; fa = par2 }
   else
     stop2("Not implemented for parents of unknown sex: ", par1)
+
+  nch = length(id %||% sex) # default 1
+  addChildren(x, father = fa, mother = mo, nch = nch, sex = sex, ids = id, verbose = verbose)
+}
+
+#' @rdname ped_modify
+#' @export
+addSon = function(x, parents, id = NULL, verbose = TRUE) {
+  addChild(x, parents = parents, id = id, sex = 1, verbose = verbose)
 }
 
 #' @rdname ped_modify
 #' @export
 addDaughter = function(x, parents, id = NULL, verbose = TRUE) {
-
-  npar = length(parents)
-  if(npar == 0 || npar > 2)
-    stop2("Argument `parents` must have length 1 or 2: ", parents)
-
-  if(npar == 2 && parents[1] == parents[2])
-    stop2("Duplicated parent: ", parents[1])
-
-  parents = as.character(parents) # remove potential names etc
-  existing = parents %in% unlist(labels(x))
-  if(!any(existing))
-    stop2("At least one parent must be an existing pedigree member: ", parents)
-
-  par1 = if(existing[1]) parents[1] else parents[2]
-  par2 = if(npar == 2) setdiff(parents, par1) else NULL
-
-  sex1 = getSex(x, par1)
-  if(sex1 == 1)
-    addChildren(x, father = par1, mother = par2, nch = 1, sex = 2, ids = id, verbose = verbose)
-  else if(sex1 == 2)
-    addChildren(x, father = par2, mother = par1, nch = 1, sex = 2, ids = id, verbose = verbose)
-  else
-    stop2("Not implemented for parents of unknown sex: ", par1)
+  addChild(x, parents = parents, id = id, sex = 2, verbose = verbose)
 }
 
 #' @rdname ped_modify

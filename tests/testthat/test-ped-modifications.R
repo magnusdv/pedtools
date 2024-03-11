@@ -218,12 +218,11 @@ test_that("addSon() and addDaughter() catches errors", {
 test_that("modifaction chains give identical result", {
   x = singleton(3) |> addSon(3, "aa") |> addMarker(aa="1/1") |>
     addChild(c("aa", "bb"), id = "cc", sex = 0) |> setAlleleLabels(1, "A") |>
-    relabel(c(cc = "c", bb = "b", aa = "a"))
+    relabel(c(cc = "c", bb = "b", aa = "a")) # |> plot(mark = 1)
 
-  # plot(x, mark = 1)
   y = linearPed(2) |> setSex(5, sex = 0) |> addMarker(`3` = "A/-") |>
     relabel(c(3,4,"a","b","c")) |> setAlleles(ids = "a", marker = 1, alleles = "A")
-  plot(y, mark = 1)
+
   expect_identical(x,y)
 })
 

@@ -3,6 +3,7 @@
 \name{ped_modify}
 \alias{ped_modify}
 \alias{addChildren}
+\alias{addChild}
 \alias{addSon}
 \alias{addDaughter}
 \alias{addParents}
@@ -16,10 +17,12 @@ addChildren(
   father = NULL,
   mother = NULL,
   nch = NULL,
-  sex = 1,
+  sex = 1L,
   ids = NULL,
   verbose = TRUE
 )
+
+addChild(x, parents, id = NULL, sex = 1, verbose = TRUE)
 
 addSon(x, parents, id = NULL, verbose = TRUE)
 
