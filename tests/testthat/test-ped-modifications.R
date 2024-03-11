@@ -162,6 +162,13 @@ test_that("adding and removing child restores original", {
 
 })
 
+test_that("addSon(), addDaughter(), addChild() creates children with correct sex", {
+  x = singleton(1)
+  expect_identical(x |> addSon(1, id = "A") |> getSex("A"), 1L)
+  expect_identical(x |> addDaughter(1:2, id = 3) |> getSex(3), 2L)
+  expect_identical(x |> addChild(c(1,"Mo"), id = "Ch", sex = 0) |> getSex("Ch"), 0L)
+})
+
 test_that("addSon() works with unordered parents", {
   x = nuclearPed(1)
   expect_identical(addSon(x, 1:2), addSon(x, 2:1))
@@ -171,7 +178,33 @@ test_that("addSon() works with unordered parents", {
   expect_identical(addDaughter(x, 3:4), addDaughter(x, 4:3))
 })
 
-test_that("addSon() and addDaughter() cathces errors", {
+test_that("addChildren() catches errors", {
+  x = nuclearPed(1)
+  expect_error(addChildren(x), "At least one parent must be an existing pedigree member")
+  expect_error(addChildren(x, fa = 4), "At least one parent must be an existing pedigree member")
+  expect_error(addChildren(x, mo = 4), "At least one parent must be an existing pedigree member")
+
+  expect_error(addChildren(x, fa = 1:2), "More than one father indicated")
+  expect_error(addChildren(x, mo = 1:2), "More than one mother indicated")
+
+  expect_error(addChildren(x, 1, 2, nch = 0), "Argument `nch` must be a positive integer")
+  expect_error(addChildren(x, 1, 2, nch = "a"), "Argument `nch` must be a positive integer")
+  expect_error(addChildren(x, 1, 2, nch = 1:2), "Argument `nch` must be a positive integer")
+  expect_error(addChildren(x, 1, 2, nch = list(1)), "Argument `nch` must be a positive integer")
+
+  expect_error(addChildren(x, 1, 2, id = 3), "Individual already exist")
+  expect_error(addChildren(x, 1, 2, id = 1:2), "Individual already exist")
+
+  expect_error(addChildren(x, 1, 2, nch = 2, id = 1), "Length of `ids` must equal the number of children")
+  expect_error(addChildren(x, 1, 2, nch = 1, id = 4:5), "Length of `ids` must equal the number of children")
+
+  expect_error(addChildren(x, 1, 2, sex = -1), "Illegal value of `sex`")
+  expect_error(addChildren(x, 1, 2, sex = NA), "Illegal value of `sex`")
+
+  expect_error(addChildren(x, 1, 2, nch = 2, ids = c(4,4)), "Duplicated ID label")
+})
+
+test_that("addSon() and addDaughter() catches errors", {
   x = nuclearPed(1)
   expect_error(addSon(x, c(1,1)), "Duplicated parent")
   expect_error(addSon(x, c(1,3)), "Assigned mother is male")
@@ -182,6 +215,17 @@ test_that("addSon() and addDaughter() cathces errors", {
   expect_error(addDaughter(x, 4:5), "At least one parent must be an existing pedigree member")
 })
 
+test_that("modifaction chains give identical result", {
+  x = singleton(3) |> addSon(3, "aa") |> addMarker(aa="1/1") |>
+    addChild(c("aa", "bb"), id = "cc", sex = 0) |> setAlleleLabels(1, "A") |>
+    relabel(c(cc = "c", bb = "b", aa = "a"))
+
+  # plot(x, mark = 1)
+  y = linearPed(2) |> setSex(5, sex = 0) |> addMarker(`3` = "A/-") |>
+    relabel(c(3,4,"a","b","c")) |> setAlleles(ids = "a", marker = 1, alleles = "A")
+  plot(y, mark = 1)
+  expect_identical(x,y)
+})
 
 test_that("adding and removing parents restores original - with markers", {
   x = nuclearPed(1) |> addMarker('1' = "1/2")

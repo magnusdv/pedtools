@@ -73,18 +73,19 @@ NULL
 
 #' @rdname ped_modify
 #' @export
-addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids = NULL, verbose = TRUE) {
+addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, ids = NULL, verbose = TRUE) {
   if(!is.ped(x) && !is.pedList(x))
     stop2("Input is not a `ped` object or a list of such")
-
-  nch = nch %||% if(!is.null(ids)) length(ids) else length(sex)
-  if(!isCount(nch))
-    stop2("Argument `nch` must be a positive integer: ", nch)
 
   # This variable will change as new members are created
   labs = labels(x)
 
   # Check input
+  if(length(father) > 1)
+    stop2("More than one father indicated: ", father)
+  if(length(mother) > 1)
+    stop2("More than one mother indicated: ", mother)
+
   father_exists = isTRUE(father %in% labs)
   mother_exists = isTRUE(mother %in% labs)
 
@@ -96,13 +97,20 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
   if(mother_exists && getSex(x, mother) == 1)
     stop2("Assigned mother is male: ", mother)
 
-  if(!is.null(ids) && length(ids) != nch)
-    stop2("Length of 'ids' must equal the number of children")
-  if(any(ids %in% labs))
-    stop2("Individuals already exist: ", intersect(ids, labs))
+  # Number of children
+  nch = nch %||% if(!is.null(ids)) length(ids) else length(sex)
+  if(!isCount(nch))
+    stop2("Argument `nch` must be a positive integer: ", nch)
 
-  # Recycle `sex` if needed
-  sex = rep_len(sex, nch)
+  if(!is.null(ids) && length(ids) != nch)
+    stop2("Length of `ids` must equal the number of children")
+  if(any(ids %in% labs))
+    stop2("Individual already exist: ", intersect(ids, labs))
+
+  # Check `sex` and recycle if needed
+  if(!is.numeric(sex) || !all(sex %in% 0:2))
+    stop2("Illegal value of `sex`: ", .mysetdiff(sex, 0:2))
+  sex = rep_len(as.integer(sex), nch)
 
   if(is.pedList(x)) {
     comp = getComponent(x, c(father, mother), checkUnique = TRUE)
@@ -144,8 +152,8 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
       message("Father: Creating new individual with ID = ", father)
 
     labs = c(labs, father)
-    father_int = n = n + 1
-    p = rbind(p, c(father_int, 0, 0, 1, rep(0, 2*nmark)))
+    father_int = n = n + 1L
+    p = rbind(p, c(father_int, 0L, 0L, 1L, rep(0L, 2*nmark)))
   }
   else {
     father_int = internalID(x, father)
@@ -157,8 +165,8 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1, ids
       message("Mother: Creating new individual with ID = ", mother)
 
     labs = c(labs, mother)
-    mother_int = n = n + 1
-    p = rbind(p, c(mother_int, 0, 0, 2, rep(0, 2*nmark)))
+    mother_int = n = n + 1L
+    p = rbind(p, c(mother_int, 0L, 0L, 2L, rep(0L, 2*nmark)))
   }
   else {
     mother_int = internalID(x, mother)
