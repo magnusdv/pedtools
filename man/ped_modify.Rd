@@ -85,11 +85,10 @@ Functions for adding or removing individuals in a 'ped' object.
 }
 \details{
 In \code{addChildren()} and \code{addParents()}, labels of added individuals are
-generated automatically if they are not specified by the user. In the
-automatic case, the labelling depends on whether the existing labels are
-integer-like or not. If so, the new labels are integers subsequent to the
-largest of the existing labels. If not, the new labels are "NN_1", "NN_2",
-... If any such label already exists, the numbers are adjusted accordingly.
+generated automatically if they are not specified by the user. If the
+existing labels are all integer-like, the generated labels are the smallest
+available integers. Otherwise, the new labels are the first available in the
+sequence "a1", "a2", ...
 
 \code{addChild()}, \code{addSon()} and \code{addDaughter()} are convenient wrappers for the
 most common use of \code{addChildren()}, namely adding a single child to a

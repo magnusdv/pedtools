@@ -227,56 +227,61 @@ addDaughter = function(x, parents, id = NULL, verbose = TRUE) {
 addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
   if (length(id) > 1)
       stop2("Cannot add parents to multiple individuals: ", id)
+
+  labs = labels(x) |> unlist(recursive = FALSE, use.names = FALSE)
+  isnum = .isIntegral(labs)
+
+  father = father %||% generateLabs(labs, n = 1, avoid = mother, num = isnum)
+  mother = mother %||% generateLabs(labs, n = 1, avoid = father, num = isnum)
+
+  fatherExists = father %in% labs
+  motherExists = mother %in% labs
+
+  if(is.pedList(x)) {
+    if(fatherExists || motherExists)
+      stop2("The current implementation doesn't support existing parents in ped lists")
+
+    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
+    x[[comp]] = addParents(x[[comp]], id, father, mother, verbose = verbose)
+    return(x)
+  }
+
+  ### By now, x is a connected pedigree
+
   if (id %in% nonfounders(x))
     stop2(sprintf("Individual '%s' already has parents in the pedigree", id))
 
   id_int = internalID(x, id)
-  labs = labels(x)
 
   # Check that assigned parents are OK
   desc = descendants(x, id)
-  if (!is.null(father)) {
+  if (fatherExists) {
     if (father == id) stop2("Father and child are equal")
     if (father %in% desc) stop2("Assigned father is a descendant of ", id)
-    if (father %in% labs && getSex(x, father) == 2) stop2("Assigned father is female")
+    if (getSex(x, father) == 2) stop2("Assigned father is female")
   }
-  if (!is.null(mother)) {
+  if (motherExists) {
     if (mother == id) stop2("Mother and child are equal")
     if (mother %in% desc) stop2("Assigned mother is a descendant of ", id)
-    if (mother %in% labs && getSex(x, mother) == 1) stop2("Assigned mother is male")
+    if (getSex(x, mother) == 1) stop2("Assigned mother is male")
   }
 
-  # If no labels are given, create them
-  if (is.null(father) || is.null(mother)) {
-    if(hasNumLabs(x)) {
-      mx = max(as.numeric(labs))
-      if (is.null(father)) {father = mx + 1; mx = mx + 1}
-      if (is.null(mother)) {mother = mx + 1}
-    }
-    else {
-      if (is.null(father)) {father = nextNN(labs)}
-      if (is.null(mother)) {mother = nextNN(c(labs, father))}
-    }
-  }
 
   p = as.matrix(x)
   attrs = attributes(p)
   newlabs = attrs$LABELS
   nmark = nMarkers(x)
 
-  new.father = !father %in% labs
-  new.mother = !mother %in% labs
-
-  if (new.father) {
-    if(verbose) message("Father: Creating new individual with ID = ", father)
+  if (!fatherExists) {
+    if(verbose) message("Creating new father: ", father)
     fath_int = nrow(p) + 1
     p = rbind(p, c(fath_int, 0, 0, 1, rep(0, 2*nmark)))
     newlabs = c(newlabs, father)
   }
   else fath_int = internalID(x, father)
 
-  if (new.mother) {
-    if(verbose) message("Mother: Creating new individual with ID = ", mother)
+  if (!motherExists) {
+    if(verbose) message("Creating new mother: ", mother)
     moth_int = nrow(p) + 1
     p = rbind(p, c(moth_int, 0, 0, 2, rep(0, 2*nmark)))
     newlabs = c(newlabs, mother)
@@ -288,8 +293,8 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
 
   y = restorePed(p, attrs = attrs)
   neworder = c(seq_len(id_int - 1),
-               if(new.father) fath_int,
-               if(new.mother) moth_int,
+               if(!fatherExists) fath_int,
+               if(!motherExists) moth_int,
                id_int:pedsize(x))
   reorderPed(y, neworder)
 }
