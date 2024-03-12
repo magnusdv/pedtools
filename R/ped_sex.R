@@ -64,7 +64,7 @@
 getSex = function(x, ids = NULL, named = FALSE) {
   if(is.pedList(x)) {
     sexVec = unlist(lapply(x, function(comp) comp$SEX), recursive = FALSE, use.names = FALSE)
-    nms = unlist(labels(x), recursive = FALSE, use.names = FALSE)
+    nms = labels(x)
 
     # Check for duplicates
     if(anyDuplicated.default(nms)) {

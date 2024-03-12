@@ -346,7 +346,7 @@ print.nucleus = function(x, ...) {
 
 hasNumLabs = function(x) {
   # Returns TRUE if the labels of x are coercible to integers
-  labs = labels(x) |> unlist(recursive = FALSE, use.names = FALSE)
+  labs = labels(x)
   numlabs = suppressWarnings(as.character(as.integer(labs)))
   isTRUE(all(labs == numlabs))
 }
@@ -354,7 +354,7 @@ hasNumLabs = function(x) {
 # New implementation of `hasNumLabs`; takes either a character or ped(list)
 .isIntegral = function(labs) {
   if(!is.character(labs))
-    labs = labels(labs) |> unlist(recursive = FALSE, use.names = FALSE)
+    labs = labels(labs)
 
   intlabs = suppressWarnings(as.character(as.integer(labs)))
   isTRUE(all(labs == intlabs))
@@ -362,13 +362,8 @@ hasNumLabs = function(x) {
 
 # Utility for creating new labels
 generateLabs = function(x, n = 1, num = NULL, avoid = NULL, prefix = "a") {
-  if(is.character(x))
-    labs = x
-  else
-    labs = labels(x) |> unlist(recursive = FALSE, use.names = FALSE)
-
-  if(is.null(num))
-    num = .isIntegral(labs)
+  labs = if(is.character(x)) x else labels(x)
+  num = num %||% .isIntegral(labs)
 
   # Simple strategy (no need to be clever about this...)
   # Generate enough candidates and drop the taken ones
@@ -429,10 +424,10 @@ getComponent = function(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE) {
   }
 
   # List labels of each component
-  labList = labels(x)
+  labList = labels(x, unlist = FALSE)
 
   # A single vector with all labels
-  labVec = unlist(labList)
+  labVec = unlist(labList, recursive = FALSE, use.names = FALSE)
 
   # Check for duplicates if indicated
   if(checkUnique) {

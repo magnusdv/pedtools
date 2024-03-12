@@ -281,7 +281,7 @@ unrelated = function(x, id, internal = FALSE) {
     unr = unrelated(x[[comp]], id, internal = FALSE)
 
     # Add indivs from all other comps
-    unr = c(unr, unname(unlist(labels(x[-comp]))))
+    unr = c(unr, labels(x[-comp]))
     return(unr)
   }
 

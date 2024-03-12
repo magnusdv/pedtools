@@ -272,13 +272,13 @@ addMarker = function(x, ..., geno = NULL, allelematrix = NULL, alleles = NULL,
       if(is.null(nms <- names(glist)))
         stop2("Genotypes must be named when `x` is a ped list")
 
-      unkn = setdiff(nms, unlist(labels(x)))
+      unkn = setdiff(nms, labels(x))
       if(length(unkn))
         stop2("Unknown ID label: ", unkn)
     }
 
     y = lapply(x, function(comp) {
-      labsi = labels(comp)
+      labsi = comp$ID
       mi = if(hasGeno) glist2amat(glist[intersect(nms, labsi)], labsi) else NULL
       addMarker(comp, allelematrix = mi, alleles = alleles,
                 afreq = afreq, chrom = chrom, posMb = posMb, name = name,

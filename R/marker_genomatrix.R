@@ -44,8 +44,8 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
   # Check `ids` argument
   if(!is.null(ids)) {
     ids = as.character(ids)
-    if(!all(ids %in% unlist(labels(x))))
-      stop2("Unknown ID label: ", setdiff(ids, unlist(labels(x))))
+    if(!all(ids %in% labels(x)))
+      stop2("Unknown ID label: ", setdiff(ids, labels(x)))
   }
 
   if(is.pedList(x)) {

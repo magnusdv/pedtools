@@ -70,15 +70,15 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   if(is.pedList(x)) {
 
     # Check that all `ids` are known
-    if(!is.null(ids) && !all(ids %in% unlist(labels(x))))
-      stop2("Unknown ID label: ", setdiff(ids, unlist(labels(x))))
+    if(!is.null(ids) && !all(ids %in% labels(x)))
+      stop2("Unknown ID label: ", setdiff(ids, labels(x)))
 
     # Check equality of marker counts and names
     name(x)
 
     # Extract alleles from each component
     amList = lapply(x, function(comp) {
-      ids_comp = if(!is.null(ids)) intersect(ids, labels(comp))
+      ids_comp = if(!is.null(ids)) intersect(ids, comp$ID)
       getAlleles(comp, ids = ids_comp, markers = markers)
     })
 
@@ -156,9 +156,9 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
 
   # Function for doing one component
   setAllelesComponent = function(comp) {
-    ids_comp = intersect(ids, labels(comp))
+    ids_comp = intersect(ids, comp$ID)
 
-    am = completeAlleleMatrix[labels(comp), , drop = FALSE]
+    am = completeAlleleMatrix[comp$ID, , drop = FALSE]
     am[ids_comp, ] = alleles[ids_comp, ]
 
     # Locus attributes

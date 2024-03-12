@@ -67,8 +67,8 @@ transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
   if(!toSimple && !is.pedList(to))
     stop2("Argument `to` must be a `ped` object or a list of such. Received: ", class(to)[1])
 
-  allFrom = if(fromSimple) from$ID else unlist(labels(from))
-  allTo = if(toSimple) to$ID else unlist(labels(to))
+  allFrom = if(fromSimple) from$ID else labels(from)
+  allTo = if(toSimple) to$ID else labels(to)
 
   # If ids not given: use all shared individuals
   if(is.null(idsFrom) && is.null(idsTo))

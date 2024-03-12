@@ -66,7 +66,7 @@ maskPed = function(x, ids = NULL, markerNames = NULL, markerShuffle = TRUE,
 
   # Individuals (default: 1,2,...)
   if(is.null(ids)) {
-    oldids = unlist(labels(x), use.names = FALSE)
+    oldids = labels(x)
     ids = as.character(seq_along(oldids))
     names(ids) = oldids
   }

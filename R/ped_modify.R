@@ -77,7 +77,7 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
     stop2("Input is not a `ped` object or a list of such")
 
   # NB! Labels will change as new members are created
-  labs = unlist(labels(x), recursive = FALSE, use.names = FALSE) # unlist in case of list
+  labs = labels(x)
   isnum = .isIntegral(labs)
 
   # Check input
@@ -186,14 +186,17 @@ addChild = function(x, parents, id = NULL, sex = 1, verbose = TRUE) {
   # Note: The implementation actually allows multiple children
 
   npar = length(parents)
-  if(npar == 0 || npar > 2)
-    stop2("Argument `parents` must have length 1 or 2: ", parents)
+  if(npar == 0)
+    stop2("No parents indicated")
+
+  if(npar > 2)
+    stop2("Too many parents indicated: ", parents)
 
   if(npar == 2 && parents[1] == parents[2])
     stop2("Duplicated parent: ", parents[1])
 
   parents = as.character(parents) # remove potential names etc
-  existing = parents %in% unlist(labels(x))
+  existing = parents %in% labels(x)
   if(!any(existing))
     stop2("At least one parent must be an existing pedigree member: ", parents)
 
@@ -228,7 +231,7 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
   if (length(id) > 1)
       stop2("Cannot add parents to multiple individuals: ", id)
 
-  labs = labels(x) |> unlist(recursive = FALSE, use.names = FALSE)
+  labs = labels(x)
   isnum = .isIntegral(labs)
 
   father = father %||% generateLabs(labs, n = 1, avoid = mother, num = isnum)

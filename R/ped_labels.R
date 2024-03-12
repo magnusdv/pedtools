@@ -175,9 +175,14 @@ labels.ped = function(object, ...) {
 
 #' @rdname relabel
 #' @export
-labels.list = function(object, ...) {
-  if(is.pedList(object))
-    lapply(object, labels.ped)
-  else
-    labels.default(object)
+labels.list = function(object, ..., unlist = TRUE) {
+  if(is.pedList(object)) {
+    labs = lapply(object, labels.ped)
+    if(unlist)
+      labs = unlist(labs, recursive = FALSE, use.names = FALSE)
+    return(labs)
+  }
+
+  # else
+  labels.default(object)
 }

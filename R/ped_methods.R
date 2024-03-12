@@ -144,7 +144,7 @@ summary.list = function(object, ..., detailed = TRUE) {
   if (all(nInd == 1) && all(nMark == nMark[1])) {
     cat(sprintf("List of %d singletons.\n", nTot))
     if(nTot < 10) {
-      ids = unlist(labels(x), use.names = FALSE)
+      ids = labels(x)
       sex = c("sex unknown", "male", "female")[getSex(x) + 1]
       lbs = toString(sprintf("%s (%s)", ids, sex))
       cat(sprintf("Labels: %s.\n", lbs))
