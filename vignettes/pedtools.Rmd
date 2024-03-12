@@ -83,18 +83,27 @@ In most cases it is not recommended for regular users to interact directly with 
 ## Basic pedigree plots
 To plot a pedigree, simply use `plot()`.
 
-```{r, fig.dim = c(2,2), out.width = "40%"}
+```{r trio1, fig.dim = c(2,2), out.width = "40%"}
 plot(trio)
 ```
 
-Under the hood, `pedtools::plot()` imports the excellent alignment algorithm from the **kinship2** package. The plotting itself is done within **pedtools**, which has some advantages over **kinship2**, including the ability to plot singletons. A wealth of plot options are available. An overview can be found in the documentation `?plot.ped`, but a quick example should get you started:
+Under the hood, `pedtools::plot()` imports the excellent alignment algorithm from the **kinship2** package. The plotting itself is done within **pedtools**, which has some advantages over **kinship2**, including the ability to plot singletons. A wealth of plot options are available. An overview can be found in the documentation `?plot.ped`, but a couple of quick examples should get you started. Here is a demonstration of symbol colours and styles: 
 
-```{r fig.dim = c(2,2), out.width = "40%"}
-plot(trio, deceased = "fa", starred = "mo", hatched = "girl", 
-     col = c("green", "red", "blue"), title = "Trio 1", margins = c(1,1,2,1))
+```{r trio2, fig.dim = c(2,2), out.width = "40%"}
+plot(trio, hatched = "fa", fill = c(mo="pink", girl = "lightblue"),
+     col = c("green", "red", "blue"), lwd = 3:1, lty = 1:3)
 ```
 
-See Section 2.2 for how to add, and control the appearance of, marker genotypes to pedigree plots.
+And here is an example of how to put text annotation around the symbols:
+
+```{r trio3, fig.dim = c(2.5,2), out.width = "45%"}
+plot(trio, margin = c(1,4,1,1), textAnnot = list(
+  topright = list(1:3, cex = 0.8, col = 2, font = 2, offset = 0.1),
+  left = list(c(girl = "comment"), cex = 1.5, col = 4, offset = 1, srt = 20),
+  inside = c("?", "?", "!")))
+```
+
+See Section 2.2 for how to add marker genotypes to pedigree plots.
 
 ## Built-in pedigree structures {#builtin}
 Rather than using the `ped()` function directly, it is usually quicker and safer to build pedigrees step by step, applying the arsenal of utility functions offered by **pedtools**. A typical workflow is as follows:
@@ -122,7 +131,7 @@ There are also more specialized structures, including double cousins, selfing pe
 **Add/remove/extract individuals**  
 The functions below are used to modify an existing `ped` object by adding/removing individuals, or extracting a sub-pedigree. For details, see `?ped_modify`.
 
-* `addChildren()`, with special cases `addSon()` and `addDaughter()`
+* `addChildren()`, with special cases `addSon()`, `addDaughter()`, `addChild()`
 * `addParents()`
 * `removeIndividuals()`
 * `branch()` 
@@ -166,15 +175,15 @@ Here is another possibility. We start by creating the father as a singleton, and
 ```{r}
 trio4 = singleton("fa") |> 
   addDaughter("fa", id = "girl") |> 
-  relabel(old = "NN_1", new = "mo")
+  relabel(old = "a1", new = "mo")
 ```
 
-Note that `addDaughter()` automatically created the mother as "NN_1", so we needed to relabel her.  
+Note that `addDaughter()` automatically created the mother as "a1", so we needed to relabel her.  
 
 ### Example 2: An inbred child {-}
 This time we will create this inbred family:
 
-```{r echo = FALSE, out.width = "45%", fig.height = 3}
+```{r, echo = FALSE, out.width = "45%", fig.height = 3}
 x1 = halfSibPed(nch1 = 1, nch2 = 2, sex1 = 1, sex2 = 2:1) |> 
   addSon(parents = 4:5)
 plot(x1)
@@ -295,12 +304,12 @@ A side note: It may come as a surprise that you don't need quotes around the ID 
 ## Plotting pedigrees with marker data
 Including marker data in a pedigree plot is straightforward:
 
-```{r, fig.dim=c(2,2), out.width = "40%"}
+```{r trio-mark1, fig.dim=c(2,2), out.width = "40%"}
 plot(trio, marker = m1)
 ```
 
 The appearance of the genotypes can be tweaked in various ways, as documented in `?plot.ped`. Here's an example:
-```{r, fig.dim=c(2,2), out.width = "40%"}
+```{r trio-mark2, fig.dim=c(2,2), out.width = "40%"}
 plot(trio, marker = m1, showEmpty = T, missing = "?", sep = "")
 ```
 
@@ -323,7 +332,7 @@ There is a handy shortcut, `addMarker()` (without the 's'), allowing you to crea
 ```{r}
 nuclearPed(1) |> 
   addMarker(name = "myMarker", alleles = c("a", "b", "c")) |>
-  setGenotype(marker = 1, id = 3, geno = "a/c")
+  setGenotype(id = 3, geno = "a/c")
 ```
 
 **Selecting and removing attached markers**  

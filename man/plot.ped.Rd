@@ -140,15 +140,15 @@ plot(x)
 plot(x, fouInb = NULL)
 
 # Text can be placed around and inside symbols
-plot(x, textGeneral = list(topright = 1:3, inside = LETTERS[1:3]))
+plot(x, textAnnot = list(topright = 1:3, inside = LETTERS[1:3]))
 
 # Use lists to add further options; see `?text()`
-plot(x, margin = 2, textGeneral = list(
+plot(x, margin = 2, textAnnot = list(
   topright = list(1:3, cex = 0.8, col = 2, font = 2, offset = 0.1),
   left = list(c(boy = "comment"), cex = 2, col = 4, offset = 2, srt = 20)))
 
 # Exhaustive list of annotation positions
-plot(singleton(1), cex = 3, textGeneral = list(top="top", left="left",
+plot(singleton(1), cex = 3, textAnnot = list(top="top", left="left",
   right="right", bottom="bottom", topleft="topleft", topright="topright",
   bottomleft="bottomleft", bottomright="bottomright", inside="inside"))
 

@@ -40,7 +40,7 @@
   carrier = NULL,
   deceased = NULL,
   starred = NULL,
-  textGeneral = NULL,
+  textAnnot = NULL,
   textInside = NULL,
   textAbove = NULL,
   fouInb = "autosomal",
@@ -151,11 +151,11 @@ to indicate unaffected carriers of the disease allele.)}
 \item{starred}{A vector of labels indicating pedigree members that should be
 marked with a star in the pedigree plot.}
 
-\item{textGeneral}{A list specifying further text annotation around or inside
+\item{textAnnot}{A list specifying further text annotation around or inside
 the pedigree symbols. See Details for more information.}
 
 \item{textInside, textAbove}{Character vectors of text to be printed inside or
-above pedigree symbols. [Soft deprecated; replaced by \code{textGeneral}.]}
+above pedigree symbols. [Soft deprecated; replaced by \code{textAnnot}.]}
 
 \item{fouInb}{Either "autosomal" (default), "x" or NULL. If "autosomal" or
 "x", inbreeding coefficients are added to the plot above the inbred
@@ -234,12 +234,12 @@ labelled following the internal ordering.
 above. (See Examples.)
 }
 
-The argument \code{textGeneral} allows customised annotation around and inside
+The argument \code{textAnnot} allows customised annotation around and inside
 each symbol. This takes a list of lists, whose names may include "topleft",
 "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
 "inside". Each inner list should contain a character vector as its first
 element (with the text to printed), followed by further arguments passed to
-\code{\link[=text]{text()}}. For example, \code{textGeneral = list(left = list(c(A = "1"), cex = 2))}
+\code{\link[=text]{text()}}. For example, \code{textAnnot = list(left = list(c(A = "1"), cex = 2))}
 prints a large number "1" to the left of individual A (if such an individual
 exists in the pedigree. See Examples.
 

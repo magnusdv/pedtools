@@ -66,12 +66,12 @@
 #'   * If `labs` is a function, it is replaced with `labs(x)` and handled as
 #' above. (See Examples.)
 #'
-#' The argument `textGeneral` allows customised annotation around and inside
+#' The argument `textAnnot` allows customised annotation around and inside
 #' each symbol. This takes a list of lists, whose names may include "topleft",
 #' "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
 #' "inside". Each inner list should contain a character vector as its first
 #' element (with the text to printed), followed by further arguments passed to
-#' [text()]. For example, `textGeneral = list(left = list(c(A = "1"), cex = 2))`
+#' [text()]. For example, `textAnnot = list(left = list(c(A = "1"), cex = 2))`
 #' prints a large number "1" to the left of individual A (if such an individual
 #' exists in the pedigree. See Examples.
 #'
@@ -156,8 +156,8 @@
 #'   "x", inbreeding coefficients are added to the plot above the inbred
 #'   founders. If NULL, or if no founders are inbred, nothing is added.
 #' @param textInside,textAbove Character vectors of text to be printed inside or
-#'   above pedigree symbols. \[Soft deprecated; replaced by `textGeneral`.\]
-#' @param textGeneral A list specifying further text annotation around or inside
+#'   above pedigree symbols. \[Soft deprecated; replaced by `textAnnot`.\]
+#' @param textAnnot A list specifying further text annotation around or inside
 #'   the pedigree symbols. See Details for more information.
 #' @param font,fam Arguments passed on to [text()].
 #' @param colUnder,colInside,colAbove Colour vectors.
@@ -270,7 +270,7 @@ NULL
 .pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                           labs = labels(x), trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
                           hatched = NULL, hatchDensity = 25, aff = NULL, carrier = NULL,
-                          deceased = NULL, starred = NULL, textGeneral = NULL,
+                          deceased = NULL, starred = NULL, textAnnot = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal", ...) {
 
   res = list()
@@ -337,8 +337,8 @@ NULL
 
   # Further text annotation
 
-  if(!is.null(textGeneral)) {
-    res$textGeneral = lapply(textGeneral, function(b) {
+  if(!is.null(textAnnot)) {
+    res$textAnnot = lapply(textAnnot, function(b) {
       if(is.atomic(b))
         b = list(as.character(b))
       b[[1]] = .prepLabs2(x, b[[1]])
@@ -851,7 +851,7 @@ NULL
   deceased = annotation$deceasedTF
   carrier = annotation$carrierTF
   textUnder = annotation$textUnder
-  textGeneral = annotation$textGeneral
+  textAnnot = annotation$textAnnot
   textInside = annotation$textInside
   textAbove = annotation$textAbove
   col = annotation$colvec
@@ -901,16 +901,16 @@ NULL
          family = fam, font = fontAbove, pos = 3, offset = 0.5, xpd = NA)
   }
 
-  if(!is.null(textGeneral)) {
-    .addTxt(textGeneral[["topleft"]],     xall-boxw/2, yall,        pos = 2, plotord)
-    .addTxt(textGeneral[["top"]],         xall,        yall,        pos = 3, plotord)
-    .addTxt(textGeneral[["topright"]],    xall+boxw/2, yall,        pos = 4, plotord)
-    .addTxt(textGeneral[["left"]],        xall-boxw/2, yall+boxh/2, pos = 2, plotord)
-    .addTxt(textGeneral[["right"]],       xall+boxw/2, yall+boxh/2, pos = 4, plotord)
-    .addTxt(textGeneral[["bottomleft"]],  xall-boxw/2, yall+boxh,   pos = 2, plotord)
-    .addTxt(textGeneral[["bottom"]],      xall,        yall+boxh,   pos = 1, plotord)
-    .addTxt(textGeneral[["bottomright"]], xall+boxw/2, yall+boxh,   pos = 4, plotord)
-    .addTxt(textGeneral[["inside"]],      xall,        yall+boxh/2, pos = NULL, plotord)
+  if(!is.null(textAnnot)) {
+    .addTxt(textAnnot[["topleft"]],     xall-boxw/2, yall,        pos = 2, plotord)
+    .addTxt(textAnnot[["top"]],         xall,        yall,        pos = 3, plotord)
+    .addTxt(textAnnot[["topright"]],    xall+boxw/2, yall,        pos = 4, plotord)
+    .addTxt(textAnnot[["left"]],        xall-boxw/2, yall+boxh/2, pos = 2, plotord)
+    .addTxt(textAnnot[["right"]],       xall+boxw/2, yall+boxh/2, pos = 4, plotord)
+    .addTxt(textAnnot[["bottomleft"]],  xall-boxw/2, yall+boxh,   pos = 2, plotord)
+    .addTxt(textAnnot[["bottom"]],      xall,        yall+boxh,   pos = 1, plotord)
+    .addTxt(textAnnot[["bottomright"]], xall+boxw/2, yall+boxh,   pos = 4, plotord)
+    .addTxt(textAnnot[["inside"]],      xall,        yall+boxh/2, pos = NULL, plotord)
   }
 }
 
