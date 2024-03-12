@@ -351,7 +351,38 @@ hasNumLabs = function(x) {
   isTRUE(all(labs == numlabs))
 }
 
+# New implementation of `hasNumLabs`; takes either a character or ped(list)
+.isIntegral = function(labs) {
+  if(!is.character(labs))
+    labs = labels(labs) |> unlist(recursive = FALSE, use.names = FALSE)
 
+  intlabs = suppressWarnings(as.character(as.integer(labs)))
+  isTRUE(all(labs == intlabs))
+}
+
+# Utility for creating new labels
+generateLabs = function(x, n = 1, num = NULL, avoid = NULL, prefix = "a") {
+  if(is.character(x))
+    labs = x
+  else
+    labs = labels(x) |> unlist(recursive = FALSE, use.names = FALSE)
+
+  if(is.null(num))
+    num = .isIntegral(labs)
+
+  # Simple strategy (no need to be clever about this...)
+  # Generate enough candidates and drop the taken ones
+  taken = c(labs, avoid)
+  cand = as.character(seq_len(length(taken) + n))
+
+  if(!num)
+    cand = paste0(prefix, cand)
+
+  unused = .mysetdiff(cand, taken)
+  unused[1:n]
+}
+
+# TODO: Delete?
 # Utility function for generating numbered "NN" labels.
 # Returns "NN_i" where i increments largest j occurring as NN_j, NN.j or NN-j in input.
 nextNN = function(labs) { # labs a character vector

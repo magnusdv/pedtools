@@ -1,12 +1,15 @@
 
-test_that("nextNN works", {
-  expect_equal(nextNN(c(1:5)), "NN_1")
-  expect_equal(nextNN(character()), "NN_1")
-  expect_equal(nextNN("NN1"), "NN_2")
-  expect_equal(nextNN("NN.1"), "NN_2")
-  expect_equal(nextNN("NN_1"), "NN_2")
-  expect_equal(nextNN("NN-1"), "NN_2")
-  expect_equal(nextNN(c(1,"NN_2", 3, "NN_1")), "NN_3")
+test_that("generateLabs() works", {
+  expect_equal(generateLabs("1"), "2")
+  expect_equal(generateLabs("2"), "1")
+  expect_equal(generateLabs("1", avoid = "2"), "3")
+  expect_equal(generateLabs("2", avoid = "1"), "3")
+  expect_equal(generateLabs("a"), "a1")
+  expect_equal(generateLabs("a1"), "a2")
+  expect_equal(generateLabs("a2"), "a1")
+  expect_equal(generateLabs("1", num = F), "a1")
+  expect_equal(generateLabs("2", n = 2), c("1", "3"))
+  expect_equal(generateLabs("a3", n = 2), c("a1", "a2"))
 })
 
 test_that("mergePed() works in half sib example", {

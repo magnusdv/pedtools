@@ -3,11 +3,10 @@
 #' Functions for adding or removing individuals in a 'ped' object.
 #'
 #' In `addChildren()` and `addParents()`, labels of added individuals are
-#' generated automatically if they are not specified by the user. In the
-#' automatic case, the labelling depends on whether the existing labels are
-#' integer-like or not. If so, the new labels are integers subsequent to the
-#' largest of the existing labels. If not, the new labels are "NN_1", "NN_2",
-#' ... If any such label already exists, the numbers are adjusted accordingly.
+#' generated automatically if they are not specified by the user. If the
+#' existing labels are all integer-like, the generated labels are the smallest
+#' available integers. Otherwise, the new labels are the first available in the
+#' sequence "a1", "a2", ...
 #'
 #' `addChild()`, `addSon()` and `addDaughter()` are convenient wrappers for the
 #' most common use of `addChildren()`, namely adding a single child to a
@@ -77,24 +76,9 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   if(!is.ped(x) && !islist)
     stop2("Input is not a `ped` object or a list of such")
 
-  numLabs = hasNumLabs(x)
-
   # NB! Labels will change as new members are created
-  labs = unlist(labels(x), use.names = FALSE) # unlist in case of list
-
-  # Utility for creating new labels
-  nextlabs = function(labs, len, avoid = NULL) {
-    labs = c(labs, avoid)
-    if(numLabs) {
-      mx = max(suppressWarnings(as.numeric(c(labs, avoid))), na.rm = TRUE)
-      seq.int(from = mx + 1, length.out = len)
-    }
-    else {
-      res = character(0)
-      for(i in seq_len(len)) res = c(res, nextNN(c(labs, res)))
-      res
-    }
-  }
+  labs = unlist(labels(x), recursive = FALSE, use.names = FALSE) # unlist in case of list
+  isnum = .isIntegral(labs)
 
   # Check input
   if(length(father) > 1)
@@ -102,11 +86,11 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   if(length(mother) > 1)
     stop2("More than one mother indicated: ", mother)
 
-  father = father %||% nextlabs(labs, 1, avoid = c(mother, ids))
+  father = father %||% generateLabs(labs, n=1, num = isnum, avoid = c(mother, ids))
   if(!(father_exists <- father %in% labs))
     labs = c(labs, father)
 
-  mother = mother %||% nextlabs(labs, 1, avoid = ids)
+  mother = mother %||% generateLabs(labs, n=1, num = isnum, avoid = ids)
   if(!(mother_exists <- mother %in% labs))
     labs = c(labs, mother)
 
@@ -124,7 +108,7 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
     stop2("Argument `nch` must be a positive integer: ", nch)
 
   # Children IDs
-  ids = ids %||% nextlabs(labs, len = nch)
+  ids = ids %||% generateLabs(labs, n = nch, num = isnum)
   if(length(ids) != nch)
     stop2("Length of `ids` must equal the number of children")
   if(any(ids %in% labs))
