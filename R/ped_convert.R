@@ -85,8 +85,18 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
           detectLoops = !is.na(attrs$UNBROKEN_LOOPS),
           reorder = FALSE)
 
-  if(is.pedList(p))
-    stop2("Cannot restore to `ped` object: Disconnected input")
+  if(is.pedList(p)) {
+    if(!is.null(attrs$LOOP_BREAKERS) || !is.null(attrs$FOUNDER_INBREEDING))
+      stop2("Cannot restore disconnected ouput in this case")
+    # Hack
+    y = lapply(p, function(pcmp) {
+      idx = match(pcmp$ID, x[,1])
+      a = attrs
+      a$LABELS = a$LABELS[idx]
+      restorePed(x[idx, , drop = FALSE], attrs = a, validate = validate)
+    })
+    return(y)
+  }
 
   p = relabel(p, new = attrs$LABELS)
   p['LOOP_BREAKERS'] = list(attrs$LOOP_BREAKERS) # Trick to keep explicit NULLs

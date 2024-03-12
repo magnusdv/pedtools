@@ -305,8 +305,17 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
 #' @export
 removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
                              returnLabs = FALSE, verbose = TRUE) {
+  if(is.pedList(x)) {
+    y = lapply(x, function(comp)
+      removeIndividuals(comp, .myintersect(comp$ID, ids), remove = remove,
+                        returnLabs = returnLabs, verbose = FALSE))
+    # Remove NULLs
+    y = y[!sapply(y, is.null)]
+    return(y)
+  }
+
   if(!is.ped(x))
-    stop2("Input is not a `ped` object")
+    stop2("Input is not a `ped` object or a list of such")
 
   if(!length(ids))
     return(x)
