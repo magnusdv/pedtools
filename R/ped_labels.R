@@ -164,8 +164,10 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
   x
 }
 
-#' @param object A `ped` object
-#' @param ... Not used
+#' @param object A `ped` object.
+#' @param ... Not used.
+#' @param unlist A logical; if TRUE (default), the output is unlisted to a
+#'   single character vector.
 #'
 #' @rdname relabel
 #' @export

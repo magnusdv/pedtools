@@ -45,9 +45,12 @@ character vector.}
 "asPlot" or "generations". If not supplied, this is computed internally
 with \code{\link[=.pedAlignment]{.pedAlignment()}}.}
 
-\item{object}{A \code{ped} object}
+\item{object}{A \code{ped} object.}
 
-\item{...}{Not used}
+\item{...}{Not used.}
+
+\item{unlist}{A logical; if TRUE (default), the output is unlisted to a
+single character vector.}
 }
 \value{
 \itemize{
