@@ -361,20 +361,18 @@ hasNumLabs = function(x) {
 }
 
 # Utility for creating new labels
-generateLabs = function(x, n = 1, num = NULL, avoid = NULL, prefix = "a") {
+generateLabs = function(x, n = 1, avoid = NULL, prefix = "") {
   labs = if(is.character(x)) x else labels(x)
-  num = num %||% .isIntegral(labs)
 
   # Simple strategy (no need to be clever about this...)
   # Generate enough candidates and drop the taken ones
   taken = c(labs, avoid)
   cand = as.character(seq_len(length(taken) + n))
 
-  if(!num)
+  if(nzchar(prefix))
     cand = paste0(prefix, cand)
 
-  unused = .mysetdiff(cand, taken)
-  unused[1:n]
+  .mysetdiff(cand, taken)[seq_len(n)]
 }
 
 # TODO: Delete?

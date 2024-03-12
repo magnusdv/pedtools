@@ -85,10 +85,8 @@ Functions for adding or removing individuals in a 'ped' object.
 }
 \details{
 In \code{addChildren()} and \code{addParents()}, labels of added individuals are
-generated automatically if they are not specified by the user. If the
-existing labels are all integer-like, the generated labels are the smallest
-available integers. Otherwise, the new labels are the first available in the
-sequence "a1", "a2", ...
+generated automatically if they are not specified by the user. The automatic
+labelling uses the smallest integers not already in use.
 
 \code{addChild()}, \code{addSon()} and \code{addDaughter()} are convenient wrappers for the
 most common use of \code{addChildren()}, namely adding a single child to a

@@ -3,10 +3,8 @@
 #' Functions for adding or removing individuals in a 'ped' object.
 #'
 #' In `addChildren()` and `addParents()`, labels of added individuals are
-#' generated automatically if they are not specified by the user. If the
-#' existing labels are all integer-like, the generated labels are the smallest
-#' available integers. Otherwise, the new labels are the first available in the
-#' sequence "a1", "a2", ...
+#' generated automatically if they are not specified by the user. The automatic
+#' labelling uses the smallest integers not already in use.
 #'
 #' `addChild()`, `addSon()` and `addDaughter()` are convenient wrappers for the
 #' most common use of `addChildren()`, namely adding a single child to a
@@ -78,7 +76,6 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
 
   # NB! Labels will change as new members are created
   labs = labels(x)
-  isnum = .isIntegral(labs)
 
   # Check input
   if(length(father) > 1)
@@ -86,11 +83,11 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   if(length(mother) > 1)
     stop2("More than one mother indicated: ", mother)
 
-  father = father %||% generateLabs(labs, n=1, num = isnum, avoid = c(mother, ids))
+  father = father %||% generateLabs(labs, n=1, avoid = c(mother, ids))
   if(!(father_exists <- father %in% labs))
     labs = c(labs, father)
 
-  mother = mother %||% generateLabs(labs, n=1, num = isnum, avoid = ids)
+  mother = mother %||% generateLabs(labs, n=1, avoid = ids)
   if(!(mother_exists <- mother %in% labs))
     labs = c(labs, mother)
 
@@ -108,7 +105,7 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
     stop2("Argument `nch` must be a positive integer: ", nch)
 
   # Children IDs
-  ids = ids %||% generateLabs(labs, n = nch, num = isnum)
+  ids = ids %||% generateLabs(labs, n = nch)
   if(length(ids) != nch)
     stop2("Length of `ids` must equal the number of children")
   if(any(ids %in% labs))
@@ -232,10 +229,9 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
       stop2("Cannot add parents to multiple individuals: ", id)
 
   labs = labels(x)
-  isnum = .isIntegral(labs)
 
-  father = father %||% generateLabs(labs, n = 1, avoid = mother, num = isnum)
-  mother = mother %||% generateLabs(labs, n = 1, avoid = father, num = isnum)
+  father = father %||% generateLabs(labs, n = 1, avoid = mother)
+  mother = mother %||% generateLabs(labs, n = 1, avoid = father)
 
   fatherExists = father %in% labs
   motherExists = mother %in% labs

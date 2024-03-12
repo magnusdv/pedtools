@@ -100,11 +100,11 @@ test_that("addChildren works with num labels", {
 
 test_that("addChildren works with char labels", {
   m = singleton("fa") |> addChildren(father="fa", nch=2)
-  expect_equal(m, nuclearPed(father="fa", mother="a1", children=c("a2","a3")))
+  expect_equal(m, nuclearPed(father="fa", mother="1", children=2:3))
 
   # start with female singleton
   f = singleton("mo", sex=2) |> addChildren(mother="mo", nch=2) |> reorderPed(c(2,1,3,4))
-  expect_equal(f, nuclearPed(father="a1", mother="mo", children=c("a2","a3")))
+  expect_equal(f, nuclearPed(father="1", mother="mo", children=2:3))
 })
 
 test_that("addChildren with nch=2 gives same result as twice with nch=1", {
@@ -255,13 +255,8 @@ test_that("addParents() creates parents with correct labels", {
 
   y = nuclearPed(fa="fa", mo="mo", nch=1)
   y1 = addParents(y, "fa", verbose=F)
-  y2 = addParents(y, "fa", father="a1", mother="a2", verbose=F)
+  y2 = addParents(y, "fa", father="1", mother="2", verbose=F)
   expect_identical(y1, y2)
-
-  z = nuclearPed(fa="a1", mo="a2", nch=1)
-  z1 = addParents(z, "a1", verbose=F)
-  z2 = addParents(z, "a1", father="a3", mother="a4", verbose=F)
-  expect_identical(z1, z2)
 })
 
 

@@ -17,7 +17,7 @@ relabel(
 
 \method{labels}{ped}(object, ...)
 
-\method{labels}{list}(object, ...)
+\method{labels}{list}(object, ..., unlist = TRUE)
 }
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}

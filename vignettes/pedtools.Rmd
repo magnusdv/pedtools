@@ -90,17 +90,20 @@ plot(trio)
 Under the hood, `pedtools::plot()` imports the excellent alignment algorithm from the **kinship2** package. The plotting itself is done within **pedtools**, which has some advantages over **kinship2**, including the ability to plot singletons. A wealth of plot options are available. An overview can be found in the documentation `?plot.ped`, but a couple of quick examples should get you started. Here is a demonstration of symbol colours and styles: 
 
 ```{r trio2, fig.dim = c(2,2), out.width = "40%"}
-plot(trio, hatched = "fa", fill = c(mo="pink", girl = "lightblue"),
-     col = c("green", "red", "blue"), lwd = 3:1, lty = 1:3)
+plot(trio, hatched = "fa", hatchDensity = 15, 
+     fill = c(mo = "pink", girl = "lightblue"), 
+     col = c("green", "red", "blue"), 
+     lwd = 3:1, lty = 1:3)
 ```
 
 And here is an example of how to put text annotation around the symbols:
 
 ```{r trio3, fig.dim = c(2.5,2), out.width = "45%"}
-plot(trio, margin = c(1,4,1,1), textAnnot = list(
-  topright = list(1:3, cex = 0.8, col = 2, font = 2, offset = 0.1),
-  left = list(c(girl = "comment"), cex = 1.5, col = 4, offset = 1, srt = 20),
-  inside = c("?", "?", "!")))
+plot(trio, margin = c(1,3,1,1), 
+     textAnnot = list(
+       topright = list(1:3, cex = 0.8, col = 2, font = 2, offset = 0.1),
+       left     = list(c(girl = "comment"), cex = 1.5, col = 4, offset = 1, srt = 20),
+       inside   = c("?", "?", "!")))
 ```
 
 See Section 2.2 for how to add marker genotypes to pedigree plots.
@@ -175,10 +178,10 @@ Here is another possibility. We start by creating the father as a singleton, and
 ```{r}
 trio4 = singleton("fa") |> 
   addDaughter("fa", id = "girl") |> 
-  relabel(old = "a1", new = "mo")
+  relabel(old = "1", new = "mo")
 ```
 
-Note that `addDaughter()` automatically created the mother as "a1", so we needed to relabel her.  
+Note that `addDaughter()` automatically created the mother as "1", so we needed to relabel her.  
 
 ### Example 2: An inbred child {-}
 This time we will create this inbred family:
