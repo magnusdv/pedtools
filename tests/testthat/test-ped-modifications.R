@@ -215,6 +215,17 @@ test_that("addSon() and addDaughter() catches errors", {
   expect_error(addDaughter(x, 4:5), "At least one parent must be an existing pedigree member")
 })
 
+test_that("adding children across components", {
+  x1 = singletons(1:3, sex = c(1,2,1)) |> addSon(1:2)
+  x2 = list(nuclearPed(ch=4), singleton(3))
+  expect_identical(x1, x2)
+
+  y1 = singletons(c("a", "b", "d"), sex = c(1,2,2)) |>
+    addSon(c("a", "b"), id = "c") |> addChildren("c", "d", id = "e", sex = 2)
+  y2 = linearPed(2, sex = 1:2) |> relabel(letters[1:5])
+  expect_identical(y1, y2)
+})
+
 test_that("modifaction chains give identical result", {
   x = singleton(3) |> addSon(3, "aa") |> addMarker(aa="1/1") |>
     addChild(c("aa", "bb"), id = "cc", sex = 0) |> setAlleleLabels(1, "A") |>

@@ -346,7 +346,7 @@ print.nucleus = function(x, ...) {
 
 hasNumLabs = function(x) {
   # Returns TRUE if the labels of x are coercible to integers
-  labs = labels(x)
+  labs = labels(x) |> unlist(recursive = FALSE, use.names = FALSE)
   numlabs = suppressWarnings(as.character(as.integer(labs)))
   isTRUE(all(labs == numlabs))
 }

@@ -27,23 +27,19 @@
 #' the indicated subset forms a connected pedigree; failing to comply with this
 #' may lead to obscure errors.)
 #'
-#' @param x A `ped` object.
-#' @param ids A character vector (or coercible to such) with ID labels. In
-#'   `addChildren` the (optional) `ids` argument is used to specify labels for
-#'   the created children. If given, its length must equal `nch`. If not given,
-#'   labels are assigned automatically as explained in Details.
+#' @param x A `ped` object, or a list of such.
+#' @param ids A vector of ID labels. In `addChildren()` these are the children
+#'   to be created. If NULL (default) given, automatic labels are generated.
 #' @param remove Either "ancestors" or "descendants" (default), dictating the
 #'   method of removing pedigree members. Abbreviations are allowed.
 #' @param returnLabs A logical, by default FALSE. If TRUE, `removeIndividuals()`
 #'   returns only the labels of all members to be removed, instead of actually
 #'   removing them.
 #' @param id The ID label of a pedigree member.
-#' @param father,mother Single ID labels. At least one of these must belong to
-#'   an existing pedigree member. The other label may either: 1) belong to an
-#'   existing member, 2) not belong to any existing member, or 3) be missing
-#'   (i.e. not included in the function call). In cases 2 and 3 a new founder is
-#'   added to the pedigree. In case 2 its label is the one given, while in case
-#'   3 a suitable label is created by the program (see Details).
+#' @param father,mother Single ID labels. At least one of these must be an
+#'   existing member of `x`. The other may be (i) another existing member, (ii)
+#'   a new founder to be created, or (iii) missing (i.e., NULL), in which case
+#'   the other parent is created and given a suitable name.
 #' @param nch A positive integer indicating the number of children to be
 #'   created. Default: 1.
 #' @param sex Gender codes of the created children (recycled if needed).
@@ -67,17 +63,38 @@
 #' # Remove 8-10 and their parents
 #' y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 #'
+#' # Adding a child across components
+#' z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
+#'
+#'
 #' @name ped_modify
 NULL
 
 #' @rdname ped_modify
 #' @export
 addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, ids = NULL, verbose = TRUE) {
-  if(!is.ped(x) && !is.pedList(x))
+  islist = is.pedList(x)
+  if(!is.ped(x) && !islist)
     stop2("Input is not a `ped` object or a list of such")
 
-  # This variable will change as new members are created
-  labs = labels(x)
+  numLabs = hasNumLabs(x)
+
+  # NB! Labels will change as new members are created
+  labs = unlist(labels(x), use.names = FALSE) # unlist in case of list
+
+  # Utility for creating new labels
+  nextlabs = function(labs, len, avoid = NULL) {
+    labs = c(labs, avoid)
+    if(numLabs) {
+      mx = max(suppressWarnings(as.numeric(c(labs, avoid))), na.rm = TRUE)
+      seq.int(from = mx + 1, length.out = len)
+    }
+    else {
+      res = character(0)
+      for(i in seq_len(len)) res = c(res, nextNN(c(labs, res)))
+      res
+    }
+  }
 
   # Check input
   if(length(father) > 1)
@@ -85,8 +102,13 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   if(length(mother) > 1)
     stop2("More than one mother indicated: ", mother)
 
-  father_exists = isTRUE(father %in% labs)
-  mother_exists = isTRUE(mother %in% labs)
+  father = father %||% nextlabs(labs, 1, avoid = c(mother, ids))
+  if(!(father_exists <- father %in% labs))
+    labs = c(labs, father)
+
+  mother = mother %||% nextlabs(labs, 1, avoid = ids)
+  if(!(mother_exists <- mother %in% labs))
+    labs = c(labs, mother)
 
   if(!father_exists && !mother_exists)
     stop2("At least one parent must be an existing pedigree member")
@@ -101,27 +123,42 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   if(!isCount(nch))
     stop2("Argument `nch` must be a positive integer: ", nch)
 
-  if(!is.null(ids) && length(ids) != nch)
+  # Children IDs
+  ids = ids %||% nextlabs(labs, len = nch)
+  if(length(ids) != nch)
     stop2("Length of `ids` must equal the number of children")
   if(any(ids %in% labs))
-    stop2("Individual already exist: ", intersect(ids, labs))
+    stop2("Individual already exists: ", intersect(ids, labs))
+  if (anyDuplicated.default(labs))
+    stop2("Duplicated ID label: ", labs[duplicated(labs)])
+
+  labs = c(labs, ids)
 
   # Check `sex` and recycle if needed
   if(!is.numeric(sex) || !all(sex %in% 0:2))
     stop2("Illegal value of `sex`: ", .mysetdiff(sex, 0:2))
   sex = rep_len(as.integer(sex), nch)
 
-  if(is.pedList(x)) {
+
+  if(islist) {
     comp = getComponent(x, c(father, mother), checkUnique = TRUE)
     compSet = unique.default(comp[!is.na(comp)])
-    if(length(compSet) == 2)
-      y = .addChildrenAcrossComps(x, father, mother, nch = nch, sex = sex, ids = ids, verbose = verbose)
-    else if(length(compSet) == 1) {
-      co = x[[compSet]]
-      y = x
-      y[[compSet]] = addChildren(co, father, mother, nch = nch, sex = sex, ids = ids, verbose = verbose)
+    if(length(compSet) == 1) {
+      newcomp = addChildren(x[[compSet]], father, mother, nch = nch, sex = sex,
+                            ids = ids, verbose = verbose)
+      x[[compSet]] = newcomp
     }
-    return(y)
+    else if(length(compSet) == 2) {
+      facomp = compSet[1]
+      mocomp = compSet[2]
+      newcomp = x[[facomp]] |>
+        addChildren(father, mother, nch = nch, sex = sex, ids = ids, verbose = FALSE) |>
+        mergePed(x[[mocomp]], by = mother, relabel = FALSE)
+      x[[facomp]] = newcomp
+      x[[mocomp]] = NULL
+      if(length(x) == 1) x = x[[1]]
+    }
+    return(x)
   }
 
   n = pedsize(x)
@@ -131,51 +168,23 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   attrs = attributes(p)
   nmark = nMarkers(x)
 
-  # Utility for creating new labels, depending on existing labels being numeric
-  nextlabs = function(labs, len) {
-    if(hasNumLabs(x)) {
-      mx = max(as.numeric(labs))
-      seq.int(mx + 1, length.out = len)
-    }
-    else {
-      res = character(0)
-      for(i in seq_len(len)) res = c(res, nextNN(c(labs, res)))
-      res
-    }
-  }
-
   if(!father_exists) {
-    if(is.null(father))
-      father = nextlabs(labs, 1)
-    if (verbose)
-      message("Father: Creating new individual with ID = ", father)
-
-    labs = c(labs, father)
+    if(verbose) message("Creating new father: ", father)
     father_int = n = n + 1L
     p = rbind(p, c(father_int, 0L, 0L, 1L, rep(0L, 2*nmark)))
   }
   else {
     father_int = internalID(x, father)
   }
-  if(!mother_exists) {
-    if(is.null(mother))
-      mother = nextlabs(labs, 1)
-    if (verbose)
-      message("Mother: Creating new individual with ID = ", mother)
 
-    labs = c(labs, mother)
+  if(!mother_exists) {
+    if (verbose) message("Creating new mother: ", mother)
     mother_int = n = n + 1L
     p = rbind(p, c(mother_int, 0L, 0L, 2L, rep(0L, 2*nmark)))
   }
   else {
     mother_int = internalID(x, mother)
   }
-  # Children
-  if(is.null(ids)) ids = nextlabs(labs, len = nch)
-  labs = c(labs, ids)
-
-  if (anyDuplicated.default(labs))
-    stop2("Duplicated ID label: ", labs[duplicated(labs)])
 
   children_pedcols = cbind(nrow(p) + (1:nch), father_int, mother_int, sex)
   children_markers = matrix(0L, nrow = nch, ncol = nmark*2)
@@ -183,10 +192,6 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
 
   attrs$LABELS = as.character(labs)
   restorePed(p, attrs = attrs)
-}
-
-.addChildrenAcrossComps = function(x, father, mother, nch, sex, ids, verbose) {
-  stop2("Adding children across components is not implemented yet")
 }
 
 

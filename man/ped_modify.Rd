@@ -43,24 +43,20 @@ branch(x, id)
 \method{subset}{ped}(x, subset, ...)
 }
 \arguments{
-\item{x}{A \code{ped} object.}
+\item{x}{A \code{ped} object, or a list of such.}
 
-\item{father, mother}{Single ID labels. At least one of these must belong to
-an existing pedigree member. The other label may either: 1) belong to an
-existing member, 2) not belong to any existing member, or 3) be missing
-(i.e. not included in the function call). In cases 2 and 3 a new founder is
-added to the pedigree. In case 2 its label is the one given, while in case
-3 a suitable label is created by the program (see Details).}
+\item{father, mother}{Single ID labels. At least one of these must be an
+existing member of \code{x}. The other may be (i) another existing member, (ii)
+a new founder to be created, or (iii) missing (i.e., NULL), in which case
+the other parent is created and given a suitable name.}
 
 \item{nch}{A positive integer indicating the number of children to be
 created. Default: 1.}
 
 \item{sex}{Gender codes of the created children (recycled if needed).}
 
-\item{ids}{A character vector (or coercible to such) with ID labels. In
-\code{addChildren} the (optional) \code{ids} argument is used to specify labels for
-the created children. If given, its length must equal \code{nch}. If not given,
-labels are assigned automatically as explained in Details.}
+\item{ids}{A vector of ID labels. In \code{addChildren()} these are the children
+to be created. If NULL (default) given, automatic labels are generated.}
 
 \item{verbose}{A logical: Verbose output or not.}
 
@@ -89,17 +85,16 @@ Functions for adding or removing individuals in a 'ped' object.
 }
 \details{
 In \code{addChildren()} and \code{addParents()}, labels of added individuals are
-created automatically if they are not specified by the user. In the automatic
-case, the labelling depends on whether the existing labels are integer-like
-or not (i.e. if \code{labels(x)} equals \code{as.character(as.integer(labels(x)))}.) If
-so, the new labels are integers subsequent to the largest of the existing
-labels. If not, the new labels are "NN_1", "NN_2", ... If any such label
-already exists, the numbers are adjusted accordingly.
+generated automatically if they are not specified by the user. In the
+automatic case, the labelling depends on whether the existing labels are
+integer-like or not. If so, the new labels are integers subsequent to the
+largest of the existing labels. If not, the new labels are "NN_1", "NN_2",
+... If any such label already exists, the numbers are adjusted accordingly.
 
-\code{addSon()} and \code{addDaughter()} are wrappers for the most common use of
-\code{addChildren()}, namely adding a single child to a pedigree. Note that the
-parents can be given in any order. If only one parent is supplied, the other
-is created as a new individual.
+\code{addChild()}, \code{addSon()} and \code{addDaughter()} are convenient wrappers for the
+most common use of \code{addChildren()}, namely adding a single child to a
+pedigree. Note that the parents can be given in any order. If only one parent
+is supplied, the other is created as a new individual.
 
 \code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
 all of their ancestors OR descendants, depending on the \code{remove} argument.
@@ -126,6 +121,10 @@ y1 = removeIndividuals(x, 6:7)
 
 # Remove 8-10 and their parents
 y2 = removeIndividuals(x, 8:10, remove = "ancestors")
+
+# Adding a child across components
+z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
+
 
 }
 \seealso{
