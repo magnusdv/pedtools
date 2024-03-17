@@ -90,6 +90,15 @@ plot(x, labs = males)
 # Rename some individuals
 plot(x, labs = c(FATHER = "fa", "boy"))
 
+# By default, long names are folded to width ~12 characters
+plot(x, labs = c("Very long father's name" = "fa"), margin = 2)
+
+# Folding width may be adjusted ...
+plot(x, labs = c("Very long father's name" = "fa"), foldLabs = 6)
+
+# ... or switched off (requires larger margin!)
+plot(x, labs = c("Very long father's name" = "fa"), foldLabs = FALSE)
+
 # By default, labels are trimmed for initial/trailing line breaks ...
 plot(x, labs = c("\nFA" = "fa"))
 
@@ -106,10 +115,12 @@ plot(x, hatched = labels, fill = c(boy = "red"))
 # Use functions to specify colours
 plot(x, fill = list(red = leaves, blue = ancestors(x, "boy")))
 
-# Line type and width
-plot(x, lty = 2, lwd = 3, cex = 2)
+#----- Symbol line types and widths -----
 
-# Detailed line type and width
+# Dotted, thick symbols
+plot(x, lty = 3, lwd = 4, cex = 2)
+
+# Detailed specification of line types and width
 plot(x, lty = list(dashed = founders), lwd = c(boy = 4))
 
 #----- Genotypes -----
@@ -130,14 +141,14 @@ plot(x, marker = "SNP")
 # Multiple markers
 plot(x, marker = 1:2)
 
-#----- Further tex annotation -----
+#----- Further text annotation -----
 
 # Founder inbreeding is shown by default
-founderInbreeding(x, "mo") = 0.1
-plot(x)
+xinb = x |> setFounderInbreeding("mo", value = 0.1)
+plot(xinb)
 
 # ... but can be suppressed
-plot(x, fouInb = NULL)
+plot(xinb, fouInb = NULL)
 
 # Text can be placed around and inside symbols
 plot(x, textAnnot = list(topright = 1:3, inside = LETTERS[1:3]))

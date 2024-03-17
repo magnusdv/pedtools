@@ -139,3 +139,33 @@ listIdentical = function(x) {
     return(TRUE)
   all(vapply(x[-1], identical, y = x[[1]], logical(1)))
 }
+
+
+# Fold a single string at roughly the given width; try to break at nice places
+# TODO: Not optimised (and probably reinventing the wheel here).
+# Better idea: Start with strsplit(s, "")
+smartfold = function(s, width = 10, breakAt = c(' ', '-', '.', ':', ')', ']')) {
+  width = as.integer(max(width, 2))
+  nch = nchar(s)
+  if(nch < width + 3)
+    return(s)
+
+  res = character(0)
+  remaining = s
+  while(nch >= width + 3) {
+    b = width # default next brea, if no better
+    for (ch in breakAt) {
+      pos = gregexpr(ch, remaining, fixed = TRUE)[[1]] |> as.integer() # all positions
+      goodpos = pos[pos >= width - 2 & pos <= width + 3 & pos <= nch - 3]
+      if(length(goodpos)) {
+        b = max(goodpos)
+        break
+      }
+    }
+    res = c(res, substr(remaining, 1, b))
+    remaining = substr(remaining, b + 1, nch)
+    nch = nchar(remaining)
+  }
+  res = c(res, remaining)
+  paste0(res, collapse = "\n")
+}

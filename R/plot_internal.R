@@ -100,6 +100,10 @@
 #'   as a DAG, i.e., with arrows connecting parent-child pairs.
 #' @param labs A vector or function controlling the individual labels in the
 #'   plot. By default, `labels(x)` are used. See Details for valid formats.
+#' @param foldLabs A number or function controlling the folding of long labels.
+#'   If a number, line breaks are inserted at roughly this width, trying to
+#'   break at break-friendly characters. If a function, this is applied to each
+#'   label.
 #' @param trimLabs A logical, by default TRUE. Removes line breaks and tabs from
 #'   both ends of the labels (after adding genotypes, if `marker` is not NULL).
 #' @param cex Expansion factor controlling font size. This also affects symbol
@@ -268,7 +272,7 @@ NULL
 #' @rdname internalplot
 #' @export
 .pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
-                          labs = labels(x), trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
+                          labs = labels(x), foldLabs = 12, trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
                           hatched = NULL, hatchDensity = 25, aff = NULL, carrier = NULL,
                           deceased = NULL, starred = NULL, textAnnot = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal", ...) {
@@ -292,6 +296,12 @@ NULL
     labs = setNames(x$ID, 1:nInd)
 
   textu = .prepLabs(x, labs)
+
+  # Fold
+  if(isCount(foldLabs))
+    textu = vapply(textu, function(s) smartfold(s, width = foldLabs), FUN.VALUE = "")
+  else if(is.function(foldLabs))
+    textu = vapply(textu, foldLabs, FUN.VALUE = "")
 
   # Add stars to labels
   if(is.function(starred))

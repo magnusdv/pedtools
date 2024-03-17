@@ -65,6 +65,15 @@
 #' # Rename some individuals
 #' plot(x, labs = c(FATHER = "fa", "boy"))
 #'
+#' # By default, long names are folded to width ~12 characters
+#' plot(x, labs = c("Very long father's name" = "fa"), margin = 2)
+#'
+#' # Folding width may be adjusted ...
+#' plot(x, labs = c("Very long father's name" = "fa"), foldLabs = 6)
+#'
+#' # ... or switched off (requires larger margin!)
+#' plot(x, labs = c("Very long father's name" = "fa"), foldLabs = FALSE)
+#'
 #' # By default, labels are trimmed for initial/trailing line breaks ...
 #' plot(x, labs = c("\nFA" = "fa"))
 #'

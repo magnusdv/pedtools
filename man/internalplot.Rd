@@ -29,6 +29,7 @@
   missing = "-",
   showEmpty = FALSE,
   labs = labels(x),
+  foldLabs = 12,
   trimLabs = TRUE,
   col = 1,
   fill = NA,
@@ -117,6 +118,11 @@ the format determined by \code{sep} and \code{missing}. See also \code{showEmpty
 
 \item{labs}{A vector or function controlling the individual labels in the
 plot. By default, \code{labels(x)} are used. See Details for valid formats.}
+
+\item{foldLabs}{A number or function controlling the folding of long labels.
+If a number, line breaks are inserted at roughly this width, trying to
+break at break-friendly characters. If a function, this is applied to each
+label.}
 
 \item{trimLabs}{A logical, by default TRUE. Removes line breaks and tabs from
 both ends of the labels (after adding genotypes, if \code{marker} is not NULL).}
