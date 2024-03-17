@@ -13,7 +13,7 @@
 #' duplications.
 #'
 #' If `x` is a list of `ped` objects these are plotted next to each other,
-#' vertically centered in the plot window. For finer control, and possibly
+#' vertically centred in the plot window. For finer control, and possibly
 #' nested lists of pedigrees, use [plotPedList()].
 #'
 #' @param x A [ped()] object or a list of such.
@@ -90,10 +90,12 @@
 #' # Use functions to specify colours
 #' plot(x, fill = list(red = leaves, blue = ancestors(x, "boy")))
 #'
-#' # Line type and width
-#' plot(x, lty = 2, lwd = 3, cex = 2)
+#' #----- Symbol line types and widths -----
 #'
-#' # Detailed line type and width
+#' # Dotted, thick symbols
+#' plot(x, lty = 3, lwd = 4, cex = 2)
+#'
+#' # Detailed specification of line types and width
 #' plot(x, lty = list(dashed = founders), lwd = c(boy = 4))
 #'
 #' #----- Genotypes -----
@@ -114,14 +116,14 @@
 #' # Multiple markers
 #' plot(x, marker = 1:2)
 #'
-#' #----- Further tex annotation -----
+#' #----- Further text annotation -----
 #'
 #' # Founder inbreeding is shown by default
-#' founderInbreeding(x, "mo") = 0.1
-#' plot(x)
+#' xinb = x |> setFounderInbreeding("mo", value = 0.1)
+#' plot(xinb)
 #'
 #' # ... but can be suppressed
-#' plot(x, fouInb = NULL)
+#' plot(xinb, fouInb = NULL)
 #'
 #' # Text can be placed around and inside symbols
 #' plot(x, textAnnot = list(topright = 1:3, inside = LETTERS[1:3]))

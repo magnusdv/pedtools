@@ -43,7 +43,7 @@ library(pedtools)
 
 
 # Pedigrees
-In **pedtools** and the ped suite packages, pedigrees are stored as `ped` objects. We start by explaining briefly what these objects look like, and their basic constructor. If you are reading this vignette simply to learn how to create a particular pedigree, you may want to skip ahead to section 1.3 where we describe practical shortcuts to common pedigree structures.
+In **pedtools** and all other pedsuite packages, pedigrees are stored as `ped` objects. We start by explaining briefly what these objects look like, and their basic constructor. If you are reading this vignette simply to learn how to create a particular pedigree, you may want to skip ahead to section 1.3 where we describe practical shortcuts to common pedigree structures.
 
 ## The `ped` class
 

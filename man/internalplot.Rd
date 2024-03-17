@@ -240,8 +240,8 @@ labelled following the internal ordering.
 above. (See Examples.)
 }
 
-The argument \code{textAnnot} allows customised annotation around and inside
-each symbol. This takes a list of lists, whose names may include "topleft",
+The argument \code{textAnnot} allows customised annotation around and inside each
+symbol. This takes a list of lists, whose names may include "topleft",
 "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
 "inside". Each inner list should contain a character vector as its first
 element (with the text to printed), followed by further arguments passed to

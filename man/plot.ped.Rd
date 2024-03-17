@@ -54,7 +54,7 @@ some minor adjustments have been made to improve scaling and avoid unneeded
 duplications.
 
 If \code{x} is a list of \code{ped} objects these are plotted next to each other,
-vertically centered in the plot window. For finer control, and possibly
+vertically centred in the plot window. For finer control, and possibly
 nested lists of pedigrees, use \code{\link[=plotPedList]{plotPedList()}}.
 }
 \examples{
