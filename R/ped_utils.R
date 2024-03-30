@@ -375,7 +375,7 @@ generateLabs = function(x, n = 1, avoid = NULL, prefix = "") {
   .mysetdiff(cand, taken)[seq_len(n)]
 }
 
-# TODO: Delete?
+# TODO: Delete - no longer used. Replaced by generateLabs
 # Utility function for generating numbered "NN" labels.
 # Returns "NN_i" where i increments largest j occurring as NN_j, NN.j or NN-j in input.
 nextNN = function(labs) { # labs a character vector

@@ -1,22 +1,24 @@
-# dev
+# pedtools 2.6.0
+
+This is a large release with several new features, including a few (relatively minor) breaking changes.
 
 ## Breaking changes
 
-* In pedigree plots, Long labels are now automatically folded to an approximate width of 12 characters by default. Use the new argument `foldLabs` to adjust the folding width, or to switch off folding (`foldLabs = FALSE`).
+* In pedigree plots, long labels are now automatically folded to an approximate width of 12 characters by default. Use the new argument `foldLabs` to adjust the folding width, or to switch off folding (`foldLabs = FALSE`).
 
-* When adding children or parents to a pedigree, the default labelling of new individuals has been simplified. The new labels are now always the smallest integers not already in use. (Previous versions used "NN_1", "NN_2", etc for pedigrees with nonnumeric labels.)
+* When adding children or parents to a pedigree, the default labelling of new individuals has been simplified. The new labels are now always the smallest integers not already in use. (Previous versions used "NN_1", "NN_2", etc for pedigrees with non-numeric labels.)
 
 * `labels(x)` now always returns a character vector, also when `x` is a list of pedigrees. Use `labels(x, unlist = FALSE)` to retain the old behaviour.
 
 ## New features
 
-* `addChildren(x, ...)` and friends now works across components of `x`, when `x` is a list of pedigrees. For instance: `singletons(1:2, sex = 1:2) |> addSon(1:2)`.
+* `addChildren(x, ...)`, and its companions `addSon()` and `addDaughter()`, now works across components of `x`, when `x` is a list of pedigrees. For instance, this now works as expected: `singletons(1:2, sex = 1:2) |> addSon(1:2)`.
 
 * New function `addChild()` is similar to `addSon()` and `addDaughter()`, but allows the sex to be set programmatically, also to `sex = 0`.
 
 * `plot.ped()` gains argument `textAnnot` allowing highly customisable text annotations around and inside pedigree symbols.
 
-* `ancestors()`, `descendants()`, `commonAncestors()` and `commonDescendants()` gain a new argument `maxGen` indicating to limit the analysis to a given number of generations.
+* `ancestors()`, `descendants()`, `commonAncestors()` and `commonDescendants()` gain a new argument `maxGen` limiting the analysis to the given number of generations.
 
 * `transferMarkers()` gains the argument `checkAttrs` for checking consistency of marker attributes across pedigree components.
 
