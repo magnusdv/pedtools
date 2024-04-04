@@ -18,6 +18,7 @@ readPed(
   missing = 0,
   sep = NULL,
   colSkip = NULL,
+  addMissingFounders = FALSE,
   validate = TRUE,
   ...
 )
@@ -52,9 +53,9 @@ If this is not found, genders of parents are deduced from the data, leaving
 the remaining as unknown.}
 
 \item{marker_col}{Index vector indicating columns with marker alleles. If NA,
-all columns to the right of all pedigree columns are used. If \code{sep}
-(see below) is non-NULL, each column is interpreted as a genotype column
-and split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}.}
+all columns to the right of all pedigree columns are used. If \code{sep} (see
+below) is non-NULL, each column is interpreted as a genotype column and
+split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}.}
 
 \item{locusAttributes}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
@@ -66,7 +67,12 @@ and split into separate alleles with \code{strsplit(..., split = sep, fixed = TR
 names. If given, these columns are removed directly after \code{read.table()},
 before any other processing.}
 
-\item{validate}{A logical indicating if the pedigree structure should be validated.}
+\item{addMissingFounders}{A logical. If TRUE, any parent not included in the
+\code{id} column is added as a founder of corresponding sex. By default, missing
+founders result in an error.}
+
+\item{validate}{A logical indicating if the pedigree structure should be
+validated.}
 
 \item{...}{Further parameters passed on to \code{\link[=read.table]{read.table()}}, e.g.
 \code{comment.char} and \code{quote}.}

@@ -87,7 +87,8 @@ readPed = function(pedfile, colSep = "", header = NA,
                    famid_col = NA, id_col = NA, fid_col = NA,
                    mid_col = NA, sex_col = NA, marker_col = NA,
                    locusAttributes = NULL, missing = 0,
-                   sep = NULL, colSkip = NULL, validate = TRUE, ...) {
+                   sep = NULL, colSkip = NULL,
+                   addMissingFounders = FALSE, validate = TRUE, ...) {
 
   # If header = NA, check first line
   if(is.na(header)) {
@@ -107,27 +108,31 @@ readPed = function(pedfile, colSep = "", header = NA,
       ped.df = ped.df[, -colSkip[colSkip > 0], drop = FALSE]
   }
 
+  nc = ncol(ped.df)
+
+  # TODO: Clean this up and make smarter
   # guess columns if no header info
   if(!header && isTRUE(all(is.na(c(famid_col, id_col, fid_col, mid_col, sex_col, marker_col))))) {
-    hasFamid = anyDuplicated(ped.df[,1]) || (ncol(ped.df) >=5 && isTRUE(all(0 == ped.df[,3:4])))
+    hasFamid = anyDuplicated(ped.df[,1]) || (nc >=4 && isTRUE(all(0 == ped.df[,3:4])))
     if(hasFamid) {
       famid_col = 1
       id_col = 2
       fid_col = 3
       mid_col = 4
-      sex_col = 5
+      sex_col = if(nc > 4) 5 else NA
     }
     else {
       id_col = 1
       fid_col = 2
       mid_col = 3
-      sex_col = 4
+      sex_col = if(nc > 3) 4 else NA
     }
   }
 
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
          locusAttributes = locusAttributes, missing = missing,
-         sep = sep, validate = validate)
+         sep = sep, addMissingFounders = addMissingFounders,
+         validate = validate)
 
 }

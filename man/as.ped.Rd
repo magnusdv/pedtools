@@ -18,7 +18,9 @@ as.ped(x, ...)
   locusAttributes = NULL,
   missing = 0,
   sep = NULL,
+  addMissingFounders = FALSE,
   validate = TRUE,
+  verbose = TRUE,
   ...
 )
 }
@@ -45,9 +47,9 @@ If this is not found, genders of parents are deduced from the data, leaving
 the remaining as unknown.}
 
 \item{marker_col}{Index vector indicating columns with marker alleles. If NA,
-all columns to the right of all pedigree columns are used. If \code{sep}
-(see below) is non-NULL, each column is interpreted as a genotype column
-and split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}.}
+all columns to the right of all pedigree columns are used. If \code{sep} (see
+below) is non-NULL, each column is interpreted as a genotype column and
+split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}.}
 
 \item{locusAttributes}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
@@ -55,7 +57,14 @@ and split into separate alleles with \code{strsplit(..., split = sep, fixed = TR
 
 \item{sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
-\item{validate}{A logical indicating if the pedigree structure should be validated.}
+\item{addMissingFounders}{A logical. If TRUE, any parent not included in the
+\code{id} column is added as a founder of corresponding sex. By default, missing
+founders result in an error.}
+
+\item{validate}{A logical indicating if the pedigree structure should be
+validated.}
+
+\item{verbose}{A logical.}
 }
 \value{
 A \code{ped} object or a list of such.
@@ -85,5 +94,9 @@ as.ped(df2)
 # Two singletons
 df3 = data.frame(id = 1:2, fid = 0, mid = 0, sex = 1)
 as.ped(df3)
+
+# Add missing parents as founders
+df4 = data.frame(id = 1, fid = 2, mid = 3, sex = 1)
+as.ped(df4, addMissingFounders = TRUE)
 
 }

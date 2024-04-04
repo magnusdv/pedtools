@@ -241,14 +241,20 @@ as.ped = function(x, ...) {
 #'   If this is not found, genders of parents are deduced from the data, leaving
 #'   the remaining as unknown.
 #' @param marker_col Index vector indicating columns with marker alleles. If NA,
-#'   all columns to the right of all pedigree columns are used. If `sep`
-#'   (see below) is non-NULL, each column is interpreted as a genotype column
-#'   and split into separate alleles with `strsplit(..., split = sep, fixed = TRUE)`.
+#'   all columns to the right of all pedigree columns are used. If `sep` (see
+#'   below) is non-NULL, each column is interpreted as a genotype column and
+#'   split into separate alleles with `strsplit(..., split = sep, fixed =
+#'   TRUE)`.
 #' @param locusAttributes Passed on to [setMarkers()] (see explanation there).
 #' @param missing Passed on to [setMarkers()] (see explanation there).
 #' @param sep Passed on to [setMarkers()] (see explanation there).
-#' @param validate A logical indicating if the pedigree structure should be validated.
-#'
+#' @param addMissingFounders A logical. If TRUE, any parent not included in the
+#'   `id` column is added as a founder of corresponding sex. By default, missing
+#'   founders result in an error.
+#' @param validate A logical indicating if the pedigree structure should be
+#'   validated.
+#' @param verbose A logical.
+
 #' @examples
 #' # Trio
 #' df1 = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2), sex = c(1,2,1))
@@ -263,12 +269,17 @@ as.ped = function(x, ...) {
 #' df3 = data.frame(id = 1:2, fid = 0, mid = 0, sex = 1)
 #' as.ped(df3)
 #'
+#' # Add missing parents as founders
+#' df4 = data.frame(id = 1, fid = 2, mid = 3, sex = 1)
+#' as.ped(df4, addMissingFounders = TRUE)
+#'
 #' @rdname as.ped
 #' @export
 as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
                              mid_col = NA, sex_col = NA, marker_col = NA,
                              locusAttributes = NULL, missing = 0,
-                             sep = NULL, validate = TRUE, ...) {
+                             sep = NULL, addMissingFounders = FALSE,
+                             validate = TRUE, verbose = TRUE, ...) {
 
   # Identify `famid` column and check for multiple pedigrees
   colnames = tolower(names(x))
@@ -329,7 +340,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
           names(col_idx)[!is.na(col_idx) & col_idx == dup])
   }
 
-  # Chech that columns exist
+  # Check that columns exist
   nonexist = !is.na(col_idx) & (col_idx < 1 | col_idx > NC)
   if(any(nonexist))
     stop2("Column index out of range: ", col_idx[nonexist])
@@ -338,12 +349,13 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   famid = if(is.na(famid_col)) "" else x[[famid_col]][1]
 
   ### Ped columns
-  id = x[[id_col]]
+  id = origId = x[[id_col]]
   fid = x[[fid_col]]
   mid = x[[mid_col]]
 
   # If sex is missing, deduce partially from parental status
   if(is.na(sex_col)) {
+    if(verbose) cat("Deducing sex from parental status\n")
     sex = integer(nrow(x))
     sex[match(fid, id)] = 1
     sex[match(mid, id)] = 2
@@ -352,6 +364,28 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   }
   else
     sex = x[[sex_col]]
+
+  # Add missing founders
+  if(addMissingFounders) {
+    missFa = .mysetdiff(fid, id)
+    missMo = .mysetdiff(mid, id)
+    miss0 = .myintersect(missFa, missMo) # hermaphrodites!
+    if(n0 <- length(miss0)) {
+      missFa = .mysetdiff(missFa, miss0)
+      missMo = .mysetdiff(missMo, miss0)
+    }
+    nFa = length(missFa)
+    nMo = length(missMo)
+    if(n0 + nFa + nMo > 0) {
+      if(verbose && n0) cat("Adding missing bi-sex founders:", toString(miss0), "\n")
+      if(verbose && nFa) cat("Adding missing male founders:", toString(missFa), "\n")
+      if(verbose && nMo) cat("Adding missing female founders:", toString(missMo), "\n")
+      id = c(miss0, missFa, missMo, id)
+      fid = c(rep_len(0, n0 + nFa + nMo), fid)
+      mid = c(rep_len(0, n0 + nFa + nMo), mid)
+      sex = c(rep(0:2, c(n0, nFa, nMo)), sex)
+    }
+  }
 
   # Create ped
   p = ped(id = id, fid = fid, mid = mid, sex = sex, famid = famid,
@@ -372,7 +406,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   }
   else { # Otherwise, convert marker-cols to matrix
     AM = as.matrix(x)[, marker_col, drop = FALSE]
-    rownames(AM) = id
+    rownames(AM) = origId
   }
 
   # Return if neither alleles or locus data are given
@@ -386,7 +420,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {
     p = lapply(p, function(comp) {
-      setMarkers(comp, alleleMatrix = AM[labels(comp), , drop = FALSE],
+      setMarkers(comp, alleleMatrix = AM[comp$ID, , drop = FALSE],
                  locusAttributes = locusAttributes,
                  missing = missing, sep = sep)
     })
