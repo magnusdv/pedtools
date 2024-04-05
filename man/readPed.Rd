@@ -18,6 +18,7 @@ readPed(
   missing = 0,
   sep = NULL,
   colSkip = NULL,
+  sexCodes = NULL,
   addMissingFounders = FALSE,
   validate = TRUE,
   ...
@@ -66,6 +67,10 @@ split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}
 \item{colSkip}{Columns to skip, given as a vector of indices or columns
 names. If given, these columns are removed directly after \code{read.table()},
 before any other processing.}
+
+\item{sexCodes}{A list with optional entries "male", "female" and "unknown",
+indicating how non-default entries in the \code{sex} column should be
+interpreted. Default values: male = 1, female = 2, unknown = 0.}
 
 \item{addMissingFounders}{A logical. If TRUE, any parent not included in the
 \code{id} column is added as a founder of corresponding sex. By default, missing
@@ -138,6 +143,12 @@ readPed(tf)
 # With column names
 write.table(trio2, file = tf, col.names = FALSE, row.names = FALSE)
 readPed(tf, famid = 1, id = 2, fid = 3, mid = 4, sex = 5)
+
+### With non-standard `sex` codes
+trio3 = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2),
+                   sex = c("male","female","?"))
+write.table(trio3, file = tf, row.names = FALSE)
+readPed(tf, sexCodes = list(male = "male", female = "female", unknown = "?"))
 
 # Cleanup
 unlink(tf)

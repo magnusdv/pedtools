@@ -24,6 +24,7 @@
 #' replaced by other single-character letters or numbers, e.g., "snp-12" gives
 #' alleles 1 and 2.
 #'
+#' @inheritParams as.ped.data.frame
 #' @param pedfile A file name
 #' @param colSep A column separator character, passed on as the `sep` argument
 #'   of [read.table()]. The default is to separate on white space, that is, one
@@ -77,17 +78,22 @@
 #' write.table(trio2, file = tf, col.names = FALSE, row.names = FALSE)
 #' readPed(tf, famid = 1, id = 2, fid = 3, mid = 4, sex = 5)
 #'
+#' ### With non-standard `sex` codes
+#' trio3 = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2),
+#'                    sex = c("male","female","?"))
+#' write.table(trio3, file = tf, row.names = FALSE)
+#' readPed(tf, sexCodes = list(male = "male", female = "female", unknown = "?"))
+#'
 #' # Cleanup
 #' unlink(tf)
 #'
-#' @inheritParams as.ped.data.frame
 #' @importFrom utils read.table
 #' @export
 readPed = function(pedfile, colSep = "", header = NA,
                    famid_col = NA, id_col = NA, fid_col = NA,
                    mid_col = NA, sex_col = NA, marker_col = NA,
                    locusAttributes = NULL, missing = 0,
-                   sep = NULL, colSkip = NULL,
+                   sep = NULL, colSkip = NULL, sexCodes = NULL,
                    addMissingFounders = FALSE, validate = TRUE, ...) {
 
   # If header = NA, check first line
@@ -132,7 +138,7 @@ readPed = function(pedfile, colSep = "", header = NA,
   as.ped(ped.df, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
          mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
          locusAttributes = locusAttributes, missing = missing,
-         sep = sep, addMissingFounders = addMissingFounders,
+         sep = sep, sexCodes = sexCodes, addMissingFounders = addMissingFounders,
          validate = validate)
 
 }

@@ -248,6 +248,9 @@ as.ped = function(x, ...) {
 #' @param locusAttributes Passed on to [setMarkers()] (see explanation there).
 #' @param missing Passed on to [setMarkers()] (see explanation there).
 #' @param sep Passed on to [setMarkers()] (see explanation there).
+#' @param sexCodes A list with optional entries "male", "female" and "unknown",
+#'   indicating how non-default entries in the `sex` column should be
+#'   interpreted. Default values: male = 1, female = 2, unknown = 0.
 #' @param addMissingFounders A logical. If TRUE, any parent not included in the
 #'   `id` column is added as a founder of corresponding sex. By default, missing
 #'   founders result in an error.
@@ -278,7 +281,8 @@ as.ped = function(x, ...) {
 as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
                              mid_col = NA, sex_col = NA, marker_col = NA,
                              locusAttributes = NULL, missing = 0,
-                             sep = NULL, addMissingFounders = FALSE,
+                             sep = NULL, sexCodes = NULL,
+                             addMissingFounders = FALSE,
                              validate = TRUE, verbose = TRUE, ...) {
 
   # Identify `famid` column and check for multiple pedigrees
@@ -364,6 +368,16 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   }
   else
     sex = x[[sex_col]]
+
+  # Translate non-standard entries in the `sex` column
+  if(!is.null(sexCodes)) {
+    if(length(badnms <- .mysetdiff(names(sexCodes), c("male", "female", "unknown"))))
+      stop2(sprintf("Illegal name of argument  `sexCodes`: '%s'\nLegal names are 'male', 'female' and 'uknown'", toString(badnms)))
+    sexCodes = as.list(sexCodes)
+    sex[sex %in% sexCodes$male] = 1
+    sex[sex %in% sexCodes$female] = 2
+    sex[sex %in% sexCodes$unknown] = 0
+  }
 
   # Add missing founders
   if(addMissingFounders) {

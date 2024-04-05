@@ -18,6 +18,7 @@ as.ped(x, ...)
   locusAttributes = NULL,
   missing = 0,
   sep = NULL,
+  sexCodes = NULL,
   addMissingFounders = FALSE,
   validate = TRUE,
   verbose = TRUE,
@@ -56,6 +57,10 @@ split into separate alleles with \code{strsplit(..., split = sep, fixed = TRUE)}
 \item{missing}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
 
 \item{sep}{Passed on to \code{\link[=setMarkers]{setMarkers()}} (see explanation there).}
+
+\item{sexCodes}{A list with optional entries "male", "female" and "unknown",
+indicating how non-default entries in the \code{sex} column should be
+interpreted. Default values: male = 1, female = 2, unknown = 0.}
 
 \item{addMissingFounders}{A logical. If TRUE, any parent not included in the
 \code{id} column is added as a founder of corresponding sex. By default, missing

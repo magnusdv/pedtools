@@ -32,8 +32,8 @@ test_that("validatePed() catches malformed pedigrees", {
   expect_error(ped(id, c(0,0,0), mid, sex), "Individual a has exactly 1 parent")
   expect_error(ped(id, fid, c(0,0,0), sex), "Individual a has exactly 1 parent")
 
-  expect_error(ped(id, fid, mid, c(1,3,-1)), "Illegal sex: 3")
-  expect_error(ped(id, fid, mid, c(1,3,-1)), "Illegal sex: -1")
+  expect_error(ped(id, fid, mid, c(1,3,-1)), "Illegal sex: 3, -1")
+  expect_error(ped(id, fid, mid, c(1,2,"?")), "Illegal sex: ?")
 
   expect_error(ped(id, mid, fid, sex), "Individual c is female, but appear as the father of a")
   expect_error(ped(id, mid, fid, sex), "Individual b is male, but appear as the mother of a")
