@@ -112,7 +112,6 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
   id = as.character(id)
   fid = as.character(fid)
   mid = as.character(mid)
-  sex = as.integer(sex)
   famid = as.character(famid)
 
   # Duplicated IDs
@@ -137,6 +136,11 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
 
   if(length(famid) != 1)
     stop2("`famid` must be a character string: ", famid)
+
+  # Check for illegal entries in `sex``
+  if(!all(sex %in% 0:2))
+    stop2("Illegal sex: ", .mysetdiff(sex, 0:2))
+  sex = as.integer(sex)
 
   # Connected components
   if(!isConnected) {
