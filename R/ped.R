@@ -1,7 +1,14 @@
 #' Pedigree construction
 #'
 #' This is the basic constructor of `ped` objects. Utility functions for
-#' creating many common pedigree structures are described in [ped_basic].
+#' creating many common pedigree structures are described in [ped_basic]. See
+#' also [as.ped()] and [readPed()], which are more liberal regarding the input
+#' format.
+#'
+#' Each individual must have either both parents specified, or no parents.
+#' Missing parents are indicated with entries "0", "" or NA in `fid` and `mid`.
+#' Note that `id`,`fid`,`mid` are all converted to character vectors before
+#' matching to establish the parent connections.
 #'
 #' If the pedigree is disconnected, it is split into its connected components
 #' and returned as a list of `ped` objects.
@@ -16,13 +23,10 @@
 #' the same individual, is allowed in `ped` objects. Any such "self-fertilizing"
 #' parent must have undecided sex (`sex = 0`).
 #'
-#' @param id A vector (numeric or character) of individual ID labels.
-#' @param fid A vector of the same length as `id`, containing the labels of the
-#'   fathers. In other words `fid[i]` is the father of `id[i]`, or 0 if `id[i]`
-#'   is a founder.
-#' @param mid A vector of the same length as `id`, containing the labels of the
-#'   mothers. In other words `mid[i]` is the mother of `id[i]`, or 0 if `id[i]`
-#'   is a founder.
+#' @param id A vector (coercible to character) of individual ID labels.
+#' @param fid,mid Vectors of the same length as `id`, naming the father and
+#'   mother of each individual, respectively. Missing parents (i.e.,
+#'   corresponding to founder individuals) may be entered as "0", "" or NA.
 #' @param sex A numeric of the same length as `id`, describing the genders of
 #'   the individuals (in the same order as `id`.) Each entry must be either 1
 #'   (=male), 2 (=female) or 0 (=unknown).

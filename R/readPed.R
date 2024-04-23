@@ -70,13 +70,13 @@
 #' ### Two trios in the same file
 #' trio2 = cbind(famid = rep(c("trio1", "trio2"), each = 3), rbind(trio, trio))
 #'
-#' # Without column names
-#' write.table(trio2, file = tf, row.names = FALSE)
+#' # With column names
+#' write.table(trio2, file = tf, col.names = TRUE, row.names = FALSE)
 #' readPed(tf)
 #'
-#' # With column names
+#' # Without column names
 #' write.table(trio2, file = tf, col.names = FALSE, row.names = FALSE)
-#' readPed(tf, famid = 1, id = 2, fid = 3, mid = 4, sex = 5)
+#' readPed(tf)
 #'
 #' ### With non-standard `sex` codes
 #' trio3 = data.frame(id = 1:3, fid = c(0,0,1), mid = c(0,0,2),

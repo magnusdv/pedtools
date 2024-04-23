@@ -93,7 +93,7 @@ getSex = function(x, ids = NULL, named = FALSE) {
 #' @export
 setSex = function(x, ids = NULL, sex) {
 
-  ispedlist <- is.pedList(x)
+  ispedlist = is.pedList(x)
   if(!is.ped(x) && !ispedlist)
     stop2("Input is not a `ped` object or a list of such")
 
@@ -102,9 +102,11 @@ setSex = function(x, ids = NULL, sex) {
   else
     ids = ids %||% names(sex) %||% stop2("If `ids` is NULL, then `sex` must be named")
 
-  sex = as.integer(sex) # strip names
-
   idsL = length(ids)
+  if(idsL == 0)
+    return(x)
+
+  sex = as.integer(sex) # strip names
   sexL = length(sex)
   if(sexL < idsL)
     sex = rep(sex, length.out = idsL)

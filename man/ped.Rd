@@ -24,15 +24,11 @@ singleton(id = 1, sex = 1, famid = "")
 singletons(id, sex = 1)
 }
 \arguments{
-\item{id}{A vector (numeric or character) of individual ID labels.}
+\item{id}{A vector (coercible to character) of individual ID labels.}
 
-\item{fid}{A vector of the same length as \code{id}, containing the labels of the
-fathers. In other words \code{fid[i]} is the father of \code{id[i]}, or 0 if \code{id[i]}
-is a founder.}
-
-\item{mid}{A vector of the same length as \code{id}, containing the labels of the
-mothers. In other words \code{mid[i]} is the mother of \code{id[i]}, or 0 if \code{id[i]}
-is a founder.}
+\item{fid, mid}{Vectors of the same length as \code{id}, naming the father and
+mother of each individual, respectively. Missing parents (i.e.,
+corresponding to founder individuals) may be entered as "0", "" or NA.}
 
 \item{sex}{A numeric of the same length as \code{id}, describing the genders of
 the individuals (in the same order as \code{id}.) Each entry must be either 1
@@ -85,9 +81,16 @@ IDs. This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
 }
 \description{
 This is the basic constructor of \code{ped} objects. Utility functions for
-creating many common pedigree structures are described in \link{ped_basic}.
+creating many common pedigree structures are described in \link{ped_basic}. See
+also \code{\link[=as.ped]{as.ped()}} and \code{\link[=readPed]{readPed()}}, which are more liberal regarding the input
+format.
 }
 \details{
+Each individual must have either both parents specified, or no parents.
+Missing parents are indicated with entries "0", "" or NA in \code{fid} and \code{mid}.
+Note that \code{id},\code{fid},\code{mid} are all converted to character vectors before
+matching to establish the parent connections.
+
 If the pedigree is disconnected, it is split into its connected components
 and returned as a list of \code{ped} objects.
 
