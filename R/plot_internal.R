@@ -350,7 +350,7 @@ NULL
   if(!is.null(textAnnot)) {
     res$textAnnot = lapply(textAnnot, function(b) {
       if(is.atomic(b))
-        b = list(as.character(b))
+        b = list(b)
       b[[1]] = .prepLabs2(x, b[[1]])
       b
     })
