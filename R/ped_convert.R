@@ -381,8 +381,9 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
 
   # Add missing founders
   if(addMissingFounders) {
-    missFa = .mysetdiff(fid, id)
-    missMo = .mysetdiff(mid, id)
+    nopar = c("0", "", NA)
+    missFa = .mysetdiff(fid, c(id, nopar))
+    missMo = .mysetdiff(mid, c(id, nopar))
     miss0 = .myintersect(missFa, missMo) # hermaphrodites!
     if(n0 <- length(miss0)) {
       missFa = .mysetdiff(missFa, miss0)
