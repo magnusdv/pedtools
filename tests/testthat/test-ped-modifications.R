@@ -38,7 +38,7 @@ test_that("setSex() recycles sex", {
 
 test_that("setSex() and swapSex() works with selectors", {
   x = nuclearPed(1) |> setSex(ids = leaves, sex = 0) |> swapSex(ids = males)
-  y = nuclearPed(fa = 2, mo = 1, ch = 3, sex = 0) |> reorderPed(c(2,1,3))
+  y = nuclearPed(fa = 2, mo = 1, ch = 3, sex = 0) |> reorderPed()
   expect_identical(x, y)
 })
 
@@ -88,7 +88,7 @@ test_that("addChildren works with num labels", {
   expect_equal(m, nuclearPed(father=4, mother=1, children=2:3))
 
   # start with female singleton
-  f = singleton(4, sex=2) |> addChildren(mother=4, nch=2) |> reorderPed(c(2,1,3,4))
+  f = singleton(4, sex=2) |> addChildren(mother=4, nch=2) |> reorderPed(c(1,4,2:3))
   expect_equal(f, nuclearPed(mother=4, father=1, children=2:3))
 
   # inbreeding example

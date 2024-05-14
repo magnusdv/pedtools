@@ -295,7 +295,7 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
                if(!fatherExists) fath_int,
                if(!motherExists) moth_int,
                id_int:pedsize(x))
-  reorderPed(y, neworder)
+  reorderPed(y, neworder, internal = TRUE)
 }
 
 

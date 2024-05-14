@@ -9,7 +9,7 @@
 \alias{internalID}
 \title{Internal ordering of pedigree members}
 \usage{
-reorderPed(x, neworder = NULL)
+reorderPed(x, neworder = NULL, internal = FALSE)
 
 parentsBeforeChildren(x)
 
@@ -22,8 +22,13 @@ internalID(x, ids, errorIfUnknown = TRUE)
 \arguments{
 \item{x}{A \code{ped} object. Most of these functions also accepts ped lists.}
 
-\item{neworder}{A permutation of \code{labels(x)} or of vector \code{1:pedsize(x)}. By
-default, the sorting order of the ID labels is used.}
+\item{neworder}{A permutation of \code{labels(x)} (or a subset of this),
+indicating the new internal ordering. If \code{internal = TRUE}, \code{neworder}
+refers to the internal ordering, so must be numeric. \code{1:pedsize(x)}. By
+default, the natural order of the ID labels is used.}
+
+\item{internal}{A logical (default: FALSE). If TRUE, \code{neworder} is
+interpreted as referring to the internal ordering.}
 
 \item{ids}{A character vector (or coercible to one) of original ID labels.}
 
@@ -60,18 +65,25 @@ containing both the component number and internal ID (within the component).
 x = ped(id = 3:1, fid = c(1,0,0), mid = c(2,0,0), sex = c(1,2,1), reorder = FALSE)
 x
 
-# The 'ids' argument is converted to character, hence these are equivalent:
+# The 'ids' argument is converted to character, hence these are the same:
 internalID(x, ids = 3)
 internalID(x, ids = "3")
 
 hasParentsBeforeChildren(x)
 
-# Fix the ordering
-y = parentsBeforeChildren(x)
-internalID(y, ids = 3)
+# Put parents first
+parentsBeforeChildren(x)
 
-# A different ordering
-reorderPed(x, c(2,1,3))
+# Typical use of reorderPed: Swap sibling plot order
+y = nuclearPed(2) |> reorderPed(4:3)
+plot(y)
+
+
+### If labels are numeric, argument `internal` is important
+z = singleton(1) |> addParents(1)
+z
+reorderPed(z, 1:3, internal = FALSE) # ID order = "1","2","3"
+reorderPed(z, 1:3, internal = TRUE)  # index order: 1,2,3 (i.e., no change)
 
 }
 \seealso{
