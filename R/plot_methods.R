@@ -154,6 +154,9 @@
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param packed,width,align Parameters passed on to
 #'   [kinship2::align.pedigree()]. Can usually be left untouched.
+#' @param spouseOrder An optional vector (or list of vectors) indicating plot
+#'   ordering for spouses. (This is converted into a matrix and forward as
+#'   `hints`; see below.)
 #' @param hints An optional list of hints passed on to
 #'   [kinship2::align.pedigree()].
 #' @param fouInb Either "autosomal" (default), "x" or NULL. If "autosomal" or
@@ -194,7 +197,7 @@ NULL
 #' @importFrom kinship2 align.pedigree
 #' @export
 .pedAlignment = function(x = NULL, plist = NULL, arrows = FALSE, twins = NULL, packed = TRUE,
-                         width = 10, align = c(1.5, 2), hints = NULL, ...) {
+                         width = 10, align = c(1.5, 2), spouseOrder = NULL, hints = NULL, ...) {
 
   if(hasSelfing(x) && !arrows) {
     message("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message.")
@@ -216,6 +219,13 @@ NULL
   # Twin data: enforce data frame
   if(is.vector(twins))
     twins = data.frame(id1 = twins[1], id2 = twins[2], code = as.integer(twins[3]))
+
+  # (Try to) force spouse order
+  if(!is.null(spouseOrder)) {
+    if(!is.null(hints))
+      stop2("Cannot use both `hints` and `spouseOrder` in the same call")
+    hints = .spouseOrder(x, spouseOrder)
+  }
 
   k2ped = as_kinship2_pedigree(x, twins = twins)
   plist = kinship2::align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
@@ -1007,4 +1017,28 @@ NULL
   }
 
   vec
+}
+
+
+.spouseOrder = function(x, plotorder) {
+  if(!is.ped(x))
+    stop2("Spouse ordering is not implemented for ped lists")
+
+  if(!is.list(plotorder))
+    plotorder = list(plotorder)
+
+  allPairs = list()
+  for(ids in plotorder) {
+    idsInt = internalID(x, ids)
+    newPairs = lapply(2:length(idsInt), function(i) idsInt[(i-1):i])
+    allPairs = c(allPairs, newPairs)
+  }
+
+  for(p in allPairs) {
+    if(!p[1] %in% spouses(x, p[2], internal = TRUE))
+      stop2(sprintf("'%s' is not spouse of '%s'", x$ID[p[2]], x$ID[p[1]]))
+  }
+
+  spouse = cbind(do.call(rbind, allPairs), 0)
+  list(order = seq_along(x$ID), spouse = spouse)
 }

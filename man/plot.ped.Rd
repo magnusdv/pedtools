@@ -79,6 +79,9 @@ plot(x, symbolsize = 1.5)
 # Various annotations
 plot(x, hatched = "boy", starred = "fa", deceased = "mo", title = "Fam 1")
 
+# Swap spouse order
+plot(x, spouseOrder = c("mo", "fa"))
+
 #----- ID labels -----
 
 # Label only some members

@@ -17,6 +17,7 @@
   packed = TRUE,
   width = 10,
   align = c(1.5, 2),
+  spouseOrder = NULL,
   hints = NULL,
   ...
 )
@@ -95,6 +96,10 @@ the \code{relation} parameter of \code{\link[kinship2:plot.pedigree]{kinship2::p
 
 \item{packed, width, align}{Parameters passed on to
 \code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Can usually be left untouched.}
+
+\item{spouseOrder}{An optional vector (or list of vectors) indicating plot
+ordering for spouses. (This is converted into a matrix and forward as
+\code{hints}; see below.)}
 
 \item{hints}{An optional list of hints passed on to
 \code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}.}
