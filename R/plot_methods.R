@@ -182,7 +182,7 @@
 #' frame()
 #' drawPed(align, annot, scale)
 #'
-#' @name internalplot
+#' @name plotmethods
 NULL
 
 
@@ -190,7 +190,7 @@ NULL
 
 # Alignment ---------------------------------------------------------------
 
-#' @rdname internalplot
+#' @rdname plotmethods
 #' @importFrom kinship2 align.pedigree
 #' @export
 .pedAlignment = function(x = NULL, plist = NULL, arrows = FALSE, twins = NULL, packed = TRUE,
@@ -269,7 +269,7 @@ NULL
 
 # Annotation --------------------------------------------------------------
 
-#' @rdname internalplot
+#' @rdname plotmethods
 #' @export
 .pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                           labs = labels(x), foldLabs = 12, trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
@@ -490,7 +490,7 @@ NULL
 
 #--- Plot dimension and scaling parameters
 
-#' @rdname internalplot
+#' @rdname plotmethods
 #' @importFrom graphics frame strheight strwidth
 #' @export
 .pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1,
@@ -662,7 +662,7 @@ NULL
 }
 
 
-#' @rdname internalplot
+#' @rdname plotmethods
 #' @importFrom graphics lines polygon segments
 #' @export
 .drawPed = function(alignment, annotation, scaling) {
@@ -840,7 +840,7 @@ NULL
 }
 
 
-#' @rdname internalplot
+#' @rdname plotmethods
 #' @importFrom graphics segments points text.default
 #' @export
 .annotatePed = function(alignment, annotation, scaling, font = NULL, fam = NULL,

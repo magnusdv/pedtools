@@ -26,7 +26,7 @@ parameters are not reset after plotting, which may be useful for adding
 additional annotation.}
 
 \item{...}{Arguments passed on to the internal plot functions. For a complete
-list of parameters, see \link{internalplot}. The most important ones are
+list of parameters, see \link{plotmethods}. The most important ones are
 illustrated in the Examples below.}
 
 \item{alignment}{List of alignment details, as returned by \code{\link[=.pedAlignment]{.pedAlignment()}}.}
@@ -43,7 +43,7 @@ A list of three lists with various plot details: \code{alignment},
 This is the main function for plotting pedigrees. Many options are available
 for controlling the appearance of pedigree symbols and accompanying labels.
 The most important ones are illustrated in the Examples section below; for a
-complete overview, see the separate page \link{internalplot}, which also explains
+complete overview, see the separate page \link{plotmethods}, which also explains
 the plotting procedure in more detail.
 }
 \details{
@@ -200,5 +200,5 @@ drawPed(dat$alignment, dat$annotation, dat$scaling)
 }
 \seealso{
 \code{\link[=plotPedList]{plotPedList()}}, \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}. Plot options are
-documented in \link{internalplot}.
+documented in \link{plotmethods}.
 }

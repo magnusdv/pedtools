@@ -3,7 +3,7 @@
 #' This is the main function for plotting pedigrees. Many options are available
 #' for controlling the appearance of pedigree symbols and accompanying labels.
 #' The most important ones are illustrated in the Examples section below; for a
-#' complete overview, see the separate page [internalplot], which also explains
+#' complete overview, see the separate page [plotmethods], which also explains
 #' the plotting procedure in more detail.
 #'
 #' The main pedigree layout is calculated with the `kinship2` package, see
@@ -23,14 +23,14 @@
 #'   parameters are not reset after plotting, which may be useful for adding
 #'   additional annotation.
 #' @param ... Arguments passed on to the internal plot functions. For a complete
-#'   list of parameters, see [internalplot]. The most important ones are
+#'   list of parameters, see [plotmethods]. The most important ones are
 #'   illustrated in the Examples below.
 #'
 #' @return A list of three lists with various plot details: `alignment`,
 #'   `annotation`, `scaling`.
 #'
 #' @seealso [plotPedList()], [kinship2::plot.pedigree()]. Plot options are
-#'   documented in [internalplot].
+#'   documented in [plotmethods].
 #'
 #' @examples
 #'
@@ -248,7 +248,7 @@ drawPed = function(alignment, annotation = NULL, scaling = NULL, keep.par = FALS
 
 #' Convert pedigree to kinship2 format
 #'
-#' @inheritParams internalplot
+#' @inheritParams plotmethods
 #'
 #' @examples
 #' x = nuclearPed()
