@@ -7,16 +7,15 @@
 getComponent(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE)
 }
 \arguments{
-\item{x}{A list of \code{ped} objects}
+\item{x}{A \code{ped} object, or a list of such.}
 
-\item{ids}{A vector of ID labels (coercible to character)}
+\item{ids}{A vector of ID labels (coercible to character).}
 
-\item{checkUnique}{If TRUE an error is raised if any element of \code{ids} occurs
-more than once in \code{x}. Default: FALSE.}
+\item{checkUnique}{A logical, by default FALSE. If TRUE, an error is raised
+if any element of \code{ids} occurs more than once in \code{x}.}
 
-\item{errorIfUnknown}{If TRUE, the function stops with an error if not all
-elements of \code{ids} are recognised as names of members in \code{x}. Default:
-FALSE.}
+\item{errorIfUnknown}{A logical, by default FALSE. If TRUE, the function
+stops with an error if not all elements of \code{ids} are found in \code{x}.}
 }
 \value{
 An integer vector of the same length as \code{ids}, with NA entries where

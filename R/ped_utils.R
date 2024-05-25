@@ -395,13 +395,12 @@ nextNN = function(labs) { # labs a character vector
 #' Given a list of `ped` objects (called pedigree components), and a vector of
 #' ID labels, find the index of the component holding each individual.
 #'
-#' @param x A list of `ped` objects
-#' @param ids A vector of ID labels (coercible to character)
-#' @param checkUnique If TRUE an error is raised if any element of `ids` occurs
-#'   more than once in `x`. Default: FALSE.
-#' @param errorIfUnknown If TRUE, the function stops with an error if not all
-#'   elements of `ids` are recognised as names of members in `x`. Default:
-#'   FALSE.
+#' @param x A `ped` object, or a list of such.
+#' @param ids A vector of ID labels (coercible to character).
+#' @param checkUnique A logical, by default FALSE. If TRUE, an error is raised
+#'   if any element of `ids` occurs more than once in `x`.
+#' @param errorIfUnknown A logical, by default FALSE. If TRUE, the function
+#'   stops with an error if not all elements of `ids` are found in `x`.
 #'
 #' @return An integer vector of the same length as `ids`, with NA entries where
 #'   the corresponding label was not found in any of the components.
@@ -414,9 +413,18 @@ nextNN = function(labs) { # labs a character vector
 #'
 #' @export
 getComponent = function(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE) {
-  if(is.ped(x))
-    x = list(x)
-  else if(!is.pedList(x)) {
+  # If simple ped: Handle separately and return early
+  if(is.ped(x)) {
+    comp = rep(1L, length(ids))
+    if(any(unkn <- !ids %in% x$ID)) {
+      if(errorIfUnknown)
+        stop2("Unknown ID label: ", ids[unkn])
+      comp[unkn] = NA_integer_
+    }
+    return(comp)
+  }
+
+  if(!is.pedList(x)) {
     print(x)
     stop2("Input is not a `ped` object (or a list of such)")
   }
