@@ -57,8 +57,9 @@
 #' @param g A nonnegative integer indicating the number of ancestral generations
 #'   to include. The resulting pedigree has `2^(g+1)-1` members. The case `g =
 #'   0` results in a singleton.
-#' @param s A nonnegative integer indicating the number of consecutive selfings.
-#'   The case `s = 0` results in a singleton.
+#' @param s Either a character vector of ID labels, or a nonnegative integer
+#'   indicating the number of consecutive selfings. The case `s = 0` results in
+#'   a singleton.
 #' @return A `ped` object.
 #'
 #' @seealso [ped()], [singleton()], [ped_complex], [ped_subgroups]
@@ -316,12 +317,23 @@ ancestralPed = function(g) {
 #' @rdname ped_basic
 #' @export
 selfingPed = function(s, sex = 1) {
-  if(!isCount(s, minimum = 0))
-    stop2("`s` must be a nonnegative integer: ", s)
+  if(is.character(s)) {
+    ids = s
+  }
+  else if(isCount(s, minimum = 0)) {
+    ids = 1:(s+1)
+  }
+  else
+    stop2("`s` must be either a character vector or a nonnegative integer: ", s)
 
-  if(s == 0)
-    return(singleton(1, sex = sex))
+  n = length(ids)
 
-  ped(id = 1:(s+1), fid = 0:s, mid = 0:s, sex = c(rep(0, s), sex),
+  if(n == 1)
+    return(singleton(ids, sex = sex))
+
+  # fid and mid
+  parid = c(0, ids[-n])
+
+  ped(id = ids, fid = parid, mid = parid, sex = c(rep(0, n-1), sex),
       reorder = FALSE, validate = FALSE, verbose = FALSE)
 }

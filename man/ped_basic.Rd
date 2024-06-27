@@ -96,8 +96,9 @@ is "nephew" or "niece". Both can be abbreviated.}
 \item{g}{A nonnegative integer indicating the number of ancestral generations
 to include. The resulting pedigree has \code{2^(g+1)-1} members. The case \code{g = 0} results in a singleton.}
 
-\item{s}{A nonnegative integer indicating the number of consecutive selfings.
-The case \code{s = 0} results in a singleton.}
+\item{s}{Either a character vector of ID labels, or a nonnegative integer
+indicating the number of consecutive selfings. The case \code{s = 0} results in
+a singleton.}
 }
 \value{
 A \code{ped} object.
