@@ -1,3 +1,28 @@
+# pedtools 2.7.0
+
+## New features
+
+* `plot.ped()` gains a new argument, `spouseOrder`, to specify the display order of spouses.
+
+* `readPed()` and `as.ped()` now include a `addMissingFounders` argument, supporting pedigree files where (some or all) founders are not explicitly listed (i.e., entries in the `fid` or `mid` columns that do not appear in the `id` column).
+
+* `readPed()` and `as.ped()` now also feature a `sexCodes` argument, accommodating pedigree files where sex is indicated by codes other than the standard 0 (unknown), 1 (male), 2 (female).
+
+* `reorderPed()` has improved flexibility, allowing the reordering of a subset of the pedigree.
+
+* `selfingPed()` now accepts a vector of ID labels as the first argument. (Previously, only the number of selfings could be given.)
+
+* The plotting argument `showEmpty`, controlling the appearance of missing genotypes, now accepts a function, e.g. `leaves()`.
+
+## Other changes
+
+* `getComponent()` behaves better when the pedigree has only one component.
+
+* `ped()` checks for illegal `sex` entries earlier than before, thus avoiding certain (rare) problems.
+
+* Brush up on code and documentation.
+
+
 # pedtools 2.6.0
 
 This is a large release with several new features, including a few (relatively minor) breaking changes.
