@@ -140,5 +140,4 @@ readPed = function(pedfile, colSep = "", header = NA,
          locusAttributes = locusAttributes, missing = missing,
          sep = sep, sexCodes = sexCodes, addMissingFounders = addMissingFounders,
          validate = validate)
-
 }

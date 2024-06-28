@@ -143,7 +143,6 @@ generations = function(x, what = c("max", "compMax", "indiv", "depth")) {
   N = length(x$ID)
   FIDX = x$FIDX
   MIDX = x$MIDX
-  FOU = which(FIDX == 0) # founders(x, internal = TRUE)
   NONFOU = which(FIDX > 0)
 
   dp = rep(1L, N) # depth = 1 for founders
@@ -373,20 +372,6 @@ generateLabs = function(x, n = 1, avoid = NULL, prefix = "") {
     cand = paste0(prefix, cand)
 
   .mysetdiff(cand, taken)[seq_len(n)]
-}
-
-# TODO: Delete - no longer used. Replaced by generateLabs
-# Utility function for generating numbered "NN" labels.
-# Returns "NN_i" where i increments largest j occurring as NN_j, NN.j or NN-j in input.
-nextNN = function(labs) { # labs a character vector
-  NNs = grepl("^NN", labs)
-  if(!any(NNs))
-    return("NN_1")
-  NNnum = suppressWarnings(as.numeric(sub("^NN[._-]?", "", labs[NNs])))
-  if(all(is.na(NNnum)))
-    return("NN_1")
-  nextNNnum = max(NNnum, na.rm = TRUE) + 1
-  return(sprintf("NN_%d", nextNNnum))
 }
 
 

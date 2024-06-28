@@ -22,16 +22,24 @@ loop breaking, and merging pedigrees. The plotting feature imports
 machinery from the
 [kinship2](https://CRAN.R-project.org/package=kinship2) package.
 
-**pedtools** is the hub of the **ped suite**, a collection of R packages
+**pedtools** is the hub of the **pedsuite**, a collection of R packages
 for pedigree analysis, including applications in forensic and medical
-genetics. The **ped suite** has its own [GitHub
+genetics. The **pedsuite** has its own [GitHub
 repository](https://github.com/magnusdv/pedsuite) and a dedicated
 [website](https://magnusdv.github.io/pedsuite/) offering more
 information.
 
-<span style="color:red;"> Try the **QuickPed** app for building and
-analysing pedigrees here: <https://magnusdv.shinyapps.io/quickped/>
-</span>
+#### Citation
+
+If you use **pedtools** in a publication, please cite the book [Pedigree
+Analysis in
+R](https://shop.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2)
+(Vigeland, 2021. Academic Press. ISBN:9780128244302).
+
+#### Online app
+
+Try the online app **QuickPed** for building and analysing pedigrees
+here: <https://magnusdv.shinyapps.io/quickped/>
 
 ## Installation
 

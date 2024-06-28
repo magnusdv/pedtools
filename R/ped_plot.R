@@ -461,10 +461,10 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
       newpeds = lapply(p, list)
     else { # if list of ped with plot arguments
       p1 = p[[1]]
-      if(inherits(p[[1]], "pedList"))
+      if(inherits(p1, "pedList"))
         class(p[[1]]) = "list"
-      else if (!is.ped(p[[1]]))
-        stop2("First element must be a `ped` object", p[[1]])
+      else if (!is.ped(p1))
+        stop2("First element must be a `ped` object", p1)
       newpeds = list(p)
     }
 
