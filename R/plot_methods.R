@@ -339,8 +339,12 @@ NULL
 
     gg = do.call(cbind, lapply(mlist, format, sep = sep, missing = missing))
     geno = apply(gg, 1, paste, collapse = "\n")
+
     if(is.logical(showEmpty) && length(showEmpty) == 1)
       showEmpty = if(showEmpty) x$ID else NULL
+    else if (is.function(showEmpty))
+      showEmpty = showEmpty(x)
+
     hideEmpty = match(x$ID, showEmpty, nomatch = 0L) == 0
     if (any(hideEmpty)) {
       isEmpty = rowSums(do.call(cbind, mlist)) == 0
