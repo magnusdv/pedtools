@@ -195,3 +195,41 @@ addAllele = function(x, marker, allele, freq = 0.001, adjust = c("previous", "al
 
   x
 }
+
+
+#' Swap genotypes between individuals
+#'
+#' @param x A `ped` object or a list of such.
+#' @param ids A vector of 2 members of `x`.
+#'
+#' @return An object identical to `x`, except that the genotypes of the `ids`
+#'   pair have been swapped.
+#'
+#' @seealso [transferMarkers()]
+#'
+#' @examples
+#' x = nuclearPed() |>
+#'   addMarker(geno = c("1/1", "2/2", "3/3"))
+#'
+#' swapGenotypes(x, ids = 1:2)
+#'
+#' @export
+swapGenotypes = function(x, ids = NULL) {
+  if(length(ids) < 2)
+    stop2("Argument `ids` must have length at least 2")
+
+  ord = order(match(ids, labels(x, unlist = TRUE), nomatch = 0L))
+
+  # Main case: swap a pair
+  if(length(ids) == 2 && ord[1] < ord[2]) {
+    ids = ids[2:1]
+    ord = ord[2:1]
+  }
+
+  als = getAlleles(x, ids)
+
+  # Swap/reorder rownames
+  rownames(als) = rownames(als)[ord]
+
+  setAlleles(x, ids = ids, alleles = als)
+}
