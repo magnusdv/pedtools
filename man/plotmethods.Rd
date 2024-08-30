@@ -215,21 +215,14 @@ plotting. Most of the arguments shown here may be supplied directly in
 \details{
 The workflow of \code{plot.ped(x, ...)} is approximately as follows:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{
-# Calculate plot parameters
-
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# Calculate plot parameters
 align = .pedAlignment(x, ...)
-
 annot = .pedAnnotation(x, ...)
-
 scale = .pedScaling(align, annot, ...)
 
 # Produce plot
-
 .drawPed(align, annot, scale)
-
-.annotatePed(align, annot, scale)
-
+.annotatePed(align, annot, scale)  # if `annot` contains text annotation etc
 }\if{html}{\out{</div>}}
 
 The \code{labs} argument control the individual ID labels printed below the
@@ -277,7 +270,6 @@ align = .pedAlignment(x)
 annot = .pedAnnotation(x)
 scale = .pedScaling(align, annot)
 
-frame()
 drawPed(align, annot, scale)
 
 }

@@ -33,21 +33,14 @@
 #' The workflow of `plot.ped(x, ...)` is approximately as follows:
 #'
 #' ```
-#'
 #' # Calculate plot parameters
-#'
 #' align = .pedAlignment(x, ...)
-#'
 #' annot = .pedAnnotation(x, ...)
-#'
 #' scale = .pedScaling(align, annot, ...)
 #'
 #' # Produce plot
-#'
 #' .drawPed(align, annot, scale)
-#'
-#' .annotatePed(align, annot, scale)
-#'
+#' .annotatePed(align, annot, scale)  # if `annot` contains text annotation etc
 #' ```
 #'
 #' The `labs` argument control the individual ID labels printed below the
@@ -182,7 +175,6 @@
 #' annot = .pedAnnotation(x)
 #' scale = .pedScaling(align, annot)
 #'
-#' frame()
 #' drawPed(align, annot, scale)
 #'
 #' @name plotmethods
