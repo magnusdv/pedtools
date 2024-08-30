@@ -29,6 +29,7 @@ cousinPed(
   removal = 0,
   side = c("right", "left"),
   half = FALSE,
+  symmetric = FALSE,
   child = FALSE
 )
 
@@ -41,7 +42,13 @@ avuncularPed(
   half = FALSE
 )
 
-halfCousinPed(degree, removal = 0, side = c("right", "left"), child = FALSE)
+halfCousinPed(
+  degree = 1,
+  removal = 0,
+  side = c("right", "left"),
+  symmetric = FALSE,
+  child = FALSE
+)
 
 ancestralPed(g)
 
@@ -85,6 +92,10 @@ added.}
 
 \item{half}{A logical indicating if the relationship should be "half-like".
 Default: FALSE.}
+
+\item{symmetric}{A logical, by default FALSE. If TRUE, the cousin pedigree
+uses female connections on the left side, giving a more symmetric
+appearance when plotted.}
 
 \item{child}{A logical: Should an inbred child be added to the two bottom
 individuals?}

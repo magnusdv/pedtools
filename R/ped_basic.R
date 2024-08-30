@@ -47,6 +47,9 @@
 #' @param removal A non-negative integer. See Details and Examples.
 #' @param side Either "right" or "left"; the side on which removals should be
 #'   added.
+#' @param symmetric A logical, by default FALSE. If TRUE, the cousin pedigree
+#'   uses female connections on the left side, giving a more symmetric
+#'   appearance when plotted.
 #' @param half A logical indicating if the relationship should be "half-like".
 #'   Default: FALSE.
 #' @param child A logical: Should an inbred child be added to the two bottom
@@ -197,10 +200,8 @@ linearPed = function(n, sex = 1) {
 
 #' @rdname ped_basic
 #' @export
-cousinPed = function(degree, removal = 0, side = c("right", "left"), half = FALSE, child = FALSE) {
-
-  if(half)
-    return(halfCousinPed(degree = degree, removal = removal, side = side, child = child))
+cousinPed = function(degree = 1, removal = 0, side = c("right", "left"),
+                     half = FALSE, symmetric = FALSE, child = FALSE) {
 
   if(!isCount(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
@@ -214,7 +215,8 @@ cousinPed = function(degree, removal = 0, side = c("right", "left"), half = FALS
          left  = {deg_left  <- deg_left  + removal})
 
   # Chain on the left side
-  x = linearPed(deg_left + 1)
+  leftsex = if(symmetric && deg_left > 0) c(rep(2, deg_left), 1) else 1
+  x = linearPed(deg_left + 1, sex = leftsex)
 
   # Chain on the right side
   y = linearPed(deg_right + 1)
@@ -261,7 +263,8 @@ avuncularPed = function(top = c("uncle", "aunt"), bottom = c("nephew", "niece"),
 
 #' @rdname ped_basic
 #' @export
-halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child = FALSE) {
+halfCousinPed = function(degree = 1, removal = 0, side = c("right", "left"),
+                         symmetric = FALSE, child = FALSE) {
   if(!isCount(degree, minimum = 0))
     stop2("`degree` must be a nonnegative integer: ", degree)
   if(!isCount(removal, minimum = 0))
@@ -273,7 +276,8 @@ halfCousinPed = function(degree, removal = 0, side = c("right", "left"), child =
          left  = {deg_left <- deg_left + removal})
 
   # Chain on the left side
-  x = linearPed(deg_left + 1)
+  leftsex = if(symmetric && deg_left > 0) c(rep(2, deg_left), 1) else 1
+  x = linearPed(deg_left + 1, sex = leftsex)
 
   # Chain on the right side
   y = linearPed(deg_right + 1)
