@@ -79,6 +79,7 @@
   cex.main = NULL,
   font.main = NULL,
   col.main = NULL,
+  line.main = NA,
   ...
 )
 }
@@ -204,7 +205,7 @@ that the symbol dimensions are at least \code{minsize} inches. Default: FALSE.}
 
 \item{colUnder, colInside, colAbove}{Colour vectors.}
 
-\item{cex.main, col.main, font.main}{Parameters passed on to \code{\link[=title]{title()}}.}
+\item{cex.main, line.main, col.main, font.main}{Parameters passed on to \code{\link[=title]{title()}}.}
 }
 \description{
 The main purpose of this page is to document the many options for pedigree
