@@ -25,7 +25,7 @@ halfSibPed(
 linearPed(n, sex = 1)
 
 cousinPed(
-  degree,
+  degree = 1,
   removal = 0,
   side = c("right", "left"),
   half = FALSE,
