@@ -1,3 +1,14 @@
+# pedtools 2.7.1
+
+## New features
+
+* New function `swapGenotypes()` for swapping the genotypes of two individuals.
+
+* New plot argument `line.main` for title placement.
+
+* `cousinPed()` and `halfCousinPed()` gain argument `symmetric`, which if TRUE gives a symmetric shape when plotted (female line on the left side; male line of the right).
+
+
 # pedtools 2.7.0
 
 ## New features
