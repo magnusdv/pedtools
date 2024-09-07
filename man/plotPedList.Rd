@@ -9,6 +9,7 @@ plotPedList(
   widths = NULL,
   groups = NULL,
   titles = NULL,
+  grouptitlesArgs = NULL,
   frames = TRUE,
   fmar = NULL,
   source = NULL,
@@ -34,6 +35,9 @@ structure of \code{plots}.}
 
 \item{titles}{A character vector of titles for each group. Overrides titles
 given in individuals subplots.}
+
+\item{grouptitlesArgs}{A list of arguments passed on to \code{\link[=mtext]{mtext()}} for
+\code{titles}.}
 
 \item{frames}{A logical indicating if groups should be framed.}
 

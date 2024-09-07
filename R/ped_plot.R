@@ -312,6 +312,8 @@ plot.pedList = function(x, ...) {
 #'   structure of `plots`.
 #' @param titles A character vector of titles for each group. Overrides titles
 #'   given in individuals subplots.
+#' @param grouptitlesArgs A list of arguments passed on to [mtext()] for
+#'   `titles`.
 #' @param frames A logical indicating if groups should be framed.
 #' @param fmar A single number in the interval \eqn{[0,0.5)} controlling the
 #'   position of the frames.
@@ -417,7 +419,7 @@ plot.pedList = function(x, ...) {
 #' @importFrom graphics grconvertX grconvertY layout mtext rect par plot
 #' @export
 plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
-                       frames = TRUE, fmar = NULL, source = NULL,
+                       grouptitlesArgs = NULL, frames = TRUE, fmar = NULL, source = NULL,
                        dev.height = NULL, dev.width = NULL,
                        newdev = !is.null(dev.height) || !is.null(dev.width),
                        verbose = FALSE, ...) {
@@ -519,7 +521,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
       arglist[[parname]] = extra.args[[parname]]
 
     # Remove inner title
-    arglist$title = NULL
+    #arglist$title = NULL
 
     # Margins
     arglist$margins = arglist$margins %||% {
@@ -596,8 +598,13 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   # Add titles
   if(hasTitles) {
     midpoints = if(!is.null(grouptitles)) (grStart + grStop)/2 else ratios[1:N] + diff(ratios)/2
-    cex.title = extra.args$cex.main %||% NA
-    mtext(finalTitles, outer = TRUE, at = midpoints, cex = cex.title, font = 2) # bold
+    gtArgs = list(text = finalTitles, at = midpoints, outer = TRUE, font = 2,
+                cex = extra.args$cex.main %||% NA)
+    if(!is.null(grouptitlesArgs))
+      gtArgs = modifyList(gtArgs, grouptitlesArgs)
+    #cex.title = extra.args$cex.main %||% NA
+    #mtext(finalTitles, outer = TRUE, at = midpoints, cex = cex.title,line = 0, font = 2)
+    do.call(mtext, gtArgs)
   }
 }
 
