@@ -7,10 +7,11 @@
 getGenotypes(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
 }
 \arguments{
-\item{x}{A \code{ped} object or a list of such}
+\item{x}{A \code{ped} object or a list of such.}
 
-\item{ids}{A vector of ID labels. If NULL (default) all individuals are
-included.}
+\item{ids}{A vector of ID labels, or a function operating on \code{x}, e.g.,
+\code{\link[=typedMembers]{typedMembers()}}. By default (\code{ids = NULL}) all individuals are included,
+also non-genotyped ones.}
 
 \item{markers}{A vector of indices or names of markers attaches to \code{x}. If
 NULL (default) all markers are included.}
@@ -21,11 +22,12 @@ genotypes.}
 \item{missing}{A single string to be used for missing alleles.}
 }
 \value{
-\code{getGenotypes()} returns a character matrix with \code{length(ids)} rows
-and \code{length(markers)} columns.
+\code{getGenotypes()} returns a character matrix with \code{length(ids)} rows and
+\code{length(markers)} columns.
 }
 \description{
-Extract the genotypes of multiple individuals/markers in form of a matrix.
+Extract the genotypes of specified individuals and markers from a pedigree
+object, and return them as a character matrix.
 }
 \examples{
 x = nuclearPed() |>
@@ -40,6 +42,9 @@ s = transferMarkers(x, singleton("s"))
 peds = list(x, s)
 
 getGenotypes(peds)
+
+# Using a function to select individuals
+getGenotypes(x, ids = typedMembers)
 
 }
 \seealso{

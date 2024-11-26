@@ -1,10 +1,12 @@
 #' Genotype matrix
 #'
-#' Extract the genotypes of multiple individuals/markers in form of a matrix.
+#' Extract the genotypes of specified individuals and markers from a pedigree
+#' object, and return them as a character matrix.
 #'
-#' @param x A `ped` object or a list of such
-#' @param ids A vector of ID labels. If NULL (default) all individuals are
-#'   included.
+#' @param x A `ped` object or a list of such.
+#' @param ids A vector of ID labels, or a function operating on `x`, e.g.,
+#'   [typedMembers()]. By default (`ids = NULL`) all individuals are included,
+#'   also non-genotyped ones.
 #' @param markers A vector of indices or names of markers attaches to `x`. If
 #'   NULL (default) all markers are included.
 #' @param sep A single string to be used as allele separator in marker
@@ -13,8 +15,8 @@
 #'
 #' @return
 #'
-#' `getGenotypes()` returns a character matrix with `length(ids)` rows
-#'   and `length(markers)` columns.
+#' `getGenotypes()` returns a character matrix with `length(ids)` rows and
+#' `length(markers)` columns.
 #'
 #' @seealso [getAlleles()]
 #'
@@ -32,30 +34,38 @@
 #'
 #' getGenotypes(peds)
 #'
+#' # Using a function to select individuals
+#' getGenotypes(x, ids = typedMembers)
+#'
 #' @export
 getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-") {
-  if(!is.ped(x) && !is.pedList(x))
+  discon = !is.ped(x)
+  if(discon && !is.pedList(x)) {
     stop2("The first argument must be a `ped` object or a list of such")
-
-  if(dup <- anyDuplicated(ids)) {
-    stop2("Duplicated element of argument `ids`: ", dup)
   }
 
   # Check `ids` argument
   if(!is.null(ids)) {
-    ids = as.character(ids)
-    if(!all(ids %in% labels(x)))
-      stop2("Unknown ID label: ", setdiff(ids, labels(x)))
+
+    if(is.function(ids))
+      ids = ids(x)
+    else {
+      ids = as.character(ids)
+      if(!all(ids %in% labels(x)))
+        stop2("Unknown ID label: ", setdiff(ids, labels(x)))
+      if(dup <- anyDuplicated.default(ids))
+        stop2("Duplicated element of argument `ids`: ", dup)
+    }
   }
 
-  if(is.pedList(x)) {
+  if(discon) {
 
     # Check equality of marker counts and names
     name(x, seq_markers(x))
 
     # Extract genotypes from each component
     compList = lapply(x, function(comp) {
-      ids_comp = if(!is.null(ids)) intersect(ids, labels(comp))
+      ids_comp = if(!is.null(ids)) .myintersect(ids, labels(comp))
       getGenotypes(comp, ids = ids_comp, markers = markers)
     })
 
@@ -70,7 +80,7 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
   }
 
   # Main body: x is now is single `ped` object
-  ids = ids %||% labels(x)
+  ids = ids %||% x$ID
 
   # Ensure markers is integer
   markers = if(!is.null(markers)) whichMarkers(x, markers) else seq_markers(x)
