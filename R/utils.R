@@ -66,6 +66,11 @@ safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 # Fast intersection. NB: assumes no duplicates!
 .myintersect = function(x, y) y[match(x, y, 0L)]
 
+#
+.setnames = function (x, nms = x) {
+    names(x) = nms
+    x
+}
 
 .comb2 = function(n) {
     if (n < 2)

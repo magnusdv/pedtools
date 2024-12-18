@@ -33,10 +33,12 @@
 #' @param markers A character vector (with marker names) or a numeric vector
 #'   (with marker indices). If NULL (default), the behaviour depends on
 #'   `matchNames`, see Details.
-#' @param checkComps A logical. If TRUE, and `x` is a list of pedigrees, an
-#'   error is raised if marker attributes differ between components.
 #' @param attribs A subset of the character vector `c("alleles", "afreq", "name"
 #'   ,"chrom" ,"posMb", "mutmod", "rate")`.
+#' @param checkComps A logical. If TRUE, and `x` is a list of pedigrees, an
+#'   error is raised if marker attributes differ between components.
+#' @param simplify A logical. If TRUE, and `attribs` is a single element, the
+#'   output is flattened to a simple list.
 #' @param locusAttributes A list of lists, with attributes for each marker.
 #' @param matchNames A logical, only relevant if `markers = NULL`. If TRUE, then
 #'   the markers to be modified are identified by the 'name' component of each
@@ -48,7 +50,9 @@
 #'
 #' @return
 #'
-#' * `getLocusAttributes` : a list of lists
+#' * `getLocusAttributes` : a list of lists. If the markers has names,
+#' these are used to name the outer list. If `simplify = TRUE` and `attribs` is
+#' a single element, the output is a simple list.
 #'
 #' * `setLocusAttributes` : a modified version of `x`.
 #'
@@ -85,9 +89,10 @@ NULL
 
 #' @rdname locusAttributes
 #' @export
-getLocusAttributes = function(x, markers = NULL, checkComps = FALSE,
+getLocusAttributes = function(x, markers = NULL,
                               attribs = c("alleles", "afreq", "name", "chrom",
-                                          "posMb", "mutmod")) {
+                                          "posMb", "mutmod"),
+                              checkComps = FALSE, simplify = FALSE) {
 
   if(is.pedList(x)) {
     if(checkComps) {
@@ -109,11 +114,22 @@ getLocusAttributes = function(x, markers = NULL, checkComps = FALSE,
   attribs = match.arg(attribs, several.ok = TRUE)
 
   mlist = getMarkers(x, markers)
-  lapply(mlist, function(m) {
+  res = lapply(mlist, function(m) {
     a = attributes(m)[attribs]
-    a = a[!is.na(names(a))]
+    names(a) = attribs # ensure NULLs are kept - with names! Recall `list(a = 1)['b']`
     a
   })
+
+  # Name the outer list if markers are named
+  nms = vapply(mlist, name.marker, character(1))
+  if(!anyNA(nms))
+    names(res) = nms
+
+  # Optional flattening if single attribute
+  if(length(attribs) == 1 && simplify)
+    res = lapply(res, function(x) x[[1]])
+
+  res
 }
 
 #' @rdname locusAttributes

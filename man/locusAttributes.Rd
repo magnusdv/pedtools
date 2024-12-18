@@ -9,8 +9,9 @@
 getLocusAttributes(
   x,
   markers = NULL,
+  attribs = c("alleles", "afreq", "name", "chrom", "posMb", "mutmod"),
   checkComps = FALSE,
-  attribs = c("alleles", "afreq", "name", "chrom", "posMb", "mutmod")
+  simplify = FALSE
 )
 
 setLocusAttributes(
@@ -28,10 +29,13 @@ setLocusAttributes(
 (with marker indices). If NULL (default), the behaviour depends on
 \code{matchNames}, see Details.}
 
+\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")}.}
+
 \item{checkComps}{A logical. If TRUE, and \code{x} is a list of pedigrees, an
 error is raised if marker attributes differ between components.}
 
-\item{attribs}{A subset of the character vector \code{c("alleles", "afreq", "name" ,"chrom" ,"posMb", "mutmod", "rate")}.}
+\item{simplify}{A logical. If TRUE, and \code{attribs} is a single element, the
+output is flattened to a simple list.}
 
 \item{locusAttributes}{A list of lists, with attributes for each marker.}
 
@@ -46,7 +50,9 @@ markers are erased. If FALSE, attributes not affected by the submitted
 }
 \value{
 \itemize{
-\item \code{getLocusAttributes} : a list of lists
+\item \code{getLocusAttributes} : a list of lists. If the markers has names,
+these are used to name the outer list. If \code{simplify = TRUE} and \code{attribs} is
+a single element, the output is a simple list.
 \item \code{setLocusAttributes} : a modified version of \code{x}.
 }
 }
