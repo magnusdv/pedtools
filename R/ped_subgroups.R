@@ -274,9 +274,11 @@ spouses = function(x, id, internal = FALSE) {
   if(length(id) != 1)
     stop2("`id` must have length 1")
 
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(discon) {
     comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
     return(spouses(x[[comp]], id, internal = FALSE))
   }
@@ -290,7 +292,7 @@ spouses = function(x, id, internal = FALSE) {
                 x$MIDX[x$FIDX == id],                        # sex = 1
                 x$FIDX[x$MIDX == id])                        # sex = 2
   spous_uniq = unique.default(spous)
-  if(internal) spous_uniq else labels.ped(x)[spous_uniq]
+  if(internal) spous_uniq else x$ID[spous_uniq]
 }
 
 
@@ -362,9 +364,14 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 siblings = function(x, id, half = NA, internal = FALSE) {
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
+  if(length(id) != 1)
+    stop2("`id` must have length 1")
+
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(discon) {
     comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
     return(siblings(x[[comp]], id, half = half, internal = FALSE))
   }
