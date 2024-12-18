@@ -270,10 +270,6 @@ children = function(x, id, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
-offspring = children
-
-#' @rdname ped_subgroups
-#' @export
 spouses = function(x, id, internal = FALSE) {
   if(length(id) != 1)
     stop2("`id` must have length 1")

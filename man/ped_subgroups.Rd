@@ -12,7 +12,6 @@
 \alias{father}
 \alias{mother}
 \alias{children}
-\alias{offspring}
 \alias{spouses}
 \alias{unrelated}
 \alias{parents}
@@ -45,8 +44,6 @@ father(x, id, internal = FALSE)
 mother(x, id, internal = FALSE)
 
 children(x, id, internal = FALSE)
-
-offspring(x, id, internal = FALSE)
 
 spouses(x, id, internal = FALSE)
 
