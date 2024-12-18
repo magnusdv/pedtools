@@ -187,55 +187,85 @@ untypedMembers = function(x, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 father = function(x, id, internal = FALSE) {
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
-    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-    return(father(x[[comp]], id, internal = FALSE))
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  idInt = if(!internal) internalID(x, id) else id
+
+  if(discon) { # in this case idInt is a data frame
+    res = character(length(id))
+    for(co in unique.default(idInt$comp)) {
+      rw = idInt$comp == co
+      fai = father(x[[co]], id = idInt$int[rw], internal = TRUE)
+      fai[fai == 0] = NA
+      res[rw] = x[[co]]$ID[fai]
+    }
+    # For back compatibility. TODO: Remove in future version?
+    if(length(res) == 1 && is.na(res))
+      res = character(0)
+
+    return(res)
   }
 
-  if(!internal)
-    id = internalID(x, id)
+  # TODO: `nuclearPed() |> father(1)` now returns char(0). Better with NA?
 
-  fa = x$FIDX[id]
-  if(internal) fa else labels.ped(x)[fa]
+  fa = x$FIDX[idInt]
+  if(internal) fa else x$ID[fa]
 }
 
 #' @rdname ped_subgroups
 #' @export
 mother = function(x, id, internal = FALSE) {
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
-    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-    return(mother(x[[comp]], id, internal = FALSE))
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  idInt = if(!internal) internalID(x, id) else id
+
+  if(discon) { # in this case idInt is a data frame
+    res = character(length(id))
+    for(co in unique.default(idInt$comp)) {
+      rw = idInt$comp == co
+      moi = mother(x[[co]], id = idInt$int[rw], internal = TRUE)
+      moi[moi == 0] = NA
+      res[rw] = x[[co]]$ID[moi]
+    }
+    # For back compatibility. TODO: Remove in future version?
+    if(length(res) == 1 && is.na(res))
+      res = character(0)
+
+    return(res)
   }
 
-  if(!internal)
-    id = internalID(x, id)
-
-  mo = x$MIDX[id]
-  if(internal) mo else labels.ped(x)[mo]
+  mo = x$MIDX[idInt]
+  if(internal) mo else x$ID[mo]
 }
+
 
 #' @rdname ped_subgroups
 #' @export
 children = function(x, id, internal = FALSE) {
-  if(length(id) != 1)
-    stop2("`id` must have length 1")
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
 
-  if(is.pedList(x)) {
-    if(internal)
-      stop2("Argument `internal` cannot be TRUE when `x` is a pedlist")
-    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
-    return(children(x[[comp]], id, internal = FALSE))
+  idInt = if(!internal) internalID(x, id) else id
+
+  if(discon) { # in this case idInt is a data frame
+    chList = lapply(unique.default(idInt$comp), function(co) {
+      chi = children(x[[co]], id = idInt$int[idInt$comp == co], internal = TRUE)
+      x[[co]]$ID[chi]
+    })
+    return(unlist(chList, use.names = FALSE))
   }
 
-  if(!internal)
-    id = internalID(x, id)
+  if(length(idInt) == 1)
+    ch = (x$FIDX == idInt | x$MIDX == idInt)
+  else
+    ch = (x$FIDX %in% idInt | x$MIDX %in% idInt)
 
-  ch = (x$FIDX == id | x$MIDX == id)
-  if(internal) which(ch) else labels.ped(x)[ch]
+  if(internal) which(ch) else x$ID[ch]
 }
 
 #' @rdname ped_subgroups

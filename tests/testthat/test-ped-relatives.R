@@ -1,6 +1,6 @@
 
 test_that("father() and mother() works", {
-  x = nuclearPed(father="fa", mother="mo", child="ch")
+  x = nuclearPed(father="fa", mother="mo", children="ch")
   y = list(singleton(1), x, singleton(2))
 
   expect_equal(father(x, "ch"), "fa")
@@ -22,9 +22,9 @@ test_that("father() and mother() works", {
   expect_equal(mother(x, 1, internal=T), 0)
 
   expect_error(father(y, 1, internal=T),
-               "Argument `internal` cannot be TRUE when `x` is a pedlist")
+               "Argument `internal` cannot be TRUE when `x` is disconnected")
   expect_error(mother(y, 1, internal=T),
-               "Argument `internal` cannot be TRUE when `x` is a pedlist")
+               "Argument `internal` cannot be TRUE when `x` is disconnected")
 })
 
 
