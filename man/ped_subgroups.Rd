@@ -18,6 +18,7 @@
 \alias{grandparents}
 \alias{siblings}
 \alias{nephews_nieces}
+\alias{niblings}
 \alias{ancestors}
 \alias{commonAncestors}
 \alias{descendants}
@@ -56,6 +57,8 @@ grandparents(x, id, degree = 2, internal = FALSE)
 siblings(x, id, half = NA, internal = FALSE)
 
 nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
+
+niblings(x, id, half = NA, internal = FALSE)
 
 ancestors(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 

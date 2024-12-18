@@ -415,6 +415,13 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
+niblings = function(x, id, half = NA, internal = FALSE) {
+  sibs = siblings(x, id, half = half, internal = internal)
+  children(x, sibs, internal = internal)
+}
+
+#' @rdname ped_subgroups
+#' @export
 ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   if(is.pedList(x)) {
     if(internal)
