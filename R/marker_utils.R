@@ -233,3 +233,69 @@ swapGenotypes = function(x, ids = NULL) {
 
   setAlleles(x, ids = ids, alleles = als)
 }
+
+#' Harmonise markers across components in a ped list
+#'
+#' This function ensures that all components of a ped list have the same
+#' markers, in the same order. Missing markers are added with empty genotypes.
+#' Note that _unnamed_ markers cannot be harmonised and will be removed by this
+#' function.
+#'
+#' @param x A list of `ped` objects. An error is raised if any component
+#'   contains an unnamed marker.
+#'
+#' @returns A copy of `x` where all components have the same markers attached,
+#'   and in the same order. Unnamed markers are removed.
+#'
+#' @examples
+#' x = list(
+#'   singleton(1) |> addMarker(),  # unnamed marker will be removed
+#'   singleton(2) |> addMarker(name = "M1"),
+#'   singleton(3) |> addMarker(geno = "3/3", alleles = 1:3, name = "M2")
+#' )
+#' harmoniseMarkers(x)
+#'
+#' @export
+harmoniseMarkers = function(x) {
+  # If connected pedigree, return as is
+  if(is.ped(x) || (length(x) == 1 && is.ped(x[[1]])))
+    return(x)
+
+  mList0 = lapply(x, name)
+  mList = lapply(mList0, function(v) v[!is.na(v)])
+  if(listIdentical(mList)) {
+    if(identical(mList0, mList))
+      return(x)
+    else
+      return(selectMarkers(x, markers = mList[[1]]))
+  }
+
+  firstCmp = .firstComp(mList) # first component of each
+  allMarkers = names(firstCmp)
+
+  # List of locus attributes for all markers
+  allAttribs = list()
+  for(i in 1:max(firstCmp)) {
+    new = getLocusAttributes(x[[i]], markers = allMarkers[firstCmp == i])
+    allAttribs = c(allAttribs, new)
+  }
+  allAttribs
+
+  # Add missing markers to each component
+  for(i in seq_along(x)) {
+    missingMs = setdiff(allMarkers, mList[[i]])
+    if(length(missingMs))
+      x[[i]] = addMarkers(x[[i]], locusAttributes = allAttribs[missingMs])
+  }
+
+  # Ensure same order
+  selectMarkers(x, markers = allMarkers)
+}
+
+# Utility: In a list of overlapping characters, find first component of each element
+.firstComp = function(lst) {
+  allElements = unlist(lst, recursive = FALSE, use.names = FALSE)
+  u = !duplicated(allElements)
+  lstIdx = rep(seq_along(lst), lengths(lst))
+  .setnames(lstIdx[u], allElements[u])
+}
