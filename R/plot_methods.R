@@ -145,6 +145,8 @@
 #'   marked with a star in the pedigree plot.
 #' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
+#' @param miscarriage A vector of labels indicating miscarriages, shown as
+#'   triangles in the pedigree plot.
 #' @param packed,width,align Parameters passed on to
 #'   [kinship2::align.pedigree()]. Can usually be left untouched.
 #' @param spouseOrder An optional vector (or list of vectors) indicating plot
@@ -161,7 +163,8 @@
 #'   the pedigree symbols. See Details for more information.
 #' @param font,fam Arguments passed on to [text()].
 #' @param colUnder,colInside,colAbove Colour vectors.
-#' @param cex.main,line.main,col.main,font.main Parameters passed on to [title()].
+#' @param cex.main,line.main,col.main,font.main Parameters passed on to
+#'   [title()].
 #' @param alignment List of alignment details, as returned by [.pedAlignment()].
 #' @param annotation List of annotation details as returned by
 #'   [.pedAnnotation()].
@@ -188,8 +191,9 @@ NULL
 #' @rdname plotmethods
 #' @importFrom kinship2 align.pedigree
 #' @export
-.pedAlignment = function(x = NULL, plist = NULL, arrows = FALSE, twins = NULL, packed = TRUE,
-                         width = 10, align = c(1.5, 2), spouseOrder = NULL, hints = NULL, ...) {
+.pedAlignment = function(x = NULL, plist = NULL, arrows = FALSE, twins = NULL,
+                         miscarriage = NULL, packed = TRUE, width = 10,
+                         align = c(1.5, 2), spouseOrder = NULL, hints = NULL, ...) {
 
   if(hasSelfing(x) && !arrows) {
     message("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message.")
@@ -197,12 +201,12 @@ NULL
   }
 
   if(!is.null(plist))
-    return(.extendPlist(x, plist, arrows))
+    return(.extendPlist(x, plist, arrows = arrows, miscarriage = miscarriage))
 
   # Singleton
   if(is.singleton(x)) {
     plist = list(n = 1, nid = cbind(1), pos = cbind(0), fam = cbind(0), spouse = cbind(0))
-    return(.extendPlist(x, plist))
+    return(.extendPlist(x, plist, miscarriage = miscarriage))
   }
 
   if(arrows)
@@ -237,11 +241,11 @@ NULL
   plist$pos[] = round(plist$pos[], 6)
 
   # Add further parameters
-  .extendPlist(x, plist)
+  .extendPlist(x, plist, miscarriage = miscarriage)
 }
 
 
-.extendPlist = function(x, plist, arrows = FALSE) {
+.extendPlist = function(x, plist, arrows = FALSE, miscarriage = NULL) {
   nid = plist$nid
   pos = plist$pos
 
@@ -264,7 +268,16 @@ NULL
   xpos = pos[tmp]
   ypos = row(pos)[tmp]
 
-  list(plist = plist, x = xpos, y = ypos, nInd = nInd, sex = getSex(x), ped = x, arrows = arrows,
+  sex = getSex(x)
+  if(length(miscarriage)) {
+    idx = match(miscarriage, x$ID, nomatch = 0L)
+    idx = idx[idx > 0]
+    if(any(idx %in% c(x$FID, x$MID)))
+      stop2("A parent cannot assigned as a miscarriage: ", miscarriage[idx %in% c(x$FID, x$MID)])
+    sex[idx] = 3
+  }
+
+  list(plist = plist, x = xpos, y = ypos, nInd = nInd, sex = sex, ped = x, arrows = arrows,
        plotord = plotord, xall = xall, yall = yall, maxlev = maxlev, xrange = xrange, yrange = yrange)
 }
 
@@ -719,7 +732,8 @@ NULL
   POLYS = list(list(x = c(0, -0.5, 0, 0.5), y = c(0, 0.5, 1, 0.5)), # diamond
                list(x = c(-1, -1, 1, 1)/2, y = c(0, 1, 1, 0)),      # square
                list(x = 0.5 * cos(seq(0, 2 * pi, length = 50)),     # circle
-                    y = 0.5 * sin(seq(0, 2 * pi, length = 50)) + 0.5))
+                    y = 0.5 * sin(seq(0, 2 * pi, length = 50)) + 0.5),
+               list(x = c(0, -1.2, 1.2)/2, y = c(0, 0.6, 0.6)))     # triangle
 
   # Draw all the symbols
   for (k in seq_along(plotord)) {

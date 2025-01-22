@@ -149,6 +149,9 @@
 #' # Medical pedigree
 #' plot(x, aff = "boy", carrier = "mo")
 #'
+#' # Miscarriage
+#' plot(x, miscarriage = "boy", deceased = "boy", labs = founders)
+#'
 #' # Twins
 #' x = nuclearPed(children = c("tw1", "tw2", "tw3"))
 #' plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ

@@ -14,6 +14,7 @@
   plist = NULL,
   arrows = FALSE,
   twins = NULL,
+  miscarriage = NULL,
   packed = TRUE,
   width = 10,
   align = c(1.5, 2),
@@ -94,6 +95,9 @@ as a DAG, i.e., with arrows connecting parent-child pairs.}
 
 \item{twins}{A data frame with columns \code{id1}, \code{id2} and \code{code}, passed on to
 the \code{relation} parameter of \code{\link[kinship2:plot.pedigree]{kinship2::plot.pedigree()}}.}
+
+\item{miscarriage}{A vector of labels indicating miscarriages, shown as
+triangles in the pedigree plot.}
 
 \item{packed, width, align}{Parameters passed on to
 \code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Can usually be left untouched.}
@@ -205,7 +209,8 @@ that the symbol dimensions are at least \code{minsize} inches. Default: FALSE.}
 
 \item{colUnder, colInside, colAbove}{Colour vectors.}
 
-\item{cex.main, line.main, col.main, font.main}{Parameters passed on to \code{\link[=title]{title()}}.}
+\item{cex.main, line.main, col.main, font.main}{Parameters passed on to
+\code{\link[=title]{title()}}.}
 }
 \description{
 The main purpose of this page is to document the many options for pedigree
