@@ -3,29 +3,30 @@
 #' Functions for identifying, breaking and restoring loops in pedigrees.
 #'
 #' Pedigree loops are usually handled (by pedtools and related packages) under
-#' the hood - using the functions described here - without need for explicit
-#' action from end users. When a ped object `x` is created, an internal routine
-#' detects if the pedigree contains loops, in which case `x$UNBROKEN_LOOPS` is
-#' set to TRUE.
+#' the hood -- using the functions described here -- without the need for
+#' explicit action from end users. When a ped object `x` is created, an internal
+#' routine detects if the pedigree contains loops, in which case
+#' `x$UNBROKEN_LOOPS` is set to TRUE.
 #'
 #' In cases with complex inbreeding, it can be instructive to plot the pedigree
 #' after breaking the loops. Duplicated individuals are plotted with appropriate
 #' labels (see examples).
 #'
-#' The function `findLoopBreakers` identifies a set of individuals breaking all
-#' inbreeding loops, but not marriage loops. These require more machinery for
-#' efficient detection, and pedtools does this is a separate function,
-#' `findLoopBreakers2`, utilizing methods from the `igraph` package. Since this
-#' is rarely needed for most users, `igraph` is not imported when loading
-#' pedtools, only when `findLoopBreakers2` is called.
-#'
-#' In practice, `breakLoops` first calls `findLoopBreakers` and breaks at the
-#' returned individuals. If the resulting ped object still has loops,
-#' `findLoopBreakers2` is called to break any marriage loops.
+#' The function `breakLoops` breaks the loops of the input pedigree by
+#' duplicating the *loop breakers*. These may be given by the user; otherwise
+#' they are selected automatically. In the current implementation, only
+#' nonfounders can act as loop breakers. For automatic selection of loop
+#' breakers, `breakLoops` first calls `findLoopBreakers`, which identifies a set
+#' of individuals breaking all *inbreeding loops* and breaks at the returned
+#' individuals. If the resulting ped object still has loops, `findLoopBreakers2`
+#' is called to handle *marriage loops*. In earlier versions of pedtools this
+#' required the `igraph` package, but now uses a custom implementation using a
+#' depth-first search algorithm to find a cycle in the marriage node graph of
+#' the pedigree.
 #'
 #' @param x a [ped()] object.
 #' @param loopBreakers either NULL (resulting in automatic selection of loop
-#'   breakers) or a numeric containing IDs of individuals to be used as loop
+#'   breakers) or a vector indicating the individuals to be used as loop
 #'   breakers.
 #' @param verbose a logical: Verbose output or not?
 #' @param errorIfFail a logical: If TRUE an error is raised if the loop breaking
@@ -33,7 +34,7 @@
 #'
 #' @return For `breakLoops`, a `ped` object in which the indicated loop breakers
 #'   are duplicated. The returned object will also have a non-null
-#'   `loopBreakers` entry, namely a matrix with the IDs of the original loop
+#'   `LOOP_BREAKERS` entry, namely a matrix with the IDs of the original loop
 #'   breakers in the first column and the duplicates in the second. If loop
 #'   breaking fails, then depending on `errorIfFail` either an error is raised,
 #'   or the input pedigree is returned, still containing unbroken loops.
@@ -50,9 +51,8 @@
 #'   here counts all closed paths in the pedigree and will in general be larger
 #'   than the genus of the underlying graph.
 #'
-#'   For `findLoopBreakers` and `findLoopBreakers2`, a numeric vector of
-#'   individual ID's.
-#' @author Magnus Dehli Vigeland
+#'   For `findLoopBreakers` and `findLoopBreakers2`, a vector of individual
+#'   labels.
 #'
 #' @examples
 #'
@@ -60,17 +60,15 @@
 #' plot(breakLoops(x))
 #'
 #' # Pedigree with marriage loop: Double first cousins
-#' if(requireNamespace("igraph", quietly = TRUE)) {
-#'   y = doubleCousins(1, 1, child = TRUE)
-#'   findLoopBreakers(y) # --> 9
-#'   findLoopBreakers2(y) # --> 7 and 9
-#'   y2 = breakLoops(y)
-#'   plot(y2)
+#' y = doubleCousins(1, 1, child = TRUE)
+#' findLoopBreakers(y) # --> 9
+#' findLoopBreakers2(y) # --> 5 and 9
+#' y2 = breakLoops(y)
+#' plot(y2)
 #'
-#'   # Or loop breakers chosen by user
-#'   y3 = breakLoops(y, 6:7)
-#'   plot(y3)
-#' }
+#' # Or loop breakers chosen by user
+#' y3 = breakLoops(y, 6:7)
+#' plot(y3)
 #'
 #' @export
 inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedingLoops
@@ -231,11 +229,11 @@ tieLoops = function(x, verbose = TRUE) {
 #' @rdname inbreedingLoops
 findLoopBreakers = function(x) {
   loopdata = inbreedingLoops(x)
-  # write each loop as vector exluding top/bottom
+  # write each loop as vector excluding top/bottom
   loops = lapply(loopdata, function(lo) c(lo$pathA, lo$pathB))
   bestbreakers = numeric()
   while (length(loops) > 0) {
-    # add the individual occuring in most loops
+    # add the individual occurring in most loops
     best = which.max(tabulate(unlist(loops)))
     bestbreakers = c(bestbreakers, best)
     loops = loops[sapply(loops, function(vec) !best %in% vec)]
@@ -247,51 +245,151 @@ findLoopBreakers = function(x) {
 #' @export
 #' @rdname inbreedingLoops
 findLoopBreakers2 = function(x, errorIfFail = TRUE) {
-  if (!requireNamespace("igraph", quietly = TRUE)) {
-    warning("This pedigree has marriage loops. The package 'igraph' must be installed for automatic selection of loop breakers.\n")
-    return(numeric())
-  }
 
   breakers = numeric()
   N = pedsize(x)
-
-  ped2edge = function(id, fid, mid) {
-    # input: ped-kolonner UTEN founder-rader
-    couples = paste(fid, mid, sep = "+")
-    dups = duplicated.default(couples)
-    edge.children = cbind(couples, id)
-    edge.marriage_F = cbind(fid, couples)[!dups, ]
-    edge.marriage_M = cbind(mid, couples)[!dups, ]
-    rbind(edge.marriage_F, edge.marriage_M, edge.children)
-  }
-
-  NONFOU = nonfounders(x, internal = TRUE)
-  id = NONFOU
-  fid = x$FIDX[NONFOU]
-  mid = x$MIDX[NONFOU]
-  nonf = as.character(NONFOU)
+  idx  = nonfounders(x, internal = TRUE)
+  fidx = x$FIDX[idx]
+  midx = x$MIDX[idx]
+  nonf = as.character(idx)
 
   while (TRUE) {
-    g = igraph::graph_from_edgelist(ped2edge(id, fid, mid))
-    loop = igraph::girth(g)$circle
-    if (length(loop) == 0)
+    g = .marriageGraphEdges(idx, fidx, midx, reduced = TRUE)
+    loop = .findGraphCycle(g)
+    if(length(loop) == 0)
       break
-    good.breakers = intersect(loop$name, nonf)
 
-    if (length(good.breakers) == 0) {
+    goodBreakers = .myintersect(loop, nonf)
+    if(length(goodBreakers) == 0) {
       if(errorIfFail) stop("\
 This pedigree requires founders as loop breakers, which is not implemented in pedtools yet.\
 Please contact package maintainer if this is important to you.", call. = FALSE)
       else return()
     }
 
-    b = as.numeric(good.breakers[1])
+    b = as.numeric(goodBreakers[1])
     breakers = c(breakers, b)
     N = N+1
-    fid[fid == b] = N
-    mid[mid == b] = N
+    fidx[fidx == b] = N
+    midx[midx == b] = N
   }
+
   labs = labels(x)
   labs[breakers]
 }
 
+
+### Jan 2025: Methods for finding and breaking marriage loops
+marriageGraph = function(x, reduced = FALSE) {
+  # Index of nonfounders
+  idx = nonfounders(x, internal = TRUE)
+  fidx = x$FIDX[idx]
+  midx = x$MIDX[idx]
+
+  g = .marriageGraphEdges(idx, fidx, midx, reduced = reduced)
+
+  glab = as.character(g)
+  dim(glab) = dim(g)
+  marnodes = g[g > 1000]
+  fid = marnodes %/% 1000
+  mid = marnodes %% 1000
+  glab[g > 1000] = paste(fid, mid, sep = "+")
+  glab
+}
+
+# Internal method for creating marriage graph edges.
+# NB: All internal/numerical labels.
+.marriageGraphEdges = function(idx, fidx, midx, reduced = FALSE) {
+  couples = 1000*fidx + midx
+
+  # Incoming edges: From each spouse to their marriage node
+  dups = duplicated.default(couples)
+  spou = c(fidx[!dups], midx[!dups])
+  marIn = cbind(from = spou, to = rep(couples[!dups], 2), label = spou)
+
+  # Outgoing edges, from marriage nodes to children
+  marOut = cbind(from = couples, to = idx, label = idx)
+
+  if(reduced) {
+    # Skip edges to leaves
+    isnonleave = idx %in% c(fidx,midx)
+    marOut = marOut[isnonleave, , drop = FALSE]
+
+    # Skip ID nodes with only 1 spouse
+    ismono = tabulate(spou) == 1
+    monos = which(ismono)
+
+    monoidxOut = match(monos, marOut[, 2], nomatch = 0)
+    childMono = monos[monoidxOut > 0]
+
+    # Replace child monos with their marriage node
+    marOut[monoidxOut[monoidxOut > 0], 2] = marIn[match(childMono, marIn[, 1]), 2]
+
+    # Remove spouse edge
+    marIn = marIn[!ismono[marIn[,1]], , drop = FALSE]
+  }
+
+  rbind(marIn, marOut)
+}
+
+# Finds a cycle in a graph given as an edge matrix.
+.findGraphCycle = function(g) {
+  # g: edge matrix with columns 'from', 'to', 'label' (optional)
+  # Output: vector of vertices (or edges if 'label') forming a cycle, or NULL
+
+  mode(g) = "character"
+  .from = g[,1]
+  .to = g[,2]
+  nodes = unique.default(c(.from, .to))
+
+  # Adjacency list (undirected!)
+  adjList = lapply(nodes, function(i) c(.from[.to == i], .to[.from == i]))
+  names(adjList) = nodes
+
+  env = new.env()
+  env$visited = logical(length(adjList)) |> .setnames(nodes)
+  env$prev  = rep(NA, length(adjList)) |> .setnames(nodes)
+  env$cycle = NULL
+
+  # Depth first traversal, keeping track of path
+  DFS = function(i, prev = "") {
+    env$visited[i] = TRUE
+    env$prev[i]  = prev
+    neigh = adjList[[i]] |> .mysetdiff(prev)
+    for(j in neigh) {
+      if(env$visited[j]) {
+        # Reconstruct cycle
+        cyc = x = i
+        while(x != j)
+          cyc = c(x <- env$prev[x], cyc)
+        env$cycle = as.character(cyc)
+        return(TRUE)
+      }
+      else if(DFS(j, prev = i))
+        return(TRUE)
+    }
+    FALSE
+  }
+
+  # Start DFS from first node
+  DFS(names(adjList)[length(nodes)])
+
+  if(is.null(env$cycle))
+    return(NULL)
+
+  # Cycle given as vector of vertices
+  cycleV = env$cycle
+
+  # If no edge label column, return vertices
+  if(ncol(g) == 2)
+    return(cycleV)
+
+  # Matrix of edge labels
+  nn = length(nodes)
+  edgeLabels = matrix(NA_character_, nrow = nn, ncol = nn, dimnames = list(nodes, nodes))
+  edgeLabels[g[, 1:2, drop = FALSE]] = g[,3]
+  edgeLabels[g[, 2:1, drop = FALSE]] = g[,3]
+
+  # Return edge labels of cycle
+  unique.default(edgeLabels[cbind(cycleV, c(cycleV[-1], cycleV[1]))])
+}
