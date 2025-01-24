@@ -25,7 +25,6 @@ Imports:
     kinship2,
     pedmut
 Suggests: 
-    igraph,
     kableExtra,
     knitr,
     rmarkdown,

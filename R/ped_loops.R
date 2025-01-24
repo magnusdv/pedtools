@@ -71,7 +71,7 @@
 #' plot(y3)
 #'
 #' @export
-inbreedingLoops = function(x) { # CHANGE: pedigreeLoops changed name to inbreedingLoops
+inbreedingLoops = function(x) {
   n = pedsize(x)
   dls = descentPaths(x, 1:n, internal = TRUE)
   dls = dls[lengths(dls) > 1]
@@ -337,10 +337,16 @@ marriageGraph = function(x, reduced = FALSE) {
   # g: edge matrix with columns 'from', 'to', 'label' (optional)
   # Output: vector of vertices (or edges if 'label') forming a cycle, or NULL
 
+  if(!length(g))
+    return(NULL)
+
   mode(g) = "character"
   .from = g[,1]
   .to = g[,2]
   nodes = unique.default(c(.from, .to))
+
+  if(length(nodes) < 3)
+    return(NULL)
 
   # Adjacency list (undirected!)
   adjList = lapply(nodes, function(i) c(.from[.to == i], .to[.from == i]))
