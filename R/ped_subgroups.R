@@ -5,7 +5,7 @@
 #'
 #' @param x A [ped()] object or a list of such.
 #' @param id,ids A character (or coercible to such) with one or several ID
-#'   labels.
+#'   labels. If `internal` is TRUE, `id` and `ids` should be positive integers.
 #' @param maxGen The number of generations to include. Default: Inf (no limit).
 #' @param inclusive A logical indicating whether an individual should be counted
 #'   among his or her own ancestors/descendants
@@ -191,6 +191,9 @@ father = function(x, id, internal = FALSE) {
   if(internal && discon)
     stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
 
+  if(internal && !is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
+
   idInt = if(!internal) internalID(x, id) else id
 
   if(discon) { # in this case idInt is a data frame
@@ -221,6 +224,9 @@ mother = function(x, id, internal = FALSE) {
   if(internal && discon)
     stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
 
+  if(internal && !is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
+
   idInt = if(!internal) internalID(x, id) else id
 
   if(discon) { # in this case idInt is a data frame
@@ -249,6 +255,9 @@ children = function(x, id, internal = FALSE) {
   discon = !is.ped(x)
   if(internal && discon)
     stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(internal && !is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   idInt = if(!internal) internalID(x, id) else id
 
@@ -283,9 +292,10 @@ spouses = function(x, id, internal = FALSE) {
     return(spouses(x[[comp]], id, internal = FALSE))
   }
 
-  # Returns a vector containing all individuals sharing offspring with <id>.
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   spous = switch(x$SEX[id] + 1,
                 c(x$MIDX[x$FIDX == id], x$FIDX[x$MIDX == id]), # sex = 0
@@ -315,6 +325,8 @@ unrelated = function(x, id, internal = FALSE) {
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   ancs = ancestors(x, id, inclusive = TRUE, internal = TRUE)
   rel = lapply(ancs, function(a) descendants(x, a, inclusive = TRUE, internal = TRUE))
@@ -336,6 +348,8 @@ parents = function(x, id, internal = FALSE) {
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   par = c(x$FIDX[id], x$MIDX[id])
   if(internal) par else labels.ped(x)[par]
@@ -353,6 +367,8 @@ grandparents = function(x, id, degree = 2, internal = FALSE) {
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   nextgen = id
   for(i in seq_len(degree))
@@ -378,6 +394,12 @@ siblings = function(x, id, half = NA, internal = FALSE) {
 
   if(!internal)
     id = internalID(x, id)
+  else {
+    if(!is.numeric(id))
+      stop2("Argument `id` must be numeric when `internal` is TRUE")
+    if(is.na(id) || id <= 0)
+      stop2("Argument `id` must be a positive integer when `internal` is TRUE")
+  }
 
   fa = x$FIDX[id]
   mo = x$MIDX[id]
@@ -442,9 +464,10 @@ ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
     return(unlist(ancList))
   }
 
-  # climbs upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   FIDX = x$FIDX
   MIDX = x$MIDX
@@ -453,6 +476,8 @@ ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
 
   up1 = c(FIDX[id], MIDX[id])
   up1 = up1[up1 > 0]
+
+  # Climb upwards storing parents iteratively. (Not documented: Accepts id of length > 1)
 
   while (g < maxGen && length(up1)) {
     ancest = c(ancest, up1)
@@ -463,6 +488,7 @@ ancestors = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE) {
   ancest = .mysortInt(unique.default(ancest))
   if(internal) ancest else labels.ped(x)[ancest]
 }
+
 
 #' @rdname ped_subgroups
 #' @export
@@ -498,6 +524,8 @@ descendants = function(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
   if(!internal)
     id = internalID(x, id)
+  else if(!is.numeric(id))
+    stop2("Argument `id` must be numeric when `internal` is TRUE")
 
   FIDX = x$FIDX
   MIDX = x$MIDX
