@@ -19,6 +19,7 @@
 \alias{siblings}
 \alias{nephews_nieces}
 \alias{niblings}
+\alias{piblings}
 \alias{ancestors}
 \alias{commonAncestors}
 \alias{descendants}
@@ -60,6 +61,8 @@ nephews_nieces(x, id, removal = 1, half = NA, internal = FALSE)
 
 niblings(x, id, half = NA, internal = FALSE)
 
+piblings(x, id, half = NA, internal = FALSE)
+
 ancestors(x, id, maxGen = Inf, inclusive = FALSE, internal = FALSE)
 
 commonAncestors(x, ids, maxGen = Inf, inclusive = FALSE, internal = FALSE)
@@ -77,7 +80,7 @@ descentPaths(x, ids = founders(x), internal = FALSE)
 internal order.}
 
 \item{id, ids}{A character (or coercible to such) with one or several ID
-labels.}
+labels. If \code{internal} is TRUE, \code{id} and \code{ids} should be positive integers.}
 
 \item{degree, removal}{Non-negative integers.}
 

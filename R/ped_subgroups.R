@@ -445,8 +445,24 @@ nephews_nieces = function(x, id, removal = 1, half = NA, internal = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 niblings = function(x, id, half = NA, internal = FALSE) {
+  # Returns vector of all children of all siblings of `id`
   sibs = siblings(x, id, half = half, internal = internal)
   children(x, sibs, internal = internal)
+}
+
+#' @rdname ped_subgroups
+#' @export
+piblings = function(x, id, half = NA, internal = FALSE) {
+  # Returns vector of all siblings of the parents of `id`
+  pr = parents(x, id, internal = internal)
+  if(internal)
+    pr = unique.default(pr[pr > 0])
+
+  if(!length(pr))
+    return(if(internal) integer(0) else character(0))
+
+  pibList = lapply(pr, function(p) siblings(x, p, half = half, internal = internal))
+  unique.default(unlist(pibList))
 }
 
 #' @rdname ped_subgroups
