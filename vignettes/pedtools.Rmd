@@ -121,6 +121,7 @@ You will find several examples below, but first let us list the available tools 
 The following pedigree structures serve as starting points for pedigree constructions. For parameters and details, see `?ped_basic`.
 
 * `singleton()`, a pedigree consisting of a single individual
+* `singletons()`, a list of unrelated singletons
 * `nuclearPed()`, a nuclear pedigree (parents+children)
 * `halfSibPed()`, two sibships with one parent in common
 * `linearPed()`, a straight line of successors
@@ -268,8 +269,8 @@ The functions below take as input a `ped` object and the label of a single membe
 * `children()`
 * `spouses()`
 * `siblings()`
-* `cousins()`
-* `nephews_nieces()`
+* `niblings()` (= nieces and nephews)
+* `piblings()` (= aunts and uncles)
 * `ancestors()`
 * `descendants()`
 * `unrelated()`
