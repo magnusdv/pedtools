@@ -11,7 +11,7 @@
 
 *	New function `harmoniseMarkers()`.
 
-*	New function `niblings()` (= nephews & nieces).
+*	New functions `niblings()` (= nephews & nieces) and `piblings()` (= aunts & uncles, i.e. siblings of parents).
 
 *	`getLocusAttributes()` gains argument `simplify`.
 
@@ -19,7 +19,8 @@
 
 ## Other
 
-*	Better handling of ped lists in subset extractors `father()`, `mother()` etc.
+*	Improved error messages in `father()`, `mother()` etc.
+* Better handling of ped lists in `father()`, `mother()` etc.
 *	Remove deprecated `offspring()`. Use `children()` instead.
 
 
