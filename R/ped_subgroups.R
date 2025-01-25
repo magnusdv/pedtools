@@ -21,10 +21,10 @@
 #'   wanted property. (Recall that a founder is a member without parents in the
 #'   pedigree, and that a leaf is a member without children in the pedigree.)
 #'
-#'   The functions `father`, `mother`, `cousins`, `grandparents`,
-#'   `nephews_nieces`, `children`, `parents`, `siblings`, `spouses`,
-#'   `unrelated`, each returns a vector containing the IDs of all pedigree
-#'   members having the specified relationship with `id`.
+#'   The functions `father`, `mother`, `parents`, `children`, `siblings`,
+#'   `grandparents`, `spouses`, `niblings` (nephews + nieces), `piblings`
+#'   (aunts + uncles) and `unrelated`, each returns a vector containing the
+#'   IDs of all pedigree members having the specified relationship with `id`.
 #'
 #'   The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
 #'   containing the IDs of all ancestors (resp. descendants) of the individual
@@ -58,6 +58,12 @@
 #'
 #' siblings(x, 4, half = FALSE) # none
 #' siblings(x, 4, half = TRUE)  # 9
+#'
+#' niblings(x, 9) # 6, 7
+#' niblings(x, 9, half = FALSE) # none
+#'
+#' piblings(x, 6) # 9
+#' piblings(x, 6, half = FALSE) # none
 #'
 #' ancestors(x, 6)                               # 2, 3, 4, 5
 #' ancestors(x, 6, maxGen = 2, inclusive = TRUE) # 4, 5, 6

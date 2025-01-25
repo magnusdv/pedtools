@@ -99,10 +99,10 @@ each return a vector containing the IDs of all pedigree members with the
 wanted property. (Recall that a founder is a member without parents in the
 pedigree, and that a leaf is a member without children in the pedigree.)
 
-The functions \code{father}, \code{mother}, \code{cousins}, \code{grandparents},
-\code{nephews_nieces}, \code{children}, \code{parents}, \code{siblings}, \code{spouses},
-\code{unrelated}, each returns a vector containing the IDs of all pedigree
-members having the specified relationship with \code{id}.
+The functions \code{father}, \code{mother}, \code{parents}, \code{children}, \code{siblings},
+\code{grandparents}, \code{spouses}, \code{niblings} (nephews + nieces), \code{piblings}
+(aunts + uncles) and \code{unrelated}, each returns a vector containing the
+IDs of all pedigree members having the specified relationship with \code{id}.
 
 The commands \code{ancestors(x, id)} and \code{descendants(x, id)} return vectors
 containing the IDs of all ancestors (resp. descendants) of the individual
@@ -138,6 +138,12 @@ mother(x, 4)       # 3
 
 siblings(x, 4, half = FALSE) # none
 siblings(x, 4, half = TRUE)  # 9
+
+niblings(x, 9) # 6, 7
+niblings(x, 9, half = FALSE) # none
+
+piblings(x, 6) # 9
+piblings(x, 6, half = FALSE) # none
 
 ancestors(x, 6)                               # 2, 3, 4, 5
 ancestors(x, 6, maxGen = 2, inclusive = TRUE) # 4, 5, 6
