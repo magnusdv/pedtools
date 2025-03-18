@@ -19,6 +19,9 @@
 #' The `branch()` function extracts the sub-pedigree formed by `id` and all
 #' his/her spouses and descendants.
 #'
+#' The `trim()` function iteratively removes uninformative leaves from the
+#' pedigree.
+#'
 #' Finally, `subset()` can be used to extract any connected sub-pedigree. (Note
 #' that in the current implementation, the function does not actually check that
 #' the indicated subset forms a connected pedigree; failing to comply with this
@@ -29,6 +32,9 @@
 #'   to be created. If NULL (default) given, automatic labels are generated.
 #' @param remove Either "ancestors" or "descendants" (default), dictating the
 #'   method of removing pedigree members. Abbreviations are allowed.
+#' @param uninformative A vector of ID labels of individuals to be considered
+#'   removed when trimming the pedigree. Uninformative leaves are removed
+#'   iteratively until no more can be found.
 #' @param returnLabs A logical, by default FALSE. If TRUE, `removeIndividuals()`
 #'   returns only the labels of all members to be removed, instead of actually
 #'   removing them.
@@ -404,6 +410,22 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
   }
 
   restorePed(new, attrs = attrs)
+}
+
+
+#' @rdname ped_modify
+#' @export
+trim = function(x, uninformative, verbose = TRUE) {
+  # Iterative removal of uninformative leaves
+  while(length(x) > 0) {
+    removeLayer = intersect(uninformative, leaves(x))
+    if(!length(removeLayer))
+      break
+
+    x = removeIndividuals(x, removeLayer, remove = "descendants", verbose = verbose)
+  }
+
+  x
 }
 
 #' @rdname ped_modify

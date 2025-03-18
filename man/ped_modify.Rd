@@ -8,6 +8,7 @@
 \alias{addDaughter}
 \alias{addParents}
 \alias{removeIndividuals}
+\alias{trim}
 \alias{branch}
 \alias{subset.ped}
 \title{Add/remove pedigree members}
@@ -37,6 +38,8 @@ removeIndividuals(
   returnLabs = FALSE,
   verbose = TRUE
 )
+
+trim(x, uninformative, verbose = TRUE)
 
 branch(x, id)
 
@@ -72,6 +75,10 @@ method of removing pedigree members. Abbreviations are allowed.}
 returns only the labels of all members to be removed, instead of actually
 removing them.}
 
+\item{uninformative}{A vector of ID labels of individuals to be considered
+removed when trimming the pedigree. Uninformative leaves are removed
+iteratively until no more can be found.}
+
 \item{subset}{A character vector (or coercible to such) with ID labels
 forming a connected sub-pedigree.}
 
@@ -100,6 +107,9 @@ error is raised if result is a disconnected pedigree.
 
 The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
 his/her spouses and descendants.
+
+The \code{trim()} function iteratively removes uninformative leaves from the
+pedigree.
 
 Finally, \code{subset()} can be used to extract any connected sub-pedigree. (Note
 that in the current implementation, the function does not actually check that
