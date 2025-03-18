@@ -72,14 +72,36 @@
 #'
 #' @export
 inbreedingLoops = function(x) {
+
+  # TODO: This is very slow for large pedigrees
+  # More efficient implementation possible! (DFS?)
+
+  if(pedsize(x)[1] > 30) {
+    # Identify unneeded sib leaves
+    pars = x$FIDX * 1000 + x$MIDX
+    sibships = unname(split(seq_along(pars), pars))
+    sibships = sibships[lengths(sibships) > 1]
+
+    lvsInt = leaves(x, TRUE)
+    remov = unlist(lapply(sibships, function(s) {
+      lvs = s %in% lvsInt
+      if(all(lvs)) s[-1] else s[lvs]
+    }))
+
+    # Remove sib leaves
+    x = x |> setMarkers(NULL) |> removeIndividuals(remov, verbose = FALSE)
+  }
+
+  # Start main algorithm
   n = pedsize(x)
   dls = descentPaths(x, 1:n, internal = TRUE)
   dls = dls[lengths(dls) > 1]
 
-  loops = list()
-  for (dl in dls) {
+  loops = lapply(dls, function(dl) {
     top = dl[[1]][1]
     pairs = .comb2(length(dl))
+    loopsA = vector("list", length = nrow(pairs))
+    i = 1
     for (p in 1:nrow(pairs)) {
       p1 = dl[[pairs[p, 1]]][-1]
       p2 = dl[[pairs[p, 2]]][-1]
@@ -91,11 +113,16 @@ inbreedingLoops = function(x) {
       bottom = inters[1]
       pathA = p1[seq_len(match(bottom, p1)-1)]  #without top and bottom. Seq_len to deal with the 1:0 problem.
       pathB = p2[seq_len(match(bottom, p2)-1)]
-      loops = c(loops, list(list(top = top, bottom = bottom, pathA = pathA, pathB = pathB)))
+      loopsA[[i]] = list(top = top, bottom = bottom, pathA = pathA, pathB = pathB)
+      i = i + 1
     }
-  }
-  unique(loops)
+    length(loopsA) = i - 1
+    unique.default(loopsA)
+  })
+
+  unlist(loops, recursive = FALSE)
 }
+
 
 #' @export
 #' @rdname inbreedingLoops
@@ -229,6 +256,7 @@ tieLoops = function(x, verbose = TRUE) {
 #' @rdname inbreedingLoops
 findLoopBreakers = function(x) {
   loopdata = inbreedingLoops(x)
+
   # write each loop as vector excluding top/bottom
   loops = lapply(loopdata, function(lo) c(lo$pathA, lo$pathB))
   bestbreakers = numeric()
