@@ -100,9 +100,11 @@ wanted property. (Recall that a founder is a member without parents in the
 pedigree, and that a leaf is a member without children in the pedigree.)
 
 The functions \code{father}, \code{mother}, \code{parents}, \code{children}, \code{siblings},
-\code{grandparents}, \code{spouses}, \code{niblings} (nephews + nieces), \code{piblings}
-(aunts + uncles) and \code{unrelated}, each returns a vector containing the
-IDs of all pedigree members having the specified relationship with \code{id}.
+\code{grandparents}, \code{spouses}, \code{niblings} (nephews + nieces), \code{piblings} (aunts
+\itemize{
+\item uncles) and \code{unrelated}, each returns a vector containing the IDs of all
+pedigree members having the specified relationship with \code{id}.
+}
 
 The commands \code{ancestors(x, id)} and \code{descendants(x, id)} return vectors
 containing the IDs of all ancestors (resp. descendants) of the individual

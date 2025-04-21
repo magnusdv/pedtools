@@ -5,6 +5,8 @@
 #' @param x A `ped` object, or (in some functions - see Details) a list of such.
 #' @param what Either "max", "compMax", "indiv" or "depth" (See Value.)
 #' @param chromType Either "autosomal" (default) or "x".
+#' @param ids A vector of individual IDs.
+#' @param named A logical.
 #'
 #' @return
 #'
@@ -19,6 +21,10 @@
 #' the longest chain up to a founder). Finally, if `x` has multiple components,
 #' and what = "compMax"`, the function returns a vector with the generation
 #' count from each component.
+#'
+#' * `nChildren(x, ids)` returns an integer vector containing the number of
+#' children of each indicated individual. It is equivalent, but more efficient,
+#' than `lengths(lapply(ids, function(id) children(x, id)))`.
 #'
 #' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of
@@ -158,6 +164,44 @@ generations = function(x, what = c("max", "compMax", "indiv", "depth")) {
   }
 }
 
+#' @rdname ped_utils
+#' @export
+nChildren = function(x, ids = labels(x), named = FALSE) {
+  if(!length(ids))
+    return(integer(0))
+
+  discon = !is.ped(x)
+  ids = as.character(ids)
+  idsInt = internalID(x, ids)
+
+  if(discon) {
+    res = lapply(unique.default(idsInt$comp), function(co)
+      nChildren(x[[co]], ids = idsInt$id[idsInt$comp == co], named = TRUE))
+    res = unlist(res)[ids]
+    return(if(named) res else unname(res))
+  }
+
+  if(length(ids) == 1) {
+    res = sum(x$FIDX == idsInt | x$MIDX == idsInt)
+  }
+  else {
+    fidx = x$FIDX
+    midx = x$MIDX
+
+    # Avoid double-counting if selfing
+    fidx[fidx == midx] = 0
+
+    # Count
+    pars = c(fidx, midx)
+    pars = pars[pars %in% idsInt]
+    counts = tabulate(pars, nbins = max(idsInt))
+    res = counts[idsInt]
+  }
+
+  if(named)
+      names(res) = ids
+  res
+}
 
 #' @rdname ped_utils
 #' @export

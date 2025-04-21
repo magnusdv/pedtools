@@ -283,6 +283,7 @@ children = function(x, id, internal = FALSE) {
   if(internal) which(ch) else x$ID[ch]
 }
 
+
 #' @rdname ped_subgroups
 #' @export
 spouses = function(x, id, internal = FALSE) {

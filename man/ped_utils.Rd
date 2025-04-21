@@ -4,6 +4,7 @@
 \alias{ped_utils}
 \alias{pedsize}
 \alias{generations}
+\alias{nChildren}
 \alias{hasUnbrokenLoops}
 \alias{hasInbredFounders}
 \alias{hasSelfing}
@@ -15,6 +16,8 @@
 pedsize(x)
 
 generations(x, what = c("max", "compMax", "indiv", "depth"))
+
+nChildren(x, ids = labels(x), named = FALSE)
 
 hasUnbrokenLoops(x)
 
@@ -33,6 +36,10 @@ peelingOrder(x)
 
 \item{what}{Either "max", "compMax", "indiv" or "depth" (See Value.)}
 
+\item{ids}{A vector of individual IDs.}
+
+\item{named}{A logical.}
+
 \item{chromType}{Either "autosomal" (default) or "x".}
 }
 \value{
@@ -44,6 +51,9 @@ defined as the number of individuals in the longest line of parent-child
 links. (Note that this is well-defined also if \code{x} has loops and/or
 cross-generational marriages.) For individual generation numbers, use \code{what = "indiv"} (generation numbering as in the plot) or \verb{what = "depth" (length of the longest chain up to a founder). Finally, if }x\verb{ has multiple components, and what = "compMax"}, the function returns a vector with the generation
 count from each component.
+\item \code{nChildren(x, ids)} returns an integer vector containing the number of
+children of each indicated individual. It is equivalent to, but more
+efficient than, \code{lengths(lapply(ids, function(id) children(x, id)))}.
 \item \code{hasUnbrokenLoops(x)} returns TRUE if \code{x} has loops, otherwise FALSE. (No
 computation is done here; the function simply returns the value of
 \code{x$UNBROKEN_LOOPS}).
