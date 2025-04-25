@@ -51,7 +51,7 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   # Print info
   cat(strrep("* ", (max(nchar(ids)) + max(nchar(gt)) + 6)/2), "\n")
   cat("Position:", postxt, "\n")
-  cat("Mutation:", muttxt, "\n")
+  cat("Mut model:", muttxt, "\n")
   cat("Frequencies:\n")
 
   # Hack to get one space indentation

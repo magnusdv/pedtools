@@ -23,8 +23,8 @@
 #' count from each component.
 #'
 #' * `nChildren(x, ids)` returns an integer vector containing the number of
-#' children of each indicated individual. It is equivalent, but more efficient,
-#' than `lengths(lapply(ids, function(id) children(x, id)))`.
+#' children of each indicated individual. It is equivalent to, but more
+#' efficient than, `lengths(lapply(ids, function(id) children(x, id)))`.
 #'
 #' * `hasUnbrokenLoops(x)` returns TRUE if `x` has loops, otherwise FALSE. (No
 #' computation is done here; the function simply returns the value of

@@ -22,9 +22,9 @@
 #'   pedigree, and that a leaf is a member without children in the pedigree.)
 #'
 #'   The functions `father`, `mother`, `parents`, `children`, `siblings`,
-#'   `grandparents`, `spouses`, `niblings` (nephews + nieces), `piblings`
-#'   (aunts + uncles) and `unrelated`, each returns a vector containing the
-#'   IDs of all pedigree members having the specified relationship with `id`.
+#'   `grandparents`, `spouses`, `niblings` (nephews + nieces), `piblings` (aunts
+#'   + uncles) and `unrelated`, each returns a vector containing the IDs of all
+#'   pedigree members having the specified relationship with `id`.
 #'
 #'   The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
 #'   containing the IDs of all ancestors (resp. descendants) of the individual
