@@ -12,8 +12,8 @@
 #' some minor adjustments have been made to improve scaling and avoid unneeded
 #' duplications.
 #'
-#' If `x` is a list of `ped` objects these are plotted next to each other,
-#' vertically centred in the plot window. For finer control, and possibly
+#' If `x` is a list of `ped` objects, these are plotted next to each other,
+#' vertically centred in the plotting window. For finer control, and possibly
 #' nested lists of pedigrees, use [plotPedList()].
 #'
 #' @param x A [ped()] object or a list of such.

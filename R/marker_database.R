@@ -4,8 +4,8 @@
 #' either "list" format, "merlin" format or "allelic ladder" format.
 #'
 #' A frequency database in "list" format is a list of numeric vectors; each
-#' vector named with the allele labels, and the list itself named with the
-#' marker names.
+#' vector named by its allele labels, and the list itself named by its marker
+#' names.
 #'
 #' Text files containing frequencies in "list" format should look as follows,
 #' where "M1" and "M2" are marker names, and "a1","a2",... are allele labels
@@ -22,7 +22,7 @@
 #' a2 0.1
 #' }
 #'
-#' In "merlin" format, used by the software MERLIN (Abecasis et. al, 2002), the
+#' In "merlin" format, used by the software MERLIN (Abecasis et al., 2002), the
 #' same frequency data would be presented as follows:
 #' \preformatted{
 #' M M1

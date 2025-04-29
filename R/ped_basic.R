@@ -1,4 +1,4 @@
-#' Create simple pedigrees
+#' Create basic pedigrees
 #'
 #' Utility functions for creating some common pedigree structures.
 #'
@@ -25,7 +25,7 @@
 #'
 #'
 #' @param nch The number of children, by default 1. If `children` is not NULL,
-#'   `nch` is set to `length(children)`
+#'   `nch` is set to `length(children)`.
 #' @param sex A vector with integer gender codes (0=unknown, 1=male, 2=female).
 #'   In `nuclearPed()`, it contains the genders of the children and is recycled
 #'   (if necessary) to length `nch`. In `linearPed()` it also contains the
@@ -35,8 +35,8 @@
 #'   must necessarily have gender code 0.)
 #' @param father The label of the father. Default: "1".
 #' @param mother The label of the mother. Default: "2".
-#' @param children A character with labels of the children. Default: "3", "4",
-#'   ...
+#' @param children A character with labels of the children. Default: `c("3",
+#'   "4", ...)`
 #' @param nch1,nch2 The number of children in each sibship.
 #' @param sex1,sex2 Vectors of gender codes for the children in each sibship.
 #'   Recycled (if necessary) to lengths `nch1` and `nch2` respectively.
@@ -54,9 +54,9 @@
 #'   Default: FALSE.
 #' @param child A logical: Should an inbred child be added to the two bottom
 #'   individuals?
-#' @param top,bottom Words indicating the gender combination in avuncular
-#'   relationships. The first must be either "uncle" or "aunt", while the second
-#'   is "nephew" or "niece". Both can be abbreviated.
+#' @param top,bottom Strings specifying the avuncular relationships. The first
+#'   must be either "uncle" or "aunt", while the second is "nephew" or "niece".
+#'   Both can be abbreviated.
 #' @param g A nonnegative integer indicating the number of ancestral generations
 #'   to include. The resulting pedigree has `2^(g+1)-1` members. The case `g =
 #'   0` results in a singleton.

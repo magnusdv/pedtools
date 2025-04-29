@@ -43,9 +43,9 @@ equal frequencies.}
 \item{strict}{A logical. If TRUE (default) the new frequencies cannot remove
 or add any alleles.}
 
-\item{alleles}{A character containing allele names. If not given, and \code{afreq}
-is named, \code{names(afreq)} is used. The default action is to take the sorted
-vector of distinct alleles occurring in \code{allelematrix}, \code{geno} or \code{...}.}
+\item{alleles}{A vector of allele names. If not given, and \code{afreq} is named,
+\code{names(afreq)} is used. Otherwise, the default action is to use all
+distinct alleles occurring in \code{allelematrix}, \code{geno} or \code{...}.}
 
 \item{name}{A character of the same length as \code{marker}, containing marker
 names.}

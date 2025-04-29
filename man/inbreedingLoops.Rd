@@ -36,7 +36,7 @@ are duplicated. The returned object will also have a non-null
 \code{LOOP_BREAKERS} entry, namely a matrix with the IDs of the original loop
 breakers in the first column and the duplicates in the second. If loop
 breaking fails, then depending on \code{errorIfFail} either an error is raised,
-or the input pedigree is returned, still containing unbroken loops.
+or the input pedigree (with loops intact) is returned.
 
 For \code{tieLoops}, a \code{ped} object in which any duplicated individuals (as
 given in the \code{x$LOOP_BREAKERS} entry) are merged. For any ped object \code{x},
@@ -68,16 +68,15 @@ after breaking the loops. Duplicated individuals are plotted with appropriate
 labels (see examples).
 
 The function \code{breakLoops} breaks the loops of the input pedigree by
-duplicating the \emph{loop breakers}. These may be given by the user; otherwise
-they are selected automatically. In the current implementation, only
-nonfounders can act as loop breakers. For automatic selection of loop
-breakers, \code{breakLoops} first calls \code{findLoopBreakers}, which identifies a set
-of individuals breaking all \emph{inbreeding loops} and breaks at the returned
-individuals. If the resulting ped object still has loops, \code{findLoopBreakers2}
-is called to handle \emph{marriage loops}. In earlier versions of pedtools this
-required the \code{igraph} package, but now uses a custom implementation using a
-depth-first search algorithm to find a cycle in the marriage node graph of
-the pedigree.
+duplicating the loop breakers. These may be given by the user; otherwise they
+are selected automatically. In the current implementation, only nonfounders
+can act as loop breakers. For automatic selection of loop breakers,
+\code{breakLoops} first calls \code{findLoopBreakers}, which identifies and breaks all
+\emph{inbreeding loops}. If the resulting pedigree still has loops,
+\code{findLoopBreakers2} is called to handle \emph{marriage loops}. In earlier versions
+this required the \code{igraph} package, but now uses a custom implementation
+using a depth-first search algorithm to find a cycle in the marriage node
+graph.
 }
 \examples{
 

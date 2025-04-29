@@ -36,9 +36,10 @@ attributes as in \code{from}. If \code{FALSE} no new marker objects are attached
 genotypes for other pedigree members - and marker attributes - remain
 untouched.}
 
-\item{matchNames}{A logical, only relevant if \code{erase = FALSE}. If \code{matchNames = TRUE} (default) marker names are used to ensure genotypes are transferred
-into the right markers, The output contains only markers present in \code{from},
-in the same order. (An error is raised if the markers are not named.)}
+\item{matchNames}{A logical, only relevant if \code{erase = FALSE}. If \code{matchNames = TRUE} (default) marker names are used to ensure that genotypes are
+transferred into the right markers. The output only contains markers
+present in \code{from}, and in the same order. An error is raised if the markers
+are not named.}
 
 \item{checkSex}{A logical. If TRUE, it is checked that \code{fromIds} and \code{toIds}
 have the same sex. Default: FALSE.}

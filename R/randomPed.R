@@ -4,7 +4,7 @@
 #' a finite population.
 #'
 #' Starting from an initial set of founders, a sequence of `n - founders` random
-#' matings is performed. The sampling of parents in each mating is set up to
+#' matings is simulated. The sampling of parents in each mating is set up to
 #' ensure that the final result is connected.
 #'
 #' @param n A positive integer: the total number of individuals. Must be at
@@ -13,8 +13,8 @@
 #'   2 unless selfing is allowed.
 #' @param maxDirectGap An integer; the maximum distance between direct
 #'   descendants allowed to mate. For example, the default value of 1 allows
-#'   parent-child mating, but not grandparent-grandchild. Set to `Inf` or `NULL`
-#'   to remove all restrictions.
+#'   parent-child mating, but not grandparent-grandchild. Use `Inf` or `NULL`
+#'   for no restrictions.
 #' @param selfing A logical indicating if selfing is allowed. Default: FALSE.
 #' @param seed An integer seed for the random number generator (optional).
 #'

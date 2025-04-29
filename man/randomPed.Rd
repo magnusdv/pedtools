@@ -15,8 +15,8 @@ least 3.}
 
 \item{maxDirectGap}{An integer; the maximum distance between direct
 descendants allowed to mate. For example, the default value of 1 allows
-parent-child mating, but not grandparent-grandchild. Set to \code{Inf} or \code{NULL}
-to remove all restrictions.}
+parent-child mating, but not grandparent-grandchild. Use \code{Inf} or \code{NULL}
+for no restrictions.}
 
 \item{selfing}{A logical indicating if selfing is allowed. Default: FALSE.}
 
@@ -31,7 +31,7 @@ a finite population.
 }
 \details{
 Starting from an initial set of founders, a sequence of \code{n - founders} random
-matings is performed. The sampling of parents in each mating is set up to
+matings is simulated. The sampling of parents in each mating is set up to
 ensure that the final result is connected.
 }
 \examples{

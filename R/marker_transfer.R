@@ -21,9 +21,10 @@
 #'   genotypes for other pedigree members - and marker attributes - remain
 #'   untouched.
 #' @param matchNames A logical, only relevant if `erase = FALSE`. If `matchNames
-#'   = TRUE` (default) marker names are used to ensure genotypes are transferred
-#'   into the right markers, The output contains only markers present in `from`,
-#'   in the same order. (An error is raised if the markers are not named.)
+#'   = TRUE` (default) marker names are used to ensure that genotypes are
+#'   transferred into the right markers. The output only contains markers
+#'   present in `from`, and in the same order. An error is raised if the markers
+#'   are not named.
 #' @param checkSex A logical. If TRUE, it is checked that `fromIds` and `toIds`
 #'   have the same sex. Default: FALSE.
 #' @param checkAttrs A logical. If TRUE, and `from` is a list of pedigrees, an

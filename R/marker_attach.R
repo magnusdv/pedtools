@@ -8,32 +8,25 @@
 #' the function [addMarker()], which creates and attaches a single marker in one
 #' go.
 #'
-#' The most general format of `locusAttributes` a list of lists, one for each
+#' The most general format of `locusAttributes` is a list of lists, one for each
 #' marker, where possible entries in the inner lists are as follows (default
 #' values in parenthesis):
 #'
-#' * `alleles` : a character vector with allele labels
-#'
-#' * `afreq` :  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
-#' where `L = length(alleles)`)
-#'
-#' * `chrom` : chromosome number (NA)
-#'
-#' * `posMb` : physical location in megabases (NA)
-#'
-#' * `name` : marker name (NA)
-#'
-#' * `mutmod` : mutation model, or model name (NULL)
-#'
-#' * `rate` : mutation model parameter (NULL)
+#' * `alleles`: a character vector with allele labels
+#' * `afreq`: a numeric vector with allele frequencies (equal)
+#' * `chrom`: chromosome number (NA)
+#' * `posMb`: physical location in megabases (NA)
+#' * `name`: marker name (NA)
+#' * `mutmod`: mutation model, or model name (NULL)
+#' * `rate`: mutation model parameter (NULL)
 #'
 #' If `locusAttributes` is a single list of attributes (not a list of lists),
 #' then it is repeated to match the number of markers.
 #'
 #' #### Alternative formats of `locusAttributes`:
 #'
-#' * data frame or matrix. In this case an attempt is made to interpret it as a
-#' frequency database in `allelic ladder` format.
+#' * A data frame or matrix. In this case an attempt is made to interpret it
+#' as a frequency database in `allelic ladder` format.
 #'
 #' * A list of frequency vectors. All vectors should sum to 1, and be named
 #' (with allele labels)
@@ -46,7 +39,7 @@
 #' @param m Either a single `marker` object or a list of `marker` objects
 #' @param alleleMatrix A matrix with `pedsize(x)` rows, containing the observed
 #'   alleles for one or several markers. The matrix must have either 1 or 2
-#'   columns per marker. If the former, then a `sep` string must be a given, and
+#'   columns per marker. If the former, then a `sep` string must be given, and
 #'   will be used to split all entries.
 #' @param locusAttributes A list of lists, with attributes for each marker. See
 #'   Details for possible attributes.

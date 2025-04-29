@@ -4,11 +4,11 @@
 #' which the members of a pedigree are stored. (This is the order in which the
 #' members are listed when a `ped` object is printed to the screen.)
 #'
-#' The internal ordering is usually of little importance for end users, with one
-#' important exception: Certain pedigree-traversing algorithms require parents
-#' to precede their children. A special function, `parentsBeforeChildren()` is
-#' provided for this purpose. This is a wrapper of the more general
-#' `reorderPed()` which allows any permutation of the members.
+#' While the internal pedigree ordering rarely matters, it is occasionally
+#' important. The function `reorderPed()` permutes the internal ordering as
+#' specified by the user. The most common use of this function is perhaps in
+#' `parentsBeforeChildren()`, which ensures that all parents precede their
+#' children. This is required by many pedigree-traversing algorithms.
 #'
 #' It should be noted that [ped()] by default calls `parentsBeforeChildren()`
 #' whenever a pedigree is created, unless explicitly avoided with `reorder =
@@ -27,8 +27,8 @@
 #' @param x A `ped` object. Most of these functions also accepts ped lists.
 #' @param neworder A permutation of `labels(x)` (or a subset of this),
 #'   indicating the new internal ordering. If `internal = TRUE`, `neworder`
-#'   refers to the internal ordering, so must be numeric. `1:pedsize(x)`. By
-#'   default, the natural order of the ID labels is used.
+#'   refers to the internal ordering, so must be numeric. By default, the
+#'   natural order of the ID labels is used.
 #' @param internal A logical (default: FALSE). If TRUE, `neworder` is
 #'   interpreted as referring to the internal ordering.
 #' @param ids A character vector (or coercible to one) of original ID labels.

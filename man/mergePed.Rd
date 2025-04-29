@@ -7,13 +7,12 @@
 mergePed(x, y, by = NULL, relabel = FALSE, ...)
 }
 \arguments{
-\item{x, y}{\code{\link[=ped]{ped()}} objects}
+\item{x, y}{Two \code{\link[=ped]{ped()}} objects.}
 
 \item{by}{The individuals to merge by. The most general form uses a named
 vector with entries of the form \code{id.x = id.y} (see Examples). If the vector
-is unnamed, it is assumed that the merging individuals have the same labels
-in both pedigrees. Finally, if \code{by = NULL} (default), it is set to
-\code{intersect(labels(x), labels(y))}.}
+is unnamed, it is assumed that the individuals have the same labels in both
+pedigrees. By default set to \code{intersect(labels(x), labels(y))}.}
 
 \item{relabel}{A logical, by default FALSE. If TRUE, \code{relabel(..., "asPlot")}
 is run on the merged pedigree before returning.}
@@ -26,11 +25,11 @@ A \code{ped} object.
 }
 \description{
 This function merges two \code{ped} objects, joining them at the indicated
-individuals. Only ped objects without marker data are supported.
+individuals. Only \code{ped} objects without marker data are supported.
 }
 \details{
-Some internal checks are done to ensure that merging individuals have the
-same sex and the same parents.
+Some internal checks are done to ensure that merging individuals are
+compatible in terms of sex and parents.
 
 If \code{relabel = FALSE}, some relabelling might still be performed in order to
 ensure unique labels for everyone. Specifically, this is the case if some ID

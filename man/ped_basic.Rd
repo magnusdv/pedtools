@@ -10,7 +10,7 @@
 \alias{halfCousinPed}
 \alias{ancestralPed}
 \alias{selfingPed}
-\title{Create simple pedigrees}
+\title{Create basic pedigrees}
 \usage{
 nuclearPed(nch = 1, sex = 1, father = "1", mother = "2", children = NULL)
 
@@ -56,7 +56,7 @@ selfingPed(s, sex = 1)
 }
 \arguments{
 \item{nch}{The number of children, by default 1. If \code{children} is not NULL,
-\code{nch} is set to \code{length(children)}}
+\code{nch} is set to \code{length(children)}.}
 
 \item{sex}{A vector with integer gender codes (0=unknown, 1=male, 2=female).
 In \code{nuclearPed()}, it contains the genders of the children and is recycled
@@ -70,8 +70,7 @@ must necessarily have gender code 0.)}
 
 \item{mother}{The label of the mother. Default: "2".}
 
-\item{children}{A character with labels of the children. Default: "3", "4",
-...}
+\item{children}{A character with labels of the children. Default: \code{c("3", "4", ...)}}
 
 \item{nch1, nch2}{The number of children in each sibship.}
 
@@ -100,9 +99,9 @@ appearance when plotted.}
 \item{child}{A logical: Should an inbred child be added to the two bottom
 individuals?}
 
-\item{top, bottom}{Words indicating the gender combination in avuncular
-relationships. The first must be either "uncle" or "aunt", while the second
-is "nephew" or "niece". Both can be abbreviated.}
+\item{top, bottom}{Strings specifying the avuncular relationships. The first
+must be either "uncle" or "aunt", while the second is "nephew" or "niece".
+Both can be abbreviated.}
 
 \item{g}{A nonnegative integer indicating the number of ancestral generations
 to include. The resulting pedigree has \code{2^(g+1)-1} members. The case \code{g = 0} results in a singleton.}

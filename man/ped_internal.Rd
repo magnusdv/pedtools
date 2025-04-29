@@ -24,8 +24,8 @@ internalID(x, ids, errorIfUnknown = TRUE)
 
 \item{neworder}{A permutation of \code{labels(x)} (or a subset of this),
 indicating the new internal ordering. If \code{internal = TRUE}, \code{neworder}
-refers to the internal ordering, so must be numeric. \code{1:pedsize(x)}. By
-default, the natural order of the ID labels is used.}
+refers to the internal ordering, so must be numeric. By default, the
+natural order of the ID labels is used.}
 
 \item{internal}{A logical (default: FALSE). If TRUE, \code{neworder} is
 interpreted as referring to the internal ordering.}
@@ -42,11 +42,11 @@ which the members of a pedigree are stored. (This is the order in which the
 members are listed when a \code{ped} object is printed to the screen.)
 }
 \details{
-The internal ordering is usually of little importance for end users, with one
-important exception: Certain pedigree-traversing algorithms require parents
-to precede their children. A special function, \code{parentsBeforeChildren()} is
-provided for this purpose. This is a wrapper of the more general
-\code{reorderPed()} which allows any permutation of the members.
+While the internal pedigree ordering rarely matters, it is occasionally
+important. The function \code{reorderPed()} permutes the internal ordering as
+specified by the user. The most common use of this function is perhaps in
+\code{parentsBeforeChildren()}, which ensures that all parents precede their
+children. This is required by many pedigree-traversing algorithms.
 
 It should be noted that \code{\link[=ped]{ped()}} by default calls \code{parentsBeforeChildren()}
 whenever a pedigree is created, unless explicitly avoided with \code{reorder = FALSE}.

@@ -103,7 +103,6 @@ is supplied, the other is created as a new individual.
 \code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
 all of their ancestors OR descendants, depending on the \code{remove} argument.
 Leftover spouses disconnected from the remaining pedigree are also removed.
-An error is raised if the result is a disconnected pedigree.
 
 The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
 his/her spouses and descendants.

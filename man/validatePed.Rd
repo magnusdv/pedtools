@@ -9,11 +9,11 @@ validatePed(x = NULL, id = NULL, fid = NULL, mid = NULL, sex = NULL)
 \arguments{
 \item{x}{A \code{ped} object.}
 
-\item{id}{A vector (coercible to character) of individual ID labels.}
+\item{id}{A character (or coercible to character) of individual ID labels.}
 
-\item{fid, mid}{Vectors of the same length as \code{id}, naming the father and
-mother of each individual, respectively. Missing parents (i.e.,
-corresponding to founder individuals) may be entered as "0", "" or NA.}
+\item{fid, mid}{Vectors of the same length as \code{id}, naming each individual's
+father and mother. Missing parents (of founders) may be entered as "0", ""
+or NA.}
 
 \item{sex}{A numeric of the same length as \code{id}, describing the genders of
 the individuals (in the same order as \code{id}.) Each entry must be either 1

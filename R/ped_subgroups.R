@@ -4,9 +4,10 @@
 #' certain properties.
 #'
 #' @param x A [ped()] object or a list of such.
-#' @param id,ids A character (or coercible to such) with one or several ID
+#' @param id,ids A character (or coercible to character) of one or more ID
 #'   labels. If `internal` is TRUE, `id` and `ids` should be positive integers.
-#' @param maxGen The number of generations to include. Default: Inf (no limit).
+#' @param maxGen The number of generations to include. Default: `Inf` (no
+#'   limit).
 #' @param inclusive A logical indicating whether an individual should be counted
 #'   among his or her own ancestors/descendants
 #' @param internal A logical indicating whether `id` (or `ids`) refers to the
@@ -23,8 +24,8 @@
 #'
 #'   The functions `father`, `mother`, `parents`, `children`, `siblings`,
 #'   `grandparents`, `spouses`, `niblings` (nephews + nieces), `piblings` (aunts
-#'   + uncles) and `unrelated`, each returns a vector containing the IDs of all
-#'   pedigree members having the specified relationship with `id`.
+#'   + uncles) and `unrelated`, each returns a vector naming all
+#'   pedigree members with the specified relationship to `id`.
 #'
 #'   The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
 #'   containing the IDs of all ancestors (resp. descendants) of the individual

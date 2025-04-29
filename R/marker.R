@@ -12,9 +12,9 @@
 #'   in the format "a/b".
 #' @param allelematrix A matrix with 2 columns and `pedsize(x)` rows. If this is
 #'   non-NULL, then `...` must be empty.
-#' @param alleles A character containing allele names. If not given, and `afreq`
-#'   is named, `names(afreq)` is used. The default action is to take the sorted
-#'   vector of distinct alleles occurring in `allelematrix`, `geno` or `...`.
+#' @param alleles A vector of allele names. If not given, and `afreq` is named,
+#'   `names(afreq)` is used. Otherwise, the default action is to use all
+#'   distinct alleles occurring in `allelematrix`, `geno` or `...`.
 #' @param afreq A numeric of the same length as `alleles`, indicating the
 #'   population frequency of each allele. A warning is issued if the frequencies
 #'   don't sum to 1 after rounding to 3 decimals. If the vector is named, and
@@ -30,38 +30,31 @@
 #'   corresponds to the `model` parameter. Default: NULL (no mutation model).
 #' @param locusAttr A list with names `alleles`, `afreq`, `chrom`, `name`,
 #'   `posMb`, `mutmod`, `rate` (or a subset of these). This can be used as an
-#'    alternative to entering the arguments as function parameters.
+#'   alternative to entering the arguments as function parameters.
 #' @param NAstrings A character vector containing strings to be treated as
 #'   missing alleles. Default: `c("", "0", NA, "-")`.
 #' @param validate A logical indicating if the validity of the marker object
 #'   should be checked. Default: TRUE.
 #' @param validateMut A logical indicating if the mutation model (if present)
-#'   should be checked.
+#'   should be checked. Default: TRUE
 #'
 #' @return An object of class `marker`. This is an integer matrix with 2 columns
 #'   and one row per individual, and the following attributes:
 #'
 #'   * `alleles` (a character vector with allele labels)
-#'
-#'   * `afreq` (allele frequencies; default `rep.int(1/length(alleles),
-#'   length(alleles))`)
-#'
+#'   * `afreq` (allele frequencies; defaults to equal frequencies)
 #'   * `chrom` (chromosome number; default = NA)
-#'
 #'   * `posMb` (physical location in megabases; default = NA)
-#'
 #'   * `name` (marker identifier; default = NA)
-#'
-#'   * `mutmod` (a list of two (male and female) mutation matrices; default =
-#'   NULL)
+#'   * `mutmod` (a list of two (male/female) mutation matrices; default = NULL)
 #'
 #' @seealso Get/set marker attributes: [marker_getattr], [marker_setattr].
 #'
-#' Retrieve various marker properties: [marker_prop], [nMarkers()],
+#'   Retrieve various marker properties: [marker_prop], [nMarkers()],
 #'
-#' Add alleles to an existing marker: [addAllele()]
+#'   Add alleles to an existing marker: [addAllele()]
 #'
-#' Attach multiple markers: [marker_attach]
+#'   Attach multiple markers: [marker_attach]
 #'
 #'
 #'
@@ -81,20 +74,14 @@
 #'   ))
 #'
 #' # Genotypes can be assigned individually ...
-#' marker(x, fa = "1/1", mo = "1/2")
+#' addMarker(x, fa = "1/1", mo = "1/2")
 #'
 #' # ... or using the `geno` vector (all members in order)
-#' marker(x, geno = c("1/1", "1/2", NA))
+#' addMarker(x, geno = c("1/1", "1/2", NA))
 #'
-#'
-#' # Attaching a marker to the pedigree
-#' m = marker(x) # By default a SNP with alleles 1,2
-#' x = setMarkers(x, m)
-#'
-#' # A marker with a "proportional" mutation model,
-#' # with different rates for males and females
-#' mutrates = list(female = 0.1, male = 0.2)
-#' marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
+#' # A marker with an "equal" mutation model
+#' y = addMarker(x, alleles = 1:2, name = "M", mutmod = "equal", rate = 0.01)
+#' mutmod(y, "M")
 #'
 #' @export
 marker = function(x, ...,  geno = NULL, allelematrix = NULL,

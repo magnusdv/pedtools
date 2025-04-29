@@ -79,7 +79,7 @@ descentPaths(x, ids = founders(x), internal = FALSE)
 \item{internal}{A logical indicating whether \code{id} (or \code{ids}) refers to the
 internal order.}
 
-\item{id, ids}{A character (or coercible to such) with one or several ID
+\item{id, ids}{A character (or coercible to character) of one or more ID
 labels. If \code{internal} is TRUE, \code{id} and \code{ids} should be positive integers.}
 
 \item{degree, removal}{Non-negative integers.}
@@ -88,7 +88,8 @@ labels. If \code{internal} is TRUE, \code{id} and \code{ids} should be positive 
 siblings/cousins/nephews/nieces are returned. If NA, both categories are
 included.}
 
-\item{maxGen}{The number of generations to include. Default: Inf (no limit).}
+\item{maxGen}{The number of generations to include. Default: \code{Inf} (no
+limit).}
 
 \item{inclusive}{A logical indicating whether an individual should be counted
 among his or her own ancestors/descendants}
@@ -102,8 +103,8 @@ pedigree, and that a leaf is a member without children in the pedigree.)
 The functions \code{father}, \code{mother}, \code{parents}, \code{children}, \code{siblings},
 \code{grandparents}, \code{spouses}, \code{niblings} (nephews + nieces), \code{piblings} (aunts
 \itemize{
-\item uncles) and \code{unrelated}, each returns a vector containing the IDs of all
-pedigree members having the specified relationship with \code{id}.
+\item uncles) and \code{unrelated}, each returns a vector naming all
+pedigree members with the specified relationship to \code{id}.
 }
 
 The commands \code{ancestors(x, id)} and \code{descendants(x, id)} return vectors

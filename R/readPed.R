@@ -6,15 +6,10 @@
 #' the program assumes the following column order:
 #'
 #' * family ID (optional; guessed from the data)
-#'
 #' * individual ID
-#'
 #' * father's ID
-#'
 #' * mother's ID
-#'
 #' * sex
-#'
 #' * marker data (remaining columns)
 #'
 #' #### Reading SNP data

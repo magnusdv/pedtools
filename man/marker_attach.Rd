@@ -33,7 +33,7 @@ addMarkers(
 
 \item{alleleMatrix}{A matrix with \code{pedsize(x)} rows, containing the observed
 alleles for one or several markers. The matrix must have either 1 or 2
-columns per marker. If the former, then a \code{sep} string must be a given, and
+columns per marker. If the former, then a \code{sep} string must be given, and
 will be used to split all entries.}
 
 \item{locusAttributes}{A list of lists, with attributes for each marker. See
@@ -63,26 +63,25 @@ the function \code{\link[=addMarker]{addMarker()}}, which creates and attaches a
 go.
 }
 \details{
-The most general format of \code{locusAttributes} a list of lists, one for each
+The most general format of \code{locusAttributes} is a list of lists, one for each
 marker, where possible entries in the inner lists are as follows (default
 values in parenthesis):
 \itemize{
-\item \code{alleles} : a character vector with allele labels
-\item \code{afreq} :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
-where \code{L = length(alleles)})
-\item \code{chrom} : chromosome number (NA)
-\item \code{posMb} : physical location in megabases (NA)
-\item \code{name} : marker name (NA)
-\item \code{mutmod} : mutation model, or model name (NULL)
-\item \code{rate} : mutation model parameter (NULL)
+\item \code{alleles}: a character vector with allele labels
+\item \code{afreq}: a numeric vector with allele frequencies (equal)
+\item \code{chrom}: chromosome number (NA)
+\item \code{posMb}: physical location in megabases (NA)
+\item \code{name}: marker name (NA)
+\item \code{mutmod}: mutation model, or model name (NULL)
+\item \code{rate}: mutation model parameter (NULL)
 }
 
 If \code{locusAttributes} is a single list of attributes (not a list of lists),
 then it is repeated to match the number of markers.
 \subsection{Alternative formats of \code{locusAttributes}:}{
 \itemize{
-\item data frame or matrix. In this case an attempt is made to interpret it as a
-frequency database in \verb{allelic ladder} format.
+\item A data frame or matrix. In this case an attempt is made to interpret it
+as a frequency database in \verb{allelic ladder} format.
 \item A list of frequency vectors. All vectors should sum to 1, and be named
 (with allele labels)
 \item Shortcut for simple SNP data: The argument \code{locusAttributes = "snp-AB"}

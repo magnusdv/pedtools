@@ -230,7 +230,7 @@ scale = .pedScaling(align, annot, ...)
 .annotatePed(align, annot, scale)  # if `annot` contains text annotation etc
 }\if{html}{\out{</div>}}
 
-The \code{labs} argument control the individual ID labels printed below the
+The \code{labs} argument controls the individual ID labels printed below the
 pedigree symbols. By default the output of \code{labels(x)} is used, but there are
 several alternative forms:
 \itemize{
@@ -248,10 +248,10 @@ The argument \code{textAnnot} allows customised annotation around and inside eac
 symbol. This takes a list of lists, whose names may include "topleft",
 "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
 "inside". Each inner list should contain a character vector as its first
-element (with the text to printed), followed by further arguments passed to
+element (with the text to be printed), followed by further arguments passed to
 \code{\link[=text]{text()}}. For example, \code{textAnnot = list(left = list(c(A = "1"), cex = 2))}
 prints a large number "1" to the left of individual A (if such an individual
-exists in the pedigree. See Examples.
+exists in the pedigree). See Examples.
 
 The arguments \code{col}, \code{fill}, \code{lty} and \code{lwd} can all be indicated in a number
 of ways:

@@ -1,22 +1,21 @@
 #' Merge two pedigrees
 #'
 #' This function merges two `ped` objects, joining them at the indicated
-#' individuals. Only ped objects without marker data are supported.
+#' individuals. Only `ped` objects without marker data are supported.
 #'
-#' Some internal checks are done to ensure that merging individuals have the
-#' same sex and the same parents.
+#' Some internal checks are done to ensure that merging individuals are
+#' compatible in terms of sex and parents.
 #'
 #' If `relabel = FALSE`, some relabelling might still be performed in order to
 #' ensure unique labels for everyone. Specifically, this is the case if some ID
 #' labels occur in both `x` and `y` other than those given in the `by` argument.
 #' In such cases, the relevant members of `y` get a suffix `.y`.
 #'
-#' @param x,y [ped()] objects
+#' @param x,y Two [ped()] objects.
 #' @param by The individuals to merge by. The most general form uses a named
 #'   vector with entries of the form `id.x = id.y` (see Examples). If the vector
-#'   is unnamed, it is assumed that the merging individuals have the same labels
-#'   in both pedigrees. Finally, if `by = NULL` (default), it is set to
-#'   `intersect(labels(x), labels(y))`.
+#'   is unnamed, it is assumed that the individuals have the same labels in both
+#'   pedigrees. By default set to `intersect(labels(x), labels(y))`.
 #' @param relabel A logical, by default FALSE. If TRUE, `relabel(..., "asPlot")`
 #'   is run on the merged pedigree before returning.
 #' @param ... further arguments passed along to [ped()], e.g. `famid`,

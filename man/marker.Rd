@@ -52,9 +52,9 @@ in the format "a/b".}
 \item{allelematrix}{A matrix with 2 columns and \code{pedsize(x)} rows. If this is
 non-NULL, then \code{...} must be empty.}
 
-\item{alleles}{A character containing allele names. If not given, and \code{afreq}
-is named, \code{names(afreq)} is used. The default action is to take the sorted
-vector of distinct alleles occurring in \code{allelematrix}, \code{geno} or \code{...}.}
+\item{alleles}{A vector of allele names. If not given, and \code{afreq} is named,
+\code{names(afreq)} is used. Otherwise, the default action is to use all
+distinct alleles occurring in \code{allelematrix}, \code{geno} or \code{...}.}
 
 \item{afreq}{A numeric of the same length as \code{alleles}, indicating the
 population frequency of each allele. A warning is issued if the frequencies
@@ -80,7 +80,7 @@ missing alleles. Default: \code{c("", "0", NA, "-")}.}
 should be checked. Default: TRUE.}
 
 \item{validateMut}{A logical indicating if the mutation model (if present)
-should be checked.}
+should be checked. Default: TRUE}
 
 \item{locusAttr}{A list with names \code{alleles}, \code{afreq}, \code{chrom}, \code{name},
 \code{posMb}, \code{mutmod}, \code{rate} (or a subset of these). This can be used as an
@@ -91,12 +91,11 @@ An object of class \code{marker}. This is an integer matrix with 2 columns
 and one row per individual, and the following attributes:
 \itemize{
 \item \code{alleles} (a character vector with allele labels)
-\item \code{afreq} (allele frequencies; default \code{rep.int(1/length(alleles),   length(alleles))})
+\item \code{afreq} (allele frequencies; defaults to equal frequencies)
 \item \code{chrom} (chromosome number; default = NA)
 \item \code{posMb} (physical location in megabases; default = NA)
 \item \code{name} (marker identifier; default = NA)
-\item \code{mutmod} (a list of two (male and female) mutation matrices; default =
-NULL)
+\item \code{mutmod} (a list of two (male/female) mutation matrices; default = NULL)
 }
 }
 \description{
@@ -120,20 +119,14 @@ stopifnot(identical(
   ))
 
 # Genotypes can be assigned individually ...
-marker(x, fa = "1/1", mo = "1/2")
+addMarker(x, fa = "1/1", mo = "1/2")
 
 # ... or using the `geno` vector (all members in order)
-marker(x, geno = c("1/1", "1/2", NA))
+addMarker(x, geno = c("1/1", "1/2", NA))
 
-
-# Attaching a marker to the pedigree
-m = marker(x) # By default a SNP with alleles 1,2
-x = setMarkers(x, m)
-
-# A marker with a "proportional" mutation model,
-# with different rates for males and females
-mutrates = list(female = 0.1, male = 0.2)
-marker(x, alleles = 1:2, mutmod = "prop", rate = mutrates)
+# A marker with an "equal" mutation model
+y = addMarker(x, alleles = 1:2, name = "M", mutmod = "equal", rate = 0.01)
+mutmod(y, "M")
 
 }
 \seealso{

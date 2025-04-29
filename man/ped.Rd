@@ -24,11 +24,11 @@ singleton(id = 1, sex = 1, famid = "")
 singletons(id, sex = 1)
 }
 \arguments{
-\item{id}{A vector (coercible to character) of individual ID labels.}
+\item{id}{A character (or coercible to character) of individual ID labels.}
 
-\item{fid, mid}{Vectors of the same length as \code{id}, naming the father and
-mother of each individual, respectively. Missing parents (i.e.,
-corresponding to founder individuals) may be entered as "0", "" or NA.}
+\item{fid, mid}{Vectors of the same length as \code{id}, naming each individual's
+father and mother. Missing parents (of founders) may be entered as "0", ""
+or NA.}
 
 \item{sex}{A numeric of the same length as \code{id}, describing the genders of
 the individuals (in the same order as \code{id}.) Each entry must be either 1
@@ -56,27 +56,27 @@ FALSE.}
 A \code{ped} object, which is essentially a list with the following
 entries:
 \itemize{
-\item \code{ID} : A character vector of ID labels. Unless the pedigree is reordered
+\item \code{ID}: A character vector of ID labels. Unless the pedigree is reordered
 during creation, this equals \code{as.character(id)}
-\item \code{FIDX} : An integer vector with paternal indices: For each \eqn{j =
-  1,2,...}, the entry \code{FIDX[j]} is 0 if \code{ID[j]} has no father within the
-pedigree; otherwise \code{ID[FIDX[j]]} is the father of \code{ID[j]}.
-\item \code{MIDX} : An integer vector with maternal indices: For each \eqn{j =
-  1,2,...}, the entry \code{MIDX[j]} is 0 if \code{ID[j]} has no mother within the
-pedigree; otherwise \code{ID[MIDX[j]]} is the mother of \code{ID[j]}.
-\item \code{SEX} : An integer vector with gender codes. Unless the pedigree is
+\item \code{FIDX}: An integer vector with paternal indices: For each \eqn{j =
+  1,2,...}, \code{FIDX[j]} is 0 if \code{ID[j]} has no father; otherwise \code{ID[FIDX[j]]}
+is the father of \code{ID[j]}.
+\item \code{MIDX}: An integer vector with maternal indices: For each \eqn{j =
+  1,2,...}, \code{MIDX[j]} is 0 if \code{ID[j]} has no mother; otherwise \code{ID[MIDX[j]]}
+is the mother of \code{ID[j]}.
+\item \code{SEX}: An integer vector with gender codes. Unless the pedigree is
 reordered, this equals \code{as.integer(sex)}.
-\item \code{FAMID} : The family ID.
-\item \code{UNBROKEN_LOOPS} : A logical indicating if the pedigree has unbroken
+\item \code{FAMID}: The family ID.
+\item \code{UNBROKEN_LOOPS}: A logical indicating if the pedigree has unbroken
 loops, or NA if the status is currently unknown.
-\item \code{LOOP_BREAKERS} : A matrix with loop breaker ID's in the first column and
+\item \code{LOOP_BREAKERS}: A matrix with loop breaker ID's in the first column and
 their duplicates in the second column. All entries refer to the internal
 IDs. This is usually set by \code{\link[=breakLoops]{breakLoops()}}.
-\item \code{FOUNDER_INBREEDING} : A list of two potential entries, "autosomal" and
+\item \code{FOUNDER_INBREEDING}: A list of two potential entries, "autosomal" and
 "x"; both numeric vectors with the same length as \code{founders(x)}.
 \code{FOUNDER_INBREEDING} is always NULL when a new \code{ped} is created. See
 \code{\link[=founderInbreeding]{founderInbreeding()}}.
-\item \code{MARKERS} : A list of \code{marker} objects, or NULL.
+\item \code{MARKERS}: A list of \code{marker} objects, or NULL.
 }
 }
 \description{

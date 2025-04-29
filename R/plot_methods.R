@@ -15,7 +15,7 @@
 #
 # Internally, the previous single `plot()` function has been refactored into the
 # following steps:
-# * .pedAlignment(): Builds on `kinship2::align.pedigree(), but also handles singletons and DAGs
+# * .pedAlignment(): Builds on `kinship2::align.pedigree()`, but also handles singletons and DAGs
 # * .pedAnnotation(): Prepare and collect annotation variables
 # * .pedScaling(): Calculate symbol sizes and scaling variables
 # * .drawPed(): Draw symbols
@@ -43,7 +43,7 @@
 #' .annotatePed(align, annot, scale)  # if `annot` contains text annotation etc
 #' ```
 #'
-#' The `labs` argument control the individual ID labels printed below the
+#' The `labs` argument controls the individual ID labels printed below the
 #' pedigree symbols. By default the output of `labels(x)` is used, but there are
 #' several alternative forms:
 #'
@@ -63,10 +63,10 @@
 #' symbol. This takes a list of lists, whose names may include "topleft",
 #' "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
 #' "inside". Each inner list should contain a character vector as its first
-#' element (with the text to printed), followed by further arguments passed to
+#' element (with the text to be printed), followed by further arguments passed to
 #' [text()]. For example, `textAnnot = list(left = list(c(A = "1"), cex = 2))`
 #' prints a large number "1" to the left of individual A (if such an individual
-#' exists in the pedigree. See Examples.
+#' exists in the pedigree). See Examples.
 #'
 #' The arguments `col`, `fill`, `lty` and `lwd` can all be indicated in a number
 #' of ways:
