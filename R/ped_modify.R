@@ -13,14 +13,16 @@
 #'
 #' `removeIndividuals()` removes the individuals indicated with `ids` along with
 #' all of their ancestors OR descendants, depending on the `remove` argument.
-#' Leftover spouses disconnected to the remaining pedigree are also removed. An
-#' error is raised if result is a disconnected pedigree.
+#' Leftover spouses disconnected from the remaining pedigree are also removed.
 #'
 #' The `branch()` function extracts the sub-pedigree formed by `id` and all
 #' his/her spouses and descendants.
 #'
-#' The `trim()` function iteratively removes uninformative leaves from the
-#' pedigree.
+#' The `trim()` function iteratively removes uninformative leaves (i.e., members
+#' without children) from the pedigree. Note that the definition of
+#' "uninformative" is entirely user-defined. For example, `trim(x,
+#' untypedMembers)`, will remove untyped individuals from the bottom until the
+#' process stops.
 #'
 #' Finally, `subset()` can be used to extract any connected sub-pedigree. (Note
 #' that in the current implementation, the function does not actually check that
@@ -32,9 +34,9 @@
 #'   to be created. If NULL (default) given, automatic labels are generated.
 #' @param remove Either "ancestors" or "descendants" (default), dictating the
 #'   method of removing pedigree members. Abbreviations are allowed.
-#' @param uninformative A vector of ID labels of individuals to be considered
-#'   removed when trimming the pedigree. Uninformative leaves are removed
-#'   iteratively until no more can be found.
+#' @param uninformative A vector naming individuals considered "uninformative",
+#'   or a function (typically a helper function like [untypedMembers()]).
+#'   Uninformative leaves are removed iteratively until no more can be found.
 #' @param returnLabs A logical, by default FALSE. If TRUE, `removeIndividuals()`
 #'   returns only the labels of all members to be removed, instead of actually
 #'   removing them.
@@ -424,6 +426,10 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
 #' @rdname ped_modify
 #' @export
 trim = function(x, uninformative, verbose = TRUE) {
+
+  if(is.function(uninformative))
+    uninformative = uninformative(x)
+
   # Iterative removal of uninformative leaves
   while(length(x) > 0) {
     removeLayer = intersect(uninformative, leaves(x))
