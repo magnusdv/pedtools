@@ -316,6 +316,14 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
                         returnLabs = returnLabs, verbose = FALSE))
     # Remove NULLs
     y = y[!sapply(y, is.null)]
+
+    # Flatten
+    y = lapply(y, function(yy) if(is.ped(yy)) list(yy) else yy) |>
+      unlist(recursive = FALSE, use.names = FALSE)
+
+    if(length(y) == 1)
+      y = y[[1]]
+
     return(y)
   }
 
@@ -334,7 +342,7 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
   remove = match.arg(remove)
 
   if(verbose)
-    message(sprintf("Removing individual(s) and their %s: %s", remove, toString(ids)))
+    message(sprintf("Removing individual(s) and their %s: %s", remove, trunc(ids)))
 
   # Descendants OR ancestors.
   remov = switch(remove,

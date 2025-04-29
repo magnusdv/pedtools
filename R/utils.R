@@ -179,3 +179,11 @@ smartfold = function(s, width = 10, breakAt = c(' ', '-', '.', ':', ')', ']')) {
   res = c(res, remaining)
   paste0(res, collapse = "\n")
 }
+
+trunc = function(x, printMax = 8, head = 3) {
+  if(length(x) <= printMax)
+    return(toString(x))
+  maxHead = max(1, min(head, printMax - 2))
+  y = c(head(x, maxHead), "...", x[length(x)])
+  toString(y)
+}

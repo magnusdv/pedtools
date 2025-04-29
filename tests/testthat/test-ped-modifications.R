@@ -136,6 +136,14 @@ test_that("adding and removing child restores original", {
 
 })
 
+test_that("removeIndividuals handles pedlists", {
+  x = list(ancestralPed(2), singleton(8))
+  y = removeIndividuals(x, 7) |> removeIndividuals(1:4, "ancestors") |>
+    removeIndividuals(5:6)
+  expect_identical(y, singleton(8))
+})
+
+
 test_that("addSon(), addDaughter(), addChild() creates children with correct sex", {
   x = singleton(1)
   expect_identical(x |> addSon(1, id = "A") |> getSex("A"), 1L)
