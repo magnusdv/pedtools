@@ -47,14 +47,15 @@ or add any alleles.}
 \code{names(afreq)} is used. Otherwise, the default action is to use all
 distinct alleles occurring in \code{allelematrix}, \code{geno} or \code{...}.}
 
-\item{name}{A character of the same length as \code{marker}, containing marker
-names.}
+\item{name}{A character of the same length as \code{marker} (recycled if length
+1), with new marker names. Use \code{NULL} or \code{NA} to remove names.}
 
-\item{chrom}{A character of the same length as \code{marker}, containing
-chromosome labels.}
+\item{chrom}{A character of the same length as \code{marker} (recycled if length
+1), with chromosome labels. Use \code{NULL} or \code{NA} to remove chromosome info.}
 
-\item{posMb}{A numeric of the same length as \code{marker}, containing the
-physical marker positions in megabases (or NA).}
+\item{posMb}{A numeric of the same length as \code{marker} (recycled if length 1),
+containing physical marker positions in Mb. Use \code{NULL} or \code{NA} to remove
+position info.}
 }
 \value{
 A copy of \code{x} with modified attributes.

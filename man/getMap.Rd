@@ -25,8 +25,8 @@ a matrix instead of a data frame.}
 
 \item{verbose}{A logical.}
 
-\item{map}{Either a data frame or the path to a map file. See Details
-regarding format.}
+\item{map}{Either a data frame, the path to a map file, or NULL (for removing
+map info). See Details regarding format.}
 
 \item{matchNames}{A logical; if TRUE, pre-existing marker names of \code{x} will
 be used to assign chromosome labels and positions from \code{map}.}

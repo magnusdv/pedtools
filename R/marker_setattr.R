@@ -10,12 +10,13 @@
 #'   (e.g., [founders()]).
 #' @param marker A vector of indices or names of one or several markers attached
 #'   to `x`.
-#' @param name A character of the same length as `marker`, containing marker
-#'   names.
-#' @param chrom A character of the same length as `marker`, containing
-#'   chromosome labels.
-#' @param posMb A numeric of the same length as `marker`, containing the
-#'   physical marker positions in megabases (or NA).
+#' @param name A character of the same length as `marker` (recycled if length
+#'   1), with new marker names. Use `NULL` or `NA` to remove names.
+#' @param chrom A character of the same length as `marker` (recycled if length
+#'   1), with chromosome labels. Use `NULL` or `NA` to remove chromosome info.
+#' @param posMb A numeric of the same length as `marker` (recycled if length 1),
+#'   containing physical marker positions in Mb. Use `NULL` or `NA` to remove
+#'   position info.
 #' @param strict A logical. If TRUE (default) the new frequencies cannot remove
 #'   or add any alleles.
 #'
@@ -343,15 +344,20 @@ setMarkername = function(x, marker = NULL, name) {
   }
 
   marker = marker %||% names(name) %||% seq_markers(x)
-  if(length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
+  nm = length(marker)
+  if(nm == 0)
+    stop2("Empty `marker` argument")
+
+  if(is.null(name))
+    name = NA
 
   name = as.character(name) # especially important to allow NA input
 
-  if(length(name) != length(marker))
-    stop2("Length of `name` must equal the number of markers")
-  if(!is.character(name))
-    stop2("Argument `name` must be a character vector")
+  if(length(name) == 1)
+    name = rep(name, nm)
+  else if(length(name) != nm)
+    stop2(sprintf("Length of `name` must equal 1 or the number of markers (%d)", nm))
+
   if (any(dig <- suppressWarnings(name == as.integer(name)), na.rm = TRUE))
     stop2("Marker name cannot consist entirely of digits: ", name[dig])
 
@@ -379,15 +385,19 @@ setChrom = function(x, marker = NULL, chrom) {
   }
 
   marker = marker %||% seq_markers(x)
-  if(length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
+  nm = length(marker)
+  if(nm == 0)
+    stop2("Empty `marker` argument")
+
+  if(is.null(chrom))
+    chrom = NA
 
   chrom = as.character(chrom)
-  if(length(chrom) != length(marker))
-    if(length(chrom) == 1)
-      chrom = rep(chrom, length(marker))
-  else
-    stop2("Length of `chrom` must equal the number of markers")
+
+  if(length(chrom) == 1)
+    chrom = rep(chrom, nm)
+  else if(length(chrom) != nm)
+    stop2(sprintf("Length of `chrom` must equal 1 or the number of markers (%d)", nm))
 
   idx = whichMarkers(x, markers = marker)
   mlist = x$MARKERS[idx]
@@ -410,10 +420,17 @@ setPosition = function(x, marker = NULL, posMb) {
   }
 
   marker = marker %||% seq_markers(x)
-  if(length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
-  if(length(posMb) != length(marker))
-    stop2("Length of `posMb` must equal the number of markers")
+  nm = length(marker)
+  if(nm == 0)
+    stop2("Empty `marker` argument")
+
+  if(is.null(posMb))
+    posMb = NA
+
+  if(length(posMb) == 1)
+    posMb = rep(posMb, nm)
+  else if(length(posMb) != nm)
+    stop2(sprintf("Length of `posMb` must equal 1 or the number of markers (%d)", nm))
 
   pos = suppressWarnings(as.numeric(posMb))
   bad = (!is.na(posMb) & is.na(pos)) | (!is.na(pos) & pos < 0)

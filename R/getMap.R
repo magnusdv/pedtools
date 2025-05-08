@@ -28,8 +28,8 @@
 #' @param merlin A logical mostly for internal use: If TRUE the function returns
 #'   a matrix instead of a data frame.
 #' @param verbose A logical.
-#' @param map Either a data frame or the path to a map file. See Details
-#'   regarding format.
+#' @param map Either a data frame, the path to a map file, or NULL (for removing
+#'   map info). See Details regarding format.
 #' @param matchNames A logical; if TRUE, pre-existing marker names of `x` will
 #'   be used to assign chromosome labels and positions from `map`.
 #' @param ... Further arguments passed to `read.table()`.
@@ -170,22 +170,28 @@ fixMerlinMap = function(map) {
 #' @importFrom utils read.table
 #' @export
 setMap = function(x, map, matchNames = NA, ...) {
-  if(!is.ped(x) && !is.pedList(x))
-    stop2("Input must be a `ped` object or a list of such")
 
   N = nMarkers(x)
   if(N == 0)
     stop2("The pedigree has no attached markers")
 
+  # Read in map if file path given
   if(is.character(map) && length(map) == 1)
     map = read.table(map, header = TRUE, as.is = TRUE, ...)
-
-  if(!is.data.frame(map))
-    stop2("`map` must be a data frame or file path")
 
   if(is.pedList(x)) {
     return(lapply(x, function(comp) setMap(comp, map = map, matchNames = matchNames)))
   }
+
+  ### Connected `ped` from here
+
+  # If NULL map, set chrom and pos to NA and return
+  if(is.null(map)) {
+    return(x |> setChrom(chrom = NA) |> setPosition(posMb = NA))
+  }
+
+  if(!is.data.frame(map))
+    stop2("`map` must be a data frame, a file path, or NULL")
 
   mapNames = map[[2]]
   xNames = name(x, 1:N)
