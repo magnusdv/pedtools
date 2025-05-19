@@ -63,10 +63,10 @@
 #' symbol. This takes a list of lists, whose names may include "topleft",
 #' "topright", "left", "right", "bottomleft", "bottom", "bottomright" and
 #' "inside". Each inner list should contain a character vector as its first
-#' element (with the text to be printed), followed by further arguments passed to
-#' [text()]. For example, `textAnnot = list(left = list(c(A = "1"), cex = 2))`
-#' prints a large number "1" to the left of individual A (if such an individual
-#' exists in the pedigree). See Examples.
+#' element (with the text to be printed), followed by further arguments passed
+#' to [text()]. For example, `textAnnot = list(left = list(c(A = "1"), cex =
+#' 2))` prints a large number "1" to the left of individual A (if such an
+#' individual exists in the pedigree). See Examples.
 #'
 #' The arguments `col`, `fill`, `lty` and `lwd` can all be indicated in a number
 #' of ways:
@@ -141,6 +141,8 @@
 #'   should be marked with a dot. (This is typically used in medical pedigrees
 #'   to indicate unaffected carriers of the disease allele.)
 #' @param deceased A vector of labels indicating deceased pedigree members.
+#' @param proband A vector of labels indicating proband individuals, to be
+#'   marked with an arrow in the plot.
 #' @param starred A vector of labels indicating pedigree members that should be
 #'   marked with a star in the pedigree plot.
 #' @param twins A data frame with columns `id1`, `id2` and `code`, passed on to
@@ -289,7 +291,7 @@ NULL
 .pedAnnotation = function(x, title = NULL, marker = NULL, sep = "/", missing = "-", showEmpty = FALSE,
                           labs = labels(x), foldLabs = 12, trimLabs = TRUE, col = 1, fill = NA, lty = 1, lwd = 1,
                           hatched = NULL, hatchDensity = 25, aff = NULL, carrier = NULL,
-                          deceased = NULL, starred = NULL, textAnnot = NULL,
+                          deceased = NULL, starred = NULL, proband = NULL, textAnnot = NULL,
                           textInside = NULL, textAbove = NULL, fouInb = "autosomal", ...) {
 
   res = list()
@@ -467,6 +469,15 @@ NULL
   # Convert to T/F
   res$deceasedTF = x$ID %in% deceased
 
+
+  # Proband -----------------------------------------------------------------
+
+  if(is.function(proband))
+    proband = proband(x)
+
+  # Convert to T/F
+  res$probandTF = x$ID %in% proband
+
   # Return list -------------------------------------------------------------
   res
 }
@@ -537,6 +548,17 @@ NULL
   mar = margins
   if(length(mar) == 1)
     mar = if(!is.null(title)) c(mar, mar, mar + 2.1, mar) else rep(mar, 4)
+
+  # Adjust margin for proband arrows?
+  if(any(prb <- annotation$probandTF)) {
+    idx = prb[alignment$plotord]
+    # Hard coded: All arrows are bottom left
+    arrowL = any(alignment$xall[idx] == xrange[1])
+    arrowB = any(alignment$yall[idx] == yrange[2])
+
+    extraMar = c(if(arrowB) 0.5 else 0, if(arrowL) 2.5 else 0, 0, 0)
+    mar = mar + extraMar
+  }
 
   # Extra padding (e.g. for ribd::ibdDraw() and ibdsim2::haploDraw())
   if(length(addSpace) == 1)
@@ -880,6 +902,7 @@ NULL
   title = annotation$title
   deceased = annotation$deceasedTF
   carrier = annotation$carrierTF
+  proband = annotation$probandTF
   textUnder = annotation$textUnder
   textAnnot = annotation$textAnnot
   textInside = annotation$textInside
@@ -907,6 +930,27 @@ NULL
     points(xall[idx], yall[idx] + boxh/2, pch = 16, cex = cex, col = col[ids])
   }
 
+  # Proband arrow
+  if(any(proband)) {
+    pos.arrow = "bottomleft" # Hard coded for now
+
+    mod = switch(pos.arrow,
+           bottomleft = list(x = -1, y = 1),
+           bottomright = list(x = 1, y = 1),
+           topleft = list(x = -1, y = 0),
+           topright = list(x = 1, y = 0))
+
+    idx = which(proband[plotord])
+    ids = plotord[idx]
+    corner.x = xall[idx] + .5*mod$x * boxw
+    corner.y = yall[idx] +    mod$y * boxh
+    arrows(x0 = corner.x + 1.7*mod$x * boxw,
+           y0 = corner.y + 0.9*mod$y * boxh - 0.9*(1-mod$y) * boxh,
+           x1 = corner.x + 0.5*mod$x * boxw,
+           y1 = corner.y,
+           lwd = 2*cex, length = .15)
+  }
+
   # Colour vector
   if (length(col) == 1)
     col = rep(col, nInd)
@@ -930,6 +974,7 @@ NULL
     text.default(xall, yall, labels = textAbove[plotord], cex = cex, col = colAbove,
          family = fam, font = fontAbove, pos = 3, offset = 0.5, xpd = NA)
   }
+
 
   if(!is.null(textAnnot)) {
     .addTxt(textAnnot[["topleft"]],     xall-boxw/2, yall,        pos = 2, plotord)

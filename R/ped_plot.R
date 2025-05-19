@@ -735,7 +735,8 @@ plot.list = function(x, ...) {
                density = annot1$density,
                angle = annot1$angle,
                carrierTF = mrg("carrierTF", FALSE),
-               deceasedTF = mrg("deceasedTF", FALSE))
+               deceasedTF = mrg("deceasedTF", FALSE),
+               probandTF = mrg("probandTF", FALSE))
 
   drawPed(align, annot, scaling = NULL, vsep2 = TRUE, ...)
 }
