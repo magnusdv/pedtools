@@ -112,6 +112,7 @@
 #' @param autoScale A logical. It TRUE, an attempt is made to adjust `cex` so
 #'   that the symbol dimensions are at least `minsize` inches. Default: FALSE.
 #' @param minsize A positive number, by default 0.15. (See `autoScale`.)
+#' @param debug A logical, turning on messages from the autoscale algorithm.
 #' @param marker Either a vector of names or indices referring to markers
 #'   attached to `x`, a `marker` object, or a list of such. The genotypes for
 #'   the chosen markers are written below each individual in the pedigree, in
@@ -525,7 +526,7 @@ NULL
 #' @export
 .pedScaling = function(alignment, annotation, cex = 1, symbolsize = 1, margins = 1,
                        addSpace = 0, xlim = NULL, ylim = NULL, vsep2 = FALSE,
-                       autoScale = FALSE, minsize = 0.15, ...) {
+                       autoScale = FALSE, minsize = 0.15, debug = FALSE, ...) {
 
   textUnder = annotation$textUnder
   textAbove = annotation$textAbove
@@ -641,11 +642,12 @@ NULL
 
     trycex = round(0.95 * cex, 2)
     trysymbolsize = round(1.05 * symbolsize, 2)
-    message(sprintf("autoScale: cex = %g, symbolsize = %g", trycex, trysymbolsize))
+    if(debug)
+      message(sprintf("autoScale: cex = %g, symbolsize = %g", trycex, trysymbolsize))
 
     return(.pedScaling(alignment, annotation, cex = trycex, symbolsize = trysymbolsize,
-                       margins = margins, addSpace = addSpace, xlim = xlim,
-                       ylim = ylim, vsep2 = vsep2, autoScale = TRUE, minsize = minsize))
+                       margins = margins, addSpace = addSpace, xlim = xlim, ylim = ylim,
+                       vsep2 = vsep2, autoScale = TRUE, minsize = minsize, debug = debug))
   }
 
   if (ht1 <= 0)

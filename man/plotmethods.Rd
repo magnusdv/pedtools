@@ -63,7 +63,7 @@
   vsep2 = FALSE,
   autoScale = FALSE,
   minsize = 0.15,
-  verbose = FALSE,
+  debug = FALSE,
   ...
 )
 
@@ -207,6 +207,8 @@ explicitly. Rarely needed by end users.}
 that the symbol dimensions are at least \code{minsize} inches. Default: FALSE.}
 
 \item{minsize}{A positive number, by default 0.15. (See \code{autoScale}.)}
+
+\item{debug}{A logical, turning on messages from the autoscale algorithm.}
 
 \item{scaling}{List of scaling parameters as returned by \code{\link[=.pedScaling]{.pedScaling()}}.}
 
