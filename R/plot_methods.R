@@ -950,7 +950,7 @@ NULL
            y0 = corner.y + 0.9*mod$y * boxh - 0.9*(1-mod$y) * boxh,
            x1 = corner.x + 0.5*mod$x * boxw,
            y1 = corner.y,
-           lwd = 2*cex, length = .15)
+           lwd = 1.2, length = .15)
   }
 
   # Colour vector
