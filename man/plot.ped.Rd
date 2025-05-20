@@ -172,18 +172,25 @@ plot(singleton(1), cex = 3, textAnnot = list(top="top", left="left",
 plot(x, arrows = TRUE, title = "DAG")
 
 # Medical pedigree
-plot(x, aff = "boy", carrier = "mo")
+plot(x, carrier = "mo", aff = "boy", proband = "boy")
 
 # Miscarriage
 plot(x, miscarriage = "boy", deceased = "boy", labs = founders)
 
+# Affected child of first cousins
+y = cousinPed(1, symmetric = TRUE, child = TRUE)
+plot(y, aff = leaves, proband = leaves)
+
+# Same, with straight legs
+plot(y, aff = leaves, proband = leaves, straight = TRUE)
+
 # Twins
-x = nuclearPed(children = c("tw1", "tw2", "tw3"))
-plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
-plot(x, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
+z = nuclearPed(children = c("tw1", "tw2", "tw3"))
+plot(z, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 1)) # MZ
+plot(z, twins = data.frame(id1 = "tw1", id2 = "tw2", code = 2)) # DZ
 
 # Triplets
-plot(x, twins = data.frame(id1 = c("tw1", "tw2"),
+plot(z, twins = data.frame(id1 = c("tw1", "tw2"),
                            id2 = c("tw2", "tw3"),
                            code = 2))
 
@@ -192,9 +199,6 @@ plot(selfingPed(2))
 
 # Complex pedigree: Quadruple half first cousins
 plot(quadHalfFirstCousins())
-
-# Straight legs
-plot(quadHalfFirstCousins(), align = c(0,0))
 
 # Lists of multiple pedigree
 plot(list(singleton(1), nuclearPed(1), linearPed(2)))
