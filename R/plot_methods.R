@@ -150,6 +150,8 @@
 #'   the `relation` parameter of [kinship2::plot.pedigree()].
 #' @param miscarriage A vector of labels indicating miscarriages, shown as
 #'   triangles in the pedigree plot.
+#' @param straight A logical, indicating if the plot should (attempt to) use
+#'   straight lines everywhere. Default: FALSE.
 #' @param packed,width,align Parameters passed on to
 #'   [kinship2::align.pedigree()]. Can usually be left untouched.
 #' @param spouseOrder An optional vector (or list of vectors) indicating plot
@@ -196,7 +198,8 @@ NULL
 #' @export
 .pedAlignment = function(x = NULL, plist = NULL, arrows = FALSE, twins = NULL,
                          miscarriage = NULL, packed = TRUE, width = 10,
-                         align = c(1.5, 2), spouseOrder = NULL, hints = NULL, ...) {
+                         straight = FALSE, align = NULL,
+                         spouseOrder = NULL, hints = NULL, ...) {
 
   if(hasSelfing(x) && !arrows) {
     message("Pedigree has selfing, switching to DAG mode. Use `arrows = TRUE` to avoid this message.")
@@ -227,6 +230,7 @@ NULL
   }
 
   k2ped = as_kinship2_pedigree(x, twins = twins)
+  align = align %||% if(straight) c(0,0) else c(1.5, 2)
   plist = kinship2::align.pedigree(k2ped, packed = packed, width = width, align = align, hints = hints)
 
   # Catch missing persons (kindepth bug!)

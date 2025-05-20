@@ -17,7 +17,8 @@
   miscarriage = NULL,
   packed = TRUE,
   width = 10,
-  align = c(1.5, 2),
+  straight = FALSE,
+  align = NULL,
   spouseOrder = NULL,
   hints = NULL,
   ...
@@ -103,6 +104,9 @@ triangles in the pedigree plot.}
 
 \item{packed, width, align}{Parameters passed on to
 \code{\link[kinship2:align.pedigree]{kinship2::align.pedigree()}}. Can usually be left untouched.}
+
+\item{straight}{A logical, indicating if the plot should (attempt to) use
+straight lines everywhere. Default: FALSE.}
 
 \item{spouseOrder}{An optional vector (or list of vectors) indicating plot
 ordering for spouses. (This is converted into a matrix and forward as
