@@ -80,15 +80,15 @@ setMutmod = function(x, markers = NULL, ..., update = FALSE) {
     stop2("Package `pedmut` must be installed in order to include mutation models")
 
   opts = list(...)
-  markers = markers %||% seq_len(nMarkers(x))
-  mIdx = whichMarkers(x, markers)
 
   # Remove all models?
   if("model" %in% names(opts) && is.null(opts$model)) {
-    for(i in mIdx)
-      mutmod(x, i) = NULL
+    mutmod(x, markers) = NULL
     return(x)
   }
+
+  markers = markers %||% seq_len(nMarkers(x))
+  mIdx = whichMarkers(x, markers)
 
   for(i in mIdx) {
 

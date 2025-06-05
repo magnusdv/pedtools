@@ -147,8 +147,6 @@ NULL
 #' @rdname marker_inplace
 #' @export
 `mutmod<-.list` = function(x, marker = NULL, ..., value) {
-  marker = marker %||% seq_markers(x)
-
   for(i in seq_along(x))
     mutmod(x[[i]], marker) = value
   x
