@@ -9,7 +9,7 @@ setSNPs(x, snpData)
 \arguments{
 \item{x}{A \code{ped} object.}
 
-\item{snpData}{A data frame with 6 columns. See Details.}
+\item{snpData}{A data frame with at least 6 columns. See Details.}
 }
 \value{
 A copy of \code{x} with the indicated SNP markers attached.
@@ -19,7 +19,8 @@ Create and attach a list of empty SNP markers with specified position and
 allele frequencies.
 }
 \details{
-The data frame \code{snpData} should contain the following columns, in order:
+The first 6 columns of \code{snpData} should be as follows, in order. (The column
+names do not matter.)
 \itemize{
 \item \code{CHROM}: Chromosome (character)
 \item \code{MARKER}: Marker name (character)
@@ -29,11 +30,14 @@ The data frame \code{snpData} should contain the following columns, in order:
 \item \code{FREQ1}: Allele frequency of \code{A1} (number in \verb{[0,1]})
 }
 
-The actual column names do not matter.
-
 Each column must be of the stated type, or coercible to it. (For example,
 \code{CHROM}, \code{A1} and \code{A2} may be given as numbers, but will be internally
 converted to characters.)
+
+Subsequent columns are assumed to contain genotypes. These columns must be
+named with the IDs matching individuals in \code{x}. The genotypes must use the
+alleles given in \code{A1} and \code{A2}, and can be formatted with or without
+separator, e.g. \code{A/C} or \code{AC}.
 }
 \examples{
 
@@ -43,9 +47,12 @@ snps = data.frame(
   MB     = c(1.23, 2.34),
   A1     = c("A", "G"),
   A2     = c("C", "C"),
-  FREQ1  = c(0.7, 0.12))
+  FREQ1  = c(0.7, 0.12),
+  `2`    = c("A/C", "G/C"),
+  check.names = FALSE)       # Note: `check.names = FALSE`!
 
 x = setSNPs(nuclearPed(), snpData = snps)
+x
 
 # Inspect the results:
 getMap(x)
