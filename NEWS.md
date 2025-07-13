@@ -1,3 +1,20 @@
+# pedtools 2.8.2
+
+* Extend `setSNPs()` to handle genotype columns. (Previously, this function could only attach empty SNPs.) 
+
+* Update the default chromosome lengths used in `distributeMarkers()`, syncing with updates in `ibdsim2`.
+
+* New pedigree plot argument `proband` for adding arrows to selected pedigree members.
+
+* New plot argument `straight` for (attempting to use) straight connectors in pedigree plots.
+
+## Minor fixes
+
+* Add debug option for auto-scaling, avoiding excessive messages.
+* Optimise removal of mutation models with `setMutmod(..., model = NULL)`.
+* Allow to remove marker maps with `setMap(x, map = NULL)`.
+
+
 # pedtools 2.8.1
 
 ## New features
