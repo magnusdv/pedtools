@@ -190,7 +190,7 @@ as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
 
     mlist = getMarkers(x, markers)
     geno = do.call(cbind,
-      lapply(mlist, function(m) format(m, sep = sep, missing = missing)))
+      lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing)))
 
     # Headers of genotype columns: name if present, otherwise <idx>
     nms = vapply(mlist, name.marker, character(1))

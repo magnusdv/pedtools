@@ -1,11 +1,15 @@
 
 #' @export
-format.marker = function(x, sep = "/", missing = "-", ...) {
-  als = c(missing, alleles(x))
+format.marker = function(x, sep = "/", missing = "-", Xchrom = NULL, ...) {
+  als = c(missing, alleles.marker(x))
   al1 = als[x[, 1] + 1]
   al2 = als[x[, 2] + 1]
   gt = paste(al1, al2, sep = sep)
-  if (isXmarker(x)) {
+
+  if(is.null(Xchrom))
+    Xchrom = isXmarker.marker(x)
+
+  if(Xchrom) {
     male = attr(x, 'sex') == 1
 
     # Male 'homozygosity': Just show first allele
@@ -15,10 +19,14 @@ format.marker = function(x, sep = "/", missing = "-", ...) {
   gt
 }
 
+
 #' @export
-print.marker = function(x, sep = "/", missing = "-", ...) {
+print.marker = function(x, sep = "/", missing = "-", Xchrom = NULL, ...) {
   ids = attr(x, 'pedmembers')
-  gt = format(x, sep = sep, missing = missing)
+  if(is.null(Xchrom))
+    Xchrom = isXmarker.marker(x)
+
+  gt = format.marker(x, sep = sep, missing = missing, Xchrom = Xchrom)
 
   df = data.frame(id = ids, gt = gt)
 
@@ -30,8 +38,8 @@ print.marker = function(x, sep = "/", missing = "-", ...) {
   df = commentAndRealign(df, 1, rep(TRUE, nrow(df)), " ")
 
   # If X: add question mark for heterozygous males
-  if(isXmarker(x)) {
-    maleHet = attr(x, "sex") == 1 & !gt %in% c(alleles(x), missing)
+  if(Xchrom) {
+    maleHet = attr(x, "sex") == 1 & !gt %in% c(alleles.marker(x), missing)
     df = commentAndRealign(df, 2, maleHet, "?")
   }
 

@@ -4,7 +4,14 @@
 \alias{getGenotypes}
 \title{Genotype matrix}
 \usage{
-getGenotypes(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
+getGenotypes(
+  x,
+  ids = NULL,
+  markers = NULL,
+  sep = "/",
+  missing = "-",
+  Xchrom = NULL
+)
 }
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
@@ -20,6 +27,9 @@ NULL (default) all markers are included.}
 genotypes.}
 
 \item{missing}{A single string to be used for missing alleles.}
+
+\item{Xchrom}{A single logical, or NULL (default). May be used to indicate if
+all (or none) markers are on X, if this is known in advance.}
 }
 \value{
 \code{getGenotypes()} returns a character matrix with \code{length(ids)} rows and

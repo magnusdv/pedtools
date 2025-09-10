@@ -201,8 +201,8 @@ isXmarker.default = function(x, ...) {
 #' @rdname marker_prop
 #' @export
 isXmarker.marker = function(x, ...) {
-  chr = chrom(x)
-  isTRUE(chr == "X" || chr == "23")
+  chr = chrom.marker(x)
+  !is.na(chr) && (chr == "X" || chr == "23")
 }
 
 #' @rdname marker_prop
@@ -240,7 +240,7 @@ allowsMutations.default = function(x, ...) {
 #' @rdname marker_prop
 #' @export
 allowsMutations.marker = function(x, ...) {
-  mut = mutmod(x)
+  mut = mutmod.marker(x)
   !is.null(mut) || !trivialMut(mut)
 }
 

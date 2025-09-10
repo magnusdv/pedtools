@@ -12,6 +12,8 @@
 #' @param sep A single string to be used as allele separator in marker
 #'   genotypes.
 #' @param missing A single string to be used for missing alleles.
+#' @param Xchrom A single logical, or NULL (default). May be used to indicate if
+#' all (or none) markers are on X, if this is known in advance.
 #'
 #' @return
 #'
@@ -38,8 +40,10 @@
 #' getGenotypes(x, ids = typedMembers)
 #'
 #' @export
-getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-") {
+getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-", Xchrom = NULL) {
+
   discon = !is.ped(x)
+
   if(discon && !is.pedList(x)) {
     stop2("The first argument must be a `ped` object or a list of such")
   }
@@ -66,7 +70,7 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
     # Extract genotypes from each component
     compList = lapply(x, function(comp) {
       ids_comp = if(!is.null(ids)) .myintersect(ids, labels(comp))
-      getGenotypes(comp, ids = ids_comp, markers = markers)
+      getGenotypes(comp, ids = ids_comp, markers = markers, sep = sep, missing = missing, Xchrom = Xchrom)
     })
 
     # Bind into single matrix
@@ -99,10 +103,12 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-")
 
   # Genotype matrix with all individuals
   mlist = getMarkers(x, markers)
-  g = do.call(cbind, lapply(mlist, function(m) format(m, sep = sep, missing = missing)))
+  g = lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing, Xchrom = Xchrom)) |>
+    unlist(use.names = FALSE)
+  dim(g) = c(length(x$ID), length(markers))
 
   # Set dimnames
-  rownames(g) = labels(x)
+  rownames(g) = x$ID
   colnames(g) = mNames
 
   # Return subset
