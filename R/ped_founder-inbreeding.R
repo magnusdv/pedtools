@@ -174,14 +174,8 @@ setFounderInbreeding = function(x, ids = NULL, value, chromType = "autosomal") {
 
   ids = ids %||% intersect(nms, fou) %||% fou
 
-  if(is.null(nms) && length(value) == 1)
-    value = rep_len(value, length(ids))
-
-  if(is.null(nms) && length(ids) != length(value))
-    stop2("When `value` is unnamed, its length must equal 1 or `length(ids)`")
-
-  if(!is.null(nms) && !all(ids %in% nms))
-    stop2("Individual not included in `value`: ", setdiff(ids, nms))
+  if(length(ids) == 0)
+    return(x)
 
   if(anyDuplicated.default(ids) > 0)
     stop2("Duplicated ID label: ", ids[duplicated(ids)])
@@ -189,6 +183,21 @@ setFounderInbreeding = function(x, ids = NULL, value, chromType = "autosomal") {
   if(any(!ids %in% fou)) {
     internalID(x, ids) # quick hack to catch unknown labels
     stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
+  }
+
+  # Synchronise `ids` with `names(value)`
+  if(is.null(nms)) {
+    nval = length(value)
+    if(nval == 1)
+      value = rep_len(value, length(ids))
+    else if(nval != length(ids))
+      stop2("When `value` is unnamed, its length must equal 1 or `length(ids)`")
+  }
+  else {
+    if(!all(ids %in% nms))
+      stop2("Individual not included in `value`: ", setdiff(ids, nms))
+
+    value = unname(value[ids])
   }
 
   chromType = match.arg(tolower(chromType), c("autosomal", "x"))
