@@ -619,3 +619,63 @@ descentPaths = function(x, ids = founders(x), internal = FALSE) {
 }
 
 .descentPaths = descentPaths
+
+
+#' Extract singletons from pedigree
+#'
+#' @param x A `ped` object or a list of such.
+#' @param ids A vector of ID labels (coercible to character).
+#' @param keepFI A logical indicating if founder inbreeding should be preserved,
+#'   if present.
+#'
+#' @returns A list of singletons.
+#'
+#' @examples
+#'
+#' x = nuclearPed() |> addMarker(geno = c("1/1", NA, "1/2"))
+#'
+#' # Extract father and child
+#' extractSingletons(x, ids = c(1,3))
+#'
+#' @export
+extractSingletons = function(x, ids = NULL, keepFI = TRUE) {
+  ids = as.character(ids)
+
+  if(is.pedList(x)) {
+    comps = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
+    res = lapply(unique.default(comps), function(co)
+      extractSingletons(x[[co]], ids = ids[comps == co], keepFI = keepFI))
+
+    return(unlist(res, recursive = FALSE)[ids])
+  }
+
+  idsInt = internalID(x, ids) |> .setnames(ids)
+  sex = getSex(x, ids, named = TRUE)
+
+  y = singletons(ids, sex = sex) |> .setnames(ids)
+
+  if(keepFI && !is.null(x$FOUNDER_INBREEDING)) {
+    y = setFounderInbreeding(y, value = founderInbreeding(x, named = TRUE))
+  }
+
+  # Copy marker data
+  for(id in ids) {
+    idi = idsInt[[id]]
+    sexi = sex[[id]]
+
+    mlist = lapply(x$MARKERS, function(m) {
+      newm = m[idi, ]
+      attr = attributes(m)
+      attr$pedmembers = id
+      attr$sex = sexi
+      attr$dim = c(1L,2L)
+      attributes(newm) = attr
+      newm
+    })
+    class(mlist) = "markerList"
+
+    y[[id]]$MARKERS = mlist
+  }
+
+  y
+}
