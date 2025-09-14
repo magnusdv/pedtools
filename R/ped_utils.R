@@ -271,7 +271,7 @@ hasCommonAncestor = function(x) {
 }
 
 validate_sex = function(sex, nInd, zero_allowed = TRUE) {
-  if(length(sex) == 0)
+  if(length(sex) == 0 && nInd > 0)
     stop2(sprintf("`%s` cannot be empty", deparse(substitute(sex))))
   if(length(sex) > nInd)
     stop2(sprintf("`%s` is longer than the number of individuals",
