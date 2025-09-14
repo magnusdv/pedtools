@@ -623,12 +623,20 @@ descentPaths = function(x, ids = founders(x), internal = FALSE) {
 
 #' Extract singletons from pedigree
 #'
+#' Extract one or more individuals from a pedigree, returning a list of
+#' singletons. Marker data and founder inbreeding (if present) are preserved.
+#'
 #' @param x A `ped` object or a list of such.
-#' @param ids A vector of ID labels (coercible to character).
+#' @param ids A vector of ID labels (coercible to character). If empty, all
+#'   individuals are extracted.
+#' @param simplify1 A logical indicating if the output should be simplified to a
+#'   singleton object (i.e., removing the outer list structure) if `ids` has
+#'   length 1.
 #' @param keepFI A logical indicating if founder inbreeding should be preserved,
 #'   if present.
 #'
-#' @returns A list of singletons.
+#' @returns A list of singletons. If `length(ids) == 1` and `simplify1 = TRUE`,
+#'   a single `singleton` object is returned instead.
 #'
 #' @examples
 #'
@@ -637,16 +645,29 @@ descentPaths = function(x, ids = founders(x), internal = FALSE) {
 #' # Extract father and child
 #' extractSingletons(x, ids = c(1,3))
 #'
+#' # Extract all members
+#' extractSingletons(x)
+#'
+#'
 #' @export
-extractSingletons = function(x, ids = NULL, keepFI = TRUE) {
-  ids = as.character(ids)
+extractSingletons = function(x, ids = NULL, simplify1 = TRUE, keepFI = TRUE) {
+  if(is.null(ids))
+    ids = labels(x)
+  else
+    ids = as.character(ids)
 
   if(is.pedList(x)) {
-    comps = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
-    res = lapply(unique.default(comps), function(co)
-      extractSingletons(x[[co]], ids = ids[comps == co], keepFI = keepFI))
 
-    return(unlist(res, recursive = FALSE)[ids])
+    comps = getComponent(x, ids, checkUnique = TRUE, errorIfUnknown = TRUE)
+
+    resList = lapply(unique.default(comps), function(co)
+      extractSingletons(x[[co]], ids = ids[comps == co], simplify1 = FALSE, keepFI = keepFI))
+    res = unlist(resList, recursive = FALSE)[ids]
+
+    if(simplify1 && length(ids) == 1)
+      return(res[[1]])
+
+    return(res)
   }
 
   idsInt = internalID(x, ids) |> .setnames(ids)
@@ -677,5 +698,8 @@ extractSingletons = function(x, ids = NULL, keepFI = TRUE) {
     y[[id]]$MARKERS = mlist
   }
 
-  y
+  if(simplify1 && length(ids) == 1)
+    y[[1]]
+  else
+    y
 }

@@ -4,21 +4,28 @@
 \alias{extractSingletons}
 \title{Extract singletons from pedigree}
 \usage{
-extractSingletons(x, ids = NULL, keepFI = TRUE)
+extractSingletons(x, ids = NULL, simplify1 = TRUE, keepFI = TRUE)
 }
 \arguments{
 \item{x}{A \code{ped} object or a list of such.}
 
-\item{ids}{A vector of ID labels (coercible to character).}
+\item{ids}{A vector of ID labels (coercible to character). If empty, all
+individuals are extracted.}
+
+\item{simplify1}{A logical indicating if the output should be simplified to a
+singleton object (i.e., removing the outer list structure) if \code{ids} has
+length 1.}
 
 \item{keepFI}{A logical indicating if founder inbreeding should be preserved,
 if present.}
 }
 \value{
-A list of singletons.
+A list of singletons. If \code{length(ids) == 1} and \code{simplify1 = TRUE},
+a single \code{singleton} object is returned instead.
 }
 \description{
-Extract singletons from pedigree
+Extract one or more individuals from a pedigree, returning a list of
+singletons. Marker data and founder inbreeding (if present) are preserved.
 }
 \examples{
 
@@ -26,5 +33,9 @@ x = nuclearPed() |> addMarker(geno = c("1/1", NA, "1/2"))
 
 # Extract father and child
 extractSingletons(x, ids = c(1,3))
+
+# Extract all members
+extractSingletons(x)
+
 
 }
