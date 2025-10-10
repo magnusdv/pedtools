@@ -1,7 +1,7 @@
 #' Merge two pedigrees
 #'
-#' This function merges two `ped` objects, joining them at the indicated
-#' individuals. Only `ped` objects without marker data are supported.
+#' This function merges two pedigrees, joining them at the indicated
+#' individuals.
 #'
 #' Some internal checks are done to ensure that merging individuals are
 #' compatible in terms of sex and parents.
@@ -27,24 +27,9 @@
 #' @examples
 #'
 #' ############
-#' # Example 1
-#' # A family trio where each parent have first cousin parents.
-#' ############
-#'
-#' # Trio
-#' x = nuclearPed(1)
-#'
-#' # Add paternal family
-#' pat = cousinPed(1, child = TRUE)
-#' x = mergePed(x, pat, by = c("1" = "9"))
-#'
-#' # Maternal family
-#' mat = cousinPed(1, child = TRUE) |> swapSex("9")
-#' x = mergePed(x, mat, by = c("2" = "9"))
-#'
-#' # Relabel (Alternative: add `relabel = TRUE` in the previous call)
-#' x = relabel(x, "asPlot")
-#'
+#' # Example 1: Merge 2 trios by fusing the fathers
+#' x1 = x2 = nuclearPed()
+#' x = mergePed(x1, x2, by = c("1" = "1"))
 #' plot(x)
 #'
 #'
@@ -56,18 +41,16 @@
 #' y = cousinPed(degree = 1)
 #'
 #' # Create two sisters
-#' motherPed = nuclearPed(2, sex = 2)
+#' sisters = nuclearPed(2, sex = 2)
 #'
-#' # Plot to see who is who: `plotPedList(list(y, motherPed))`
+#' # Plot to see who is who: `plot(list(y, sisters))`
 #'
 #' # Merge
-#' z = mergePed(y, motherPed, by = c("4" = 3, "6" = 4), relabel = TRUE)
+#' z = mergePed(y, sisters, by = c("4" = 3, "6" = 4), relabel = TRUE)
 #' plot(z)
 #'
 #' @export
 mergePed = function(x, y, by = NULL, relabel = FALSE, ...) {
-  if (!is.null(x$MARKERS) || !is.null(y$MARKERS))
-    stop2("Merging is only supported for pedigrees without marker data")
 
   xlabs = labels(x)
   ylabs = labels(y)
@@ -130,11 +113,28 @@ mergePed = function(x, y, by = NULL, relabel = FALSE, ...) {
     }
   }
 
-  xm = as.data.frame(x)
-  ym = as.data.frame(y)
+  # Combine as data.frames, without marker data
+  xm = x |> selectMarkers(NULL) |> as.data.frame()
+  ym = y |> selectMarkers(NULL) |> as.data.frame()
   zm = rbind(xm[!xlabs %in% del$x, ], ym[!ylabs %in% del$y, ])
 
   z = ped(id = zm$id, fid = zm$fid, mid = zm$mid, sex = zm$sex, ...)
+
+  # Transfer marker data, if any
+  xmark = hasMarkers(x)
+  ymark = hasMarkers(y)
+  if(xmark && !ymark)
+    z = transferMarkers(from = x, to = z)
+  else if(!xmark && ymark)
+    z = transferMarkers(from = y, to = z)
+  else if(xmark && ymark) {
+    # Hack: adjust labels
+    if(length(shared <- intersect(xlabs, ylabs)))
+      y = relabel(y, old = shared, new = paste0(shared, ".y"))
+    z = z |> transferMarkers(from = list(x,y), to = _)
+  }
+
+  # Final pedigree: Relabel if requested
   if(relabel)
     z = relabel(z, "asPlot")
 

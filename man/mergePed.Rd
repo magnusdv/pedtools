@@ -24,8 +24,8 @@ is run on the merged pedigree before returning.}
 A \code{ped} object.
 }
 \description{
-This function merges two \code{ped} objects, joining them at the indicated
-individuals. Only \code{ped} objects without marker data are supported.
+This function merges two pedigrees, joining them at the indicated
+individuals.
 }
 \details{
 Some internal checks are done to ensure that merging individuals are
@@ -39,24 +39,9 @@ In such cases, the relevant members of \code{y} get a suffix \code{.y}.
 \examples{
 
 ############
-# Example 1
-# A family trio where each parent have first cousin parents.
-############
-
-# Trio
-x = nuclearPed(1)
-
-# Add paternal family
-pat = cousinPed(1, child = TRUE)
-x = mergePed(x, pat, by = c("1" = "9"))
-
-# Maternal family
-mat = cousinPed(1, child = TRUE) |> swapSex("9")
-x = mergePed(x, mat, by = c("2" = "9"))
-
-# Relabel (Alternative: add `relabel = TRUE` in the previous call)
-x = relabel(x, "asPlot")
-
+# Example 1: Merge 2 trios by fusing the fathers
+x1 = x2 = nuclearPed()
+x = mergePed(x1, x2, by = c("1" = "1"))
 plot(x)
 
 
@@ -68,12 +53,12 @@ plot(x)
 y = cousinPed(degree = 1)
 
 # Create two sisters
-motherPed = nuclearPed(2, sex = 2)
+sisters = nuclearPed(2, sex = 2)
 
-# Plot to see who is who: `plotPedList(list(y, motherPed))`
+# Plot to see who is who: `plot(list(y, sisters))`
 
 # Merge
-z = mergePed(y, motherPed, by = c("4" = 3, "6" = 4), relabel = TRUE)
+z = mergePed(y, sisters, by = c("4" = 3, "6" = 4), relabel = TRUE)
 plot(z)
 
 }
