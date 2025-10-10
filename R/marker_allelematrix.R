@@ -4,9 +4,12 @@
 #' individuals/markers simultaneously
 #'
 #' If the `alleles` argument of `setAlleles()` is not a matrix, it is recycled
-#' (if necessary), and converted into a matrix of the correct dimensions. For
-#' example, setting `alleles = 0` gives a simple way of removing the genotypes
-#' of some or all individuals (while keeping the markers attached).
+#' (if necessary), and converted into a matrix of the correct dimensions.
+#'
+#' `removeGenotypes()` is a convenience function for removing the genotypes of
+#' specified individuals and markers. It is equivalent to `setAlleles(...,
+#' alleles = 0)`. In particular, `removeGenotypes(x)` removes all genotypes from
+#' the pedigree `x`, but leaves all locus attributes intact.
 #'
 #' @param x A `ped` object or a list of such
 #' @param ids A vector of ID labels. If NULL (default) all individuals are
@@ -39,7 +42,7 @@
 #' stopifnot(identical(mat1[2:3, 3:4], mat2))
 #'
 #' # Remove all genotypes
-#' y = setAlleles(x, alleles = 0)
+#' y = removeGenotypes(x)
 #' y
 #'
 #' # Setting a single genotype
@@ -116,6 +119,7 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   amSubset
 }
 
+
 #' @rdname getAlleles
 #' @export
 setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
@@ -182,6 +186,11 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
     setAllelesComponent(x)
 }
 
+#' @rdname getAlleles
+#' @export
+removeGenotypes = function(x, ids = NULL, markers = NULL) {
+  setAlleles(x, ids = ids, markers = markers, alleles = 0)
+}
 
 # For internal use
 allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0, sep = NULL, validate = TRUE) {

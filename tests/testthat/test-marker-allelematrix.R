@@ -6,13 +6,13 @@ x = as.ped(df, locus = list(list(alleles = 1:2), list(alleles = 2:3)))
 
 
 test_that("`getAlleles()` returns a character matrix", {
-  a = getAlleles(x, ids = "3", marker = "M1")
+  a = getAlleles(x, ids = "3", markers = "M1")
   expect_true(is.character(a) && is.matrix(a) && all(dim(a) == 1:2))
 
-  b1 = getAlleles(x, ids = character(0), marker = "M1")
+  b1 = getAlleles(x, ids = character(0), markers = "M1")
   expect_true(is.character(b1) && is.matrix(b1) && all(dim(b1) == c(0,2)))
 
-  b2 = getAlleles(x, ids = "3", marker = character(0))
+  b2 = getAlleles(x, ids = "3", markers = character(0))
   expect_true(is.character(b2) && is.matrix(b2) && all(dim(b2) == c(1,0)))
 })
 
@@ -44,12 +44,17 @@ test_that("`getAlleles()` and `setAlleles()` are inverses", {
 })
 
 test_that("`setAlleles()` catches errors", {
-  expect_error(setAlleles(x, marker = 3, alleles = 0), "Marker index out of range")
 
   expect_error(setAlleles(x, alleles = 3), "Invalid allele for marker `M1`: 3")
 
   expect_error(setAlleles(x, ids = 4:5, alleles = 0), "Unknown ID label: 5")
 
-  expect_error(setAlleles(x, ids = 1, alleles = 1:3), "")
+  expect_error(setAlleles(x, markers = 3, alleles = 0), "Marker index out of range")
+
+  expect_error(setAlleles(x, ids = 1, alleles = 1:3))
 })
 
+test_that("`removeGenotypes()` catches errors", {
+  expect_error(removeGenotypes(x, ids = 4:5), "Unknown ID label: 5")
+  expect_error(removeGenotypes(x, markers = 3), "Marker index out of range")
+})

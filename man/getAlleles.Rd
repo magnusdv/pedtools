@@ -3,11 +3,14 @@
 \name{getAlleles}
 \alias{getAlleles}
 \alias{setAlleles}
+\alias{removeGenotypes}
 \title{Allele matrix manipulation}
 \usage{
 getAlleles(x, ids = NULL, markers = NULL)
 
 setAlleles(x, ids = NULL, markers = NULL, alleles)
+
+removeGenotypes(x, ids = NULL, markers = NULL)
 }
 \arguments{
 \item{x}{A \code{ped} object or a list of such}
@@ -37,9 +40,11 @@ individuals/markers simultaneously
 }
 \details{
 If the \code{alleles} argument of \code{setAlleles()} is not a matrix, it is recycled
-(if necessary), and converted into a matrix of the correct dimensions. For
-example, setting \code{alleles = 0} gives a simple way of removing the genotypes
-of some or all individuals (while keeping the markers attached).
+(if necessary), and converted into a matrix of the correct dimensions.
+
+\code{removeGenotypes()} is a convenience function for removing the genotypes of
+specified individuals and markers. It is equivalent to \code{setAlleles(..., alleles = 0)}. In particular, \code{removeGenotypes(x)} removes all genotypes from
+the pedigree \code{x}, but leaves all locus attributes intact.
 }
 \examples{
 # Setup: Pedigree with two markers
@@ -53,7 +58,7 @@ mat2 = getAlleles(x, ids = 2:3, markers = "m2")
 stopifnot(identical(mat1[2:3, 3:4], mat2))
 
 # Remove all genotypes
-y = setAlleles(x, alleles = 0)
+y = removeGenotypes(x)
 y
 
 # Setting a single genotype
