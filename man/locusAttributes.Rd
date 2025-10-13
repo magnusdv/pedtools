@@ -50,63 +50,55 @@ markers are erased. If FALSE, attributes not affected by the submitted
 }
 \value{
 \itemize{
-\item \code{getLocusAttributes} : a list of lists. If the markers has names,
+\item \code{getLocusAttributes}: a list of lists. If the markers have names,
 these are used to name the outer list. If \code{simplify = TRUE} and \code{attribs} is
 a single element, the output is a simple list.
-\item \code{setLocusAttributes} : a modified version of \code{x}.
+\item \code{setLocusAttributes}: a modified version of \code{x}.
 }
 }
 \description{
 Retrieve or modify the attributes of attached markers
 }
 \details{
-The default setting \code{markers = NULL} select markers automatically, depending
-on the \code{matchNames} argument. If \code{matchNames = FALSE}, all markers are chosen
-If \code{matchNames = TRUE}, markers will be matched against the \code{name} entries in
-\code{locusAttributes} (and an error issued if these are missing).
+The default setting \code{markers = NULL} selects markers automatically, depending
+on the \code{matchNames} argument. If \code{matchNames = FALSE}, all markers are
+chosen. If \code{matchNames = TRUE}, markers will be matched against the \code{name}
+entries in \code{locusAttributes} (and an error issued if any are missing).
 
 Note that the default value \code{NA} of \code{matchNames} is changed to TRUE if all
-entries of \code{locusAttributes} have a \code{name} component which matches the name a
-an attached marker.
+entries of \code{locusAttributes} have a \code{name} component which matches the name
+of an attached marker.
 
 Possible attributes given in \code{locusAttributes} are as follows (default values
-in parenthesis):
+in parentheses):
 \itemize{
-\item \code{alleles} : a character vector with allele labels
-\item \code{afreq} :  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
+\item \code{alleles}: a character vector with allele labels
+\item \code{afreq}:  a numeric vector with allele frequencies (\code{rep.int(1/L, L)},
 where \code{L = length(alleles)})
-\item \code{name} : marker name (NA)
-\item \code{chrom} : chromosome number (NA)
-\item \code{posMb} : physical location in megabases (NA)
-\item \code{mutmod} : mutation model, or model name (NULL)
-\item \code{rate} : mutation model parameter (NULL)
+\item \code{name}: marker name (NA)
+\item \code{chrom}: chromosome number (NA)
+\item \code{posMb}: physical location in megabases (NA)
+\item \code{mutmod}: mutation model, or model name (NULL)
+\item \code{rate}: mutation model parameter (NULL)
 }
 }
 \examples{
-x = singleton(1)
-x = addMarkers(x, marker(x, name = "m1", alleles = 1:2))
-x = addMarkers(x, marker(x, name = "m2", alleles = letters[1:2], chrom = "X"))
-
-# Change frequencies at both loci
-y = setLocusAttributes(x, markers = 1:2, loc = list(afreq = c(.1, .9)))
-getMarkers(y, 1)
-
-# Set the same mutation model at both loci
-z = setLocusAttributes(x, markers = 1:2, loc = list(mutmod = "proportional", rate = .1))
-mutmod(z, 1)
+x = singleton(1) |>
+  addMarker(name = "m1", alleles = 1:2) |>
+  addMarker(name = "m2", alleles = letters[1:2], chrom = "X")
 
 # By default, the markers to be modified are identified by name
 locs = list(list(name = "m1", alleles = 1:10),
             list(name = "m2", alleles = letters[1:10]))
-w = setLocusAttributes(x, loc = locs)
-getMarkers(w, 1:2)
+y = setLocusAttributes(x, locusAttributes = locs)
+getMarkers(y, 1:2)
 
 # If `erase = TRUE` attributes not explicitly given are erased
-w2 = setLocusAttributes(x, loc = locs, erase = TRUE)
-chrom(w2, 2) # not "X" anymore
+y2 = setLocusAttributes(x, locusAttributes = locs, erase = TRUE)
+chrom(y2, 2) # not "X" anymore
 
 # The getter and setter are inverses
-newx = setLocusAttributes(x, loc = getLocusAttributes(x))
+newx = setLocusAttributes(x, locusAttributes = getLocusAttributes(x))
 stopifnot(identical(x, newx))
 
 }

@@ -2,32 +2,26 @@
 #'
 #' Retrieve or modify the attributes of attached markers
 #'
-#' The default setting `markers = NULL` select markers automatically, depending
-#' on the `matchNames` argument. If `matchNames = FALSE`, all markers are chosen
-#' If `matchNames = TRUE`, markers will be matched against the `name` entries in
-#' `locusAttributes` (and an error issued if these are missing).
+#' The default setting `markers = NULL` selects markers automatically, depending
+#' on the `matchNames` argument. If `matchNames = FALSE`, all markers are
+#' chosen. If `matchNames = TRUE`, markers will be matched against the `name`
+#' entries in `locusAttributes` (and an error issued if any are missing).
 #'
 #' Note that the default value `NA` of `matchNames` is changed to TRUE if all
-#' entries of `locusAttributes` have a `name` component which matches the name a
-#' an attached marker.
+#' entries of `locusAttributes` have a `name` component which matches the name
+#' of an attached marker.
 #'
 #' Possible attributes given in `locusAttributes` are as follows (default values
-#' in parenthesis):
+#' in parentheses):
 #'
-#' * `alleles` : a character vector with allele labels
-#'
-#' * `afreq` :  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
+#' * `alleles`: a character vector with allele labels
+#' * `afreq`:  a numeric vector with allele frequencies (`rep.int(1/L, L)`,
 #' where `L = length(alleles)`)
-#'
-#' * `name` : marker name (NA)
-#'
-#' * `chrom` : chromosome number (NA)
-#'
-#' * `posMb` : physical location in megabases (NA)
-#'
-#' * `mutmod` : mutation model, or model name (NULL)
-#'
-#' * `rate` : mutation model parameter (NULL)
+#' * `name`: marker name (NA)
+#' * `chrom`: chromosome number (NA)
+#' * `posMb`: physical location in megabases (NA)
+#' * `mutmod`: mutation model, or model name (NULL)
+#' * `rate`: mutation model parameter (NULL)
 #'
 #' @param x A `ped` object, or a list of such.
 #' @param markers A character vector (with marker names) or a numeric vector
@@ -50,37 +44,29 @@
 #'
 #' @return
 #'
-#' * `getLocusAttributes` : a list of lists. If the markers has names,
+#' * `getLocusAttributes`: a list of lists. If the markers have names,
 #' these are used to name the outer list. If `simplify = TRUE` and `attribs` is
 #' a single element, the output is a simple list.
 #'
-#' * `setLocusAttributes` : a modified version of `x`.
+#' * `setLocusAttributes`: a modified version of `x`.
 #'
 #' @examples
-#' x = singleton(1)
-#' x = addMarkers(x, marker(x, name = "m1", alleles = 1:2))
-#' x = addMarkers(x, marker(x, name = "m2", alleles = letters[1:2], chrom = "X"))
-#'
-#' # Change frequencies at both loci
-#' y = setLocusAttributes(x, markers = 1:2, loc = list(afreq = c(.1, .9)))
-#' getMarkers(y, 1)
-#'
-#' # Set the same mutation model at both loci
-#' z = setLocusAttributes(x, markers = 1:2, loc = list(mutmod = "proportional", rate = .1))
-#' mutmod(z, 1)
+#' x = singleton(1) |>
+#'   addMarker(name = "m1", alleles = 1:2) |>
+#'   addMarker(name = "m2", alleles = letters[1:2], chrom = "X")
 #'
 #' # By default, the markers to be modified are identified by name
 #' locs = list(list(name = "m1", alleles = 1:10),
 #'             list(name = "m2", alleles = letters[1:10]))
-#' w = setLocusAttributes(x, loc = locs)
-#' getMarkers(w, 1:2)
+#' y = setLocusAttributes(x, locusAttributes = locs)
+#' getMarkers(y, 1:2)
 #'
 #' # If `erase = TRUE` attributes not explicitly given are erased
-#' w2 = setLocusAttributes(x, loc = locs, erase = TRUE)
-#' chrom(w2, 2) # not "X" anymore
+#' y2 = setLocusAttributes(x, locusAttributes = locs, erase = TRUE)
+#' chrom(y2, 2) # not "X" anymore
 #'
 #' # The getter and setter are inverses
-#' newx = setLocusAttributes(x, loc = getLocusAttributes(x))
+#' newx = setLocusAttributes(x, locusAttributes = getLocusAttributes(x))
 #' stopifnot(identical(x, newx))
 #'
 #' @name locusAttributes
