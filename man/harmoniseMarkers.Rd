@@ -4,27 +4,37 @@
 \alias{harmoniseMarkers}
 \title{Harmonise markers across components in a ped list}
 \usage{
-harmoniseMarkers(x)
+harmoniseMarkers(x, verbose = TRUE)
 }
 \arguments{
-\item{x}{A list of \code{ped} objects. An error is raised if any component
-contains an unnamed marker.}
+\item{x}{A list of \code{ped} objects.}
+
+\item{verbose}{A logical.}
 }
 \value{
 A copy of \code{x} where all components have the same markers attached,
-and in the same order. Unnamed markers are removed.
+and in the same order. Unnamed markers are removed (unless \code{x} is returned
+unchanged, see Details).
 }
 \description{
-This function ensures that all components of a ped list have the same
-markers, in the same order. Missing markers are added with empty genotypes.
-Note that \emph{unnamed} markers cannot be harmonised and will be removed by this
-function.
+Ensures all components of a ped list contain the same markers in identical
+order. Missing markers are added with empty genotypes. Markers whose
+attributes differ between components are updated to match the first
+occurrence of the marker. Note that this function removes all unnamed
+markers, unless the input is returned unchanged (see Details).
+}
+\details{
+If the input is a single connected pedigree, it is returned as is.
+
+If all marker attributes are identical across all components, \code{x} is also
+returned unchanged.
 }
 \examples{
 x = list(
   singleton(1) |> addMarker(),  # unnamed marker will be removed
-  singleton(2) |> addMarker(name = "M1"),
-  singleton(3) |> addMarker(geno = "3/3", alleles = 1:3, name = "M2")
+  singleton(2) |> addMarker(name = "M1", alleles = 1:2),
+  singleton(3) |> addMarker(name = "M1", alleles = 1:3), # will be modified
+  singleton(4) |> addMarker(geno = "3/3", alleles = 1:3, name = "M2")
 )
 harmoniseMarkers(x)
 

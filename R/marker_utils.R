@@ -236,56 +236,74 @@ swapGenotypes = function(x, ids = NULL) {
 
 #' Harmonise markers across components in a ped list
 #'
-#' This function ensures that all components of a ped list have the same
-#' markers, in the same order. Missing markers are added with empty genotypes.
-#' Note that _unnamed_ markers cannot be harmonised and will be removed by this
-#' function.
+#' Ensures all components of a ped list contain the same markers in identical
+#' order. Missing markers are added with empty genotypes. Markers whose
+#' attributes differ between components are updated to match the first
+#' occurrence of the marker. Note that this function removes all unnamed
+#' markers, unless the input is returned unchanged (see Details).
 #'
-#' @param x A list of `ped` objects. An error is raised if any component
-#'   contains an unnamed marker.
+#' If the input is a single connected pedigree, it is returned as is.
 #'
-#' @returns A copy of `x` where all components have the same markers attached,
-#'   and in the same order. Unnamed markers are removed.
+#' If all marker attributes are identical across all components, `x` is also
+#' returned unchanged.
+#'
+#' @param x A list of `ped` objects.
+#' @param verbose A logical.
+
+#' @return A copy of `x` where all components have the same markers attached,
+#'   and in the same order. Unnamed markers are removed (unless `x` is returned
+#'   unchanged, see Details).
 #'
 #' @examples
 #' x = list(
 #'   singleton(1) |> addMarker(),  # unnamed marker will be removed
-#'   singleton(2) |> addMarker(name = "M1"),
-#'   singleton(3) |> addMarker(geno = "3/3", alleles = 1:3, name = "M2")
+#'   singleton(2) |> addMarker(name = "M1", alleles = 1:2),
+#'   singleton(3) |> addMarker(name = "M1", alleles = 1:3), # will be modified
+#'   singleton(4) |> addMarker(geno = "3/3", alleles = 1:3, name = "M2")
 #' )
 #' harmoniseMarkers(x)
 #'
 #' @export
-harmoniseMarkers = function(x) {
+harmoniseMarkers = function(x, verbose = TRUE) {
   # If connected pedigree, return as is
   if(is.ped(x) || (length(x) == 1 && is.ped(x[[1]])))
     return(x)
 
-  mList0 = lapply(x, name)
-  mList = lapply(mList0, function(v) v[!is.na(v)])
-  if(listIdentical(mList)) {
-    if(identical(mList0, mList))
-      return(x)
-    else
-      return(selectMarkers(x, markers = mList[[1]]))
-  }
+  # All attributes of every marker in each component
+  a = lapply(x, getLocusAttributes)
 
-  firstCmp = .firstComp(mList) # first component of each
+  # If all attributes identical, return without further questions
+  if(listIdentical(a))
+    return(x)
+
+  # First pass: keep only markers with names
+  a = lapply(a, function(v) v[!is.na(names(v))])
+  mList = lapply(a, names)
+
+  # Authority: First occurrence index of each marker
+  firstCmp = .firstComp(mList)
   allMarkers = names(firstCmp)
 
-  # List of locus attributes for all markers
-  allAttribs = list()
-  for(i in 1:max(firstCmp)) {
-    new = getLocusAttributes(x[[i]], markers = allMarkers[firstCmp == i])
-    allAttribs = c(allAttribs, new)
-  }
-  allAttribs
+  A = lapply(allMarkers, function(m) a[[firstCmp[[m]]]][[m]])
+  names(A) = allMarkers
 
-  # Add missing markers to each component
-  for(i in seq_along(x)) {
-    missingMs = setdiff(allMarkers, mList[[i]])
-    if(length(missingMs))
-      x[[i]] = addMarkers(x[[i]], locusAttributes = allAttribs[missingMs])
+  # Loop through markers
+  for(m in allMarkers) {
+    useAttrib = A[[m]]
+    for(i in seq_along(x)) {
+      attri = a[[i]][[m]]
+      # If missing, add new marker
+      if(is.null(attri)) {
+        if(verbose)
+          cat(sprintf("Adding marker %s in component %d\n", m, i))
+        x[[i]] = addMarkers(x[[i]], locusAttributes = useAttrib)
+      }
+      else if(!identical(attri, useAttrib)) {
+        if(verbose)
+          cat(sprintf("Updating marker %s in component %d\n", m, i))
+        x[[i]] = setLocusAttributes(x[[i]], markers = m, useAttrib, erase = TRUE)
+      }
+    }
   }
 
   # Ensure same order
