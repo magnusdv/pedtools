@@ -4,9 +4,9 @@
 
 * New function `extractSingletons()`.
 
-* Unlike previously, `mergePed()` can now merge pedigrees with marker data.
+* `mergePed()` can now merge pedigrees with marker data.
 
-* New function `removeGenotypes()`, synonymous with (but more intuitive than) `setAlleles(..., alleles = 0)`.
+* New function `removeGenotypes()`, equivalent to (but more intuitive than) `setAlleles(..., alleles = 0)`.
 
 * `getGenotypes()` gains argument `Xchrom` to be used when it is known in advance that all/none markers are on X.
 

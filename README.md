@@ -84,9 +84,9 @@ plot(x, marker = 1, hatched = 7)
 
 <img src="man/figures/README-example-1.png" width="40%" style="display: block; margin: auto;" />
 
-The process of building pedigrees is perfectly suited for the pipe
-operator `|>` recently introduced in R. For example, the above pedigree
-could have been created as follows:
+The process of building pedigrees is perfectly suited for R’s pipe
+operator `|>`. For example, the above pedigree could have been created
+as follows:
 
 ``` r
 x = halfSibPed(type = "paternal") |>
