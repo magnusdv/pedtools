@@ -1,3 +1,23 @@
+# pedtools 2.9.0
+
+## New features
+
+* New function `extractSingletons()`.
+
+* Unlike previously, `mergePed()` can now merge pedigrees with marker data.
+
+* New function `removeGenotypes()`, synonymous with (but more intuitive than) `setAlleles(..., alleles = 0)`.
+
+* `getGenotypes()` gains argument `Xchrom` to be used when it is known in advance that all/none markers are on X.
+
+
+## Minor fixes
+
+* `harmoniseMarkers()` now checks all marker attributes.
+* In `setFounderInbreeding()`, supplying values with a named vector now works as intended.
+* `getGenotypes` is more efficient in cases with many markers.
+
+
 # pedtools 2.8.2
 
 * Extend `setSNPs()` to handle genotype columns. (Previously, this function could only attach empty SNPs.) 
