@@ -43,16 +43,17 @@
 #'   position) on the same chromosome, and FALSE otherwise.
 #'
 #' @examples
-#' x = singleton(1)
-#' m1 = marker(x, chrom = 1, posMb = 10, name = "m1")
-#' m2 = marker(x, chrom = 1, posMb = 11)
-#' m3 = marker(x, chrom = 1)
-#' x = setMarkers(x, list(m1, m2, m3))
+#' x = singleton(1) |>
+#'   addMarker(chrom = 1, posMb = 10, name = "m1") |>
+#'   addMarker(chrom = 1, posMb = 11) |>
+#'   addMarker(chrom = 1)
 #'
 #' # Compare effect of `na.action`
+#' \donttest{
 #' getMap(x, na.action = 0)
 #' getMap(x, na.action = 1)
 #' getMap(x, na.action = 2)
+#' }
 #'
 #' # Getting and setting map are inverses
 #' y = setMap(x, getMap(x))
