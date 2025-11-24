@@ -24,10 +24,12 @@
 #' untypedMembers)`, will remove untyped individuals from the bottom until the
 #' process stops.
 #'
-#' Finally, `subset()` can be used to extract any connected sub-pedigree. (Note
-#' that in the current implementation, the function does not actually check that
-#' the indicated subset forms a connected pedigree; failing to comply with this
-#' may lead to obscure errors.)
+#' Finally, `subset()` can be used to extract any sub-pedigree, returning a list
+#' of pedigrees if the result is disconnected. By default, an error is raised if
+#' some individuals would be left with exactly one parent. Alternatively,
+#' `missingParents = "exclude"` removes the parent–child connection in such
+#' cases, while `missingParents = "include"` adds the missing parent to the
+#' subset.
 #'
 #' @param x A `ped` object, or a list of such.
 #' @param ids A vector of ID labels. In `addChildren()` these are the children
@@ -71,6 +73,9 @@
 #' # Adding a child across components
 #' z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
 #'
+#' # General subsetting depends on `missingParent`:
+#' subset(w, c(3,7), missingParents = "exclude")
+#' subset(w, c(3,7), missingParents = "include")
 #'
 #' @name ped_modify
 NULL
@@ -457,17 +462,20 @@ branch = function(x, id) {
   # sort (since subset() does not sort)
   ids = ids[order(internalID(x, ids))]
 
-  subset(x, subset = ids)
+  subset(x, subset = ids, missingParents = "exclude")
 }
 
 
-#' @param subset A character vector (or coercible to such) with ID labels
-#'   forming a connected sub-pedigree.
+#' @param subset A character vector (or coercible to such): A subset of the ID
+#'   labels of `x`.
 #' @param ... Not used.
+#' @param missingParents A word indicating how to deal with single parents in
+#'   the subset. Either "error" (default), "exclude" (remove the parent-child
+#'   connection) or "include" (expand `subset` to include the missing parents).
 #'
 #' @rdname ped_modify
 #' @export
-subset.ped = function(x, subset, ...) {
+subset.ped = function(x, subset, ..., missingParents = c("error", "exclude", "include")) {
   if(!is.null(x$LOOP_BREAKERS))
     stop2("`subset()` is not yet implemented for pedigrees with broken loops")
 
@@ -477,13 +485,33 @@ subset.ped = function(x, subset, ...) {
     stop2("Duplicated ID label: ", unique(subset[duplicated(subset)]))
 
   pedm = as.matrix(x)
+
+  missPar = match.arg(missingParents)
+
+  # If missing parents are to be included, do this now
+  if(missPar == "include") {
+    fa = pedm[sub_idx, 2]
+    mo = pedm[sub_idx, 3]
+    missFa = fa > 0 & !fa %in% sub_idx
+    missMo = mo > 0 & !mo %in% sub_idx
+    eF = fa[missFa & !missMo]
+    eM = mo[!missFa & missMo]
+    sub_idx = sort.int(unique.default(c(sub_idx, eF, eM)))
+  }
+
+  # Main subsetting
   subped = pedm[sub_idx, , drop = FALSE]
 
-  # set FID = 0 if father is not in subset
+  # Set FID = 0 for fathers outside subset
   subped[!(subped[, 2] %in% sub_idx), 2] = 0L
 
-  # set MID = 0 if mother is not in subset
+  # Set MID = 0 for mothers outside in subset
   subped[!(subped[, 3] %in% sub_idx), 3] = 0L
+
+  # Single parents: Remove edge if "exclude"
+  if(missPar == "exclude") {
+    subped[xor(subped[,2] > 0, subped[,3] > 0), 2:3] = 0L
+  }
 
   # Fix labels
   attrs = attributes(pedm)

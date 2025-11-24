@@ -43,7 +43,7 @@ trim(x, uninformative, verbose = TRUE)
 
 branch(x, id)
 
-\method{subset}{ped}(x, subset, ...)
+\method{subset}{ped}(x, subset, ..., missingParents = c("error", "exclude", "include"))
 }
 \arguments{
 \item{x}{A \code{ped} object, or a list of such.}
@@ -79,10 +79,14 @@ removing them.}
 or a function (typically a helper function like \code{\link[=untypedMembers]{untypedMembers()}}).
 Uninformative leaves are removed iteratively until no more can be found.}
 
-\item{subset}{A character vector (or coercible to such) with ID labels
-forming a connected sub-pedigree.}
+\item{subset}{A character vector (or coercible to such): A subset of the ID
+labels of \code{x}.}
 
 \item{...}{Not used.}
+
+\item{missingParents}{A word indicating how to deal with single parents in
+the subset. Either "error" (default), "exclude" (remove the parent-child
+connection) or "include" (expand \code{subset} to include the missing parents).}
 }
 \value{
 The modified \code{ped} object.
@@ -112,10 +116,12 @@ without children) from the pedigree. Note that the definition of
 "uninformative" is entirely user-defined. For example, \code{trim(x, untypedMembers)}, will remove untyped individuals from the bottom until the
 process stops.
 
-Finally, \code{subset()} can be used to extract any connected sub-pedigree. (Note
-that in the current implementation, the function does not actually check that
-the indicated subset forms a connected pedigree; failing to comply with this
-may lead to obscure errors.)
+Finally, \code{subset()} can be used to extract any sub-pedigree, returning a list
+of pedigrees if the result is disconnected. By default, an error is raised if
+some individuals would be left with exactly one parent. Alternatively,
+\code{missingParents = "exclude"} removes the parent–child connection in such
+cases, while \code{missingParents = "include"} adds the missing parent to the
+subset.
 }
 \examples{
 
@@ -133,6 +139,9 @@ y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 # Adding a child across components
 z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
 
+# General subsetting depends on `missingParent`:
+subset(w, c(3,7), missingParents = "exclude")
+subset(w, c(3,7), missingParents = "include")
 
 }
 \seealso{
