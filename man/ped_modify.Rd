@@ -109,7 +109,9 @@ all of their ancestors OR descendants, depending on the \code{remove} argument.
 Leftover spouses disconnected from the remaining pedigree are also removed.
 
 The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
-his/her spouses and descendants.
+his/her descendants, and all necessary spouses. Note that some structure may
+be lost in this process; for instance, compare \code{x = halfSibTriangle(3)} with
+\code{branch(x, 1)}.
 
 The \code{trim()} function iteratively removes uninformative leaves (i.e., members
 without children) from the pedigree. Note that the definition of
@@ -138,6 +140,11 @@ y2 = removeIndividuals(x, 8:10, remove = "ancestors")
 
 # Adding a child across components
 z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
+
+# Extract a branch
+w = cousinPed(1, child = TRUE)
+w4 = branch(w, 4)
+plot(list(w, w4))
 
 # General subsetting depends on `missingParent`:
 subset(w, c(3,7), missingParents = "exclude")
