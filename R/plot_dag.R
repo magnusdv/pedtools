@@ -35,7 +35,7 @@
 }
 
 
-.plotDAG = function(alignment, annotation, scaling) {
+.plotDAG = function(alignment, annotation, scaling, length = 0.1, ...) {
 
   n = alignment$nInd
   sex = alignment$sex
@@ -82,13 +82,13 @@
   ch = match(nonf, plotord)
   fa = match(x$FIDX[nonf], plotord)
   mo = match(x$MIDX[nonf], plotord)
-  shortArrows(xall[fa],yall[fa], xall[ch],yall[ch],sex0=1,sex1=sex[nonf],rx=rx,ry=ry)
-  shortArrows(xall[mo],yall[mo], xall[ch],yall[ch],sex0=2,sex1=sex[nonf],rx=rx,ry=ry)
+  shortArrows(xall[fa],yall[fa], xall[ch],yall[ch],sex0=1,sex1=sex[nonf],rx=rx,ry=ry, length = length, ...)
+  shortArrows(xall[mo],yall[mo], xall[ch],yall[ch],sex0=2,sex1=sex[nonf],rx=rx,ry=ry, length = length, ...)
 }
 
 
 #' @importFrom graphics arrows
-shortArrows = function(x0, y0, x1, y1, sex0, sex1, rx, ry, sex, length = 0.1, ...) {
+shortArrows = function(x0, y0, x1, y1, sex0, sex1, rx, ry, length = 0.1, ...) {
   # NB: Points are given for top centre of symbol!
   # Adjusting to mid centre
   y0 = y0 + ry

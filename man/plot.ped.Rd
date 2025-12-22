@@ -9,7 +9,14 @@
 \usage{
 \method{plot}{ped}(x, draw = TRUE, keep.par = FALSE, ...)
 
-drawPed(alignment, annotation = NULL, scaling = NULL, keep.par = FALSE, ...)
+drawPed(
+  alignment,
+  annotation = NULL,
+  scaling = NULL,
+  keep.par = FALSE,
+  draw = TRUE,
+  ...
+)
 
 \method{plot}{pedList}(x, ...)
 

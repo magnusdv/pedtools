@@ -229,7 +229,7 @@ plot.ped = function(x, draw = TRUE, keep.par = FALSE, ...) {
 #' @param scaling List of scaling parameters as returned by [.pedScaling()].
 
 #' @export
-drawPed = function(alignment, annotation = NULL, scaling = NULL, keep.par = FALSE, ...) {
+drawPed = function(alignment, annotation = NULL, scaling = NULL, keep.par = FALSE, draw = TRUE, ...) {
 
   frame()
 
@@ -239,11 +239,13 @@ drawPed = function(alignment, annotation = NULL, scaling = NULL, keep.par = FALS
   if(!keep.par)
     on.exit(par(scaling$oldpar), add = TRUE)
 
-  # Symbols and connectors
-  .drawPed(alignment, annotation, scaling)
+  if(draw) {
+    # Symbols and connectors
+    .drawPed(alignment, annotation, scaling)
 
-  # Annotation
-  .annotatePed(alignment, annotation, scaling, ...)
+    # Annotation
+    .annotatePed(alignment, annotation, scaling, ...)
+  }
 
   # Prepare output
   output = list(alignment = alignment, annotation = annotation, scaling = scaling)
