@@ -776,7 +776,7 @@ NULL
   }
 
   ## Add lines between spouses (MDV: Vectorized/simplified)
-  sp = plist$spouse
+  sp = plist$spouse %||% matrix(nrow = 0, ncol = 0)
   cl = col(sp)[sp > 0]
   rw = row(sp)[sp > 0]
   tmpy = rw + boxh/2
