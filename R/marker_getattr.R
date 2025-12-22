@@ -7,6 +7,8 @@
 #' @param marker,markers The index or name of a marker (or a vector indicating
 #'   several markers) attached to `x`.
 #' @param id The ID label of a single pedigree member.
+#' @param simplify1 A logical (default: TRUE) indicating if the output should be
+#'   simplified to an unnamed vector if the input is a single marker.
 #' @param ... Further arguments, not used.
 #'
 #' @return The associated marker attributes.
@@ -196,20 +198,28 @@ alleles.marker = function(x, ...) {
 
 #' @rdname marker_getattr
 #' @export
-alleles.ped = function(x, marker, ...) {
-  if(missing(marker) || length(marker) == 0)
-    stop2("Argument `marker` cannot be empty")
-  if(length(marker) > 1)
-    stop2("Allele extraction can only be done for a single marker")
-
+alleles.ped = function(x, marker = NULL, simplify1 = TRUE, ...) {
+  marker = marker %||% seq_markers(x)
   mlist = getMarkers(x, markers = marker)
-  m = mlist[[1]]
-  alleles(m)
+
+  # List of alleles
+  a = lapply(mlist, alleles.marker)
+
+  # Simplify output for single marker
+  if(length(marker) == 1 && simplify1)
+    return(a[[1]])
+
+  # Marker names (NA's are ok)
+  nms = vapply(mlist, name.marker, character(1))
+  names(a) = nms
+
+  # Return list
+  a
 }
 
 #' @rdname marker_getattr
 #' @export
-alleles.list = function(x, marker, ...) {
+alleles.list = function(x, marker = NULL, simplify1 = TRUE, ...) {
   comp_wise = lapply(x, alleles, marker = marker)
   if(!listIdentical(comp_wise))
     stop2("The output of `alleles()` differs between pedigree components")

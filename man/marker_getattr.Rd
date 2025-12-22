@@ -48,9 +48,9 @@ alleles(x, ...)
 
 \method{alleles}{marker}(x, ...)
 
-\method{alleles}{ped}(x, marker, ...)
+\method{alleles}{ped}(x, marker = NULL, simplify1 = TRUE, ...)
 
-\method{alleles}{list}(x, marker, ...)
+\method{alleles}{list}(x, marker = NULL, simplify1 = TRUE, ...)
 
 afreq(x, ...)
 
@@ -91,6 +91,9 @@ posMb(x, ...)
 
 \item{marker, markers}{The index or name of a marker (or a vector indicating
 several markers) attached to \code{x}.}
+
+\item{simplify1}{A logical (default: TRUE) indicating if the output should be
+simplified to an unnamed vector if the input is a single marker.}
 }
 \value{
 The associated marker attributes.
