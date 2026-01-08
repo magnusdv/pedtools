@@ -211,17 +211,20 @@ father = function(x, id, internal = FALSE) {
       fai[fai == 0] = NA
       res[rw] = x[[co]]$ID[fai]
     }
-    # For back compatibility. TODO: Remove in future version?
-    if(length(res) == 1 && is.na(res))
-      res = character(0)
-
     return(res)
   }
 
-  # TODO: `nuclearPed() |> father(1)` now returns char(0). Better with NA?
-
   fa = x$FIDX[idInt]
-  if(internal) fa else x$ID[fa]
+  if(internal)
+    return(fa)
+
+  if(all(fa > 0))
+    return(x$ID[fa])
+
+  labs = character(length(fa))
+  labs[fa == 0] = NA_character_
+  labs[fa  > 0] = x$ID[fa[fa > 0]]
+  labs
 }
 
 #' @rdname ped_subgroups
@@ -244,15 +247,19 @@ mother = function(x, id, internal = FALSE) {
       moi[moi == 0] = NA
       res[rw] = x[[co]]$ID[moi]
     }
-    # For back compatibility. TODO: Remove in future version?
-    if(length(res) == 1 && is.na(res))
-      res = character(0)
-
     return(res)
   }
 
   mo = x$MIDX[idInt]
-  if(internal) mo else x$ID[mo]
+  if(internal) return(mo)
+
+  if(all(mo > 0))
+    return(x$ID[mo])
+
+  labs = character(length(mo))
+  labs[mo == 0] = NA_character_
+  labs[mo  > 0] = x$ID[mo[mo > 0]]
+  labs
 }
 
 

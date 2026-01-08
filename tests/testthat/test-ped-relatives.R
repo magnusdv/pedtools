@@ -8,12 +8,12 @@ test_that("father() and mother() works", {
   expect_equal(father(y, "ch"), "fa")
   expect_equal(mother(y, "ch"), "mo")
 
-  expect_equal(father(x, "fa"), character(0))
-  expect_equal(mother(x, "fa"), character(0))
-  expect_equal(father(y, "fa"), character(0))
-  expect_equal(mother(y, "fa"), character(0))
-  expect_equal(father(y, 1), character(0))
-  expect_equal(mother(y, 1), character(0))
+  expect_equal(father(x, "fa"), NA_character_)
+  expect_equal(mother(x, "fa"), NA_character_)
+  expect_equal(father(y, "fa"), NA_character_)
+  expect_equal(mother(y, "fa"), NA_character_)
+  expect_equal(father(y, 1), NA_character_)
+  expect_equal(mother(y, 1), NA_character_)
 
   expect_equal(father(x, 3, internal=T), 1)
   expect_equal(mother(x, 3, internal=T), 2)
