@@ -1,3 +1,18 @@
+# pedtools 2.9.1
+
+* Extracting sub-pedigrees with `subset()` is now more flexible, allowing disconnected outputs. It also has a new argument `missingParents` controlling how to handle parents that are not included in the subset.
+
+* The `branch()` behaves more intuitively thanks to the improved `subset.ped()`.
+
+* New function `addSibling()` for adding a sibling to an existing pedigree member.
+
+* New function `countHomozygous()` for counting homozygous genotypes.
+
+## Other
+
+* `father(x, id)` and `mother(x, id)` now output `NA` when `id` is a founder in `x`. (Previously this gave `character(0)`.)
+
+
 # pedtools 2.9.0
 
 ## New features
@@ -9,7 +24,6 @@
 * New function `removeGenotypes()`, equivalent to (but more intuitive than) `setAlleles(..., alleles = 0)`.
 
 * `getGenotypes()` gains argument `Xchrom` to be used when it is known in advance that all/none markers are on X.
-
 
 ## Minor fixes
 
