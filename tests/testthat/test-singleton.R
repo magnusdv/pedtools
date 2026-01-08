@@ -27,6 +27,14 @@ test_that("addChildren works on singleton", {
   expect_identical(x, nuclearPed(1))
 })
 
+test_that("addSiblings works on singleton", {
+  x = addSibling(s, 1, side = "r")
+  expect_identical(x, nuclearPed(2) |> relabel(new = c(2,3,1,4)))
+
+  y = addSibling(s, 1, side = "l")
+  expect_identical(y, nuclearPed(2) |> relabel(new = c(2,3,4,1)))
+})
+
 test_that("addParents works on singleton", {
   x = addParents(singleton(3), 3, father=1, mother=2)
   x = parentsBeforeChildren(x)
@@ -34,8 +42,8 @@ test_that("addParents works on singleton", {
 })
 
 test_that("singleton relatives are all empty", {
-  expect_identical(father(s, 1), character(0))
-  expect_identical(mother(s, 1), character(0))
+  expect_identical(father(s, 1), NA_character_)
+  expect_identical(mother(s, 1), NA_character_)
   expect_identical(parents(s, 1), character(0))
   expect_identical(grandparents(s, 1), character(0))
   expect_identical(spouses(s, 1), character(0))

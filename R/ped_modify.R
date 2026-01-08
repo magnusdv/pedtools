@@ -11,6 +11,12 @@
 #' pedigree. Note that the parents can be given in any order. If only one parent
 #' is supplied, the other is created as a new individual.
 #'
+#' `addSibling()` adds a sibling to the indicated individual, creating parents
+#' if necessary. The new sibling is placed either directly before or after the
+#' indicated individual, depending on the `side` argument. (But note that the
+#' internal ordering of individuals is not always respected when plotting the
+#' pedigree.)
+#'
 #' `removeIndividuals()` removes the individuals indicated with `ids` along with
 #' all of their ancestors OR descendants, depending on the `remove` argument.
 #' Leftover spouses disconnected from the remaining pedigree are also removed.
@@ -51,10 +57,13 @@
 #'   the other parent is created and given a suitable name.
 #' @param nch A positive integer indicating the number of children to be
 #'   created. Default: 1.
-#' @param sex Gender codes of the created children (recycled if needed).
-#' @param verbose A logical: Verbose output or not.
+#' @param sex A vector of integers indicating the sex of the created
+#'   individuals. (1 = male, 2 = female, 0 = unknown). Recycled as needed.
 #' @param parents A vector of 1 or 2 ID labels, of which at least one must be an
 #'   existing member of `x`.
+#' @param side A word indicating whether a new sibling should be placed to the left or right
+#'  of the indicated individual. Default: "right".
+#' @param verbose A logical.
 #'
 #' @return The modified `ped` object.
 #' @seealso [ped()], [relabel()], [swapSex()]
@@ -245,7 +254,7 @@ addDaughter = function(x, parents, id = NULL, verbose = TRUE) {
 #' @rdname ped_modify
 #' @export
 addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
-  if (length(id) > 1)
+  if(length(id) > 1)
       stop2("Cannot add parents to multiple individuals: ", id)
 
   labs = labels(x)
@@ -318,6 +327,43 @@ addParents = function(x, id, father = NULL, mother = NULL, verbose = TRUE) {
   reorderPed(y, neworder, internal = TRUE)
 }
 
+#' @rdname ped_modify
+#' @export
+addSibling = function(x, id, sex = 1, side = c("right", "left"), verbose = TRUE) {
+
+  if(length(id) > 1)
+    stop2("Cannot add sibling to multiple individuals: ", id)
+
+  if(is.pedList(x)) {
+    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
+    x[[comp]] = addSibling(x[[comp]], id = id, sex = sex, side = side)
+    return(x)
+  }
+
+  ### By now, x is a connected pedigree
+
+  if(id %in% founders(x))
+    x = addParents(x, id, verbose = FALSE)
+
+  # Variables needed below
+  n = length(x$ID)
+  idInt = internalID(x, id)
+  side = match.arg(side)
+
+  # Add the sibling
+  y = addChild(x, parents(x, id), sex = sex, verbose = verbose)
+
+  # If no reordering needed, return
+  if(n == idInt && side == "right")
+    return(y)
+
+  # Move sib directly before or after `id`
+  ord = switch(side,
+               left = c(seq_len(idInt-1), n+1, idInt:n),
+               right = c(seq_len(idInt), n+1, if(idInt < n) seq.int(idInt+1, n)))
+
+  reorderPed(y, ord, internal = TRUE)
+}
 
 
 #' @rdname ped_modify

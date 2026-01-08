@@ -7,6 +7,7 @@
 \alias{addSon}
 \alias{addDaughter}
 \alias{addParents}
+\alias{addSibling}
 \alias{removeIndividuals}
 \alias{trim}
 \alias{branch}
@@ -30,6 +31,8 @@ addSon(x, parents, id = NULL, verbose = TRUE)
 addDaughter(x, parents, id = NULL, verbose = TRUE)
 
 addParents(x, id, father = NULL, mother = NULL, verbose = TRUE)
+
+addSibling(x, id, sex = 1, side = c("right", "left"), verbose = TRUE)
 
 removeIndividuals(
   x,
@@ -56,17 +59,21 @@ the other parent is created and given a suitable name.}
 \item{nch}{A positive integer indicating the number of children to be
 created. Default: 1.}
 
-\item{sex}{Gender codes of the created children (recycled if needed).}
+\item{sex}{A vector of integers indicating the sex of the created
+individuals. (1 = male, 2 = female, 0 = unknown). Recycled as needed.}
 
 \item{ids}{A vector of ID labels. In \code{addChildren()} these are the children
 to be created. If NULL (default) given, automatic labels are generated.}
 
-\item{verbose}{A logical: Verbose output or not.}
+\item{verbose}{A logical.}
 
 \item{parents}{A vector of 1 or 2 ID labels, of which at least one must be an
 existing member of \code{x}.}
 
 \item{id}{The ID label of a pedigree member.}
+
+\item{side}{A word indicating whether a new sibling should be placed to the left or right
+of the indicated individual. Default: "right".}
 
 \item{remove}{Either "ancestors" or "descendants" (default), dictating the
 method of removing pedigree members. Abbreviations are allowed.}
@@ -103,6 +110,12 @@ labelling uses the smallest integers not already in use.
 most common use of \code{addChildren()}, namely adding a single child to a
 pedigree. Note that the parents can be given in any order. If only one parent
 is supplied, the other is created as a new individual.
+
+\code{addSibling()} adds a sibling to the indicated individual, creating parents
+if necessary. The new sibling is placed either directly before or after the
+indicated individual, depending on the \code{side} argument. (But note that the
+internal ordering of individuals is not always respected when plotting the
+pedigree.)
 
 \code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
 all of their ancestors OR descendants, depending on the \code{remove} argument.
