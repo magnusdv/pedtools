@@ -1,33 +1,51 @@
-#' Count homozygous markers
+#' Find homozygous genotypes
 #'
-#' Counts the number of homozygous genotypes for each individual.
+#' Identifies homozygous genotypes in the marker data. A genotype is homozygous
+#' if both alleles are non-missing and equal.
 #'
-#' @param x A pedigree (ped object) with marker data.
-#' @param ids A vector of individual ID labels. If NULL (default) all
-#'   individuals are included.
+#' @param x A `ped` object or a list of such. An error is raised if `x` has no
+#'   marker data.
+#' @param ids A vector of individual ID labels. Defaults to all typed members of
+#'   `x`.
+#' @param count A logical. If TRUE, return counts per individual.
 #'
-#' @returns A named integer vector with the counts of homozygous markers for
-#'   each individual in `ids`.
+#' @returns By default, a logical matrix of dimension `N x L`, where N is
+#'   `length(ids)` and L is the number of markers. If `count = TRUE`, a numeric
+#'   vector of length N giving the number of homozygous genotypes for each
+#'   individual.
 #'
 #' @examples
-#' x = nuclearPed() |> addMarker(`2` = "1/1", `3` = "1/2")
-#' countHomozygous(x)
+#' x = nuclearPed(father = "fa", mother = "mo", children = "ch") |>
+#'   addMarker(name = "m1", geno = c(NA, "1/1", "1/2")) |>
+#'   addMarker(name = "m2", geno = c(NA, "2/2", "2/2"))
+#'
+#' isHomozygous(x)
+#' isHomozygous(x, ids = "mo")
+#' isHomozygous(x, count = TRUE)
 #'
 #' @export
-countHomozygous = function(x, ids = NULL) {
+isHomozygous = function(x, ids = typedMembers(x), count = FALSE) {
   if(!hasMarkers(x)) stop2("Input pedigree has no marker data")
 
   amat = getAlleles(x, ids)
   ids = rownames(amat)
 
-  dm = dim(amat)
-  odd = seq(1, dm[2], by = 2)
+  odd = seq(1, dim(amat)[2], by = 2)
   even = odd + 1
 
-  homoz = amat[, odd] == amat[, even]
-  res = .rowSums(homoz, dm[1], dm[2]/2, na.rm = TRUE)
-  names(res) = ids
-  res
+  homoz = amat[, odd, drop = FALSE] == amat[, even, drop = FALSE]
+
+  # Fix column names
+  nms = name(x)
+  nms[is.na(nms)] = which(is.na(nms))
+  colnames(homoz) = nms
+
+  if(count)
+    return(rowSums(homoz, na.rm = TRUE))
+
+  homoz
+}
+
 #' Find markers for which two individuals have the same genotype
 #'
 #' Identifies markers for which two individuals have the same (non-missing)
