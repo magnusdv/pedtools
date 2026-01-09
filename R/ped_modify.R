@@ -35,7 +35,7 @@
 #' Finally, `subset()` can be used to extract any sub-pedigree, returning a list
 #' of pedigrees if the result is disconnected. By default, an error is raised if
 #' some individuals would be left with exactly one parent. Alternatively,
-#' `missingParents = "exclude"` removes the parent–child connection in such
+#' `missingParents = "exclude"` removes the parent-child connection in such
 #' cases, while `missingParents = "include"` adds the missing parent to the
 #' subset.
 #'
@@ -61,8 +61,8 @@
 #'   individuals. (1 = male, 2 = female, 0 = unknown). Recycled as needed.
 #' @param parents A vector of 1 or 2 ID labels, of which at least one must be an
 #'   existing member of `x`.
-#' @param side A word indicating whether a new sibling should be placed to the left or right
-#'  of the indicated individual. Default: "right".
+#' @param side A word indicating whether a new sibling should be placed to the
+#'   left or right of the indicated individual. Default: "right".
 #' @param verbose A logical.
 #'
 #' @return The modified `ped` object.

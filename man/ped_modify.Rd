@@ -72,8 +72,8 @@ existing member of \code{x}.}
 
 \item{id}{The ID label of a pedigree member.}
 
-\item{side}{A word indicating whether a new sibling should be placed to the left or right
-of the indicated individual. Default: "right".}
+\item{side}{A word indicating whether a new sibling should be placed to the
+left or right of the indicated individual. Default: "right".}
 
 \item{remove}{Either "ancestors" or "descendants" (default), dictating the
 method of removing pedigree members. Abbreviations are allowed.}
@@ -134,7 +134,7 @@ process stops.
 Finally, \code{subset()} can be used to extract any sub-pedigree, returning a list
 of pedigrees if the result is disconnected. By default, an error is raised if
 some individuals would be left with exactly one parent. Alternatively,
-\code{missingParents = "exclude"} removes the parent–child connection in such
+\code{missingParents = "exclude"} removes the parent-child connection in such
 cases, while \code{missingParents = "include"} adds the missing parent to the
 subset.
 }
