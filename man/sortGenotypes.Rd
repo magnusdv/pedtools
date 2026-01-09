@@ -7,7 +7,7 @@
 sortGenotypes(x)
 }
 \arguments{
-\item{x}{A \code{ped} object or a list of such}
+\item{x}{A \code{ped} object or a list of such.}
 }
 \value{
 An object identical to \code{x} except that the all genotypes are sorted.

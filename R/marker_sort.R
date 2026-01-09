@@ -4,7 +4,7 @@
 #' attached to `x` has alleles 1 and 2, then running this function will replace
 #' all genotypes "2/1" by "1/2".
 #'
-#' @param x A `ped` object or a list of such
+#' @param x A `ped` object or a list of such.
 #'
 #' @return An object identical to `x` except that the all genotypes are sorted.
 #'
@@ -30,19 +30,25 @@ sortGenotypes = function(x) {
   if(is.pedList(x))
     return(lapply(x, sortGenotypes))
 
-  if(!hasMarkers(x)) return(x)
+  ### By now x is a single ped object
+
+  L = length(x$MARKERS)
+  if(L == 0) return(x)
 
   # Need integer allele representation for comparisons.
   # Hence as.matrix.ped() instead of getAlleles().
   pedm = as.matrix(x)
 
-  # Index of allele-1 columns (not hard-coding number of ped columns)
-  a1idx = seq(ncol(pedm) - 2*nMarkers(x) + 1, ncol(pedm), by = 2)
+  # Index of allele-1 columns (not hard-coding number of ped columns) (??)
+  a1idx = seq(ncol(pedm) - 2*L + 1, ncol(pedm), by = 2)
   a2idx = a1idx + 1
 
   a1 = pedm[, a1idx]
   a2 = pedm[, a2idx]
   swap = a1 > a2
+
+  if(!any(swap))
+    return(x)  # nothing to do
 
   pedm[, a1idx][swap] = a2[swap]
   pedm[, a2idx][swap] = a1[swap]
