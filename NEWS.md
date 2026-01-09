@@ -6,7 +6,9 @@
 
 * New function `addSibling()` for adding a sibling to an existing pedigree member.
 
-* New function `countHomozygous()` for counting homozygous genotypes.
+* New function `isHomozygous()` for finding and counting homozygous genotypes in the marker data.
+
+* New function `sameGenotype()` for finding and counting markers for which two individuals have the same genotype.
 
 ## Other
 
