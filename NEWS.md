@@ -10,6 +10,8 @@
 
 * New function `sameGenotype()` for finding and counting markers for which two individuals have the same genotype.
 
+* New functions `expectedHomozygosity()` and `expectedHeterozygosity()` for computing these quantities from allele frequencies (or marker objects).
+
 ## Other
 
 * `father(x, id)` and `mother(x, id)` now output `NA` when `id` is a founder in `x`. (Previously this gave `character(0)`.)
