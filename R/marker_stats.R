@@ -25,6 +25,40 @@
 #'
 #' @export
 isHomozygous = function(x, ids = typedMembers(x), count = FALSE) {
+  if(!is.ped(x))
+    return(.isHomozygous0(x, ids = ids, count = count))
+
+  nMark = nMarkers(x, compwise = FALSE)
+  if(nMark == 0) stop2("Input pedigree has no marker data")
+
+  amat = unlist(x$MARKERS)
+  dim(amat) = c(length(x$ID), 2 * nMark)
+
+  idsInt = internalID(x, ids)
+
+  odd = seq(1, dim(amat)[2], by = 2)
+  even = odd + 1
+
+  a1 = amat[idsInt, odd, drop = FALSE]
+  a2 = amat[idsInt, even, drop = FALSE]
+
+  homoz = a1 == a2
+  homoz[a1 == 0] = NA  # set missing to NA
+
+  # Fix dim names
+  nms = name(x)
+  nms[is.na(nms)] = which(is.na(nms))
+  colnames(homoz) = nms
+  rownames(homoz) = ids
+
+  if(count)
+    return(rowSums(homoz, na.rm = TRUE))
+
+  homoz
+}
+
+# Old version, slower, but takes ped lists
+.isHomozygous0 = function(x, ids = typedMembers(x), count = FALSE) {
   if(!hasMarkers(x)) stop2("Input pedigree has no marker data")
 
   amat = getAlleles(x, ids)
@@ -45,6 +79,7 @@ isHomozygous = function(x, ids = typedMembers(x), count = FALSE) {
 
   homoz
 }
+
 
 #' Find markers for which two individuals have the same genotype
 #'
@@ -72,6 +107,46 @@ isHomozygous = function(x, ids = typedMembers(x), count = FALSE) {
 #'
 #' @export
 sameGenotype = function(x, ids = typedMembers(x), count = FALSE) {
+  if(!is.ped(x))
+    return(.sameGenotype0(x, ids = ids, count = count))
+
+  nMark = nMarkers(x, compwise = FALSE)
+  if(nMark == 0) stop2("Input pedigree has no marker data")
+  if(length(ids) != 2) stop2("Argument `ids` must be a vector of length 2")
+
+  amat = unlist(x$MARKERS)
+  dim(amat) = c(length(x$ID), 2 * nMark)
+
+  idsInt = internalID(x, ids)
+  id1 = idsInt[1]
+  id2 = idsInt[2]
+
+  odd = seq(1, dim(amat)[2], by = 2)
+  even = odd + 1
+
+  a1 = amat[id1, odd]
+  a2 = amat[id1, even]
+  b1 = amat[id2, odd]
+  b2 = amat[id2, even]
+
+  sameG = (a1 == b1 & a2 == b2) | (a1 == b2 & a2 == b1)
+  sameG[a1+a2 == 0] = NA  # set missing to NA
+
+  # Fix dim names
+  nms = name(x)
+  if(anyNA(nms))
+    nms[is.na(nms)] = which(is.na(nms))
+  names(sameG) = nms
+
+  if(count)
+    return(sum(sameG, na.rm = TRUE))
+
+  sameG
+}
+
+
+# Old version, slower, but takes ped lists
+.sameGenotype0 = function(x, ids = typedMembers(x), count = FALSE) {
   if(!hasMarkers(x)) stop2("Input pedigree has no marker data")
   if(length(ids) != 2) stop2("Argument `ids` must be a vector of length 2")
 
