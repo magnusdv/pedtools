@@ -461,7 +461,7 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
   }
 
   if(length(makeFounderIdx))
-    new[match(makeFounderIdx, new[,1]), 2:3] = 0
+    new[match(makeFounderIdx, new[,1]), 2:3] = 0L
 
   attrs = attributes(xmatr)
 
