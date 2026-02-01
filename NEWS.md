@@ -1,8 +1,4 @@
-# pedtools 2.9.1
-
-* Extracting sub-pedigrees with `subset()` is now more flexible, allowing disconnected outputs. It also has a new argument `missingParents` controlling how to handle parents that are not included in the subset.
-
-* The `branch()` behaves more intuitively thanks to the improved `subset.ped()`.
+# pedtools 2.10.0
 
 * New function `addSibling()` for adding a sibling to an existing pedigree member.
 
@@ -11,6 +7,12 @@
 * New function `sameGenotype()` for finding and counting markers for which two individuals have the same genotype.
 
 * New functions `expectedHomozygosity()` and `expectedHeterozygosity()` for computing these quantities from allele frequencies (or marker objects).
+
+* Extracting sub-pedigrees with `subset()` is now more flexible, allowing disconnected outputs. It also has a new argument `missingParents` controlling how to handle parents that are not included in the subset.
+
+* The `branch()` behaves more intuitively thanks to the improved `subset.ped()`.
+
+* `alleles(x, marker)` now accepts multiple markers at once, returning a list of character vectors.
 
 ## Other
 
