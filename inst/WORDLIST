@@ -5,7 +5,9 @@ diallelic
 equifrequent
 hemizygous
 heterozygous
+heterozygosity
 homozygous
+homozygosity
 Mb
 megabase
 megabases
@@ -18,6 +20,8 @@ ORCID
 paramlink
 ped
 pedprobr
+pedsuite
+proband
 ribd
 selfing
 selfings
