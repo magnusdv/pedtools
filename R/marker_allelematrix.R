@@ -330,10 +330,17 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 }
 
 
-split_genotype_cols = function(m, sep, missing) {
+split_genotype_cols = function(m, sep, missing = 0) {
+  if(is.null(m))
+    return()
+
+  nc = ncol(m)
+  nr = nrow(m)
+  res = matrix(0, ncol = 2 * nc, nrow = nr, dimnames = list(rownames(m), NULL))
+
   nas = is.na(m) | m == missing
   if(all(nas))
-    return(matrix(0, nrow = nrow(m), ncol = 2*ncol(m)))
+    return(res)
 
   nonNA = m[!nas][1]
   if(!grepl(sep, nonNA))
@@ -342,13 +349,14 @@ split_genotype_cols = function(m, sep, missing) {
   # Replace NA's and missing by <miss>/<miss>. (Suboptimal strategy, but simple)
   m[nas] = sprintf("%s%s%s", missing, sep, missing)
 
-  nc = ncol(m)
-  nr = nrow(m)
   splitvec = unlist(strsplit(m, sep, fixed = TRUE))
-  msplit = matrix(0, ncol = 2 * nc, nrow = nr)
-  msplit[, 2 * seq_len(nc) - 1] = splitvec[2 * seq_len(nc * nr) - 1]
-  msplit[, 2 * seq_len(nc)] = splitvec[2 * seq_len(nc * nr)]
-  msplit
+
+  # Odd columns get first allele, even columns get second allele
+  evencols = 2 * seq_len(nc)
+  evenidx = 2 * seq_len(nc * nr)
+  res[, evencols - 1] = splitvec[evenidx - 1]
+  res[, evencols]     = splitvec[evenidx]
+  res
 }
 
 # For internal use
