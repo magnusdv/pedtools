@@ -83,13 +83,13 @@ getLocusAttributes = function(x, markers = NULL,
   if(is.pedList(x)) {
     if(checkComps) {
       compWise = lapply(x, function(comp)
-        getLocusAttributes(comp, markers = markers, attribs = attribs))
+        getLocusAttributes(comp, markers = markers, attribs = attribs, simplify = simplify))
       if(!listIdentical(compWise))
         stop2("Marker attributes differ between pedigree components")
       return(compWise[[1]])
     }
     else
-      return(getLocusAttributes(x[[1]], markers = markers, attribs = attribs))
+      return(getLocusAttributes(x[[1]], markers = markers, attribs = attribs, simplify = simplify))
   }
 
   if(!is.ped(x))
