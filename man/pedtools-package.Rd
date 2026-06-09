@@ -21,5 +21,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Magnus Dehli Vigeland \email{m.d.vigeland@medisin.uio.no} (\href{https://orcid.org/0000-0002-9134-4962}{ORCID})
 
+Authors:
+\itemize{
+  \item Magnus Dehli Vigeland \email{m.d.vigeland@medisin.uio.no} (\href{https://orcid.org/0000-0002-9134-4962}{ORCID})
+}
+
 }
 \keyword{internal}
