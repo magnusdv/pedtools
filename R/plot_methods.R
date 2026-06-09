@@ -448,7 +448,7 @@ NULL
   # Linetype ----------------------------------------------------------------
   ltyvec = .prepPlotarg(x, lty, default = 1)
 
-  if(any(badlty <- !ltyvec %in% 0:6)) {
+  if(any(badlty <- ltyvec %notin% 0:6)) {
     ltynames = c("blank", "solid", "dashed", "dotted", "dotdash", "longdash", "twodash")
     ltyvec[badlty] = match(ltyvec[badlty], ltynames, nomatch = 2) - 1
   }
@@ -1096,7 +1096,7 @@ NULL
   }
 
   for(p in allPairs) {
-    if(!p[1] %in% spouses(x, p[2], internal = TRUE))
+    if(p[1] %notin% spouses(x, p[2], internal = TRUE))
       stop2(sprintf("'%s' is not spouse of '%s'", x$ID[p[2]], x$ID[p[1]]))
   }
 

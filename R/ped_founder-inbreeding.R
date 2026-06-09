@@ -51,7 +51,7 @@ founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
 
   if(!is.ped(x))
     stop2("Input is not a `ped` object")
-  if(!chromType %in% c("autosomal", "x"))
+  if(chromType %notin% c("autosomal", "x"))
     stop2("Argument `chromType` must be a either 'autosomal' or 'x': ", chromType)
 
   finb = x$FOUNDER_INBREEDING[[chromType]]
@@ -73,9 +73,9 @@ founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
   }
 
   fou = founders(x)
-  if(any(!ids %in% fou)) {
+  if(anyNA(match(ids, fou))) {
     internalID(x, ids) # quick hack to catch unknown labels
-    stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
+    stop2("Pedigree member is not a founder: ", .mysetdiff(ids, fou))
   }
 
   finb = finb[match(ids, fou)]
@@ -118,9 +118,9 @@ founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
     stop2("Duplicated ID label: ", ids[duplicated(ids)])
 
   fou = founders(x)
-  if(any(!ids %in% fou)) {
+  if(anyNA(match(ids, fou))) {
     internalID(x, ids) # quick hack to catch unknown labels
-    stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
+    stop2("Pedigree member is not a founder: ", .mysetdiff(ids, fou))
   }
 
   chromType = match.arg(tolower(chromType), c("autosomal", "x"))
@@ -180,9 +180,9 @@ setFounderInbreeding = function(x, ids = NULL, value, chromType = "autosomal") {
   if(anyDuplicated.default(ids) > 0)
     stop2("Duplicated ID label: ", ids[duplicated(ids)])
 
-  if(any(!ids %in% fou)) {
+  if(anyNA(match(ids, fou))) {
     internalID(x, ids) # quick hack to catch unknown labels
-    stop2("Pedigree member is not a founder: ", setdiff(ids, fou))
+    stop2("Pedigree member is not a founder: ", .mysetdiff(ids, fou))
   }
 
   # Synchronise `ids` with `names(value)`
@@ -194,8 +194,8 @@ setFounderInbreeding = function(x, ids = NULL, value, chromType = "autosomal") {
       stop2("When `value` is unnamed, its length must equal 1 or `length(ids)`")
   }
   else {
-    if(!all(ids %in% nms))
-      stop2("Individual not included in `value`: ", setdiff(ids, nms))
+    if(anyNA(match(ids, nms)))
+      stop2("Individual not included in `value`: ", .mysetdiff(ids, nms))
 
     value = unname(value[ids])
   }

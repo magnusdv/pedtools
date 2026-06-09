@@ -142,7 +142,7 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
     stop2("`famid` must be a character string: ", famid)
 
   # Check for illegal entries in `sex``
-  if(!all(sex %in% 0:2))
+  if(anyNA(match(sex, 0:2)))
     stop2("Illegal sex: ", .mysetdiff(sex, 0:2))
   sex = as.integer(sex)
 
@@ -313,7 +313,7 @@ validatePed = function(x = NULL, id = NULL, fid = NULL, mid = NULL, sex = NULL) 
     errs = c(errs, paste("Individual", ID[has1parent], "has exactly 1 parent; this is not allowed"))
 
   # Sex
-  if (!all(SEX %in% 0:2))
+  if(anyNA(match(SEX, 0:2)))
     errs = c(errs, paste("Illegal sex:", unique(setdiff(SEX, 0:2))))
 
   # Self ancestry

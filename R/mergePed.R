@@ -66,10 +66,10 @@ mergePed = function(x, y, by = NULL, relabel = FALSE, ...) {
     stop2("Please indicate merges with the `by` argument: `by = c(<idx> = <idy>, ...)`")
 
   # Check IDs
-  if(!all(as.character(by.x) %in% xlabs))
-    stop2("Unknown ID label in pedigree 1: ", setdiff(by.x, xlabs))
-  if(!all(as.character(by.y) %in% ylabs))
-    stop2("Unknown ID label in pedigree 2: ", setdiff(by.y, ylabs))
+  if(anyNA(match(as.character(by.x), xlabs)))
+    stop2("Unknown ID label in pedigree 1: ", .mysetdiff(by.x, xlabs))
+  if(anyNA(match(as.character(by.y), ylabs)))
+    stop2("Unknown ID label in pedigree 2: ", .mysetdiff(by.y, ylabs))
 
   # Check genders
   sameSex = getSex(x, by.x) == getSex(y, by.y)
@@ -116,7 +116,7 @@ mergePed = function(x, y, by = NULL, relabel = FALSE, ...) {
   # Combine as data.frames, without marker data
   xm = x |> selectMarkers(NULL) |> as.data.frame()
   ym = y |> selectMarkers(NULL) |> as.data.frame()
-  zm = rbind(xm[!xlabs %in% del$x, ], ym[!ylabs %in% del$y, ])
+  zm = rbind(xm[xlabs %notin% del$x, ], ym[ylabs %notin% del$y, ])
 
   z = ped(id = zm$id, fid = zm$fid, mid = zm$mid, sex = zm$sex, ...)
 

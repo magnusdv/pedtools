@@ -64,7 +64,7 @@ NULL
   if(length(value) == 1)
     value = strsplit(as.character(value), "/", fixed = TRUE)[[1]]
 
-  if (!length(value) %in% 1:2)
+  if(length(value) %notin% 1:2)
     stop2("Number of alleles must be 1 or 2: ", value)
 
   if(length(value) == 1)

@@ -445,7 +445,7 @@ getComponent = function(x, ids, checkUnique = FALSE, errorIfUnknown = FALSE) {
   # If simple ped: Handle separately and return early
   if(is.ped(x)) {
     comp = rep(1L, length(ids))
-    if(any(unkn <- !ids %in% x$ID)) {
+    if(any(unkn <- ids %notin% x$ID)) {
       if(errorIfUnknown)
         stop2("Unknown ID label: ", ids[unkn])
       comp[unkn] = NA_integer_
@@ -547,7 +547,7 @@ reorderSimple = function(x, neworder, ids = NULL) {
 
   # Mask all but `ids` indivs
   if(!is.null(ids)) {
-    mask = !ID %in% ids
+    mask = ID %notin% ids
     ID[mask] = "*"
     SEX[mask] = "*"
   }

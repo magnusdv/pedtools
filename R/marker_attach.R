@@ -203,7 +203,7 @@ checkLocusAttribs = function(a) {
   # Shortcut for SNPs
   if(length(a) == 1 && is.character(a) && isTRUE(startsWith(tolower(a), "snp"))) {
     nch = nchar(a)
-    if(!nch %in% 5:6)
+    if(nch %notin% 5:6)
       stop2("Shortcut code for SNP markers must be of the form 'snpAB' or 'snp-AB': ", a)
     a = list(alleles = strsplit(a, "")[[1]][c(nch - 1, nch)])
   }
@@ -214,16 +214,16 @@ checkLocusAttribs = function(a) {
       nms = names(a[[i]])
       if(is.null(nms))
         stop2("Entry ", i, " of `locusAttributes` has no names")
-      if(!all(nms %in% attribNames))
-        stop2("Entry ", i, " of `locusAttributes` has illegal entries: ", setdiff(nms, attribNames))
+      if(anyNA(match(nms, attribNames)))
+        stop2("Entry ", i, " of `locusAttributes` has illegal entries: ", .mysetdiff(nms, attribNames))
     }
     res = a
   }
   else if (is.list(a) && any(attribNames %in% names(a))) {
     # Format 2: Single list of attributes
     nms = names(a)
-    if(!all(nms %in% attribNames))
-      stop2("Illegal locus attribute: ", setdiff(nms, attribNames))
+    if(anyNA(match(nms, attribNames)))
+      stop2("Illegal locus attribute: ", .mysetdiff(nms, attribNames))
 
     res = list(a)
   }

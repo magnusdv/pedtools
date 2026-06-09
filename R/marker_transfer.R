@@ -79,9 +79,9 @@ transferMarkers = function(from, to, ids = NULL, idsFrom = ids, idsTo = ids,
                   toString(idsFrom), toString(idsTo)))
 
   # Check for duplicates
-  if(dup <- anyDuplicated(allFrom[allFrom %in% idsFrom]))
+  if(dup <- anyDuplicated.default(allFrom[allFrom %in% idsFrom]))
     stop2("Non-unique ID label in source ped: ", allFrom[dup])
-  if(dup <- anyDuplicated(allTo[allTo %in% idsTo]))
+  if(dup <- anyDuplicated.default(allTo[allTo %in% idsTo]))
     stop2("Non-unique ID label in target ped: ", allTo[dup])
 
   if(checkSex) {

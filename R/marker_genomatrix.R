@@ -55,8 +55,8 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-",
       ids = ids(x)
     else {
       ids = as.character(ids)
-      if(!all(ids %in% labels(x)))
-        stop2("Unknown ID label: ", setdiff(ids, labels(x)))
+      if(anyNA(match(ids, labels(x))))
+        stop2("Unknown ID label: ", .mysetdiff(ids, labels(x)))
       if(dup <- anyDuplicated.default(ids))
         stop2("Duplicated element of argument `ids`: ", dup)
     }

@@ -39,7 +39,7 @@ print.marker = function(x, sep = "/", missing = "-", Xchrom = NULL, ...) {
 
   # If X: add question mark for heterozygous males
   if(Xchrom) {
-    maleHet = attr(x, "sex") == 1 & !gt %in% c(alleles.marker(x), missing)
+    maleHet = attr(x, "sex") == 1 & gt %notin% c(alleles.marker(x), missing)
     df = commentAndRealign(df, 2, maleHet, "?")
   }
 

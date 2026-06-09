@@ -66,10 +66,14 @@ safe_sample <- function(x, ...) x[sample.int(length(x), ...)]
 # Fast intersection. NB: assumes no duplicates!
 .myintersect = function(x, y) y[match(x, y, 0L)]
 
+# Fast setequal
+.mysetequal = function(x, y)
+  !anyNA(match(x, y)) && !anyNA(match(y, x))
+
 #
 .setnames = function (x, nms = x) {
-    names(x) = nms
-    x
+  names(x) = nms
+  x
 }
 
 # Fast version of t(combn(n,2))
@@ -98,7 +102,7 @@ stopifnotSimpleVector = function(x, argname = "x") {
     errmess = sprintf("argument `%s` must be a vector", argname)
 
     cl = class(x)[1]
-    if(!cl %in% c("numeric", "integer", "character", "logical", "double"))
+    if(cl %notin% c("numeric", "integer", "character", "logical", "double"))
       errmess = sprintf("%s; received an object of class '%s'", errmess, cl)
 
     stop2(errmess)

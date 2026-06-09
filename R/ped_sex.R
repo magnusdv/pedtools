@@ -163,7 +163,7 @@ swapSex = function(x, ids, verbose = TRUE) {
   MIDX = x$MIDX
   spouses = c(MIDX[FIDX %in% idsInt], FIDX[MIDX %in% idsInt])
 
-  if (!all(spouses %in% idsInt)) {
+  if(anyNA(match(spouses, idsInt))) {
     extra = x$ID[setdiff(spouses, idsInt)]
     if (verbose)
       message("Changing sex of spouses as well: ", toString(extra))

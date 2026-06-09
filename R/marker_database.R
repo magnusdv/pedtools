@@ -180,7 +180,7 @@ freqDb2attribList = function(database, format = c("list", "ladder")) {
     nms = names(database)
     if(is.null(nms))
       stop2("Frequency database does not include marker names")
-    if(dup <- anyDuplicated(nms))
+    if(dup <- anyDuplicated.default(nms))
       stop2("Duplicated marker name in frequency database: ", nms[dup])
 
     attrList = lapply(nms, function(nm) {
@@ -197,7 +197,7 @@ freqDb2attribList = function(database, format = c("list", "ladder")) {
   else if(format == "ladder") {
     als = rownames(database)
     nms = colnames(database)
-    if(dup <- anyDuplicated(nms))
+    if(dup <- anyDuplicated.default(nms))
       stop2("Duplicated marker name in database file: ", nms[dup])
 
     attrList = lapply(seq_along(nms), function(i) {

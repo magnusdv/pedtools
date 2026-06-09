@@ -66,15 +66,15 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   if(!is.ped(x) && !is.pedList(x))
     stop2("The first argument must be a `ped` object or a list of such")
 
-  if(dup <- anyDuplicated(ids)) {
+  if(dup <- anyDuplicated.default(ids)) {
     stop2("Duplicated element of argument `ids`: ", dup)
   }
 
   if(is.pedList(x)) {
 
     # Check that all `ids` are known
-    if(!is.null(ids) && !all(ids %in% labels(x)))
-      stop2("Unknown ID label: ", setdiff(ids, labels(x)))
+    if(!is.null(ids) && anyNA(match(ids, labels(x))))
+      stop2("Unknown ID label: ", .mysetdiff(ids, labels(x)))
 
     # Check equality of marker counts and names
     name(x)
@@ -132,8 +132,8 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
     ids = rownames(completeAlleleMatrix)
   else {
     ids = as.character(ids)
-    if(!all(ids %in% rownames(completeAlleleMatrix)))
-      stop2("Unknown ID label: ", setdiff(ids, rownames(completeAlleleMatrix)))
+    if(anyNA(match(ids, rownames(completeAlleleMatrix))))
+      stop2("Unknown ID label: ", .mysetdiff(ids, rownames(completeAlleleMatrix)))
   }
 
   oldAlleles = completeAlleleMatrix[ids, , drop = FALSE]
@@ -154,7 +154,7 @@ setAlleles = function(x, ids = NULL, markers = NULL, alleles) {
 
   if(is.null(rownames(alleles)))
     rownames(alleles) = ids
-  else if(!setequal(rownames(alleles), ids))
+  else if(!.mysetequal(rownames(alleles), ids))
     stop2("Unknown ID label(s) found in rownames of `alleles`: ",
           setdiff(ids, rownames(alleles)))
 

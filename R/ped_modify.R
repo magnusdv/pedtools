@@ -145,7 +145,7 @@ addChildren = function(x, father = NULL, mother = NULL, nch = NULL, sex = 1L, id
   labs = c(labs, ids)
 
   # Check `sex` and recycle if needed
-  if(!is.numeric(sex) || !all(sex %in% 0:2))
+  if(!is.numeric(sex) || anyNA(match(sex, 0:2)))
     stop2("Illegal value of `sex`: ", .mysetdiff(sex, 0:2))
   sex = rep_len(as.integer(sex), nch)
 
@@ -432,7 +432,7 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
       # Remove spouses who become unattached
       sp = .mysetdiff(c(remainFidx[makeFounder], remainMidx[makeFounder]), remov)
       isParent = sp %in% c(remainFidx[!makeFounder], remainMidx[!makeFounder])
-      isChild = !x$FIDX[sp] %in% c(0, remov) & !x$MIDX[sp] %in% c(0, remov)
+      isChild = x$FIDX[sp] %notin% c(0, remov) & x$MIDX[sp] %notin% c(0, remov)
       leftovers = sp[!isParent & !isChild]
 
       if(length(leftovers))
@@ -473,8 +473,8 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
   if (!is.null(finb) && length(intersect(remov, FOU))) {
     aut = finb$autosomal
     xchr = finb$x
-    attrs$FOUNDER_INBREEDING = list(autosomal = aut[!names(aut) %in% labs[remov]],
-                                            x = xchr[!names(xchr) %in% labs[remov]])
+    attrs$FOUNDER_INBREEDING = list(autosomal = aut[names(aut) %notin% labs[remov]],
+                                            x = xchr[names(xchr) %notin% labs[remov]])
   }
 
   restorePed(new, attrs = attrs)
@@ -545,8 +545,8 @@ subset.ped = function(x, subset, ..., missingParents = c("error", "exclude", "in
   if(missPar == "include") {
     fa = pedm[sub_idx, 2]
     mo = pedm[sub_idx, 3]
-    missFa = fa > 0 & !fa %in% sub_idx
-    missMo = mo > 0 & !mo %in% sub_idx
+    missFa = fa > 0 & fa %notin% sub_idx
+    missMo = mo > 0 & mo %notin% sub_idx
     eF = fa[missFa & !missMo]
     eM = mo[!missFa & missMo]
     sub_idx = sort.int(unique.default(c(sub_idx, eF, eM)))
@@ -556,10 +556,10 @@ subset.ped = function(x, subset, ..., missingParents = c("error", "exclude", "in
   subped = pedm[sub_idx, , drop = FALSE]
 
   # Set FID = 0 for fathers outside subset
-  subped[!(subped[, 2] %in% sub_idx), 2] = 0L
+  subped[subped[, 2] %notin% sub_idx, 2] = 0L
 
   # Set MID = 0 for mothers outside in subset
-  subped[!(subped[, 3] %in% sub_idx), 3] = 0L
+  subped[subped[, 3] %notin% sub_idx, 3] = 0L
 
   # Single parents: Remove edge if "exclude"
   if(missPar == "exclude") {

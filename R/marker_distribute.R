@@ -39,7 +39,7 @@ distributeMarkers = function(x, n = NULL, dist = NULL, chromLen = NULL,
 
   if(any(chromNames == ""))
     stop2("Irregular chromosome names")
-  if(dup <- anyDuplicated(chromNames))
+  if(dup <- anyDuplicated.default(chromNames))
     stop2("Duplicated chromosome name: ", chromNames[dup])
 
   # Total genome length
@@ -177,8 +177,8 @@ setSNPs = function(x, snpData) {
     stop2("Illegal allele frequency: ", head(FREQ1[bad]))
   als = c(A1, A2)
   legal = c(LETTERS, letters, 1:9)
-  if(!all(als %in% legal))
-    stop2("Illegal allele label (should be single letters/digits): ", head(setdiff(als, legal)))
+  if(anyNA(match(als, legal)))
+    stop2("Illegal allele label (should be single letters/digits): ", head(.mysetdiff(als, legal)))
 
   # Sort allele pairs
   swap = A1 > A2

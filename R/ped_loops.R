@@ -263,7 +263,7 @@ findLoopBreakers = function(x) {
     # add the individual occurring in most loops
     best = which.max(tabulate(unlist(loops)))
     bestbreakers = c(bestbreakers, best)
-    loops = loops[sapply(loops, function(vec) !best %in% vec)]
+    loops = loops[sapply(loops, function(vec) best %notin% vec)]
   }
   labs = labels(x)
   labs[bestbreakers]

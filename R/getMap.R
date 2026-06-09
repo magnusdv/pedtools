@@ -95,7 +95,7 @@ getMap = function(x, markers = NULL, na.action = 0, merlin = FALSE, verbose = TR
     naPos = is.na(mb) | is.na(chrom)
 
     # Autosomal unknowns: Put each on separate chromosome
-    if(any(naPosAut <- naPos & !chrom %in% c("X", 23))) {
+    if(any(naPosAut <- naPos & chrom %notin% c("X", 23))) {
       if(verbose)
         message("Warning: Missing map entries. Inserting dummy values.")
 
@@ -199,7 +199,7 @@ setMap = function(x, map, matchNames = NA, ...) {
 
   # Match names if either i) mismatch in number, or ii) names actually match in some order
   if(is.na(matchNames))
-    matchNames = (nrow(map) != N) || (!any(is.na(mapNames)) && setequal(mapNames, xNames))
+    matchNames = (nrow(map) != N) || (!any(is.na(mapNames)) && .mysetequal(mapNames, xNames))
 
   if(matchNames) {
     mIdx = match(xNames, mapNames, nomatch = NA)
@@ -235,6 +235,6 @@ hasLinkedMarkers = function(x) {
   haspos = !is.na(map$CHROM) & !is.na(map$MB)
 
   # Return TRUE if two markers on the same chromosome
-  anyDuplicated(map$CHROM[haspos]) > 0
+  anyDuplicated.default(map$CHROM[haspos]) > 0
 }
 

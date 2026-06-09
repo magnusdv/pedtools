@@ -145,9 +145,9 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   }
 
   ### Internal allele matrix
-  if(!all(m %in% c(NAstrings, ALS)))
+  if(anyNA(match(m, c(NAstrings, ALS))))
     stop2("Invalid allele", if(!is.na(name)) sprintf(" for marker `%s`", name), ": ",
-          setdiff(m, c(NAstrings, ALS)))
+          .mysetdiff(m, c(NAstrings, ALS)))
 
   m_int = match(m, ALS, nomatch = 0, incomparables = NAstrings)
   dim(m_int) = dim(m)
@@ -218,7 +218,7 @@ glist2amat = function(glist, labs) {
   # Recycle single alleles
   glist[lg == 1] = lapply(glist[lg == 1], rep, length.out = 2)
 
-  if(d <- anyDuplicated(nms))
+  if(d <- anyDuplicated.default(nms))
     stop2(sprintf("Multiple genotypes given for individual `%s`", nms[d]))
 
   # Fill matrix
@@ -349,7 +349,7 @@ validateMarker = function(x, validateMut = TRUE) {
   if(any(alleles %in% NA_allele_))
     stop2("Invalid entry in `alleles`: ", intersect(alleles, NA_allele_))
 
-  if(dup <- anyDuplicated(alleles))
+  if(dup <- anyDuplicated.default(alleles))
     stop2("Duplicated allele label: ", alleles[dup])
 
   ## afreq
@@ -363,7 +363,7 @@ validateMarker = function(x, validateMut = TRUE) {
   name = attrs$name
   if(length(name) != 1)
     stop2("Length of `name` must be 1: ", name)
-  if (all(strsplit(name, "", fixed = TRUE)[[1]] %in% 0:9))
+  if(all(strsplit(name, "", fixed = TRUE)[[1]] %in% 0:9))
     stop2("Attribute `name` cannot consist entirely of digits: ", name)
 
   # chrom

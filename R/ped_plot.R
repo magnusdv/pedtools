@@ -549,7 +549,7 @@ plotPedList = function(plots, widths = NULL, groups = NULL, titles = NULL,
   if (is.null(widths))
     widths = sqrt(maxWid - 1) + 1
   else {
-    if(!is.numeric(widths) && !length(widths) %in% c(1,N))
+    if(!is.numeric(widths) && length(widths) %notin% c(1,N))
       stop2("`widths` must be a numeric of length either 1 or the total number of objects")
     widths = rep_len(widths, N)
   }

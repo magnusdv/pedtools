@@ -160,7 +160,7 @@ setLocusAttributes = function(x, markers = NULL, locusAttributes,
       else
         nms = names(locusAttributes)
 
-      if(dup <- anyDuplicated(nms))
+      if(dup <- anyDuplicated.default(nms))
         stop2("Duplicated marker name in attribute list: ", nms[dup])
 
       # If matchNames = NA, change to TRUE if all new names match existing ones
@@ -174,7 +174,7 @@ setLocusAttributes = function(x, markers = NULL, locusAttributes,
     else markers = 1:N
   }
 
-  if(anyDuplicated(markers))
+  if(anyDuplicated.default(markers))
     stop2("Duplicated markers: ", markers[duplicated(markers)])
 
   # Index of selected markers
@@ -199,7 +199,7 @@ setLocusAttributes = function(x, markers = NULL, locusAttributes,
       updatedattri = modifyList(oldAttrs[[i]], newattri)
 
       # If new alleles are given without frequencies, the old freqs must be erased anyway
-      if("alleles" %in% names(newattri) && !"afreq" %in% names(newattri))
+      if("alleles" %in% names(newattri) && "afreq" %notin% names(newattri))
         updatedattri$afreq = NULL
 
       newattri = updatedattri
