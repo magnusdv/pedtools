@@ -38,6 +38,9 @@ isNumber = function(x, minimum = NA, maximum = NA) {
   if(is.null(x)) y else x
 }
 
+`%notin%` = function(x, table)
+  match(x, table, nomatch = 0L) == 0L
+
 seq_ped = function(x)
   seq_len(pedsize(x))
 
