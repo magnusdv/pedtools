@@ -53,8 +53,15 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
   if(f < 2 && !selfing)
     stop2("When selfing is disallowed, the number of founders must be at least 2: ", f)
   if(f > (n+1)/2)
-    stop2(sprintf("Too many founders; the pedigree cannot be connected.\nNote: A pedigree with %d members can have at most %d founders.",
-                  n, floor((n+1)/2)))
+    stop2("Too many founders; the pedigree cannot be connected.\n",
+          sprintf("(A pedigree with %d members can have at most %d founders.)", n, floor((n+1)/2)))
+
+  if(is.null(maxDirectGap))
+    maxDirectGap = Inf
+  if(!is.numeric(maxDirectGap) || length(maxDirectGap) != 1L || is.na(maxDirectGap) || maxDirectGap < 0)
+    stop2("Argument `maxDirectGap` must be a nonnegative number, `Inf`, or `NULL`")
+  finiteGap = is.finite(maxDirectGap)
+
 
   id = seq_len(n)
   fid = mid = numeric(n)
@@ -74,6 +81,13 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
 
   # Complete sex vector
   sex = c(sexFou, sexNonfou)
+
+  # Number of opposite
+  if(finiteGap && !selfing) {
+    nOppOK = integer(n)
+    sexCounts = tabulate(sex[seq_len(f)], nbins = 2L)
+    nOppOK[seq_len(f)] = sexCounts[3L - sex[seq_len(f)]]
+  }
 
   # Component index.
   # Initially 1,2,...f (singletons) and unknown (0) for the rest
@@ -101,23 +115,13 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
     w1 = wComp[compvec[sq]]
     w1 = w1/sum(w1)
 
-    # Candidates to avoid for first parent (maxDirectGap may be prohibitive)
-    if(!selfing && !is.null(maxDirectGap) && maxDirectGap < Inf) {
-       avoid = vapply(sq, function(i) {
-         gapsi = pmax.int(gengap[sq, i], gengap[i, sq], na.rm = TRUE)
-         toofar = !is.na(gapsi) & gapsi > maxDirectGap
-         samesex = sex[sq] == sex[i]
-         all(toofar | samesex)
-       }, FUN.VALUE = FALSE)
-    }
-    else {
-      avoid = rep(FALSE, k-1)
-    }
+    # Candidates to avoid for first parent
+    avoid = if(finiteGap && !selfing) nOppOK[sq] == 0L else rep(FALSE, k - 1L)
 
     # Sample first parent!
     cand1 = sq[!avoid]
     prob1 = w1[!avoid]
-    par1 = sample(cand1, size = 1, prob = prob1)
+    par1 = safe_sample(cand1, size = 1L, prob = prob1)
     comp1 = compvec[par1]
 
     # Candidates for the other parent: Any of opposite sex
@@ -132,19 +136,18 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
       isCand[compvec[sq] == comp1] = FALSE
 
     # Apply generation gap limit if given
-    if(!is.null(maxDirectGap) && maxDirectGap < Inf) {
+    if(finiteGap) {
       gaps = pmax.int(gengap[sq, par1], gengap[par1, sq], na.rm = TRUE)
       toofar = !is.na(gaps) & gaps > maxDirectGap
       isCand[toofar] = FALSE
     }
 
-    # If no candidates, plot (for debugging)
-    if(!any(isCand)) {
-      p = ped(id[sq], fid[sq], mid[sq], sex[sq])
-      plot(p, hatched = par1)
-    }
+    # If no candidates: Stop with error (should not happen!)
+    if(!any(isCand))
+      stop2(sprintf("Unexpected error in randomPed(). No valid 2nd parent at step %d (surplus = %d)",
+                    k, surplus))
 
-    # The fewer surplus, the more probable to go to another comp
+    # Sample second parent
     par2 = safe_sample(sq[isCand], 1)
     comp2 = compvec[par2]
 
@@ -174,13 +177,21 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
     }
 
     # Update generation gap matrix
-    gengap[sq, k] = 1L + pmax.int(gengap[sq, par1], gengap[sq, par2], na.rm = TRUE)
-    if(is.na(gengap[par1, k]))
-      gengap[par1, k] = 1L
-    if(is.na(gengap[par2, k]))
-      gengap[par2, k] = 1L
+    gk = 1L + pmax.int(gengap[sq, par1], gengap[sq, par2], na.rm = TRUE)
+    if(is.na(gk[par1]))
+      gk[par1] = 1L
+    if(is.na(gk[par2]))
+      gk[par2] = 1L
+    gengap[sq, k] = gk
+
+    if(finiteGap && !selfing) {
+      ok = is.na(gk) | gk <= maxDirectGap
+      ii = sq[ok & sex[sq] != sex[k]]
+      nOppOK[ii] = nOppOK[ii] + 1L
+      nOppOK[k] = length(ii)
+    }
   }
 
+  # Return as ped object
   newPed(as.character(id), as.integer(fid), as.integer(mid), sex, FAMID = "")
 }
-
