@@ -103,12 +103,12 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
 
     # Candidates to avoid for first parent (maxDirectGap may be prohibitive)
     if(!selfing && !is.null(maxDirectGap) && maxDirectGap < Inf) {
-       avoid = sapply(sq, function(i) {
-         gapsi = pmax(gengap[sq, i], gengap[i, sq], na.rm = TRUE)
+       avoid = vapply(sq, function(i) {
+         gapsi = pmax.int(gengap[sq, i], gengap[i, sq], na.rm = TRUE)
          toofar = !is.na(gapsi) & gapsi > maxDirectGap
          samesex = sex[sq] == sex[i]
          all(toofar | samesex)
-       })
+       }, FUN.VALUE = FALSE)
     }
     else {
       avoid = rep(FALSE, k-1)
@@ -133,7 +133,7 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
 
     # Apply generation gap limit if given
     if(!is.null(maxDirectGap) && maxDirectGap < Inf) {
-      gaps = pmax(gengap[sq, par1], gengap[par1, sq], na.rm = TRUE)
+      gaps = pmax.int(gengap[sq, par1], gengap[par1, sq], na.rm = TRUE)
       toofar = !is.na(gaps) & gaps > maxDirectGap
       isCand[toofar] = FALSE
     }
@@ -174,7 +174,7 @@ randomPed = function(n, founders = 2, maxDirectGap = 1, selfing = FALSE, seed = 
     }
 
     # Update generation gap matrix
-    gengap[sq, k] = 1L + pmax(gengap[sq, par1], gengap[sq, par2], na.rm = TRUE)
+    gengap[sq, k] = 1L + pmax.int(gengap[sq, par1], gengap[sq, par2], na.rm = TRUE)
     if(is.na(gengap[par1, k]))
       gengap[par1, k] = 1L
     if(is.na(gengap[par2, k]))

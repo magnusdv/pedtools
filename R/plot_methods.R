@@ -845,7 +845,7 @@ NULL
       if (diff(range(target)) < 2*pconnect)
         x1 = mean(range(target))
       else
-        x1 = pmax(min(target) + pconnect, pmin(max(target) - pconnect, parentx))
+        x1 = pmax.int(min(target) + pconnect, pmin.int(max(target) - pconnect, parentx))
 
       # MDV: `branch` set to 0.6
       y1 = i - legh

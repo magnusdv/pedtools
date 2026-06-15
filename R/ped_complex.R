@@ -249,8 +249,8 @@ halfSibTriangle = function(g) {
   id = seq_len(N)
   sex = unlist(lapply(g:1, function(a) rep_len(c(1L, 2L), length.out = a)))
   rw = rep(1:g, g:1) # row number
-  par1 = pmax(0, id - g + rw - 2)
-  par2 = pmax(0, id - g + rw - 1)
+  par1 = pmax.int(0, id - g + rw - 2)
+  par2 = pmax.int(0, id - g + rw - 1)
   fid = ifelse(sex == 1, par1, par2)
   mid = ifelse(sex == 1, par2, par1)
 
