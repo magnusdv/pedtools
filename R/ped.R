@@ -284,63 +284,59 @@ newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = TRUE) {
 #'
 #' @export
 #'
-validatePed = function(x = NULL, id = NULL, fid = NULL, mid = NULL, sex = NULL) {
-  if(!is.null(x)) {
-    ID = x$ID; FIDX = x$FIDX; MIDX = x$MIDX; SEX = x$SEX; FAMID = x$FAMID
-  }
-  else {
-    ID = as.character(id); FIDX = match(fid, id, nomatch = 0L); MIDX = match(mid, id, nomatch = 0L);
-    SEX = as.integer(sex); FAMID = ""
-  }
+validatePed = function(x = NULL, id = x$ID, fidx = x$FIDX, midx = x$MIDX, sex = x$SEX,
+                       famid = x$FAMID, fid = NULL, mid = NULL) {
+  if(!is.null(fid))
+    fidx = match(fid, id, nomatch = 0L)
+  if(!is.null(mid))
+    midx = match(mid, id, nomatch = 0L);
 
-  n = length(ID)
+  n = length(id)
 
   # Type verification (mainly for developer)
-  stopifnot2(is.character(ID), is.integer(FIDX), is.integer(MIDX), is.integer(SEX),
-            is.character(FAMID), is.singleton(x) == (n == 1))
+  stopifnot2(is.character(id), is.integer(fidx), is.integer(midx), is.integer(sex))
 
   # Other verifications that don't need friendly messages at this point
   # (since they should be caught earlier during construction)
-  stopifnot2(n > 0, length(FIDX) == n, length(MIDX) == n, length(SEX) == n,
-            all(FIDX >= 0), all(MIDX >= 0), all(FIDX <= n), all(MIDX <= n),
-            length(FAMID) == 1)
+  stopifnot2(n > 0, length(fidx) == n, length(midx) == n, length(sex) == n,
+             min(fidx) >= 0, min(midx) >= 0, max(fidx) <= n, max(midx) <= n)
+
+  if(!is.null(famid))
+    stopifnot2(is.character(famid), length(famid) == 1, !is.na(famid))
 
   errs = character(0)
 
   # Either 0 or 2 parents
-  has1parent = (FIDX > 0) != (MIDX > 0)
+  has1parent = (fidx > 0L) != (midx > 0L)
   if (any(has1parent))
-    errs = c(errs, paste("Individual", ID[has1parent], "has exactly 1 parent; this is not allowed"))
+    errs = c(errs, paste("Individual", id[has1parent], "has exactly 1 parent; this is not allowed"))
 
   # Sex
-  if(anyNA(match(SEX, 0:2)))
-    errs = c(errs, paste("Illegal sex:", unique(setdiff(SEX, 0:2))))
+  if(anyNA(sex) || min(sex) < 0L || max(sex) > 2L)
+    errs = c(errs, paste("Illegal sex:", unique(setdiff(sex, 0:2))))
 
   # Self ancestry
-  self_anc = any_self_ancestry(list(ID = ID, FIDX = FIDX, MIDX = MIDX))
-  if(length(self_anc) > 0)
+  self_anc = any_self_ancestry(id, fidx, midx)
+  if(length(self_anc) > 0L)
     errs = c(errs, paste("Individual", self_anc, "is their own ancestor"))
 
-  # If singleton: return here
-  # if(n == 1) return()
-
   # Duplicated IDs
-  if(anyDuplicated.default(ID) > 0)
-    errs = c(errs, paste("Duplicated ID label:", ID[duplicated(ID)]))
+  if(anyDuplicated.default(id) > 0L)
+    errs = c(errs, paste("Duplicated ID label:", id[duplicated.default(id)]))
 
   # Female fathers
-  if(any(SEX[FIDX] == 2)) {
-    female_fathers_int = intersect(which(SEX == 2), FIDX) # note: zeroes in FIDX disappear
-    first_child = ID[match(female_fathers_int, FIDX)]
-    errs = c(errs, paste("Individual", ID[female_fathers_int],
+  if(any(sex[fidx] == 2L, na.rm = TRUE)) {
+    female_fathers_int = intersect(which(sex == 2L), fidx) # note: zeroes in FIDX disappear
+    first_child = id[match(female_fathers_int, fidx)]
+    errs = c(errs, paste("Individual", id[female_fathers_int],
                          "is female, but appear as the father of", first_child))
   }
 
   # Male mothers
-  if(any(SEX[MIDX] == 1)) {
-    male_mothers_int = intersect(which(SEX == 1), MIDX) # note: zeroes in MIDX disappear
-    first_child = ID[match(male_mothers_int, MIDX)]
-    errs = c(errs, paste("Individual", ID[male_mothers_int],
+  if(any(sex[midx] == 1L, na.rm = TRUE)) {
+    male_mothers_int = intersect(which(sex == 1L), midx) # note: zeroes in MIDX disappear
+    first_child = id[match(male_mothers_int, midx)]
+    errs = c(errs, paste("Individual", id[male_mothers_int],
                          "is male, but appear as the mother of", first_child))
   }
 
@@ -357,37 +353,31 @@ validatePed = function(x = NULL, id = NULL, fid = NULL, mid = NULL, sex = NULL) 
 }
 
 
-any_self_ancestry = function(x) {
-  ID = x$ID
-  FIDX = x$FIDX
-  MIDX = x$MIDX
-
-  n = length(ID)
+any_self_ancestry = function(id, fidx, midx) {
+  n = length(id)
   nseq = seq_len(n)
 
   # Quick check if anyone is their own parent
-  self_parent = (nseq == FIDX) | (nseq == MIDX)
+  self_parent = nseq == fidx | nseq == midx
   if(any(self_parent))
-    return(ID[self_parent])
+    return(id[self_parent])
 
-  fou_int = which(FIDX == 0)
-  OK = rep(FALSE, n)
-  OK[fou_int] = TRUE
+  # OK means all known ancestors have been resolved.
+  # Start with founders OK
+  OK = fidx == 0L
 
-  # TODO: works, but not optimised for speed
-  for(i in nseq) { # note that i is not used
-    parents = which(OK)
-    children = which(FIDX %in% parents | MIDX %in% parents)
+  for(i in nseq) {
 
-    fatherOK = OK[FIDX[children]]
-    motherOK = OK[MIDX[children]]
-    childrenOK = children[fatherOK & motherOK]
+    # Ensure parent index 0 is treated as OK.
+    parOK = c(TRUE, OK)
+    OKnew = OK | parOK[fidx + 1L] & parOK[midx + 1L]
 
-    # If these were already ok, there is nothing more to do
-    if(all(OK[childrenOK]))
+    # No change -> remaining FALSE are cyclic/unresolvable
+    if(identical(OKnew, OK))
       break
 
-    OK[childrenOK] = TRUE
+    OK = OKnew
   }
-  ID[!OK]
+
+  id[!OK]
 }
