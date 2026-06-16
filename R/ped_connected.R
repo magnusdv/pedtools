@@ -20,7 +20,6 @@
 #'
 #' @export
 connectedComponents = function(id, fid = NULL, mid = NULL, fidx = NULL, midx = NULL) {
-
   seqn = seq_along(id)
 
   if(is.null(fidx)) {
@@ -28,32 +27,56 @@ connectedComponents = function(id, fid = NULL, mid = NULL, fidx = NULL, midx = N
     midx = match(mid, id, nomatch = 0L)
   }
 
-  adjacencyList = lapply(seqn, function(i) {
-    fa = fidx[i]; mo = midx[i]
-    c(if(fa > 0) fa, if(mo > 0 && mo != fa) mo, seqn[fidx == i | midx == i])
-  })
+  n = length(id)
 
-  env = new.env()
-  env$comp = integer(length(fidx))
+  # Fast path: all singletons
+  if(!any(fidx) && !any(midx))
+    return(unname(as.list(id)))
 
-  # Depth-first search
-  DFS = function(i, tag) {
-    env$comp[i] = tag
-    for(j in adjacencyList[[i]]) {
-      if(env$comp[j] == 0)
-        DFS(j, tag)
+  getComp = function(start) {
+    seen = logical(n)
+    seen[start] = TRUE
+
+    for(i in seqn) {
+      old = seen
+
+      # Upwards: add parents of seen individuals
+      seen[fidx[old]] = TRUE
+      seen[midx[old]] = TRUE
+
+      # Downwards: add children with at least one seen parent
+      parSeen = c(FALSE, seen)
+      seen = seen | parSeen[fidx + 1L] | parSeen[midx + 1L]
+
+      if(all(seen) || identical(seen, old))
+        break
     }
+
+    seen
   }
 
-  founders = seqn[fidx == 0 & midx == 0]
-  tag = 0
-  for(fou in founders) {
-    if(env$comp[fou] == 0) {
-      tag = tag + 1
-      DFS(fou, tag)
-    }
+  # Fast path: single connected component
+  seen = getComp(1L)
+  if(all(seen))
+    return(list(id))
+
+  # Fast path: one component plus remaining singletons
+  rest = !seen
+  if(!any(fidx[rest]) && !any(midx[rest]))
+    return(c(list(id[seen]), unname(as.list(id[rest]))))
+
+  comp = integer(n)
+  tag = 1L
+  comp[seen] = tag
+
+  repeat {
+    start = match(0L, comp)
+    if(is.na(start))
+      break
+
+    tag = tag + 1L
+    comp[getComp(start)] = tag
   }
 
-  comps = env$comp
-  lapply(1:max(comps), function(i) id[comps == i])
+  unname(split.default(id, comp))
 }
