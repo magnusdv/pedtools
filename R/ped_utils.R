@@ -291,22 +291,24 @@ validate_sex = function(sex, nInd, zero_allowed = TRUE) {
 #' @rdname ped_utils
 #' @export
 subnucs = function(x) {
-  if (is.singleton(x))
+  labs = x$ID
+  n = length(labs)
+  if(n <= 1)
     return(list())
 
-  n = pedsize(x)
-  labs = labels(x)
   seqn = seq_len(n)
-
-  FIDX = x[["FIDX"]]
-  MIDX = x[["MIDX"]]
+  FIDX = x$FIDX
+  MIDX = x$MIDX
 
   # Indices of unique parent couples
-  p_pairs_idx = seqn[FIDX + MIDX > 0 & !duplicated.default(FIDX*(n+1) + MIDX)]
+  key = FIDX*(n + 1L) + MIDX
+  couplesIdx = seqn[FIDX > 0L & !duplicated.default(key)]
 
   # List all nucs
-  lapply(rev.default(p_pairs_idx), function(j) {
-    nuc = list(father = FIDX[j], mother = MIDX[j], children = seqn[FIDX == FIDX[j] & MIDX == MIDX[j]])
+  lapply(rev.default(couplesIdx), function(j) {
+    nuc = list(father = FIDX[j],
+               mother = MIDX[j],
+               children = seqn[key == key[j]])
     class(nuc) = "nucleus"
     attr(nuc, "labels") = labs
     nuc
@@ -317,47 +319,51 @@ subnucs = function(x) {
 #' @rdname ped_utils
 #' @export
 peelingOrder = function(x) {
-  # output: list of nuclear subfamilies. Format for each nuc:
+  # Output: list of nuclear subfamilies. Format for each nuc:
   # list(father,mother,children,link), where link = 0 for the last nuc.
+
   nucs = subnucs(x)
-  if(length(nucs) == 0)
+  Nnucs = length(nucs)
+  if(!Nnucs)
     return(nucs)
 
-  peeling = vector("list", Nnucs <- length(nucs))
-  i = k = 1
+  if(hasUnbrokenLoops(x))
+    return(nucs)
 
-  while (length(nucs)) {
-    # Start searching for a nuc with only one link to others
-    nuc = nucs[[i]]
+  members = lapply(nucs, function(z) c(z$father, if(z$mother != z$father) z$mother, z$children))
+  count = tabulate(unlist(members, use.names = FALSE), nbins = length(x$ID))
 
-    # Identify links to other remaining nucs
-    if(length(nucs) > 1) {
-      nucmembers = c(nuc$father, nuc$mother, nuc$children)
-      links = nucmembers[nucmembers %in% unlist(nucs[-i], use.names = FALSE)]
-    }
-    else
-      links = 0 # if nuc is the last
+  peeling = vector("list", Nnucs)
+  i = k = 1L
 
-    # If only one link: move nuc to peeling list, and proceed
-    if (length(links) == 1) {
+  while(length(nucs)) {
+    mem = members[[i]]
+    links = if(length(nucs) == 1L) 0L else mem[count[mem] > 1L]
+
+    if(length(links) == 1L) {
+      nuc = nucs[[i]]
       nuc$link = links
       peeling[[k]] = nuc
+
+      count[mem] = count[mem] - 1L
       nucs[i] = NULL
-      i = 1
-      k = k+1
+      members[i] = NULL
+
+      i = 1L
+      k = k + 1L
+    }
+    else if(i == length(nucs)) {
+      # Unexpected loop! Include remaining nucs without 'link', and break
+      peeling[k:Nnucs] = nucs
+      break
     }
     else {
-      if (i == length(nucs)) { # LOOP! Include remaining nucs without 'link', and break.
-        peeling[k:Nnucs] = nucs
-        break
-      }
-      # Otherwise try next remaining nuc
-      i = i+1
+      i = i + 1L
     }
   }
+
   peeling
 }
-
 
 #' S3 methods
 #'
