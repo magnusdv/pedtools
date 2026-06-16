@@ -48,12 +48,8 @@
 #'
 #' * `peelingOrder(x)` calls `subnucs(x)` and extends each entry with a `link`
 #' individual, indicating a member linking the nucleus to the remaining
-#' pedigree. One application of this function is the fact that if _fails_ to
-#' find a complete peeling order if and only if the pedigree has loops. (In fact
-#' it is called each time a new `ped` object is created by [ped()] in order to
-#' detect loops.) The main purpose of the function, however, is to prepare for
-#' probability calculations in other packages, as e.g. in
-#' `pedprobr::likelihood`.
+#' pedigree. The main purpose of this is to prepare for probability calculations
+#' in other packages, as e.g. in `pedprobr::likelihood`.
 #'
 #' @examples
 #' x = fullSibMating(1)
@@ -206,18 +202,35 @@ nChildren = function(x, ids = labels(x), named = FALSE) {
 #' @rdname ped_utils
 #' @export
 hasUnbrokenLoops = function(x) {
+  unbrokenLoops = x$UNBROKEN_LOOPS
+  if(!is.null(unbrokenLoops))
+    return(unbrokenLoops)
+
   if(is.pedList(x))
     return(any(vapply(x, hasUnbrokenLoops, logical(1))))
 
-  unbrokenLoops = x$UNBROKEN_LOOPS
-  if(length(unbrokenLoops) == 1 && is.na(unbrokenLoops)) {
-    # Detect loop by trying to find a peeling order
-    nucs = peelingOrder(x)
-    lastnuc_link = nucs[[length(nucs)]]$link
-    unbrokenLoops = is.null(lastnuc_link)
-  }
+  FALSE
+}
 
-  isTRUE(unbrokenLoops)
+# Assumes a valid, connected pedigree
+hasLoop = function(x = NULL, fidx = x$FIDX, midx = x$MIDX) {
+  nonf = fidx > 0L
+  n = length(fidx)
+  if(n < 2)
+    return(FALSE)
+
+  # One nuclear family per distinct parent pair
+  f = fidx[nonf]
+  m = midx[nonf]
+  nucKey = f*(n + 1L) + m
+  keepNuc = !duplicated.default(nucKey)
+
+  # Loop iff E > V - 1 in nuclear graph
+  # Reduces to: non-self-nucs > founders - 1
+  nNucNonself = sum(keepNuc & f != m)
+  nFounders = n - length(f)
+
+  nNucNonself > nFounders - 1L
 }
 
 
@@ -560,4 +573,3 @@ reorderSimple = function(x, neworder, ids = NULL) {
 
   list(ID, FIDX, MIDX, SEX)
 }
-

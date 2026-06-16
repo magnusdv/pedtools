@@ -71,12 +71,8 @@ otherwise. By convention, \code{A[i,i]} is TRUE for all i.
 \code{children}.
 \item \code{peelingOrder(x)} calls \code{subnucs(x)} and extends each entry with a \code{link}
 individual, indicating a member linking the nucleus to the remaining
-pedigree. One application of this function is the fact that if \emph{fails} to
-find a complete peeling order if and only if the pedigree has loops. (In fact
-it is called each time a new \code{ped} object is created by \code{\link[=ped]{ped()}} in order to
-detect loops.) The main purpose of the function, however, is to prepare for
-probability calculations in other packages, as e.g. in
-\code{pedprobr::likelihood}.
+pedigree. The main purpose of this is to prepare for probability calculations
+in other packages, as e.g. in \code{pedprobr::likelihood}.
 }
 }
 \description{

@@ -159,23 +159,18 @@ ped = function(id, fid, mid, sex, famid = "", reorder = TRUE, validate = TRUE,
         idx = match(comps[[i]], id)
         ped(id = id[idx], fid = fid[idx], mid = mid[idx],
             sex = sex[idx], famid = famids[i], reorder = reorder,
-            validate = validate, detectLoops = detectLoops,
-            isConnected = TRUE, verbose = verbose)
+            validate = validate, isConnected = TRUE, verbose = verbose)
       })
 
       return(structure(pedlist, names = famids, class = c("pedList", "list")))
     }
   }
 
-  # Initialise ped object
-  x = newPed(id, FIDX, MIDX, sex, famid, detectLoops = FALSE) # TODO
-
-  # Detect loops (by trying to find a peeling order)
-  if(detectLoops)
-    x$UNBROKEN_LOOPS = hasUnbrokenLoops(x)
-
   if(validate)
-    validatePed(x)
+    validatePed(id = id, fidx = FIDX, midx = MIDX, sex = sex, famid = famid)
+
+  # Initialise ped object
+  x = newPed(id, FIDX, MIDX, sex, famid)
 
   # reorder so that parents precede their children
   if(reorder)
@@ -224,7 +219,7 @@ singletons = function(id, sex = 1) {
 #' @param MIDX An integer vector.
 #' @param SEX An integer vector.
 #' @param FAMID A string.
-#' @param detectLoops A logical.
+#' @param detectLoops (Deprecated).
 #'
 #' @return A `ped` object.
 #'
@@ -233,10 +228,12 @@ singletons = function(id, sex = 1) {
 #' newPed("a", 0L, 0L, 1L, "")
 #'
 #' @export
-newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = TRUE) {
+newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = NULL) {
   if(!all(is.character(ID), is.integer(FIDX), is.integer(MIDX),
           is.integer(SEX), is.character(FAMID)))
     stop2("Type error in the creation of `ped` object")
+
+  LOOPS = hasLoop(fidx = FIDX, midx = MIDX)
 
   # Initialise ped object
   x = list(ID = ID,
@@ -244,20 +241,12 @@ newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = TRUE) {
            MIDX = MIDX,
            SEX = SEX,
            FAMID = FAMID,
-           UNBROKEN_LOOPS = NA,
+           UNBROKEN_LOOPS = LOOPS,
            LOOP_BREAKERS = NULL,
            FOUNDER_INBREEDING = NULL,
            MARKERS = NULL)
 
-  if(length(ID) == 1) {
-    class(x) = c("singleton", "ped")
-    x$UNBROKEN_LOOPS = FALSE
-    return(x)
-  }
-
-  class(x) = "ped"
-  if(detectLoops)
-    x$UNBROKEN_LOOPS = hasUnbrokenLoops(x)
+  class(x) = if(length(ID) == 1) c("singleton", "ped") else "ped"
 
   x
 }
@@ -269,6 +258,7 @@ newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = TRUE) {
 #' malformed) [ped()] object, or its defining vectors `id`, `fid`, `mid`, `sex`.
 #'
 #' @param x A `ped` object.
+#' @param fidx,midx Integer vectors of parental indices (for internal use).
 #' @inheritParams ped
 #'
 #' @return If no errors are detected, the function returns NULL invisibly.
