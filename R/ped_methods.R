@@ -156,7 +156,7 @@ summary.list = function(object, ..., detailed = TRUE) {
 
   cat(sprintf("Ped list with %d connected component%s", n, if(n>1) "s" else "\n"))
   if(n > 1 && all(nInd == nInd[1]))
-    cat(sprintf(" (each with %d members).\n"), nInd[1])
+    cat(sprintf(" (each with %d members).\n", nInd[1]))
   else if(n > 1)
     cat(sprintf(" (# members = %s).\n", toString(nInd[1:min(10, n)])))
 
