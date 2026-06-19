@@ -41,6 +41,9 @@
 #'   labels. Otherwise the vector must have length `pedsize(x)`.
 #' @param errorIfFail A logical. If TRUE, an error is raised if loop breaking
 #'   fails. If FALSE, the pedigree is returned unchanged.
+#' @param allowRepeated A logical, temporarily set to FALSE. If TRUE, repeated
+#'  loop breakers are allowed. (This will become universal in a future release,
+#'   and the argument will be removed.)
 #'
 #' @return For `breakLoops()`, a `ped` object in which the indicated loop
 #'   breakers are duplicated. The returned object has a non-null
@@ -78,8 +81,8 @@
 #' @importFrom utils tail
 #' @importFrom stats ave
 #' @export
-breakLoops = function(x, loopBreakers = NULL, score = NULL,
-                         verbose = TRUE, errorIfFail = TRUE) {
+breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE,
+                      score = NULL, allowRepeated = FALSE) {
 
   if(isFALSE(x$UNBROKEN_LOOPS) || is.singleton(x)) {
     if(verbose) {
@@ -94,9 +97,9 @@ breakLoops = function(x, loopBreakers = NULL, score = NULL,
   auto = length(loopBreakers) == 0
 
   if(auto) {
-    plan = findLoopBreakers(x, score = score, errorIfFail = errorIfFail)
+    plan = findLoopBreakers(x, score = score, errorIfFail = errorIfFail, allowRepeated = allowRepeated)
     if(!nrow(plan)) {
-      if(errorIfFail) stop2("No loop breakers found)")
+      if(errorIfFail) stop2("No loop breakers found")
       if(verbose) message("No loop breakers found - returning unchanged")
       return(x)
     }
@@ -133,6 +136,9 @@ breakLoops = function(x, loopBreakers = NULL, score = NULL,
 
   if(any(breakers %in% oldCopies))
     stop2("Loop-breaker copies cannot be copied again")
+
+  if(!allowRepeated && anyDuplicated.default(c(oldOrigs, breakers)))
+    stop2("Repeated loop breakers require `allowRepeated = TRUE`")
 
   if(verbose)
     cat("Loop breakers:", toString(labs[breakers]), "\n")
@@ -230,8 +236,10 @@ tieLoops = function(x, verbose = TRUE) {
 
 #' @export
 #' @rdname breakLoops
-findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE) {
-  empty = matrix(character(0), ncol = 2, dimnames = list(NULL, c("lb", "child")))
+findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE, allowRepeated = FALSE) {
+
+  empty = matrix(character(0), ncol = 2,
+                 dimnames = list(NULL, c("lb", "child")))
 
   if(!isTRUE(x$UNBROKEN_LOOPS))
     return(empty)
@@ -249,7 +257,10 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE) {
       stop2("`score` must have length pedsize(x), or be named")
   }
 
-  oldCopies = if(is.null(x$LOOP_BREAKERS)) integer(0) else x$LOOP_BREAKERS[, 2]
+  oldLB = x$LOOP_BREAKERS
+  oldOrigs = if(is.null(oldLB)) integer(0) else oldLB[, 1]
+  oldCopies = if(is.null(oldLB)) integer(0) else oldLB[, 2]
+
   idx = nonfounders(x, internal = TRUE)
   fidx = x$FIDX[idx]
   midx = x$MIDX[idx]
@@ -273,14 +284,19 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE) {
     s = pref[b[cand]]
     cand = cand[!is.na(s) & s > -Inf]
 
+    usedBreakers = c(oldOrigs, breakers[seq_len(nb)])
+
+    # TODO: Remove when allowRepeated = TRUE becomes universal
+    if(!allowRepeated)
+      cand = cand[b[cand] %notin% usedBreakers]
+
     if(!length(cand)) {
-      mess = "The selected individuals cannot break all loops"
       if(errorIfFail)
-        stop2(mess)
+        stop2("The selected individuals cannot break all loops")
       return(empty)
     }
 
-    used = b[cand] %in% breakers[seq_len(nb)]
+    used = b[cand] %in% usedBreakers
     pick = cand[order(-pref[b[cand]], !used)[1L]]
     j = toNuc[pick]
 
@@ -301,8 +317,7 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE) {
     return(empty)
 
   k = seq_len(nb)
-  cbind(loopBreaker = labs[breakers[k]],
-        child = labs[splitChild[k]])
+  cbind(lb = labs[breakers[k]], child = labs[splitChild[k]])
 }
 
 
@@ -316,9 +331,13 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE) {
   couples = fidx*(N + 1L) + midx
 
   # Incoming edges: spouses to nuclear-family nodes
-  dups = duplicated.default(couples)
-  spou = c(fidx[!dups], midx[!dups])
-  marIn = cbind(from = spou, to = rep.int(couples[!dups], 2L), label = spou)
+  keepNuc = !duplicated.default(couples)
+  nuc = couples[keepNuc]
+  fa = fidx[keepNuc]
+  mo = midx[keepNuc]
+  nonself = fa != mo
+  spou = c(fa, mo[nonself])
+  marIn = cbind(from = spou, to = c(nuc, nuc[nonself]), label = spou)
 
   # Outgoing edges: nuclear-family nodes to children
   marOut = cbind(from = couples, to = idx, label = idx)

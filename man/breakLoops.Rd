@@ -9,14 +9,15 @@
 breakLoops(
   x,
   loopBreakers = NULL,
-  score = NULL,
   verbose = TRUE,
-  errorIfFail = TRUE
+  errorIfFail = TRUE,
+  score = NULL,
+  allowRepeated = FALSE
 )
 
 tieLoops(x, verbose = TRUE)
 
-findLoopBreakers(x, score = NULL, errorIfFail = TRUE)
+findLoopBreakers(x, score = NULL, errorIfFail = TRUE, allowRepeated = FALSE)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
@@ -25,14 +26,18 @@ findLoopBreakers(x, score = NULL, errorIfFail = TRUE)
 breakers, a vector indicating the individuals to be used as loop breakers,
 or a two-column matrix/data frame giving loop breakers and children.}
 
-\item{score}{Optional preference scores used by \code{findLoopBreakers()}. Higher
-values are preferred. If named, the names are interpreted as individual
-labels. Otherwise the vector must have length \code{pedsize(x)}.}
-
 \item{verbose}{A logical indicating whether to print progress messages.}
 
 \item{errorIfFail}{A logical. If TRUE, an error is raised if loop breaking
 fails. If FALSE, the pedigree is returned unchanged.}
+
+\item{score}{Optional preference scores used by \code{findLoopBreakers()}. Higher
+values are preferred. If named, the names are interpreted as individual
+labels. Otherwise the vector must have length \code{pedsize(x)}.}
+
+\item{allowRepeated}{A logical, temporarily set to FALSE. If TRUE, repeated
+loop breakers are allowed. (This will become universal in a future release,
+and the argument will be removed.)}
 }
 \value{
 For \code{breakLoops()}, a \code{ped} object in which the indicated loop
