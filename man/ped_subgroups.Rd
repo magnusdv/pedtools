@@ -12,6 +12,7 @@
 \alias{father}
 \alias{mother}
 \alias{children}
+\alias{children2}
 \alias{spouses}
 \alias{unrelated}
 \alias{parents}
@@ -45,7 +46,9 @@ father(x, id, internal = FALSE)
 
 mother(x, id, internal = FALSE)
 
-children(x, id, internal = FALSE)
+children(x, id, internal = FALSE, bySpouse = FALSE)
+
+children2(x, id, id2, internal = FALSE)
 
 spouses(x, id, internal = FALSE)
 
@@ -79,8 +82,11 @@ descentPaths(x, ids = founders(x), internal = FALSE)
 \item{internal}{A logical indicating whether \code{id} (or \code{ids}) refers to the
 internal order.}
 
-\item{id, ids}{A character (or coercible to character) of one or more ID
-labels. If \code{internal} is TRUE, \code{id} and \code{ids} should be positive integers.}
+\item{id, id2, ids}{A character (or coercible to character) of one or more ID
+labels. If \code{internal} is TRUE, these should be positive integers.}
+
+\item{bySpouse}{A logical indicating whether children should be returned
+separately by spouse, returned as a list of vectors.}
 
 \item{degree, removal}{Non-negative integers.}
 
@@ -103,8 +109,8 @@ pedigree, and that a leaf is a member without children in the pedigree.)
 The functions \code{father}, \code{mother}, \code{parents}, \code{children}, \code{siblings},
 \code{grandparents}, \code{spouses}, \code{niblings} (nephews + nieces), \code{piblings} (aunts
 \itemize{
-\item uncles) and \code{unrelated}, each returns a vector naming all
-pedigree members with the specified relationship to \code{id}.
+\item uncles) and \code{unrelated}, each returns a vector naming all pedigree members
+with the specified relationship to \code{id}.
 }
 
 The commands \code{ancestors(x, id)} and \code{descendants(x, id)} return vectors

@@ -4,8 +4,8 @@
 #' certain properties.
 #'
 #' @param x A [ped()] object or a list of such.
-#' @param id,ids A character (or coercible to character) of one or more ID
-#'   labels. If `internal` is TRUE, `id` and `ids` should be positive integers.
+#' @param id,id2,ids A character (or coercible to character) of one or more ID
+#'   labels. If `internal` is TRUE, these should be positive integers.
 #' @param maxGen The number of generations to include. Default: `Inf` (no
 #'   limit).
 #' @param inclusive A logical indicating whether an individual should be counted
@@ -16,6 +16,8 @@
 #' @param half a logical or NA. If TRUE (resp. FALSE), only half (resp. full)
 #'   siblings/cousins/nephews/nieces are returned. If NA, both categories are
 #'   included.
+#' @param bySpouse A logical indicating whether children should be returned
+#'   separately by spouse, returned as a list of vectors.
 #'
 #' @return The functions `founders`, `nonfounders`, `males`, `females`, `leaves`
 #'   each return a vector containing the IDs of all pedigree members with the
@@ -24,8 +26,8 @@
 #'
 #'   The functions `father`, `mother`, `parents`, `children`, `siblings`,
 #'   `grandparents`, `spouses`, `niblings` (nephews + nieces), `piblings` (aunts
-#'   + uncles) and `unrelated`, each returns a vector naming all
-#'   pedigree members with the specified relationship to `id`.
+#'   + uncles) and `unrelated`, each returns a vector naming all pedigree members
+#'   with the specified relationship to `id`.
 #'
 #'   The commands `ancestors(x, id)` and `descendants(x, id)` return vectors
 #'   containing the IDs of all ancestors (resp. descendants) of the individual
@@ -265,7 +267,7 @@ mother = function(x, id, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
-children = function(x, id, internal = FALSE) {
+children = function(x, id, internal = FALSE, bySpouse = FALSE) {
   discon = !is.ped(x)
   if(internal && discon)
     stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
@@ -273,14 +275,32 @@ children = function(x, id, internal = FALSE) {
   if(internal && !is.numeric(id))
     stop2("Argument `id` must be numeric when `internal` is TRUE")
 
+  if(bySpouse && length(id) != 1)
+    stop2("`id` must have length 1 when `bySpouse = TRUE`")
+
   idInt = if(!internal) internalID(x, id) else id
 
   if(discon) { # in this case idInt is a data frame
-    chList = lapply(unique.default(idInt$comp), function(co) {
+
+    if(bySpouse) {
+      comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
+      return(children(x[[comp]], id, bySpouse = TRUE))
+    }
+
+    cmps = unique.default(idInt$comp)
+    chList = lapply(cmps, function(co) {
       chi = children(x[[co]], id = idInt$int[idInt$comp == co], internal = TRUE)
       x[[co]]$ID[chi]
     })
     return(unlist(chList, use.names = FALSE))
+  }
+
+  if(bySpouse) {
+    sp = spouses(x, idInt, internal = TRUE)
+    res = lapply(sp, function(s) children2(x, idInt, s, internal = TRUE))
+    names(res) = x$ID[sp]
+
+    return(if(internal) res else lapply(res, function(z) x$ID[z]))
   }
 
   if(length(idInt) == 1)
