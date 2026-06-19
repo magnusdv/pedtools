@@ -270,8 +270,8 @@ newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = NULL) {
 #'
 #' @export
 #'
-validatePed = function(x = NULL, id = x$ID, fidx = x$FIDX, midx = x$MIDX, sex = x$SEX,
-                       famid = x$FAMID, fid = NULL, mid = NULL) {
+validatePed = function(x = NULL, id = x$ID, fid = NULL, mid = NULL, sex = x$SEX,
+                       famid = x$FAMID, fidx = x$FIDX, midx = x$MIDX) {
   if(!is.null(fid))
     fidx = match(fid, id, nomatch = 0L)
   if(!is.null(mid))

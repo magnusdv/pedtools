@@ -315,9 +315,13 @@ children = function(x, id, internal = FALSE, bySpouse = FALSE) {
 #' @rdname ped_subgroups
 #' @export
 children2 = function(x, id, id2, internal = FALSE) {
+
   discon = !is.ped(x)
   if(internal && discon)
     stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(length(id) != 1L || length(id2) != 1L)
+    stop2("Arguments `id` and `id2` must have length 1")
 
   if(discon) {
     comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)

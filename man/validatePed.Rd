@@ -7,12 +7,12 @@
 validatePed(
   x = NULL,
   id = x$ID,
-  fidx = x$FIDX,
-  midx = x$MIDX,
+  fid = NULL,
+  mid = NULL,
   sex = x$SEX,
   famid = x$FAMID,
-  fid = NULL,
-  mid = NULL
+  fidx = x$FIDX,
+  midx = x$MIDX
 )
 }
 \arguments{
@@ -20,7 +20,9 @@ validatePed(
 
 \item{id}{A character (or coercible to character) of individual ID labels.}
 
-\item{fidx, midx}{Integer vectors of parental indices (for internal use).}
+\item{fid, mid}{Vectors of the same length as \code{id}, naming each individual's
+father and mother. Missing parents (of founders) may be entered as "0", ""
+or NA.}
 
 \item{sex}{A numeric of the same length as \code{id}, describing the genders of
 the individuals (in the same order as \code{id}.) Each entry must be either 1
@@ -28,9 +30,7 @@ the individuals (in the same order as \code{id}.) Each entry must be either 1
 
 \item{famid}{A character string. Default: An empty string.}
 
-\item{fid, mid}{Vectors of the same length as \code{id}, naming each individual's
-father and mother. Missing parents (of founders) may be entered as "0", ""
-or NA.}
+\item{fidx, midx}{Integer vectors of parental indices (for internal use).}
 }
 \value{
 If no errors are detected, the function returns NULL invisibly.

@@ -118,8 +118,10 @@ reorderPed = function(x, neworder = NULL, internal = FALSE) {
   attr$LABELS = attr$LABELS[neworder]
 
   # Fix loop breakers
-  if(!is.null(lp <- attr$LOOP_BREAKERS))
-    attr$LOOP_BREAKERS = matrix(match(lp, neworder), ncol = 2)
+  if(!is.null(lp <- attr$LOOP_BREAKERS)) {
+    lp[] = match(lp, neworder)
+    attr$LOOP_BREAKERS = lp
+  }
 
   # Restore
   restorePed(xmatr[neworder, ], attrs = attr)

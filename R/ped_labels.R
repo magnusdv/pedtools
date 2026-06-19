@@ -140,12 +140,12 @@ relabel = function(x, new = "asPlot", old = labels(x), reorder = FALSE,
 
   # Loop breakers
   if(!is.null(lb <- x$LOOP_BREAKERS)) {
-    # Are any of the copies already changed by user?
-    j = lb[, 'copy'] %in% old_int
-
-    copy = lb[!j, 'copy']
-    orig = lb[!j, 'orig']
-    id[copy] = paste0("=", id[orig])
+    orig = lb[, 'orig']
+    copy = lb[, 'copy']
+    copyNo = ave(seq_along(orig), orig, FUN = seq_along)
+    keep = copy %notin% old_int
+    if(any(keep))
+      id[copy[keep]] = paste0(strrep("=", copyNo[keep]), id[orig[keep]])
   }
 
   x$ID = id

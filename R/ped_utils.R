@@ -203,8 +203,13 @@ nChildren = function(x, ids = labels(x), named = FALSE) {
 #' @export
 hasUnbrokenLoops = function(x) {
   unbrokenLoops = x$UNBROKEN_LOOPS
-  if(!is.null(unbrokenLoops))
+  if(!is.null(unbrokenLoops)) {
+
+    if(is.na(unbrokenLoops)) # only for backwards compatibility
+      unbrokenLoops = hasLoop(x)
+
     return(unbrokenLoops)
+  }
 
   if(is.pedList(x))
     return(any(vapply(x, hasUnbrokenLoops, logical(1))))
