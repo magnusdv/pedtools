@@ -294,6 +294,30 @@ children = function(x, id, internal = FALSE) {
 
 #' @rdname ped_subgroups
 #' @export
+children2 = function(x, id, id2, internal = FALSE) {
+  discon = !is.ped(x)
+  if(internal && discon)
+    stop2("Argument `internal` cannot be TRUE when `x` is disconnected")
+
+  if(discon) {
+    comp = getComponent(x, id, checkUnique = TRUE, errorIfUnknown = TRUE)
+    return(children2(x[[comp]], id, id2, internal = FALSE))
+  }
+
+  if(!internal) {
+    id = internalID(x, id)
+    id2 = internalID(x, id2)
+  }
+  else if(!is.numeric(id) || !is.numeric(id2))
+    stop2("Arguments `id` and `id2` must be numeric when `internal` is TRUE")
+
+  ch = (x$FIDX == id & x$MIDX == id2) | (x$FIDX == id2 & x$MIDX == id)
+
+  if(internal) which(ch) else x$ID[ch]
+}
+
+#' @rdname ped_subgroups
+#' @export
 spouses = function(x, id, internal = FALSE) {
   if(length(id) != 1)
     stop2("`id` must have length 1")
