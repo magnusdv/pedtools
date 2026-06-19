@@ -2,96 +2,32 @@
 % Please edit documentation in R/ped_loops.R
 \name{inbreedingLoops}
 \alias{inbreedingLoops}
-\alias{breakLoops}
-\alias{tieLoops}
-\alias{findLoopBreakers}
-\alias{findLoopBreakers2}
-\title{Pedigree loops}
+\title{Inbreeding loops}
 \usage{
 inbreedingLoops(x)
-
-breakLoops(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE)
-
-tieLoops(x, verbose = TRUE)
-
-findLoopBreakers(x)
-
-findLoopBreakers2(x, errorIfFail = TRUE)
 }
 \arguments{
-\item{x}{a \code{\link[=ped]{ped()}} object.}
-
-\item{loopBreakers}{either NULL (resulting in automatic selection of loop
-breakers) or a vector indicating the individuals to be used as loop
-breakers.}
-
-\item{verbose}{a logical: Verbose output or not?}
-
-\item{errorIfFail}{a logical: If TRUE an error is raised if the loop breaking
-is unsuccessful. If FALSE, the pedigree is returned unchanged.}
+\item{x}{A \code{ped} object.}
 }
 \value{
-For \code{breakLoops}, a \code{ped} object in which the indicated loop breakers
-are duplicated. The returned object will also have a non-null
-\code{LOOP_BREAKERS} entry, namely a matrix with the IDs of the original loop
-breakers in the first column and the duplicates in the second. If loop
-breaking fails, then depending on \code{errorIfFail} either an error is raised,
-or the input pedigree (with loops intact) is returned.
-
-For \code{tieLoops}, a \code{ped} object in which any duplicated individuals (as
-given in the \code{x$LOOP_BREAKERS} entry) are merged. For any ped object \code{x},
-the call \code{tieLoops(breakLoops(x))} should return \code{x}.
-
-For \code{inbreedingLoops}, a list containing all inbreeding loops (not marriage
-loops) found in the pedigree. Each loop is represented as a list with
-elements \code{top}, \code{bottom}, \code{pathA} (individuals forming a path from top to
-bottom) and \code{pathB} (creating a different path from top to bottom, with no
-individuals in common with \code{pathA}). Note that the number of loops reported
-here counts all closed paths in the pedigree and will in general be larger
-than the genus of the underlying graph.
-
-For \code{findLoopBreakers} and \code{findLoopBreakers2}, a vector of individual
-labels.
+A list of inbreeding loops, where each loop is a list with entries
+\code{top}, \code{bottom}, \code{pathA} and \code{pathB}. The \code{top} and \code{bottom} entries give
+the IDs of the individuals at the top and bottom of the loop, while \code{pathA}
+and \code{pathB} give the IDs of the individuals along the two paths from top to
+bottom (excluding top and bottom themselves).
 }
 \description{
-Functions for identifying, breaking and restoring loops in pedigrees.
-}
-\details{
-Pedigree loops are usually handled (by pedtools and related packages) under
-the hood -- using the functions described here -- without the need for
-explicit action from end users. When a ped object \code{x} is created, an internal
-routine detects if the pedigree contains loops, in which case
-\code{x$UNBROKEN_LOOPS} is set to TRUE.
-
-In cases with complex inbreeding, it can be instructive to plot the pedigree
-after breaking the loops. Duplicated individuals are plotted with appropriate
-labels (see examples).
-
-The function \code{breakLoops} breaks the loops of the input pedigree by
-duplicating the loop breakers. These may be given by the user; otherwise they
-are selected automatically. In the current implementation, only nonfounders
-can act as loop breakers. For automatic selection of loop breakers,
-\code{breakLoops} first calls \code{findLoopBreakers}, which identifies and breaks all
-\emph{inbreeding loops}. If the resulting pedigree still has loops,
-\code{findLoopBreakers2} is called to handle \emph{marriage loops}. In earlier versions
-this required the \code{igraph} package, but now uses a custom implementation
-using a depth-first search algorithm to find a cycle in the marriage node
-graph.
+Returns a list of all inbreeding loops in the pedigree. Note that this may be large
+(and slow) in heavily inbred pedigrees. For example, \code{fullSibMating(10)} has 8144
+loops. For finding loop breakers and breaking loops, see \code{findLoopBreakers()} and
+\code{breakLoops()}, which are much more efficient for large pedigrees, and do not require
+enumerating all loops.
 }
 \examples{
-
 x = cousinPed(1, child = TRUE)
-plot(breakLoops(x))
+loops = inbreedingLoops(x)
 
-# Pedigree with marriage loop: Double first cousins
-y = doubleCousins(1, 1, child = TRUE)
-findLoopBreakers(y) # --> 9
-findLoopBreakers2(y) # --> 5 and 9
-y2 = breakLoops(y)
-plot(y2)
-
-# Or loop breakers chosen by user
-y3 = breakLoops(y, 6:7)
-plot(y3)
-
+}
+\seealso{
+\code{\link[=findLoopBreakers]{findLoopBreakers()}}, \code{\link[=breakLoops]{breakLoops()}}
 }
