@@ -1,4 +1,27 @@
+# pedtools 2.11.0
+
+## New features
+
+* The loop breaking algorithm has been revamped and extended to allow founders to act as loop breakers, and to use the same individual as loop breaker for several loops. This enables loop breaking (and therefore likelihood calculations etc.) in many pedigrees that were previously intractable. The new algorithm is also faster than the previous one, especially in large pedigrees.
+
+* The `ped()` constructor now always checks for the presence of loops, ignoring the previous argument `detectLoops`, which is now deprecated. The previous internal loop detection algorithm, which was optional because it was slow in large pedigrees, has been replaced by a faster one which scales better.
+
+* Several methods have been revised and made more efficient, including `randomPed()`, `peelingOrder()`, `connectedComponents()`.
+
+* New function `children2()`, similar to `children()` but requiring both parents as input.
+
+* `children()` gains argument `bySpouse`, which if TRUE gives a list of children for each spouse, instead of a single vector with all children.
+
+## Other
+
+* Fix bug in `summary.list()` handling ped lists.
+* Handle NULLs in the internal `split_genotype_cols()`.
+* Various vector code cleanups.
+
+
 # pedtools 2.10.0
+
+## New features
 
 * New function `addSibling()` for adding a sibling to an existing pedigree member.
 
