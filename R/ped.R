@@ -272,6 +272,8 @@ newPed = function(ID, FIDX, MIDX, SEX, FAMID, detectLoops = NULL) {
 #'
 validatePed = function(x = NULL, id = x$ID, fid = NULL, mid = NULL, sex = x$SEX,
                        famid = x$FAMID, fidx = x$FIDX, midx = x$MIDX) {
+  id = as.character(id)
+
   if(!is.null(fid))
     fidx = match(fid, id, nomatch = 0L)
   if(!is.null(mid))
@@ -280,7 +282,7 @@ validatePed = function(x = NULL, id = x$ID, fid = NULL, mid = NULL, sex = x$SEX,
   n = length(id)
 
   # Type verification (mainly for developer)
-  stopifnot2(is.character(id), is.integer(fidx), is.integer(midx), is.integer(sex))
+  stopifnot2(is.integer(fidx), is.integer(midx), is.numeric(sex))
 
   # Other verifications that don't need friendly messages at this point
   # (since they should be caught earlier during construction)

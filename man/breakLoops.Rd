@@ -69,7 +69,7 @@ after breaking the loops. Duplicated individuals are plotted with suitable
 labels (see examples).
 
 The function \code{findLoopBreakers()} searches the marriage graph for cycles.
-For each cycle it chooses a nonfounder loop breaker and one child indicating
+For each cycle it chooses a suitable loop breaker and one child indicating
 which full-sibship should be moved.
 
 The function \code{breakLoops()} then makes one founder copy of each selected

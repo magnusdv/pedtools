@@ -13,7 +13,7 @@
 #' labels (see examples).
 #'
 #' The function `findLoopBreakers()` searches the marriage graph for cycles.
-#' For each cycle it chooses a nonfounder loop breaker and one child indicating
+#' For each cycle it chooses a suitable loop breaker and one child indicating
 #' which full-sibship should be moved.
 #'
 #' The function `breakLoops()` then makes one founder copy of each selected
@@ -530,7 +530,7 @@ inbreedingLoops = function(x) {
 
   # NB: Very slow for large pedigrees. DFS probably more efficient.
 
-  if(n0 > 30) { # why [1] ?
+  if(n0 > 30) {
     # Identify unneeded sib leaves
     pars = x$FIDX*(n0 + 1L) + x$MIDX
     sibships = unname(split.default(seq_along(pars), pars))
