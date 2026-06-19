@@ -33,14 +33,12 @@
 #' @param famid A character string. Default: An empty string.
 #' @param reorder A logical indicating if the pedigree should be reordered so
 #'   that all parents precede their children. Default: TRUE.
-#' @param detectLoops A logical indicating if the presence of loops should be
-#'   detected. Setting this to FALSE may speed up the processing of large
-#'   pedigrees. Default: TRUE.
 #' @param validate A logical indicating if a validation of the pedigree
 #'   structure should be performed. Default: TRUE.
 #' @param isConnected A logical indicating if the input is known to be a
 #'   connected pedigree. Setting this to TRUE speeds up the processing. Default:
 #'   FALSE.
+#' @param detectLoops This argument is deprecated; loops are now always detected.
 #' @param verbose A logical.
 #'
 #' @return A `ped` object, which is essentially a list with the following
@@ -186,8 +184,7 @@ singleton = function(id = 1, sex = 1, famid = "") {
   if (length(id) != 1)
     stop2("`id` must have length 1")
   sex = validate_sex(sex, nInd = 1)
-  newPed(ID = as.character(id), FIDX = 0L, MIDX = 0L, SEX = sex,
-         FAMID = famid, detectLoops = FALSE)
+  newPed(ID = as.character(id), FIDX = 0L, MIDX = 0L, SEX = sex, FAMID = famid)
 }
 
 
@@ -199,8 +196,7 @@ singletons = function(id, sex = 1) {
   sex = validate_sex(sex, nInd = n)
 
   lapply(seq_len(n), function(i)
-    newPed(ID = id[i], FIDX = 0L, MIDX = 0L, SEX = sex[i],
-           FAMID = "", detectLoops = FALSE))
+    newPed(ID = id[i], FIDX = 0L, MIDX = 0L, SEX = sex[i], FAMID = ""))
 }
 
 

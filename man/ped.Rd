@@ -42,9 +42,7 @@ that all parents precede their children. Default: TRUE.}
 \item{validate}{A logical indicating if a validation of the pedigree
 structure should be performed. Default: TRUE.}
 
-\item{detectLoops}{A logical indicating if the presence of loops should be
-detected. Setting this to FALSE may speed up the processing of large
-pedigrees. Default: TRUE.}
+\item{detectLoops}{This argument is deprecated; loops are now always detected.}
 
 \item{isConnected}{A logical indicating if the input is known to be a
 connected pedigree. Setting this to TRUE speeds up the processing. Default:

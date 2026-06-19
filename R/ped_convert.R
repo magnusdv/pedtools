@@ -81,9 +81,7 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
     attrs = attributes(x)
 
   p = ped(id = x[,1], fid = x[,2], mid = x[,3], sex = x[,4],
-          famid = attrs$FAMID, validate = validate,
-          detectLoops = !is.na(attrs$UNBROKEN_LOOPS),
-          reorder = FALSE)
+          famid = attrs$FAMID, validate = validate, reorder = FALSE)
 
   if(is.pedList(p)) {
     if(!is.null(attrs$LOOP_BREAKERS) || !is.null(attrs$FOUNDER_INBREEDING))
