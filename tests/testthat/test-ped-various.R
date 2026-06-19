@@ -22,3 +22,12 @@ test_that("as.ped.data.frame() keeps genotypes", {
   expect_identical(genotype(pp[[1]],id = 1, markers = 1), c("1", "2"))
   expect_identical(genotype(pp[[2]],id = 1, markers = 1), c("1", "2"))
 })
+
+test_that("summary.list() handles equally sized components", {
+  x = list(nuclearPed(1), nuclearPed(1))
+
+  expect_output(
+    summary(x, detailed = FALSE),
+    "Ped list with 2 connected components \\(each with 3 members\\)\\."
+  )
+})

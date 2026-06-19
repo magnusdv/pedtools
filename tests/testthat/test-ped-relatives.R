@@ -46,6 +46,18 @@ test_that("children() are correct after reorder", {
   expect_setequal(children(x, 2), true_offs)
 })
 
+test_that("children2() and children(bySpouse = TRUE) work", {
+  x = halfSibPed(2, 1)
+
+  expect_identical(children2(x, 1, 2), c("4", "5"))
+  expect_identical(children2(x, 2, 1), c("4", "5"))
+  expect_identical(children2(x, 2, 3), "6")
+
+  expect_identical(children(x, 2, bySpouse = TRUE),
+                   list(`1` = c("4", "5"), `3` = "6"))
+
+  expect_error(children2(x, 1:2, 3), "must have length 1")
+})
 
 test_that("spouses() are correct", {
   x = nuclearPed(4)

@@ -58,19 +58,31 @@ test_that("simple ped", {
 })
 
 
-test_that("randomPed works", {
-  x = randomPed(6, 3, seed = 3)
-  expect_is(x, "ped")
-  expect_equal(pedsize(x), 6)
-
-  expect_error(randomPed(2), "The total number of individuals must be at least 3")
-  expect_error(randomPed(3,1), "When selfing is disallowed, the number of founders must be at least 2")
-  expect_error(randomPed(3,3), "Too many founders")
-})
-
 test_that("singleton creation works as expected", {
   x = singleton(1)
   expect_is(x, "ped")
   expect_is(x, "singleton")
 })
 
+
+test_that("randomPed catches errors", {
+  expect_error(randomPed(2), "The total number of individuals must be at least 3")
+  expect_error(randomPed(3,1), "When selfing is disallowed, the number of founders must be at least 2")
+  expect_error(randomPed(3,3), "Too many founders")
+  expect_error(randomPed(5, maxDirectGap = -1), "`maxDirectGap`")
+  expect_error(randomPed(5, maxDirectGap = NA), "`maxDirectGap`")
+})
+
+test_that("randomPed() returns connected pedigrees", {
+  x = randomPed(20, founders = 5, seed = 3)
+
+  expect_is(x, "ped")
+  expect_equal(pedsize(x), 20)
+  expect_equal(length(founders(x)), 5)
+  expect_false(hasSelfing(x))
+
+  y = randomPed(6, founders = 1, selfing = TRUE, seed = 3)
+  expect_true(hasSelfing(y))
+  expect_equal(pedsize(y), 6)
+  expect_equal(length(founders(y)), 1)
+})

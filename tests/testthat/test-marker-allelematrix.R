@@ -58,3 +58,15 @@ test_that("`removeGenotypes()` catches errors", {
   expect_error(removeGenotypes(x, ids = 4:5), "Unknown ID label: 5")
   expect_error(removeGenotypes(x, markers = 3), "Marker index out of range")
 })
+
+test_that("split_genotype_cols() handles NULL and missing matrices", {
+  expect_null(split_genotype_cols(NULL, "/"))
+
+  x = matrix(NA_character_, 2, 2, dimnames = list(c("a", "b"), NULL))
+
+  y = split_genotype_cols(x, "/")
+
+  expect_identical(dim(y), c(2L, 4L))
+  expect_identical(rownames(y), c("a", "b"))
+  expect_true(all(y == 0))
+})

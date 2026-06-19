@@ -86,5 +86,62 @@ test_that("it is possible to relabel a loop breaker copy individual", {
   expect_identical(labels(x_r), lab)
 })
 
-# TODO: other looped peds
+
+
+# June 2026-----------------------------------------------------------------------------------------
+
+test_that("founders can be loop breakers", {
+  x = halfCousinPed(0, child = T)
+
+  auto = findLoopBreakers(x, score = c(`2` = 1))
+  expect_identical(as.character(auto[, 1]), "2")
+
+  plan = matrix(c("2", "4"), nrow = 1, dimnames = list(NULL, c("lb", "child")))
+
+  y1 = break_silent(x, plan)
+  y2 = break_silent(x, 2)
+  expect_identical(y1,y2)
+  expect_identical(tie_silent(y1), x)
+})
+
+test_that("loop breakers can be repeated", {
+  x = halfSibTriangle(4)
+
+  score = setNames(rep(-Inf, pedsize(x)), labels(x))
+  score[c("3", "6")] = 1
+
+  plan = findLoopBreakers(x, score = score, allowRepeated = TRUE)
+  expect_true(anyDuplicated.default(plan[, "lb"]) > 0)
+
+  y1 = break_silent(x, plan, allowRepeated = TRUE)
+  y2 = break_silent(x, plan[,1], allowRepeated = TRUE)
+  expect_false(y1$UNBROKEN_LOOPS)
+  expect_identical(y1,y2)
+  expect_identical(tie_silent(y1), x)
+
+  z = break_silent(x)
+  expect_false(anyDuplicated.default(z$LOOP_BREAKERS[, "orig"]) > 0)
+  expect_false(z$UNBROKEN_LOOPS)
+  expect_identical(tie_silent(z), x)
+})
+
+test_that("repeated loop breakers are also checked across calls", {
+  x = halfSibTriangle(4)
+
+  z1 = x |> break_silent(c(6,6,3), allowRepeated = TRUE)
+  z2 = x |> break_silent(6) |> break_silent(c(6,3), allowRepeated = TRUE) |> reorderPed(neworder = z1$ID)
+  expect_identical(z1, z2)
+})
+
+test_that("relabel() handles repeated loop breakers", {
+  x = halfSibTriangle(4)
+  y = break_silent(x, score = c("3" = 1, "6" = 1), allowRepeated = TRUE)
+
+  z = relabel(y, c("6" = "A"))
+  expect_identical(z$ID, sub("6", "A", y$ID))
+  expect_identical(z$LOOP_BREAKERS, y$LOOP_BREAKERS)
+
+  expect_identical(tie_silent(z) |> relabel(c(A = "6")), x)
+})
+
 

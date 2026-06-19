@@ -122,3 +122,36 @@ test_that("mergePed() catches errors", {
     mergePed(nuclearPed(), nuclearPed(), by = 3),
     "Parent mismatch")
 })
+
+
+test_that("connectedComponents() handles interleaved components", {
+  id = c("a", "d", "b", "e", "c", "f", "g")
+  fid = c("0", "0", "0", "0", "a", "d", "0")
+  mid = c("0", "0", "0", "0", "b", "e", "0")
+
+  expected = list(c("a", "b", "c"),
+                  c("d", "e", "f"),
+                  "g")
+
+  expect_identical(connectedComponents(id, fid, mid), expected)
+})
+
+test_that("peelingOrder() handles chains and selfing", {
+  p1 = peelingOrder(linearPed(2))
+  expect_equal(length(p1), 2)
+  expect_identical(
+    vapply(p1, function(z) z$link, integer(1)),
+    c(3L, 0L)
+  )
+
+  p2 = peelingOrder(selfingPed(2))
+  expect_equal(length(p2), 2)
+  expect_identical(
+    vapply(p2, function(z) z$link, integer(1)),
+    c(2L, 0L)
+  )
+
+  p3 = peelingOrder(breakLoops(fullSibMating(2), verbose = FALSE))
+  expect_true(all(vapply(p3, function(z) !is.null(z$link), logical(1))))
+  expect_identical(p3[[length(p3)]]$link, 0L)
+})
