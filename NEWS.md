@@ -3,7 +3,8 @@
 ## New features
 
 * The loop breaking algorithm has been revamped and extended to allow founders to act as loop breakers, and to use the same individual as loop breaker for several loops. This enables loop breaking (and therefore likelihood calculations etc.) in many pedigrees that were previously intractable. The new algorithm is also faster than the previous one, especially in large pedigrees.
-(For compatibility with downstream packages, repeated loop breakers currently require `breakLoops(x, allowRepeated = TRUE)`.
+    
+    Awaiting updates in downstream packages, the new loop breaking methods are disabled by default, but may be activated by `breakLoops(x, allowFounder = TRUE, allowRepeated = TRUE)`.
 
 * The `ped()` constructor now always checks for the presence of loops, ignoring the previous argument `detectLoops`, which is now deprecated. The previous internal loop detection algorithm, which was optional because it was slow in large pedigrees, has been replaced by a faster one which scales better.
 

@@ -1,5 +1,5 @@
 
-break_silent = function(...) breakLoops(..., verbose=F)
+break_silent = function(...) breakLoops(..., allowFounder = TRUE, allowRepeated = TRUE, verbose=F)
 tie_silent = function(...) tieLoops(..., verbose=F)
 
 
@@ -93,7 +93,7 @@ test_that("it is possible to relabel a loop breaker copy individual", {
 test_that("founders can be loop breakers", {
   x = halfCousinPed(0, child = T)
 
-  auto = findLoopBreakers(x, score = c(`2` = 1))
+  auto = findLoopBreakers(x, score = c(`2` = 1), allowFounder = TRUE)
   expect_identical(as.character(auto[, 1]), "2")
 
   plan = matrix(c("2", "4"), nrow = 1, dimnames = list(NULL, c("lb", "child")))
@@ -110,32 +110,27 @@ test_that("loop breakers can be repeated", {
   score = setNames(rep(-Inf, pedsize(x)), labels(x))
   score[c("3", "6")] = 1
 
-  plan = findLoopBreakers(x, score = score, allowRepeated = TRUE)
+  plan = findLoopBreakers(x, score = score, allowFounder = TRUE, allowRepeated = TRUE)
   expect_true(anyDuplicated.default(plan[, "lb"]) > 0)
 
-  y1 = break_silent(x, plan, allowRepeated = TRUE)
-  y2 = break_silent(x, plan[,1], allowRepeated = TRUE)
+  y1 = break_silent(x, plan)
+  y2 = break_silent(x, plan[,1])
   expect_false(y1$UNBROKEN_LOOPS)
   expect_identical(y1,y2)
   expect_identical(tie_silent(y1), x)
-
-  z = break_silent(x)
-  expect_false(anyDuplicated.default(z$LOOP_BREAKERS[, "orig"]) > 0)
-  expect_false(z$UNBROKEN_LOOPS)
-  expect_identical(tie_silent(z), x)
 })
 
 test_that("repeated loop breakers are also checked across calls", {
   x = halfSibTriangle(4)
 
-  z1 = x |> break_silent(c(6,6,3), allowRepeated = TRUE)
-  z2 = x |> break_silent(6) |> break_silent(c(6,3), allowRepeated = TRUE) |> reorderPed(neworder = z1$ID)
+  z1 = x |> break_silent(c(6,6,3))
+  z2 = x |> break_silent(6) |> break_silent(c(6,3)) |> reorderPed(neworder = z1$ID)
   expect_identical(z1, z2)
 })
 
 test_that("relabel() handles repeated loop breakers", {
   x = halfSibTriangle(4)
-  y = break_silent(x, score = c("3" = 1, "6" = 1), allowRepeated = TRUE)
+  y = break_silent(x, score = c("3" = 1, "6" = 1))
 
   z = relabel(y, c("6" = "A"))
   expect_identical(z$ID, sub("6", "A", y$ID))

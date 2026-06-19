@@ -41,9 +41,7 @@
 #'   labels. Otherwise the vector must have length `pedsize(x)`.
 #' @param errorIfFail A logical. If TRUE, an error is raised if loop breaking
 #'   fails. If FALSE, the pedigree is returned unchanged.
-#' @param allowRepeated A logical, temporarily set to FALSE. If TRUE, repeated
-#'  loop breakers are allowed. (This will become universal in a future release,
-#'   and the argument will be removed.)
+#' @param allowFounder,allowRepeated Logicals, temporarily set to FALSE.
 #'
 #' @return For `breakLoops()`, a `ped` object in which the indicated loop
 #'   breakers are duplicated. The returned object has a non-null
@@ -82,7 +80,7 @@
 #' @importFrom stats ave
 #' @export
 breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE,
-                      score = NULL, allowRepeated = FALSE) {
+                      score = NULL, allowFounder = FALSE, allowRepeated = FALSE) {
 
   if(isFALSE(x$UNBROKEN_LOOPS) || is.singleton(x)) {
     if(verbose) {
@@ -97,7 +95,8 @@ breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE
   auto = length(loopBreakers) == 0
 
   if(auto) {
-    plan = findLoopBreakers(x, score = score, errorIfFail = errorIfFail, allowRepeated = allowRepeated)
+    plan = findLoopBreakers(x, score = score, errorIfFail = errorIfFail,
+                            allowFounder = allowFounder, allowRepeated = allowRepeated)
     if(!nrow(plan)) {
       if(errorIfFail) stop2("No loop breakers found")
       if(verbose) message("No loop breakers found - returning unchanged")
@@ -136,6 +135,9 @@ breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE
 
   if(any(breakers %in% oldCopies))
     stop2("Loop-breaker copies cannot be copied again")
+
+  if(!allowFounder && any(breakers %in% founders(x, internal = TRUE)))
+    stop2("Founder loop breakers require `allowFounder = TRUE`")
 
   if(!allowRepeated && anyDuplicated.default(c(oldOrigs, breakers)))
     stop2("Repeated loop breakers require `allowRepeated = TRUE`")
@@ -236,7 +238,8 @@ tieLoops = function(x, verbose = TRUE) {
 
 #' @export
 #' @rdname breakLoops
-findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE, allowRepeated = FALSE) {
+findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE,
+                            allowFounder = FALSE, allowRepeated = FALSE) {
 
   empty = matrix(character(0), ncol = 2,
                  dimnames = list(NULL, c("lb", "child")))
@@ -260,6 +263,8 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE, allowRepeated =
   oldLB = x$LOOP_BREAKERS
   oldOrigs = if(is.null(oldLB)) integer(0) else oldLB[, 1]
   oldCopies = if(is.null(oldLB)) integer(0) else oldLB[, 2]
+
+  FOU = founders(x, internal = TRUE)
 
   idx = nonfounders(x, internal = TRUE)
   fidx = x$FIDX[idx]
@@ -286,7 +291,10 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE, allowRepeated =
 
     usedBreakers = c(oldOrigs, breakers[seq_len(nb)])
 
-    # TODO: Remove when allowRepeated = TRUE becomes universal
+    # TODO: These are intended to be temporary
+    if(!allowFounder)
+      cand = cand[b[cand] %notin% FOU]
+
     if(!allowRepeated)
       cand = cand[b[cand] %notin% usedBreakers]
 

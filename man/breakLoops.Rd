@@ -12,12 +12,19 @@ breakLoops(
   verbose = TRUE,
   errorIfFail = TRUE,
   score = NULL,
+  allowFounder = FALSE,
   allowRepeated = FALSE
 )
 
 tieLoops(x, verbose = TRUE)
 
-findLoopBreakers(x, score = NULL, errorIfFail = TRUE, allowRepeated = FALSE)
+findLoopBreakers(
+  x,
+  score = NULL,
+  errorIfFail = TRUE,
+  allowFounder = FALSE,
+  allowRepeated = FALSE
+)
 }
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
@@ -35,9 +42,7 @@ fails. If FALSE, the pedigree is returned unchanged.}
 values are preferred. If named, the names are interpreted as individual
 labels. Otherwise the vector must have length \code{pedsize(x)}.}
 
-\item{allowRepeated}{A logical, temporarily set to FALSE. If TRUE, repeated
-loop breakers are allowed. (This will become universal in a future release,
-and the argument will be removed.)}
+\item{allowFounder, allowRepeated}{Logicals, temporarily set to FALSE.}
 }
 \value{
 For \code{breakLoops()}, a \code{ped} object in which the indicated loop
