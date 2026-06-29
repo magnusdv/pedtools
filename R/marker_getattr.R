@@ -239,7 +239,7 @@ afreq = function(x, ...) {
 #' @export
 afreq.marker = function(x, ...) {
   afr = attr(x, "afreq")
-  names(afr) = alleles(x)
+  names(afr) = attr(x, "alleles")
   afr
 }
 
