@@ -305,7 +305,8 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE,
     }
 
     used = b[cand] %in% usedBreakers
-    pick = cand[order(-pref[b[cand]], !used)[1L]]
+    #pick = cand[order(-pref[b[cand]], !used)[1L]] # reuse as tiebreaker, but prefer higher score
+    pick = cand[order(!used, -pref[b[cand]])[1L]] # reuse > score
     j = toNuc[pick]
 
     nb = nb + 1L
