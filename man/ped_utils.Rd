@@ -98,9 +98,10 @@ z1 = singleton(1, sex = 0)
 z2 = addChildren(z1, father = 1, mother = 1, nch = 1)
 stopifnot(!hasSelfing(z1), hasSelfing(z2))
 
-# Nucleus sub-pedigrees
+# Nuclear families in a pedigree
 stopifnot(length(subnucs(z1)) == 0)
-peelingOrder(cousinPed(1))
+subnucs(cousinPed(1))
+subnucs(cousinPed(1, child = TRUE))
 
 # Plot with generation numbers as labels
 w = cousinPed(1)

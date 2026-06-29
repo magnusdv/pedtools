@@ -48,10 +48,11 @@ genotype.marker = function(x, id, ...) {
   if(is.na(id_int))
     stop2("Unknown ID label: ", id)
 
+  als = attr(x, 'alleles')
   g_num = x[id_int, ]
 
   g = rep(NA_character_, 2)
-  g[g_num > 0] = alleles(x)[g_num]
+  g[g_num > 0] = als[g_num]
   g
 }
 
@@ -77,7 +78,7 @@ getGenotypeMarker = function(m, id, sep = "/") {
   if (anyNA(id_int))
     stop2("Unknown ID label: ", setdiff(id, pedlabels))
 
-  als = alleles(m)
+  als = attr(m, 'alleles')
 
   a1int =  m[id_int, 1]
   a1int[a1int == 0L] = NA
@@ -199,14 +200,13 @@ alleles.marker = function(x, ...) {
 #' @rdname marker_getattr
 #' @export
 alleles.ped = function(x, marker = NULL, simplify1 = TRUE, ...) {
-  marker = marker %||% seq_markers(x)
-  mlist = getMarkers(x, markers = marker)
+  mlist = if(is.null(marker)) x$MARKERS else getMarkers(x, markers = marker)
 
   # List of alleles
   a = lapply(mlist, alleles.marker)
 
   # Simplify output for single marker
-  if(length(marker) == 1 && simplify1)
+  if(length(a) == 1 && simplify1)
     return(a[[1]])
 
   # Marker names (NA's are ok)
@@ -283,18 +283,10 @@ name.marker = function(x, ...) {
 #' @rdname marker_getattr
 #' @export
 name.ped = function(x, markers = NULL, ...) {
-  markers = markers %||% seq_markers(x)
-
-  mlist = getMarkers(x, markers = markers)
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers = markers)
   vapply(mlist, name.marker, character(1))
 }
 
-name2.ped = function(x, markers = NULL, ...) {
-  markers = markers %||% seq_markers(x)
-
-  mlist = getMarkers(x, markers = markers)
-  vapply(mlist, name.marker, character(1))
-}
 
 #' @rdname marker_getattr
 #' @export
@@ -323,9 +315,7 @@ chrom.marker = function(x, ...) {
 #' @rdname marker_getattr
 #' @export
 chrom.ped = function(x, markers = NULL, ...) {
-  markers = markers %||% seq_markers(x)
-
-  mlist = getMarkers(x, markers = markers)
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers = markers)
   vapply(mlist, chrom.marker, character(1))
 }
 
@@ -356,8 +346,6 @@ posMb.marker = function(x, ...) {
 #' @rdname marker_getattr
 #' @export
 posMb.ped = function(x, markers = NULL, ...) {
-  markers = markers %||% seq_markers(x)
-
-  mlist = getMarkers(x, markers = markers)
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers = markers)
   vapply(mlist, posMb, numeric(1))
 }
