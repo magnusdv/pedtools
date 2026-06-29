@@ -136,6 +136,7 @@ test_that("connectedComponents() handles interleaved components", {
   expect_identical(connectedComponents(id, fid, mid), expected)
 })
 
+# TODO: move to pedprobr
 test_that("peelingOrder() handles chains and selfing", {
   p1 = peelingOrder(linearPed(2))
   expect_equal(length(p1), 2)

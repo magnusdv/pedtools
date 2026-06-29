@@ -71,9 +71,10 @@
 #' z2 = addChildren(z1, father = 1, mother = 1, nch = 1)
 #' stopifnot(!hasSelfing(z1), hasSelfing(z2))
 #'
-#' # Nucleus sub-pedigrees
+#' # Nuclear families in a pedigree
 #' stopifnot(length(subnucs(z1)) == 0)
-#' peelingOrder(cousinPed(1))
+#' subnucs(cousinPed(1))
+#' subnucs(cousinPed(1, child = TRUE))
 #'
 #' # Plot with generation numbers as labels
 #' w = cousinPed(1)
@@ -337,6 +338,7 @@ subnucs = function(x) {
 #' @rdname ped_utils
 #' @export
 peelingOrder = function(x) {
+  # TODO: moved to pedprobr::peelOrder
   # Output: list of nuclear subfamilies. Format for each nuc:
   # list(father,mother,children,link), where link = 0 for the last nuc.
 
