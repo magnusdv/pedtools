@@ -181,26 +181,25 @@ as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
   df = data.frame(id = lab, fid = fid, mid = mid, sex = x$SEX,
                   stringsAsFactors = FALSE)
 
-  if(hasMarkers(x)) {
-    # Make sure `markers` is an index vector (not missing or character)
-    if(missing(markers)) markers = 1:nMarkers(x)
-    else markers = whichMarkers(x, markers)
+  if(!hasMarkers(x))
+    return(df)
 
-    mlist = getMarkers(x, markers)
-    geno = do.call(cbind,
-      lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing)))
+  markers = if(missing(markers)) 1:nMarkers(x) else whichMarkers(x, markers)
+  if(!length(markers))
+    return(df)
 
-    # Headers of genotype columns: name if present, otherwise <idx>
-    nms = vapply(mlist, name.marker, character(1))
-    if(any(na_name <- is.na(nms)))
-      nms[na_name] = sprintf("<%d>", markers[na_name])
-    colnames(geno) = nms
+  mlist = getMarkers(x, markers)
+  geno = do.call(cbind,
+    lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing)))
 
-    # Bind to pedcols
-    df = cbind(df, geno, stringsAsFactors = FALSE)
-  }
+  # Headers of genotype columns: name if present, otherwise <idx>
+  nms = vapply(mlist, name.marker, character(1))
+  if(any(na_name <- is.na(nms)))
+    nms[na_name] = sprintf("<%d>", markers[na_name])
+  colnames(geno) = nms
 
-  df
+  # Bind to pedcols
+  cbind(df, geno, stringsAsFactors = FALSE)
 }
 
 

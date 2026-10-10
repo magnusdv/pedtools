@@ -31,3 +31,12 @@ test_that("summary.list() handles equally sized components", {
     "Ped list with 2 connected components \\(each with 3 members\\)\\."
   )
 })
+
+
+test_that("as.data.frame works empty marker selection", {
+  x = nuclearPed() |> addMarker(`1` = "1/2")
+  expected = as.data.frame(nuclearPed())
+
+  expect_identical(as.data.frame(x, markers = NULL), expected)
+  expect_identical(as.data.frame(x, markers = integer(0)), expected)
+})
