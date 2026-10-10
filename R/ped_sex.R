@@ -119,12 +119,21 @@ setSex = function(x, ids = NULL, sex) {
       notNA = !is.na(idsInt)
       comp$SEX[idsInt[notNA]] = sex[notNA]
       validatePed(comp)
+
+      # Update sex attribute of markers
+      for(i in seq_along(comp$MARKERS))
+        attr(comp$MARKERS[[i]], "sex") = comp$SEX
+
       comp
     })
     return(y)
   }
 
   x$SEX[internalID(x, ids)] = sex
+
+  # Update sex attribute of markers
+  for(i in seq_along(x$MARKERS))
+    attr(x$MARKERS[[i]], "sex") = x$SEX
 
   validatePed(x)
   x
