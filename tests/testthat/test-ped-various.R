@@ -32,11 +32,20 @@ test_that("summary.list() handles equally sized components", {
   )
 })
 
-
 test_that("as.data.frame works empty marker selection", {
   x = nuclearPed() |> addMarker(`1` = "1/2")
   expected = as.data.frame(nuclearPed())
 
   expect_identical(as.data.frame(x, markers = NULL), expected)
   expect_identical(as.data.frame(x, markers = integer(0)), expected)
+})
+
+test_that("as.data.frame.pedList() combines pedigrees", {
+  x = nuclearPed() |> addMarker(`3` = "1/2", name = "M")
+  y = singleton("X") |> addMarker(alleles = 1:2, name = "M")
+
+  expect_identical(as.data.frame.pedList(list(x, y)),
+                   rbind(as.data.frame(x), as.data.frame(y)))
+  expect_identical(as.data.frame.pedList(list(x, y), markers = NULL),
+                   rbind(as.data.frame(x, markers = NULL), as.data.frame(y, markers = NULL)))
 })

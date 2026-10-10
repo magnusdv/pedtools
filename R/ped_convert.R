@@ -1,23 +1,22 @@
 #' Convert `ped` to matrix
 #'
-#' Converts a `ped` object or a list of such to a numeric matrix using internal
-#' labels, with additional information attached as attributes.
+#' Converts a `ped` object or a list of such to a numeric matrix using internal labels,
+#' with additional information attached as attributes.
 #'
 #' `restorePed` is the reverse of `as.matrix.ped`.
 #'
 #' @param x A `ped` object or a list of such. In `restorePed`: A numerical matrix.
-#' @param include.attrs a logical indicating if marker annotations and other
-#'   info should be attached as attributes. See Value.
-#' @param attrs a list containing labels and other `ped` info compatible with
-#'   `x`, in the format produced by `as.matrix`. If NULL, the attributes of `x`
-#'   itself are used.
-#' @param validate a logical, forwarded to [ped()]. If FALSE, no checks for
-#'   pedigree errors are performed.
+#' @param include.attrs a logical indicating if marker annotations and other info should
+#'   be attached as attributes. See Value.
+#' @param attrs a list containing labels and other `ped` info compatible with `x`, in the
+#'   format produced by `as.matrix`. If NULL, the attributes of `x` itself are used.
+#' @param validate a logical, forwarded to [ped()]. If FALSE, no checks for pedigree
+#'   errors are performed.
 #' @param \dots not used.
 #'
 #' @return For `as.matrix`: A numerical matrix with `sum(pedsize(x))` rows. If
-#'   `include.attrs = TRUE` the following attributes are attached (where
-#'   applicable), allowing a single `ped` to be reproduced by `restorePed`:
+#'   `include.attrs = TRUE` the following attributes are attached (where applicable),
+#'   allowing a single `ped` to be reproduced by `restorePed`:
 #'
 #'   * `FAMID` the family identifier (a string)
 #'
@@ -29,8 +28,8 @@
 #'
 #'   * `markerattr` a list containing the attributes of each marker
 #'
-#'   For lists, different family IDs are replaced by `""`, and attributes for
-#'   loop breakers and founder inbreeding are not retained.
+#'   For lists, different family IDs are replaced by `""`, and attributes for loop
+#'   breakers and founder inbreeding are not retained.
 #'
 #'   For `restorePed`: A `ped` object or a list of such.
 #' @author Magnus Dehli Vigeland
@@ -185,35 +184,43 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
   p
 }
 
-#' Convert ped to data.frame
+#' Convert ped to data frame
 #'
-#' Convert a `ped` object to a data.frame. The first columns are id, fid, mid
-#' and sex, followed by genotype columns for all (or a selection of) markers.
+#' Convert a `ped` object (or a list of such) to a data frame. The first columns are id,
+#' fid, mid and sex, followed by genotype columns.
 #'
-#' Note that the output of [as.data.frame.ped()] is quite different from that of
-#' [as.matrix.ped()]. This reflects the fact that these functions have different
-#' purposes.
+#' For lists of pedigrees, use `as.data.frame.pedList()` directly unless the list has
+#' class "pedList". The reason for this convention is to avoid conflicts with existing
+#' `base::as.data.frame.list()` method.
 #'
-#' Conversion to a data frame is primarily intended for pretty printing. It uses
-#' correct labels for pedigree members and marker alleles, and pastes alleles to
-#' form nice-looking genotypes.
+#' Note the difference between [as.data.frame.ped()] and [as.matrix.ped()], which have
+#' different purposes. Conversion to a data frame is primarily intended for pretty
+#' printing. It uses correct labels for pedigree members and marker alleles, and pastes
+#' alleles to form nice-looking genotypes.
 #'
-#' The matrix method, on the other hand, is a handy tool for manipulating the
-#' pedigree structure. It produces a numeric matrix, using the internal index
-#' labelling both for individuals and alleles, making it very fast. In addition,
-#' all necessary meta information (loop breakers, allele frequencies a.s.o) is
-#' kept as attributes, which makes it possible to recreate the original `ped`
-#' object.
+#' The matrix method, on the other hand, is a handy tool for manipulating the pedigree
+#' structure. It produces a numeric matrix, using the internal index labelling both for
+#' individuals and alleles, making it very fast. In addition, all necessary meta
+#' information (loop breakers, allele frequencies a.s.o) is kept as attributes, which
+#' makes it possible to recreate the original `ped` object.
 #'
-#' @param x Object of class `ped`.
-#' @param ... Further parameters
-#' @param markers Vector of marker names or indices. By default, all markers
-#'   are included.
+#' @param x A `ped` object or a list of such.
+#' @param ... Further parameters.
+#' @param markers Vector of marker names or indices. By default, all markers are included.
 #' @param sep A single string to be used as allele separator in marker genotypes.
 #' @param missing A single string to be used for missing alleles.
 #'
-#' @return A `data.frame` with `pedsize(x)` rows and `4 + nMarkers(x)` columns.
+#' @return A data frame with `4 + nMarkers(x)` columns.
 #' @seealso [as.matrix.ped()]
+#'
+#' @examples
+#' x = nuclearPed() |> addMarker(`3` = "1/2", name = "M")
+#' as.data.frame(x)
+#' as.data.frame(x, markers = NULL)
+#'
+#' # Ped list with compatible markers
+#' y = list(x, singleton("X")) |> harmoniseMarkers()
+#' as.data.frame.pedList(y)
 #'
 #' @export
 as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
@@ -245,6 +252,22 @@ as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
   cbind(df, geno, stringsAsFactors = FALSE)
 }
 
+#' @rdname as.data.frame.ped
+#' @export
+as.data.frame.pedList = function(x, ..., markers, sep = "/", missing = "-") {
+  if(!is.pedList(x))
+    stop2("Some elements are not `ped` objects")
+
+  markers = if(missing(markers)) seq_len(nMarkers(x)) else markers
+
+  # Require compatible markers across components
+  if(length(markers) &&
+     !listIdentical(lapply(x, getLocusAttributes, markers = markers)))
+    stop2("Marker attributes differ between components; use harmoniseMarkers() first")
+
+  df = lapply(x, as.data.frame.ped, markers = markers, sep = sep, missing = missing, ...)
+  do.call(rbind, unname(df))
+}
 
 #' Conversions to ped objects
 #'

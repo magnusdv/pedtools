@@ -2,44 +2,56 @@
 % Please edit documentation in R/ped_convert.R
 \name{as.data.frame.ped}
 \alias{as.data.frame.ped}
-\title{Convert ped to data.frame}
+\alias{as.data.frame.pedList}
+\title{Convert ped to data frame}
 \usage{
 \method{as.data.frame}{ped}(x, ..., markers, sep = "/", missing = "-")
+
+\method{as.data.frame}{pedList}(x, ..., markers, sep = "/", missing = "-")
 }
 \arguments{
-\item{x}{Object of class \code{ped}.}
+\item{x}{A \code{ped} object or a list of such.}
 
-\item{...}{Further parameters}
+\item{...}{Further parameters.}
 
-\item{markers}{Vector of marker names or indices. By default, all markers
-are included.}
+\item{markers}{Vector of marker names or indices. By default, all markers are included.}
 
 \item{sep}{A single string to be used as allele separator in marker genotypes.}
 
 \item{missing}{A single string to be used for missing alleles.}
 }
 \value{
-A \code{data.frame} with \code{pedsize(x)} rows and \code{4 + nMarkers(x)} columns.
+A data frame with \code{4 + nMarkers(x)} columns.
 }
 \description{
-Convert a \code{ped} object to a data.frame. The first columns are id, fid, mid
-and sex, followed by genotype columns for all (or a selection of) markers.
+Convert a \code{ped} object (or a list of such) to a data frame. The first columns are id,
+fid, mid and sex, followed by genotype columns.
 }
 \details{
-Note that the output of \code{\link[=as.data.frame.ped]{as.data.frame.ped()}} is quite different from that of
-\code{\link[=as.matrix.ped]{as.matrix.ped()}}. This reflects the fact that these functions have different
-purposes.
+For lists of pedigrees, use \code{as.data.frame.pedList()} directly unless the list has
+class "pedList". The reason for this convention is to avoid conflicts with existing
+\code{base::as.data.frame.list()} method.
 
-Conversion to a data frame is primarily intended for pretty printing. It uses
-correct labels for pedigree members and marker alleles, and pastes alleles to
-form nice-looking genotypes.
+Note the difference between \code{\link[=as.data.frame.ped]{as.data.frame.ped()}} and \code{\link[=as.matrix.ped]{as.matrix.ped()}}, which have
+different purposes. Conversion to a data frame is primarily intended for pretty
+printing. It uses correct labels for pedigree members and marker alleles, and pastes
+alleles to form nice-looking genotypes.
 
-The matrix method, on the other hand, is a handy tool for manipulating the
-pedigree structure. It produces a numeric matrix, using the internal index
-labelling both for individuals and alleles, making it very fast. In addition,
-all necessary meta information (loop breakers, allele frequencies a.s.o) is
-kept as attributes, which makes it possible to recreate the original \code{ped}
-object.
+The matrix method, on the other hand, is a handy tool for manipulating the pedigree
+structure. It produces a numeric matrix, using the internal index labelling both for
+individuals and alleles, making it very fast. In addition, all necessary meta
+information (loop breakers, allele frequencies a.s.o) is kept as attributes, which
+makes it possible to recreate the original \code{ped} object.
+}
+\examples{
+x = nuclearPed() |> addMarker(`3` = "1/2", name = "M")
+as.data.frame(x)
+as.data.frame(x, markers = NULL)
+
+# Ped list with compatible markers
+y = list(x, singleton("X")) |> harmoniseMarkers()
+as.data.frame.pedList(y)
+
 }
 \seealso{
 \code{\link[=as.matrix.ped]{as.matrix.ped()}}

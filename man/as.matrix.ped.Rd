@@ -18,22 +18,21 @@ restorePed(x, attrs = NULL, validate = TRUE)
 \arguments{
 \item{x}{A \code{ped} object or a list of such. In \code{restorePed}: A numerical matrix.}
 
-\item{include.attrs}{a logical indicating if marker annotations and other
-info should be attached as attributes. See Value.}
+\item{include.attrs}{a logical indicating if marker annotations and other info should
+be attached as attributes. See Value.}
 
 \item{\dots}{not used.}
 
-\item{attrs}{a list containing labels and other \code{ped} info compatible with
-\code{x}, in the format produced by \code{as.matrix}. If NULL, the attributes of \code{x}
-itself are used.}
+\item{attrs}{a list containing labels and other \code{ped} info compatible with \code{x}, in the
+format produced by \code{as.matrix}. If NULL, the attributes of \code{x} itself are used.}
 
-\item{validate}{a logical, forwarded to \code{\link[=ped]{ped()}}. If FALSE, no checks for
-pedigree errors are performed.}
+\item{validate}{a logical, forwarded to \code{\link[=ped]{ped()}}. If FALSE, no checks for pedigree
+errors are performed.}
 }
 \value{
 For \code{as.matrix}: A numerical matrix with \code{sum(pedsize(x))} rows. If
-\code{include.attrs = TRUE} the following attributes are attached (where
-applicable), allowing a single \code{ped} to be reproduced by \code{restorePed}:
+\code{include.attrs = TRUE} the following attributes are attached (where applicable),
+allowing a single \code{ped} to be reproduced by \code{restorePed}:
 \itemize{
 \item \code{FAMID} the family identifier (a string)
 \item \code{LABELS} the ID labels (a character vector)
@@ -42,14 +41,14 @@ applicable), allowing a single \code{ped} to be reproduced by \code{restorePed}:
 \item \code{markerattr} a list containing the attributes of each marker
 }
 
-For lists, different family IDs are replaced by \code{""}, and attributes for
-loop breakers and founder inbreeding are not retained.
+For lists, different family IDs are replaced by \code{""}, and attributes for loop
+breakers and founder inbreeding are not retained.
 
 For \code{restorePed}: A \code{ped} object or a list of such.
 }
 \description{
-Converts a \code{ped} object or a list of such to a numeric matrix using internal
-labels, with additional information attached as attributes.
+Converts a \code{ped} object or a list of such to a numeric matrix using internal labels,
+with additional information attached as attributes.
 }
 \details{
 \code{restorePed} is the reverse of \code{as.matrix.ped}.
