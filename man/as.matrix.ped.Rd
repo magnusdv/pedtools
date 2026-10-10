@@ -2,15 +2,21 @@
 % Please edit documentation in R/ped_convert.R
 \name{as.matrix.ped}
 \alias{as.matrix.ped}
+\alias{as.matrix.list}
+\alias{as.matrix.pedList}
 \alias{restorePed}
 \title{Convert \code{ped} to matrix}
 \usage{
 \method{as.matrix}{ped}(x, include.attrs = TRUE, ...)
 
+\method{as.matrix}{list}(x, include.attrs = TRUE, ...)
+
+\method{as.matrix}{pedList}(x, include.attrs = TRUE, ...)
+
 restorePed(x, attrs = NULL, validate = TRUE)
 }
 \arguments{
-\item{x}{a \code{ped} object. In \code{restorePed}: A numerical matrix.}
+\item{x}{A \code{ped} object or a list of such. In \code{restorePed}: A numerical matrix.}
 
 \item{include.attrs}{a logical indicating if marker annotations and other
 info should be attached as attributes. See Value.}
@@ -25,24 +31,25 @@ itself are used.}
 pedigree errors are performed.}
 }
 \value{
-For \code{as.matrix}: A numerical matrix with \code{pedsize(x)} rows. If
-\code{include.attrs = TRUE} the following attributes are added to the matrix,
-allowing \code{x} to be exactly reproduced by \code{restorePed}:
+For \code{as.matrix}: A numerical matrix with \code{sum(pedsize(x))} rows. If
+\code{include.attrs = TRUE} the following attributes are attached (where
+applicable), allowing a single \code{ped} to be reproduced by \code{restorePed}:
 \itemize{
 \item \code{FAMID} the family identifier (a string)
 \item \code{LABELS} the ID labels (a character vector)
 \item \code{UNBROKEN_LOOPS} a logical indicating whether \code{x} has unbroken loops
 \item \code{LOOP_BREAKERS} a numerical matrix, or NULL
-\item \code{markerattr} a list of length \code{nMarkers(x)}, containing the attributes of
-each marker
+\item \code{markerattr} a list containing the attributes of each marker
 }
 
-For \code{restorePed}: A \code{ped} object.
+For lists, different family IDs are replaced by \code{""}, and attributes for
+loop breakers and founder inbreeding are not retained.
+
+For \code{restorePed}: A \code{ped} object or a list of such.
 }
 \description{
-Converts a \code{ped} object to a numeric matrix using internal labels, with
-additional info necessary to recreate the original \code{ped} attached as
-attributes.
+Converts a \code{ped} object or a list of such to a numeric matrix using internal
+labels, with additional information attached as attributes.
 }
 \details{
 \code{restorePed} is the reverse of \code{as.matrix.ped}.
@@ -66,6 +73,12 @@ y = restorePed(m, attrs = attrs)
 # Of course a simpler way is use reorderPed():
 z = reorderPed(x, 3:1)
 stopifnot(identical(y, z))
+
+as.matrix(singletons(1:2))
+
+x = list(nuclearPed(), singleton("X")) |>
+  addMarker(`1` = "1/2", X = "1/3", alleles = 1:3)
+as.matrix(x)
 
 }
 \seealso{

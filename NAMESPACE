@@ -28,7 +28,9 @@ S3method(allowsMutations,list)
 S3method(allowsMutations,marker)
 S3method(allowsMutations,ped)
 S3method(as.data.frame,ped)
+S3method(as.matrix,list)
 S3method(as.matrix,ped)
+S3method(as.matrix,pedList)
 S3method(as.ped,data.frame)
 S3method(chrom,list)
 S3method(chrom,marker)
@@ -237,33 +239,43 @@ export(validatePed)
 export(whichMarkers)
 export(writeFreqDatabase)
 export(writePed)
-importFrom(grDevices,dev.new)
-importFrom(grDevices,dev.size)
-importFrom(graphics,arrows)
-importFrom(graphics,frame)
-importFrom(graphics,grconvertX)
-importFrom(graphics,grconvertY)
-importFrom(graphics,layout)
-importFrom(graphics,lines)
-importFrom(graphics,mtext)
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,plot.default)
-importFrom(graphics,points)
-importFrom(graphics,polygon)
-importFrom(graphics,rect)
-importFrom(graphics,segments)
-importFrom(graphics,strheight)
-importFrom(graphics,strwidth)
-importFrom(graphics,text.default)
+importFrom(grDevices,
+  dev.new,
+  dev.size
+)
+importFrom(graphics,
+  arrows,
+  frame,
+  grconvertX,
+  grconvertY,
+  layout,
+  lines,
+  mtext,
+  par,
+  plot,
+  plot.default,
+  points,
+  polygon,
+  rect,
+  segments,
+  strheight,
+  strwidth,
+  text.default
+)
 importFrom(kinship2,align.pedigree)
-importFrom(pedmut,getParams)
-importFrom(pedmut,mutationModel)
-importFrom(stats,ave)
-importFrom(stats,setNames)
-importFrom(utils,as.roman)
-importFrom(utils,head)
-importFrom(utils,modifyList)
-importFrom(utils,read.table)
-importFrom(utils,tail)
-importFrom(utils,write.table)
+importFrom(pedmut,
+  getParams,
+  mutationModel
+)
+importFrom(stats,
+  ave,
+  setNames
+)
+importFrom(utils,
+  as.roman,
+  head,
+  modifyList,
+  read.table,
+  tail,
+  write.table
+)

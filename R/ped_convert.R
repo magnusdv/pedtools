@@ -1,12 +1,11 @@
 #' Convert `ped` to matrix
 #'
-#' Converts a `ped` object to a numeric matrix using internal labels, with
-#' additional info necessary to recreate the original `ped` attached as
-#' attributes.
+#' Converts a `ped` object or a list of such to a numeric matrix using internal
+#' labels, with additional information attached as attributes.
 #'
 #' `restorePed` is the reverse of `as.matrix.ped`.
 #'
-#' @param x a `ped` object. In `restorePed`: A numerical matrix.
+#' @param x A `ped` object or a list of such. In `restorePed`: A numerical matrix.
 #' @param include.attrs a logical indicating if marker annotations and other
 #'   info should be attached as attributes. See Value.
 #' @param attrs a list containing labels and other `ped` info compatible with
@@ -16,9 +15,9 @@
 #'   pedigree errors are performed.
 #' @param \dots not used.
 #'
-#' @return For `as.matrix`: A numerical matrix with `pedsize(x)` rows. If
-#'   `include.attrs = TRUE` the following attributes are added to the matrix,
-#'   allowing `x` to be exactly reproduced by `restorePed`:
+#' @return For `as.matrix`: A numerical matrix with `sum(pedsize(x))` rows. If
+#'   `include.attrs = TRUE` the following attributes are attached (where
+#'   applicable), allowing a single `ped` to be reproduced by `restorePed`:
 #'
 #'   * `FAMID` the family identifier (a string)
 #'
@@ -28,10 +27,12 @@
 #'
 #'   * `LOOP_BREAKERS` a numerical matrix, or NULL
 #'
-#'   * `markerattr` a list of length `nMarkers(x)`, containing the attributes of
-#'   each marker
+#'   * `markerattr` a list containing the attributes of each marker
 #'
-#'   For `restorePed`: A `ped` object.
+#'   For lists, different family IDs are replaced by `""`, and attributes for
+#'   loop breakers and founder inbreeding are not retained.
+#'
+#'   For `restorePed`: A `ped` object or a list of such.
 #' @author Magnus Dehli Vigeland
 #' @seealso [ped()]
 #'
@@ -55,6 +56,12 @@
 #' z = reorderPed(x, 3:1)
 #' stopifnot(identical(y, z))
 #'
+#' as.matrix(singletons(1:2))
+#'
+#' x = list(nuclearPed(), singleton("X")) |>
+#'   addMarker(`1` = "1/2", X = "1/3", alleles = 1:3)
+#' as.matrix(x)
+#'
 #' @export
 as.matrix.ped = function(x, include.attrs = TRUE, ...) {
   m = c(seq_along(x$ID), x$FIDX, x$MIDX, x$SEX, unlist(x$MARKERS))
@@ -73,6 +80,41 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
   attributes(m) = attrs
   m
 }
+
+#' @rdname as.matrix.ped
+#' @export
+as.matrix.list = function(x, include.attrs = TRUE, ...) {
+  if(!length(x) || !all(vapply(x, is.ped, logical(1))))
+    stop2("Input must be a non-empty list of `ped` objects")
+
+  if(length(x) == 1)
+    return(as.matrix.ped(x[[1]], include.attrs = include.attrs))
+
+  # Check marker compatibility across components
+  a = lapply(x, getLocusAttributes)
+  if(!listIdentical(a))
+    stop2("Marker attributes differ between components; use harmoniseMarkers() first")
+
+  # Offset the internal indices of successive components
+  n = pedsize(x)
+  m = do.call(rbind, unname(lapply(x, as.matrix.ped, include.attrs = FALSE)))
+  offset = rep(c(0L, head(cumsum(n), -1)), n)
+  m[,1] = m[,1] + offset
+  m[,2:3] = m[,2:3] + (m[,2:3] > 0)*offset
+
+  if(include.attrs) {
+    fam = vapply(x, function(p) p$FAMID, character(1))
+    attr(m, "FAMID") = if(length(unique(fam)) == 1) fam[1] else ""
+    attr(m, "LABELS") = labels(x)
+    attr(m, "UNBROKEN_LOOPS") = hasUnbrokenLoops(x)
+    attr(m, "markerattr") = a[[1]]
+  }
+  m
+}
+
+#' @rdname as.matrix.ped
+#' @export
+as.matrix.pedList = as.matrix.list
 
 #' @rdname as.matrix.ped
 #' @export
@@ -134,6 +176,7 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
       attr$pedmembers = pedlabs
       attr$sex = p$SEX
       attributes(m) = attr
+      class(m) = "marker"
       m
     })
     class(mlist) = "markerList"
