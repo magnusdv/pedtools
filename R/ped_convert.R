@@ -103,7 +103,7 @@ as.matrix.list = function(x, include.attrs = TRUE, ...) {
 
   if(include.attrs) {
     fam = vapply(x, function(p) p$FAMID, character(1))
-    attr(m, "FAMID") = if(length(unique(fam)) == 1) fam[1] else ""
+    attr(m, "FAMID") = if(length(unique.default(fam)) == 1) fam[1] else ""
     attr(m, "LABELS") = labels(x)
     attr(m, "UNBROKEN_LOOPS") = hasUnbrokenLoops(x)
     attr(m, "markerattr") = a[[1]]
@@ -166,13 +166,12 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
   if((nc <- ncol(x)) > 4) {
     if(nc %% 2 != 0) stop2("Something is wrong: Odd number of allele columns!")
     markerattr = attrs$markerattr
-    pedlabs = labels(p)
 
     mlist = lapply(seq_len((nc-4)/2), function(k) {
       m = x[, c(3 + 2*k, 4 + 2*k), drop = FALSE]
       attr = markerattr[[k]]
       attr$dim = dim(m)
-      attr$pedmembers = pedlabs
+      attr$pedmembers = p$ID
       attr$sex = p$SEX
       attributes(m) = attr
       class(m) = "marker"
@@ -224,23 +223,23 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
 #'
 #' @export
 as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
-  lab = labels(x)
-  fid = mid = rep("0", pedsize(x))
+  lab = x$ID
+  fid = mid = rep("0", length(lab))
   fid[x$FIDX > 0] = lab[x$FIDX]
   mid[x$MIDX > 0] = lab[x$MIDX]
-  df = data.frame(id = lab, fid = fid, mid = mid, sex = x$SEX,
-                  stringsAsFactors = FALSE)
+  df = list2DF(list(id = lab, fid = fid, mid = mid, sex = x$SEX))
 
-  if(!hasMarkers(x))
+  L = length(x$MARKERS)
+  if(!L)
     return(df)
 
-  markers = if(missing(markers)) 1:nMarkers(x) else whichMarkers(x, markers)
+  markers = if(missing(markers)) 1:L else whichMarkers(x, markers)
   if(!length(markers))
     return(df)
 
   mlist = getMarkers(x, markers)
-  geno = do.call(cbind,
-    lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing)))
+  geno = unlist(lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing)))
+  dim(geno) = c(length(x$ID), length(mlist))
 
   # Headers of genotype columns: name if present, otherwise <idx>
   nms = vapply(mlist, name.marker, character(1))
@@ -248,12 +247,14 @@ as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
     nms[na_name] = sprintf("<%d>", markers[na_name])
   colnames(geno) = nms
 
-  # Bind to pedcols
+  # Bind to ped cols
   cbind(df, geno, stringsAsFactors = FALSE)
 }
 
+
 #' @rdname as.data.frame.ped
 #' @export
+#' @export as.data.frame.pedList
 as.data.frame.pedList = function(x, ..., markers, sep = "/", missing = "-") {
   if(!is.pedList(x))
     stop2("Some elements are not `ped` objects")
@@ -319,6 +320,7 @@ as.ped = function(x, ...) {
 #'   founders result in an error.
 #' @param validate A logical indicating if the pedigree structure should be
 #'   validated.
+#' @param validateMarkers A logical. If FALSE, skip validation of new markers.
 #' @param verbose A logical.
 
 #' @examples
@@ -346,7 +348,8 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
                              locusAttributes = NULL, missing = 0,
                              sep = NULL, sexCodes = NULL,
                              addMissingFounders = FALSE,
-                             validate = TRUE, verbose = TRUE, ...) {
+                             validate = TRUE, validateMarkers = TRUE,
+                             verbose = TRUE, ...) {
 
   # Identify `famid` column and check for multiple pedigrees
   colnames = tolower(names(x))
@@ -371,7 +374,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
       as.ped.data.frame(comp, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
                         mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
                         locusAttributes = locusAttributes, missing = missing, sep = sep,
-                        validate = validate, ...)
+                        validate = validate, validateMarkers = validateMarkers, ...)
     })
 
     names(pedlist) = unique_fams
@@ -499,8 +502,8 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   if (is.pedList(p)) {
     p = lapply(p, function(comp) {
       setMarkers(comp, alleleMatrix = AM[comp$ID, , drop = FALSE],
-                 locusAttributes = locusAttributes,
-                 missing = missing, sep = sep)
+                 locusAttributes = locusAttributes, missing = missing,
+                 sep = sep, validate = validateMarkers)
     })
 
     # Return pedlist
@@ -509,6 +512,6 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
 
   # Otherwise, attach markers to the single ped
   setMarkers(p, alleleMatrix = AM, locusAttributes = locusAttributes,
-             missing = missing, sep = sep)
+             missing = missing, sep = sep, validate = validateMarkers)
 }
 

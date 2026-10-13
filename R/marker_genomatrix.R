@@ -69,8 +69,9 @@ getGenotypes = function(x, ids = NULL, markers = NULL, sep = "/", missing = "-",
 
     # Extract genotypes from each component
     compList = lapply(x, function(comp) {
-      ids_comp = if(!is.null(ids)) .myintersect(ids, labels(comp))
-      getGenotypes(comp, ids = ids_comp, markers = markers, sep = sep, missing = missing, Xchrom = Xchrom)
+      ids_comp = if(!is.null(ids)) .myintersect(ids, comp$ID)
+      getGenotypes(comp, ids = ids_comp, markers = markers, sep = sep,
+                   missing = missing, Xchrom = Xchrom)
     })
 
     # Bind into single matrix

@@ -21,6 +21,7 @@ as.ped(x, ...)
   sexCodes = NULL,
   addMissingFounders = FALSE,
   validate = TRUE,
+  validateMarkers = TRUE,
   verbose = TRUE,
   ...
 )
@@ -68,6 +69,8 @@ founders result in an error.}
 
 \item{validate}{A logical indicating if the pedigree structure should be
 validated.}
+
+\item{validateMarkers}{A logical. If FALSE, skip validation of new markers.}
 
 \item{verbose}{A logical.}
 }

@@ -96,7 +96,7 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   if(length(posMb) == 0) posMb = NA
   if(length(name) == 0 || identical(name, "")) name = NA
 
-  labs = labels(x)
+  labs = x$ID
 
   # Parse genotypes into list of 2-vectors
   glist = parseGeno(geno) %||% parseDots(...)
@@ -122,25 +122,27 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   if(length(als) == 0)
     als = 1:2
 
+  nals = length(als)
+
   ### Frequencies
-  afreq = afreq %||% {rep_len(1, length(als))/length(als)}
+  afreq = afreq %||% rep_len(1/nals, nals)
   names(afreq) = names(afreq) %||% als
 
-  # Sort alleles and frequencies (numerical sorting if appropriate)
-  if (!is.numeric(als) && !anyNA(suppressWarnings(as.numeric(als))))
-    ord = order(as.numeric(als))
-  else
-    ord = order(als)
+  # Sort alleles numerically if possible, but skip sorting if already ordered
+  num = if(is.numeric(als)) als else suppressWarnings(as.numeric(als))
+  key = if(anyNA(num)) als else num
+  ord = if(!anyNA(key) && !is.unsorted(key)) seq_len(nals) else order(key)
 
   # Final ordered objects
   AFR = afreq[ord]
   ALS = names(AFR)
 
-  ### Mutation model
-  if(!is.null(mutmod)) {
-    if (!requireNamespace("pedmut", quietly = TRUE))
+  ### Mutation model (reuse if possible)
+  if(!is.null(mutmod) &&
+     (!inherits(mutmod, "mutationModel") || !identical(ALS, colnames(mutmod$female)))) {
+    if(!requireNamespace("pedmut", quietly = TRUE))
       stop2("Package `pedmut` must be installed in order to include mutation models")
-    # Create model (postpone validation)
+
     mutmod = pedmut::mutationModel(mutmod, alleles = ALS, afreq = AFR, rate = rate, validate = FALSE)
   }
 
@@ -156,15 +158,18 @@ marker = function(x, ...,  geno = NULL, allelematrix = NULL,
   ma = newMarker(m_int, alleles = ALS, afreq = unname(AFR),
             name = as.character(name), chrom = as.character(chrom),
             posMb = as.numeric(posMb), mutmod = mutmod,
-            pedmembers = labels(x), sex = x$SEX)
+            pedmembers = x$ID, sex = x$SEX)
 
   if(validate)
-    validateMarker(ma)
+    validateMarker(ma, validateMut = validateMut)
   ma
 }
 
 # Convert genotypes given in marker(x, ...) into named list
 parseDots = function(...) {
+  if(!...length())
+    return(NULL)
+
   dots = eval(substitute(alist(...)))
   if(!length(dots))
     return(NULL)

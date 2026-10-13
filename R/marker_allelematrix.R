@@ -96,7 +96,7 @@ getAlleles = function(x, ids = NULL, markers = NULL) {
   }
 
   # Main body: x is now is single `ped` object
-  ids = ids %||% labels(x)
+  ids = ids %||% x$ID
   markers = markers %||% seq_markers(x)
 
   # If no `ids` or no `markers`, return empty (but properly formed) matrix
@@ -193,10 +193,14 @@ removeGenotypes = function(x, ids = NULL, markers = NULL) {
 }
 
 # For internal use
-allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0, sep = NULL, validate = TRUE) {
+allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0,
+                                   sep = NULL, validate = TRUE) {
 
   if(!is.matrix(alleleMatrix) && !is.data.frame(alleleMatrix))
     stop2("Argument `alleleMatrix` must be either a matrix or a data frame")
+
+  labs = x$ID
+  nind = length(labs)
 
   m = as.matrix(alleleMatrix, rownames.force = TRUE)
 
@@ -206,19 +210,16 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
   # Rownames (ID labels)
   row_nms = rownames(m)
 
-  # If rownames, reorder according to pedigree
-  if(!is.null(row_nms)) {
-
-    tmp = matrix("0", nrow = pedsize(x), ncol = ncol(m))
-    idx = match(row_nms, labels(x))
-
+  # If rownames, ensure that order matches pedigree
+  if(!is.null(row_nms) && !identical(row_nms, labs)) {
+    tmp = matrix("0", nrow = nind, ncol = ncol(m))
+    idx = match(row_nms, labs)
     tmp[idx[!is.na(idx)], ] = m[row_nms[!is.na(idx)], ]
-
     m = tmp
   }
-  else if(nrow(m) != pedsize(x)) {   # If no rownames - dimensions must be correct
+  else if(nrow(m) != nind) {   # If no rownames - dimensions must be correct
     stop2(sprintf("Incompatible input.\n  Pedigree size = %d\n  Allele matrix rows = %d",
-                  pedsize(x), nrow(m)))
+                  nind, nrow(m)))
   }
 
   # If `sep` is given, split each column into single-allele columns
@@ -297,7 +298,8 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
     if(hasAttrNames) {
       if(anyNA(idx <- match(nms, nms_attr)))
-        stop2("Marker name found in `allelematrix`, but not in `locusAttributes`: ", setdiff(nms, nms_attr))
+        stop2("Marker name found in `allelematrix`, but not in `locusAttributes`: ",
+              setdiff(nms, nms_attr))
       locusAttributes = locusAttributes[idx]
     }
     else {
@@ -321,6 +323,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
     attri = locusAttributes[[i]]
     attri$x = x
     attri$allelematrix = m[, c(2*i - 1, 2*i), drop = FALSE]
+    attri$validate = validate
     attri$validateMut = FALSE
     do.call(marker, attri) # create marker object
   })

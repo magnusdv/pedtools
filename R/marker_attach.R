@@ -1,16 +1,14 @@
 #' Attach markers to pedigrees
 #'
-#' In many applications it is useful to _attach_ markers to their associated
-#' `ped` object. In particular for bigger projects with many markers, this makes
-#' it easier to manipulate the dataset as a unit. The function `setMarkers()`
-#' replaces all existing markers with the supplied ones, while `addMarkers()`
-#' appends the supplied markers to any existing ones. Note that there is also
-#' the function [addMarker()], which creates and attaches a single marker in one
-#' go.
+#' In many applications it is useful to _attach_ markers to their associated `ped` object.
+#' In particular for bigger projects with many markers, this makes it easier to manipulate
+#' the dataset as a unit. The function `setMarkers()` replaces all existing markers with
+#' the supplied ones, while `addMarkers()` appends the supplied markers to any existing
+#' ones. See also [addMarker()] which creates and attaches a single marker in one go.
 #'
-#' The most general format of `locusAttributes` is a list of lists, one for each
-#' marker, where possible entries in the inner lists are as follows (default
-#' values in parenthesis):
+#' The most general format of `locusAttributes` is a list of lists, one for each marker,
+#' where possible entries in the inner lists are as follows (default values in
+#' parenthesis):
 #'
 #' * `alleles`: a character vector with allele labels
 #' * `afreq`: a numeric vector with allele frequencies (equal)
@@ -20,38 +18,36 @@
 #' * `mutmod`: mutation model, or model name (NULL)
 #' * `rate`: mutation model parameter (NULL)
 #'
-#' If `locusAttributes` is a single list of attributes (not a list of lists),
-#' then it is repeated to match the number of markers.
+#' If `locusAttributes` is a single list of attributes (not a list of lists), then it is
+#' repeated to match the number of markers.
 #'
 #' #### Alternative formats of `locusAttributes`:
 #'
-#' * A data frame or matrix. In this case an attempt is made to interpret it
-#' as a frequency database in `allelic ladder` format.
-#'
-#' * A list of frequency vectors. All vectors should sum to 1, and be named
-#' (with allele labels)
-#'
-#' * Shortcut for simple SNP data: The argument `locusAttributes = "snp-AB"`
-#' sets all markers to be equifrequent SNPs with alleles A and B. The letters A
-#' and B may be replaced by other single-character letters or numbers.
+#' * A data frame or matrix. In this case an attempt is made to interpret it as a
+#' frequency database in `allelic ladder` format.
+#' * A list of frequency vectors. All vectors should sum to 1, and be named (with allele
+#' labels)
+#' * Shortcut for simple SNP data: The argument `locusAttributes = "snp-AB"` sets all
+#' markers to be equifrequent SNPs with alleles A and B. The letters A and B may be
+#' replaced by other single-character letters or numbers.
 #'
 #' @param x A `ped` object
 #' @param m Either a single `marker` object or a list of `marker` objects
-#' @param alleleMatrix A matrix with `pedsize(x)` rows, containing the observed
-#'   alleles for one or several markers. The matrix must have either 1 or 2
-#'   columns per marker. If the former, then a `sep` string must be given, and
-#'   will be used to split all entries.
-#' @param locusAttributes A list of lists, with attributes for each marker. See
-#'   Details for possible attributes.
-#' @param missing A single character (or coercible to one) indicating the symbol
-#'   for missing alleles.
-#' @param sep If this is a single string, each entry of `alleleMatrix` is
-#'   interpreted as a genotype, and will be split by calling `strsplit(...,
-#'   split = sep, fixed = TRUE)`. If `alleleMatrix` contains entries with "/",
-#'   this will be taken as separator by default. (To override this behaviour,
-#'   put `sep = FALSE`.)
-#' @param checkCons A logical. If TRUE (default), each marker is checked for
-#'   consistency with `x`.
+#' @param alleleMatrix A matrix with `pedsize(x)` rows, containing the observed alleles
+#'   for one or several markers. The matrix must have either 1 or 2 columns per marker. If
+#'   the former, then a `sep` string must be given, and will be used to split all entries.
+#' @param locusAttributes A list of lists, with attributes for each marker. See Details
+#'   for possible attributes.
+#' @param missing A single character (or coercible to one) indicating the symbol for
+#'   missing alleles.
+#' @param sep If this is a single string, each entry of `alleleMatrix` is interpreted as a
+#'   genotype, and will be split by calling `strsplit(..., split = sep, fixed = TRUE)`. If
+#'   `alleleMatrix` contains entries with "/", this will be taken as separator by default.
+#'   (To override this behaviour, put `sep = FALSE`.)
+#' @param checkCons A logical. If TRUE (default), check for duplicate marker names and
+#'   consistency of marker dimensions with the pedigree.
+#' @param validate A logical. If TRUE (default), validate individual markers created from
+#'   `alleleMatrix` (allele labels, frequencies, etc.).
 #'
 #' @return A `ped` object.
 #'
@@ -81,7 +77,7 @@ NULL
 #' @rdname marker_attach
 #' @export
 setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, missing = 0,
-                      sep = NULL, checkCons = TRUE) {
+                      sep = NULL, checkCons = TRUE, validate = TRUE) {
 
   # If `sep` is not given, but AM contains entries with "/", use this
   if(!is.null(alleleMatrix) && is.null(sep) && any(grepl("/", alleleMatrix, fixed = TRUE)))
@@ -95,7 +91,7 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
       stop2("When `x` is a list of pedigrees, argument `m` must be NULL")
     y = lapply(x, function(comp)
       setMarkers(comp, alleleMatrix = alleleMatrix, locusAttributes = locusAttributes,
-                 missing = missing, sep = sep, checkCons = checkCons))
+                 missing = missing, sep = sep, checkCons = checkCons, validate = validate))
     return(y)
   }
 
@@ -121,7 +117,8 @@ setMarkers = function(x, m = NULL, alleleMatrix = NULL, locusAttributes = NULL, 
   else if (is.markerList(m))
     mlist = m
   else if (is.null(m))
-    mlist = allelematrix2markerlist(x, alleleMatrix, locusAttributes, missing, sep)
+    mlist = allelematrix2markerlist(x, alleleMatrix, locusAttributes, missing, sep,
+                                    validate = validate)
   else
     stop2("Argument `m` must be either a single `marker` object, a list of such, or NULL")
 

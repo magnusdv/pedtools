@@ -13,7 +13,8 @@ setMarkers(
   locusAttributes = NULL,
   missing = 0,
   sep = NULL,
-  checkCons = TRUE
+  checkCons = TRUE,
+  validate = TRUE
 )
 
 addMarkers(
@@ -31,41 +32,41 @@ addMarkers(
 
 \item{m}{Either a single \code{marker} object or a list of \code{marker} objects}
 
-\item{alleleMatrix}{A matrix with \code{pedsize(x)} rows, containing the observed
-alleles for one or several markers. The matrix must have either 1 or 2
-columns per marker. If the former, then a \code{sep} string must be given, and
-will be used to split all entries.}
+\item{alleleMatrix}{A matrix with \code{pedsize(x)} rows, containing the observed alleles
+for one or several markers. The matrix must have either 1 or 2 columns per marker. If
+the former, then a \code{sep} string must be given, and will be used to split all entries.}
 
-\item{locusAttributes}{A list of lists, with attributes for each marker. See
-Details for possible attributes.}
+\item{locusAttributes}{A list of lists, with attributes for each marker. See Details
+for possible attributes.}
 
-\item{missing}{A single character (or coercible to one) indicating the symbol
-for missing alleles.}
+\item{missing}{A single character (or coercible to one) indicating the symbol for
+missing alleles.}
 
-\item{sep}{If this is a single string, each entry of \code{alleleMatrix} is
-interpreted as a genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = TRUE)}. If \code{alleleMatrix} contains entries with "/",
-this will be taken as separator by default. (To override this behaviour,
-put \code{sep = FALSE}.)}
+\item{sep}{If this is a single string, each entry of \code{alleleMatrix} is interpreted as a
+genotype, and will be split by calling \code{strsplit(..., split = sep, fixed = TRUE)}. If
+\code{alleleMatrix} contains entries with "/", this will be taken as separator by default.
+(To override this behaviour, put \code{sep = FALSE}.)}
 
-\item{checkCons}{A logical. If TRUE (default), each marker is checked for
-consistency with \code{x}.}
+\item{checkCons}{A logical. If TRUE (default), check for duplicate marker names and
+consistency of marker dimensions with the pedigree.}
+
+\item{validate}{A logical. If TRUE (default), validate individual markers created from
+\code{alleleMatrix} (allele labels, frequencies, etc.).}
 }
 \value{
 A \code{ped} object.
 }
 \description{
-In many applications it is useful to \emph{attach} markers to their associated
-\code{ped} object. In particular for bigger projects with many markers, this makes
-it easier to manipulate the dataset as a unit. The function \code{setMarkers()}
-replaces all existing markers with the supplied ones, while \code{addMarkers()}
-appends the supplied markers to any existing ones. Note that there is also
-the function \code{\link[=addMarker]{addMarker()}}, which creates and attaches a single marker in one
-go.
+In many applications it is useful to \emph{attach} markers to their associated \code{ped} object.
+In particular for bigger projects with many markers, this makes it easier to manipulate
+the dataset as a unit. The function \code{setMarkers()} replaces all existing markers with
+the supplied ones, while \code{addMarkers()} appends the supplied markers to any existing
+ones. See also \code{\link[=addMarker]{addMarker()}} which creates and attaches a single marker in one go.
 }
 \details{
-The most general format of \code{locusAttributes} is a list of lists, one for each
-marker, where possible entries in the inner lists are as follows (default
-values in parenthesis):
+The most general format of \code{locusAttributes} is a list of lists, one for each marker,
+where possible entries in the inner lists are as follows (default values in
+parenthesis):
 \itemize{
 \item \code{alleles}: a character vector with allele labels
 \item \code{afreq}: a numeric vector with allele frequencies (equal)
@@ -76,17 +77,17 @@ values in parenthesis):
 \item \code{rate}: mutation model parameter (NULL)
 }
 
-If \code{locusAttributes} is a single list of attributes (not a list of lists),
-then it is repeated to match the number of markers.
+If \code{locusAttributes} is a single list of attributes (not a list of lists), then it is
+repeated to match the number of markers.
 \subsection{Alternative formats of \code{locusAttributes}:}{
 \itemize{
-\item A data frame or matrix. In this case an attempt is made to interpret it
-as a frequency database in \verb{allelic ladder} format.
-\item A list of frequency vectors. All vectors should sum to 1, and be named
-(with allele labels)
-\item Shortcut for simple SNP data: The argument \code{locusAttributes = "snp-AB"}
-sets all markers to be equifrequent SNPs with alleles A and B. The letters A
-and B may be replaced by other single-character letters or numbers.
+\item A data frame or matrix. In this case an attempt is made to interpret it as a
+frequency database in \verb{allelic ladder} format.
+\item A list of frequency vectors. All vectors should sum to 1, and be named (with allele
+labels)
+\item Shortcut for simple SNP data: The argument \code{locusAttributes = "snp-AB"} sets all
+markers to be equifrequent SNPs with alleles A and B. The letters A and B may be
+replaced by other single-character letters or numbers.
 }
 }
 }

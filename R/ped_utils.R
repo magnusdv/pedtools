@@ -275,10 +275,9 @@ hasCommonAncestor = function(x) {
   if(!is.ped(x))
     stop2("Input is not a `ped` object: ", x)
 
-  n = pedsize(x)
-  labs = labels(x)
-
-  A = matrix(FALSE, ncol = n, nrow = n, dimnames = list(labs, labs))
+  ids = x$ID
+  n = length(ids)
+  A = matrix(FALSE, ncol = n, nrow = n, dimnames = list(ids, ids))
 
   FOU = founders(x, internal = TRUE)
   for(i in FOU) {
