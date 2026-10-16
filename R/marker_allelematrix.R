@@ -192,6 +192,95 @@ removeGenotypes = function(x, ids = NULL, markers = NULL) {
   setAlleles(x, ids = ids, markers = markers, alleles = 0)
 }
 
+
+
+#' Split genotype columns into allele columns
+#'
+#' Converts a matrix or data frame with one genotype column per marker into a matrix with
+#' two allele columns per marker. Malformed genotypes give an error.
+#'
+#' @param x A matrix or data frame containing genotypes.
+#' @param sep Allele separator. If NULL, detected automatically from the first 100
+#'   non-missing genotypes, trying "/", ",", "-", ";" and " ".
+#' @param missing Symbol for missing alleles (default 0).
+#' @param clean If TRUE, trim whitespace and fill in missing individual alleles, e.g. "1/"
+#'   becomes "1/0". Default FALSE for speed.
+#' @param colNames If TRUE, append `.1` and `.2` to the input column names. If FALSE
+#'   (default), columns are unnamed.
+#'
+#' @return A matrix with twice as many columns as `x`, preserving row names. Missing
+#'   alleles are represented by `missing`, except for completely missing input, which
+#'   returns a matrix of zeroes.
+#'
+#' @examples
+#' x = cbind(M1 = c("1/2", "/3"), M2 = c(NA, "1/1"))
+#' splitGenotypes(x, clean = TRUE, colNames = TRUE)
+#'
+#' @export
+splitGenotypes = function(x, sep = NULL, missing = 0, clean = FALSE, colNames = FALSE) {
+  if(is.null(x))
+    return(NULL)
+
+  if(is.data.frame(x))
+    x = as.matrix(x)
+
+  nc = ncol(x)
+  nr = nrow(x)
+
+  colnms = NULL
+  if(colNames && !is.null(oldnms <- colnames(x)))
+    colnms = paste0(rep(oldnms, each = 2L), c(".1", ".2"))
+
+  res = matrix(0, ncol = 2L * nc, nrow = nr, dimnames = list(rownames(x), colnms))
+
+  if(clean)
+    x = trimws(x)
+
+  # Identify missing genotypes
+  nas = is.na(x) | x == "" | x == missing
+  if(all(nas))
+    return(res)
+
+  # Detect separator if not supplied
+  if(is.null(sep)) {
+    v = x[!nas]
+    if(length(v) > 50)
+      length(v) = 50
+
+    candidates = c("/", ",", "-", ";", " ")
+    hit = vapply(candidates, \(s) any(grepl(s, v, fixed = TRUE)), TRUE)
+    if(!any(hit))
+      stop2("No allele separator found")
+    sep = candidates[which(hit)[1L]]
+  }
+
+  # Replace missing genotypes and optionally incomplete alleles
+  x[nas] = paste0(missing, sep, missing)
+  if(clean) {
+    i = startsWith(x, sep)
+    x[i] = paste0(missing, x[i])
+    i = endsWith(x, sep)
+    x[i] = paste0(x[i], missing)
+  }
+
+  # Split all genotypes and check allele counts
+  spl = strsplit(x, sep, fixed = TRUE)
+  len = lengths(spl)
+  if(any(len != 2L))
+    stop2("Malformed genotype: ", x[which(len != 2L)[1L]])
+
+  alleles = unlist(spl, use.names = FALSE)
+  if(clean)
+    alleles = trimws(alleles)
+
+  # Distribute alleles into alternating columns
+  evencols = 2L * seq_len(nc)
+  evenidx = 2L * seq_len(nc * nr)
+  res[, evencols - 1L] = alleles[evenidx - 1L]
+  res[, evencols] = alleles[evenidx]
+  res
+}
+
 # For internal use
 allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0,
                                    sep = NULL, validate = TRUE) {
@@ -224,7 +313,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
   # If `sep` is given, split each column into single-allele columns
   if(!is.null(sep)) {
-    m = split_genotype_cols(m, sep, missing)
+    m = splitGenotypes(m, sep, missing)
   }
   else {
     if (ncol(m) %% 2 != 0)
@@ -333,6 +422,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 }
 
 
+# TODO: Remove (replaced by `splitGenotypes()`)
 split_genotype_cols = function(m, sep, missing = 0) {
   if(is.null(m))
     return()
