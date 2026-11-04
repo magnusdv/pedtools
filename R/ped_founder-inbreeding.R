@@ -41,7 +41,7 @@ founderInbreeding = function(x, ids, named = FALSE, chromType = "autosomal") {
       idsComp = if(missids) founders(comp) else intersect(ids, founders(comp))
       founderInbreeding(comp, idsComp, named = TRUE, chromType = chromType)
     })
-    fi = unlist(filist, recursive = FALSE)
+    fi = unlist(unname(filist), recursive = FALSE)
     if(!missids)
       fi = fi[as.character(ids)]
     if(!named)

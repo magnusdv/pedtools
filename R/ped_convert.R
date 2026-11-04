@@ -125,13 +125,18 @@ restorePed = function(x, attrs = NULL, validate = TRUE) {
           famid = attrs$FAMID, validate = validate, reorder = FALSE)
 
   if(is.pedList(p)) {
-    if(!is.null(attrs$LOOP_BREAKERS) || !is.null(attrs$FOUNDER_INBREEDING))
+    if(!is.null(attrs$LOOP_BREAKERS))
       stop2("Cannot restore disconnected ouput in this case")
     # Hack
     y = lapply(p, function(pcmp) {
       idx = match(pcmp$ID, x[,1])
       a = attrs
       a$LABELS = a$LABELS[idx]
+
+      # Retain founder inbreeding for component
+      if(!is.null(fouinb <- a$FOUNDER_INBREEDING))
+        a$FOUNDER_INBREEDING = lapply(fouinb, function(v) v[names(v) %in% a$LABELS])
+
       restorePed(x[idx, , drop = FALSE], attrs = a, validate = validate)
     })
     return(y)
