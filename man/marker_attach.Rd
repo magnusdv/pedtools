@@ -111,5 +111,5 @@ stopifnot(identical(x1, x2))
 
 }
 \seealso{
-\code{\link[=addMarker]{addMarker()}}
+\code{\link[=addMarker]{addMarker()}}, \code{\link[=setMarkersFromMatrix]{setMarkersFromMatrix()}}
 }
