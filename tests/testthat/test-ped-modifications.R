@@ -155,6 +155,18 @@ test_that("removeIndividuals handles pedlists", {
   expect_identical(y, singleton(8))
 })
 
+test_that("removeIndividuals works with 'exact'", {
+  x = nuclearPed()
+  xx = list(x, singleton(4))
+  y = removeIndividuals(x, 1, remove = "exact", verbose = F)
+  yy = removeIndividuals(xx, c(1,4), remove = "exact", verbose = F)
+
+  expect_identical(unname(y), singletons(2:3, sex = 2:1))
+  expect_identical(unname(yy), singletons(2:3, sex = 2:1))
+
+  z = removeIndividuals(x, 3, remove = "exact", verbose = F)
+  expect_identical(unname(z), singletons(1:2, sex = 1:2))
+})
 
 test_that("addSon(), addDaughter(), addChild() creates children with correct sex", {
   x = singleton(1)

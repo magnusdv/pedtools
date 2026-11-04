@@ -37,7 +37,7 @@ addSibling(x, id, sex = 1, side = c("right", "left"), verbose = TRUE)
 removeIndividuals(
   x,
   ids,
-  remove = c("descendants", "ancestors"),
+  remove = c("descendants", "ancestors", "exact"),
   returnLabs = FALSE,
   verbose = TRUE
 )
@@ -51,40 +51,39 @@ branch(x, id)
 \arguments{
 \item{x}{A \code{ped} object, or a list of such.}
 
-\item{father, mother}{Single ID labels. At least one of these must be an
-existing member of \code{x}. The other may be (i) another existing member, (ii)
-a new founder to be created, or (iii) missing (i.e., NULL), in which case
-the other parent is created and given a suitable name.}
+\item{father, mother}{Single ID labels. At least one of these must be an existing member
+of \code{x}. The other may be (i) another existing member, (ii) a new founder to be
+created, or (iii) missing (i.e., NULL), in which case the other parent is created and
+given a suitable name.}
 
-\item{nch}{A positive integer indicating the number of children to be
-created. Default: 1.}
+\item{nch}{A positive integer indicating the number of children to be created. Default:
+1.}
 
-\item{sex}{A vector of integers indicating the sex of the created
-individuals. (1 = male, 2 = female, 0 = unknown). Recycled as needed.}
+\item{sex}{A vector of integers indicating the sex of the created individuals. (1 =
+male, 2 = female, 0 = unknown). Recycled as needed.}
 
-\item{ids}{A vector of ID labels. In \code{addChildren()} these are the children
-to be created. If NULL (default) given, automatic labels are generated.}
+\item{ids}{A vector of ID labels. In \code{addChildren()} these are the children to be
+created. If NULL (default) given, automatic labels are generated.}
 
 \item{verbose}{A logical.}
 
-\item{parents}{A vector of 1 or 2 ID labels, of which at least one must be an
-existing member of \code{x}.}
+\item{parents}{A vector of 1 or 2 ID labels, of which at least one must be an existing
+member of \code{x}.}
 
 \item{id}{The ID label of a pedigree member.}
 
-\item{side}{A word indicating whether a new sibling should be placed to the
-left or right of the indicated individual. Default: "right".}
+\item{side}{A word indicating whether a new sibling should be placed to the left or
+right of the indicated individual. Default: "right".}
 
-\item{remove}{Either "ancestors" or "descendants" (default), dictating the
+\item{remove}{Either "descendants" (default), "ancestors" or "exact", dictating the
 method of removing pedigree members. Abbreviations are allowed.}
 
-\item{returnLabs}{A logical, by default FALSE. If TRUE, \code{removeIndividuals()}
-returns only the labels of all members to be removed, instead of actually
-removing them.}
+\item{returnLabs}{A logical, by default FALSE. If TRUE, \code{removeIndividuals()} returns
+only the labels of all members to be removed, instead of actually removing them.}
 
-\item{uninformative}{A vector naming individuals considered "uninformative",
-or a function (typically a helper function like \code{\link[=untypedMembers]{untypedMembers()}}).
-Uninformative leaves are removed iteratively until no more can be found.}
+\item{uninformative}{A vector naming individuals considered "uninformative", or a
+function (typically a helper function like \code{\link[=untypedMembers]{untypedMembers()}}). Uninformative leaves
+are removed iteratively until no more can be found.}
 
 \item{subset}{A character vector (or coercible to such): A subset of the ID
 labels of \code{x}.}
@@ -102,43 +101,41 @@ The modified \code{ped} object.
 Functions for adding or removing individuals in a 'ped' object.
 }
 \details{
-In \code{addChildren()} and \code{addParents()}, labels of added individuals are
-generated automatically if they are not specified by the user. The automatic
-labelling uses the smallest integers not already in use.
+In \code{addChildren()} and \code{addParents()}, labels of added individuals are generated
+automatically if they are not specified by the user. The automatic labelling uses the
+smallest integers not already in use.
 
-\code{addChild()}, \code{addSon()} and \code{addDaughter()} are convenient wrappers for the
-most common use of \code{addChildren()}, namely adding a single child to a
-pedigree. Note that the parents can be given in any order. If only one parent
-is supplied, the other is created as a new individual.
+\code{addChild()}, \code{addSon()} and \code{addDaughter()} are convenient wrappers for the most
+common use of \code{addChildren()}, namely adding a single child to a pedigree. Note that
+the parents can be given in any order. If only one parent is supplied, the other is
+created as a new individual.
 
-\code{addSibling()} adds a sibling to the indicated individual, creating parents
-if necessary. The new sibling is placed either directly before or after the
-indicated individual, depending on the \code{side} argument. (But note that the
-internal ordering of individuals is not always respected when plotting the
-pedigree.)
+\code{addSibling()} adds a sibling to the indicated individual, creating parents if
+necessary. The new sibling is placed either directly before or after the indicated
+individual, depending on the \code{side} argument. (But note that the internal ordering of
+individuals is not always respected when plotting the pedigree.)
 
-\code{removeIndividuals()} removes the individuals indicated with \code{ids} along with
-all of their ancestors OR descendants, depending on the \code{remove} argument.
-Leftover spouses disconnected from the remaining pedigree are also removed.
+\code{removeIndividuals()} removes the indicated individuals from the pedigree. If \code{remove = "descendants"} (default), their descendants are also removed, together with leftover
+spouses disconnected from the remaining pedigree. Setting \code{remove = "ancestors"} does
+the same, but removes upwards instead of downwards. Finally, if \code{remove = "exact"},
+only the indicated individuals are removed.
 
-The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all
-his/her descendants, and all necessary spouses. Note that some structure may
-be lost in this process; for instance, compare \code{x = halfSibTriangle(3)} with
-\code{branch(x, 1)}.
+The \code{branch()} function extracts the sub-pedigree formed by \code{id} and all his/her
+descendants, and all necessary spouses. Note that some structure may be lost in this
+process; for instance, compare \code{x = halfSibTriangle(3)} with \code{branch(x, 1)}.
 
-The \code{trim()} function iteratively removes uninformative leaves (i.e., members
-without children) from the pedigree. Note that the definition of
-"uninformative" is entirely user-defined. For example, \code{trim(x, untypedMembers)}, will remove untyped individuals from the bottom until the
-process stops.
+The \code{trim()} function iteratively removes uninformative leaves (i.e., members without
+children) from the pedigree. Note that the definition of "uninformative" is entirely
+user-defined. For example, \code{trim(x, untypedMembers)}, will remove untyped individuals
+from the bottom until the process stops.
 
-Finally, \code{subset()} can be used to extract any sub-pedigree, returning a list
-of pedigrees if the result is disconnected. By default, an error is raised if
-some individuals would be left with exactly one parent. Alternatively,
-\code{missingParents = "exclude"} removes the parent-child connection in such
-cases, while \code{missingParents = "include"} adds the missing parent to the
-subset.
+Finally, \code{subset()} can be used to extract any sub-pedigree, returning a list of
+pedigrees if the result is disconnected. By default, an error is raised if some
+individuals would be left with exactly one parent. Alternatively, \code{missingParents = "exclude"} removes the parent-child connection in such cases, while \code{missingParents = "include"} adds the missing parent to the subset.
 }
 \examples{
+
+# In examples below, plot each step to see the changes in the pedigree.
 
 x = nuclearPed(1) |>
   addSon(3) |>
@@ -148,8 +145,11 @@ x = nuclearPed(1) |>
 # Remove 6 and 7 and their descendants
 y1 = removeIndividuals(x, 6:7)
 
+# "exact" removal converts children to singletons
+y2 = removeIndividuals(x, 6:7, remove = "exact")
+
 # Remove 8-10 and their parents
-y2 = removeIndividuals(x, 8:10, remove = "ancestors")
+y3 = removeIndividuals(x, 8:10, remove = "ancestors")
 
 # Adding a child across components
 z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)

@@ -2,73 +2,72 @@
 #'
 #' Functions for adding or removing individuals in a 'ped' object.
 #'
-#' In `addChildren()` and `addParents()`, labels of added individuals are
-#' generated automatically if they are not specified by the user. The automatic
-#' labelling uses the smallest integers not already in use.
+#' In `addChildren()` and `addParents()`, labels of added individuals are generated
+#' automatically if they are not specified by the user. The automatic labelling uses the
+#' smallest integers not already in use.
 #'
-#' `addChild()`, `addSon()` and `addDaughter()` are convenient wrappers for the
-#' most common use of `addChildren()`, namely adding a single child to a
-#' pedigree. Note that the parents can be given in any order. If only one parent
-#' is supplied, the other is created as a new individual.
+#' `addChild()`, `addSon()` and `addDaughter()` are convenient wrappers for the most
+#' common use of `addChildren()`, namely adding a single child to a pedigree. Note that
+#' the parents can be given in any order. If only one parent is supplied, the other is
+#' created as a new individual.
 #'
-#' `addSibling()` adds a sibling to the indicated individual, creating parents
-#' if necessary. The new sibling is placed either directly before or after the
-#' indicated individual, depending on the `side` argument. (But note that the
-#' internal ordering of individuals is not always respected when plotting the
-#' pedigree.)
+#' `addSibling()` adds a sibling to the indicated individual, creating parents if
+#' necessary. The new sibling is placed either directly before or after the indicated
+#' individual, depending on the `side` argument. (But note that the internal ordering of
+#' individuals is not always respected when plotting the pedigree.)
 #'
-#' `removeIndividuals()` removes the individuals indicated with `ids` along with
-#' all of their ancestors OR descendants, depending on the `remove` argument.
-#' Leftover spouses disconnected from the remaining pedigree are also removed.
+#' `removeIndividuals()` removes the indicated individuals from the pedigree. If `remove =
+#' "descendants"` (default), their descendants are also removed, together with leftover
+#' spouses disconnected from the remaining pedigree. Setting `remove = "ancestors"` does
+#' the same, but removes upwards instead of downwards. Finally, if `remove = "exact"`,
+#' only the indicated individuals are removed.
 #'
-#' The `branch()` function extracts the sub-pedigree formed by `id` and all
-#' his/her descendants, and all necessary spouses. Note that some structure may
-#' be lost in this process; for instance, compare `x = halfSibTriangle(3)` with
-#' `branch(x, 1)`.
+#' The `branch()` function extracts the sub-pedigree formed by `id` and all his/her
+#' descendants, and all necessary spouses. Note that some structure may be lost in this
+#' process; for instance, compare `x = halfSibTriangle(3)` with `branch(x, 1)`.
 #'
-#' The `trim()` function iteratively removes uninformative leaves (i.e., members
-#' without children) from the pedigree. Note that the definition of
-#' "uninformative" is entirely user-defined. For example, `trim(x,
-#' untypedMembers)`, will remove untyped individuals from the bottom until the
-#' process stops.
+#' The `trim()` function iteratively removes uninformative leaves (i.e., members without
+#' children) from the pedigree. Note that the definition of "uninformative" is entirely
+#' user-defined. For example, `trim(x, untypedMembers)`, will remove untyped individuals
+#' from the bottom until the process stops.
 #'
-#' Finally, `subset()` can be used to extract any sub-pedigree, returning a list
-#' of pedigrees if the result is disconnected. By default, an error is raised if
-#' some individuals would be left with exactly one parent. Alternatively,
-#' `missingParents = "exclude"` removes the parent-child connection in such
-#' cases, while `missingParents = "include"` adds the missing parent to the
-#' subset.
+#' Finally, `subset()` can be used to extract any sub-pedigree, returning a list of
+#' pedigrees if the result is disconnected. By default, an error is raised if some
+#' individuals would be left with exactly one parent. Alternatively, `missingParents =
+#' "exclude"` removes the parent-child connection in such cases, while `missingParents =
+#' "include"` adds the missing parent to the subset.
 #'
 #' @param x A `ped` object, or a list of such.
-#' @param ids A vector of ID labels. In `addChildren()` these are the children
-#'   to be created. If NULL (default) given, automatic labels are generated.
-#' @param remove Either "ancestors" or "descendants" (default), dictating the
+#' @param ids A vector of ID labels. In `addChildren()` these are the children to be
+#'   created. If NULL (default) given, automatic labels are generated.
+#' @param remove Either "descendants" (default), "ancestors" or "exact", dictating the
 #'   method of removing pedigree members. Abbreviations are allowed.
-#' @param uninformative A vector naming individuals considered "uninformative",
-#'   or a function (typically a helper function like [untypedMembers()]).
-#'   Uninformative leaves are removed iteratively until no more can be found.
-#' @param returnLabs A logical, by default FALSE. If TRUE, `removeIndividuals()`
-#'   returns only the labels of all members to be removed, instead of actually
-#'   removing them.
+#' @param uninformative A vector naming individuals considered "uninformative", or a
+#'   function (typically a helper function like [untypedMembers()]). Uninformative leaves
+#'   are removed iteratively until no more can be found.
+#' @param returnLabs A logical, by default FALSE. If TRUE, `removeIndividuals()` returns
+#'   only the labels of all members to be removed, instead of actually removing them.
 #' @param id The ID label of a pedigree member.
-#' @param father,mother Single ID labels. At least one of these must be an
-#'   existing member of `x`. The other may be (i) another existing member, (ii)
-#'   a new founder to be created, or (iii) missing (i.e., NULL), in which case
-#'   the other parent is created and given a suitable name.
-#' @param nch A positive integer indicating the number of children to be
-#'   created. Default: 1.
-#' @param sex A vector of integers indicating the sex of the created
-#'   individuals. (1 = male, 2 = female, 0 = unknown). Recycled as needed.
-#' @param parents A vector of 1 or 2 ID labels, of which at least one must be an
-#'   existing member of `x`.
-#' @param side A word indicating whether a new sibling should be placed to the
-#'   left or right of the indicated individual. Default: "right".
+#' @param father,mother Single ID labels. At least one of these must be an existing member
+#'   of `x`. The other may be (i) another existing member, (ii) a new founder to be
+#'   created, or (iii) missing (i.e., NULL), in which case the other parent is created and
+#'   given a suitable name.
+#' @param nch A positive integer indicating the number of children to be created. Default:
+#'   1.
+#' @param sex A vector of integers indicating the sex of the created individuals. (1 =
+#'   male, 2 = female, 0 = unknown). Recycled as needed.
+#' @param parents A vector of 1 or 2 ID labels, of which at least one must be an existing
+#'   member of `x`.
+#' @param side A word indicating whether a new sibling should be placed to the left or
+#'   right of the indicated individual. Default: "right".
 #' @param verbose A logical.
 #'
 #' @return The modified `ped` object.
 #' @seealso [ped()], [relabel()], [swapSex()]
 #'
 #' @examples
+#'
+#' # In examples below, plot each step to see the changes in the pedigree.
 #'
 #' x = nuclearPed(1) |>
 #'   addSon(3) |>
@@ -78,8 +77,11 @@
 #' # Remove 6 and 7 and their descendants
 #' y1 = removeIndividuals(x, 6:7)
 #'
+#' # "exact" removal converts children to singletons
+#' y2 = removeIndividuals(x, 6:7, remove = "exact")
+#'
 #' # Remove 8-10 and their parents
-#' y2 = removeIndividuals(x, 8:10, remove = "ancestors")
+#' y3 = removeIndividuals(x, 8:10, remove = "ancestors")
 #'
 #' # Adding a child across components
 #' z = singletons(1:2, sex = 1:2) |> addDaughter(1:2)
@@ -368,12 +370,17 @@ addSibling = function(x, id, sex = 1, side = c("right", "left"), verbose = TRUE)
 
 #' @rdname ped_modify
 #' @export
-removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
+removeIndividuals = function(x, ids, remove = c("descendants", "ancestors", "exact"),
                              returnLabs = FALSE, verbose = TRUE) {
   if(is.pedList(x)) {
     y = lapply(x, function(comp)
       removeIndividuals(comp, .myintersect(comp$ID, ids), remove = remove,
                         returnLabs = returnLabs, verbose = FALSE))
+
+    # Return labels directly for pedlists
+    if(returnLabs)
+      return(as.character(unlist(y, use.names = FALSE)))
+
     # Remove NULLs
     y = y[!sapply(y, is.null)]
 
@@ -391,7 +398,7 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
     stop2("Input is not a `ped` object or a list of such")
 
   if(!length(ids))
-    return(x)
+    return(if(returnLabs) character(0) else x)
 
   if(anyDuplicated.default(ids))
     ids = unique.default(ids)
@@ -402,12 +409,14 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
   remove = match.arg(remove)
 
   if(verbose)
-    message(sprintf("Removing individual(s) and their %s: %s", remove, trunc(ids)))
+    message(if(remove == "exact") "Removing individual(s): " else
+              sprintf("Removing individual(s) and their %s: ", remove), trunc(ids))
 
-  # Descendants OR ancestors.
+  # Determine individuals to remove
   remov = switch(remove,
-                ancestors = ancestors(x, ids_int, inclusive = TRUE, internal = TRUE),
-                descendants = descendants(x, ids_int, inclusive = TRUE, internal = TRUE))
+                 exact = ids_int,
+                 ancestors = ancestors(x, ids_int, inclusive = TRUE, internal = TRUE),
+                 descendants = descendants(x, ids_int, inclusive = TRUE, internal = TRUE))
 
   makeFounderIdx = integer(0)
 
@@ -451,7 +460,11 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
       message("Converting to founder: ", toString(labs[makeFounderIdx]))
   }
 
-  # The actual reduction. Using the as.matrix trick anticipating marker data a.s.o.
+  # Exact removal: Use subset()
+  if(remove == "exact" && length(remov) < length(labs))
+    return(subset(x, subset = labs[-remov], missingParents = "exclude"))
+
+  # Otherwise use as.matrix trick
   xmatr = as.matrix(x)
   new = xmatr[-remov, , drop = FALSE]
 
@@ -470,7 +483,7 @@ removeIndividuals = function(x, ids, remove = c("descendants", "ancestors"),
 
   # Remove founder inbreeding
   finb = attrs$FOUNDER_INBREEDING
-  if (!is.null(finb) && length(intersect(remov, FOU))) {
+  if(!is.null(finb)) {
     aut = finb$autosomal
     xchr = finb$x
     attrs$FOUNDER_INBREEDING = list(autosomal = aut[names(aut) %notin% labs[remov]],
