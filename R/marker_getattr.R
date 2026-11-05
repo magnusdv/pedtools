@@ -220,7 +220,7 @@ alleles.ped = function(x, marker = NULL, simplify1 = TRUE, ...) {
 #' @rdname marker_getattr
 #' @export
 alleles.list = function(x, marker = NULL, simplify1 = TRUE, ...) {
-  comp_wise = lapply(x, alleles, marker = marker)
+  comp_wise = lapply(x, alleles, marker = marker, simplify1 = simplify1)
   if(!listIdentical(comp_wise))
     stop2("The output of `alleles()` differs between pedigree components")
   comp_wise[[1]]

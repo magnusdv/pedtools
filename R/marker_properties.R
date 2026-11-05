@@ -241,7 +241,7 @@ allowsMutations.default = function(x, ...) {
 #' @export
 allowsMutations.marker = function(x, ...) {
   mut = mutmod.marker(x)
-  !is.null(mut) || !trivialMut(mut)
+  !is.null(mut) && !trivialMut(mut)
 }
 
 #' @rdname marker_prop

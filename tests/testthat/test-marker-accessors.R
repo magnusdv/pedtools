@@ -178,5 +178,15 @@ test_that("setAfreq() updates the mutation model", {
   expect_equal(y, z)
 })
 
+test_that("setAfreq() respects allele order", {
+  abc = letters[1:3]
+  x = singleton(1) |> addMarker(alleles = abc)
+
+  # Set new frequencies in a different order than the original
+  newfr = c(b = 0.2, c = 0.3, a = 0.5)
+  y = setAfreq(x, marker = 1, afreq = newfr)
+
+  expect_equal(afreq(y, 1), newfr[abc])
+})
 
 

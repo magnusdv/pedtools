@@ -63,7 +63,7 @@
 #'
 #' @export
 as.matrix.ped = function(x, include.attrs = TRUE, ...) {
-  m = c(seq_along(x$ID), x$FIDX, x$MIDX, x$SEX, unlist(x$MARKERS))
+  m = c(seq_along(x$ID), x$FIDX, x$MIDX, x$SEX, unlist(x$MARKERS, use.names = FALSE))
   attrs = list(dim = c(length(x$ID), 4 + 2*length(x$MARKERS)))
   if (include.attrs) {
     attrs$FAMID = x$FAMID
@@ -84,7 +84,7 @@ as.matrix.ped = function(x, include.attrs = TRUE, ...) {
 #' @export
 as.matrix.list = function(x, include.attrs = TRUE, ...) {
   if(!length(x) || !all(vapply(x, is.ped, logical(1))))
-    stop2("Input must be a non-empty list of `ped` objects")
+    return(as.matrix.default(x, ...))
 
   if(length(x) == 1)
     return(as.matrix.ped(x[[1]], include.attrs = include.attrs))
@@ -243,7 +243,8 @@ as.data.frame.ped = function(x, ..., markers, sep = "/", missing = "-") {
     return(df)
 
   mlist = getMarkers(x, markers)
-  geno = unlist(lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing)))
+  geno = unlist(lapply(mlist, function(m) format.marker(m, sep = sep, missing = missing)),
+                use.names = FALSE)
   dim(geno) = c(length(x$ID), length(mlist))
 
   # Headers of genotype columns: name if present, otherwise <idx>
@@ -379,6 +380,7 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
       as.ped.data.frame(comp, famid_col = famid_col, id_col = id_col, fid_col = fid_col,
                         mid_col = mid_col, sex_col = sex_col, marker_col = marker_col,
                         locusAttributes = locusAttributes, missing = missing, sep = sep,
+                        sexCodes = sexCodes, addMissingFounders = addMissingFounders,
                         validate = validate, validateMarkers = validateMarkers, ...)
     })
 
@@ -445,9 +447,10 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
     if(length(badnms <- .mysetdiff(names(sexCodes), c("male", "female", "unknown"))))
       stop2(sprintf("Illegal name of argument  `sexCodes`: '%s'\nLegal names are 'male', 'female' and 'uknown'", toString(badnms)))
     sexCodes = as.list(sexCodes)
-    sex[sex %in% sexCodes$male] = 1
-    sex[sex %in% sexCodes$female] = 2
-    sex[sex %in% sexCodes$unknown] = 0
+    oldSex = sex
+    sex[oldSex %in% sexCodes$male] = 1
+    sex[oldSex %in% sexCodes$female] = 2
+    sex[oldSex %in% sexCodes$unknown] = 0
   }
 
   # Add missing founders
@@ -506,9 +509,8 @@ as.ped.data.frame = function(x, famid_col = NA, id_col = NA, fid_col = NA,
   # If multiple components, do one comp at a time
   if (is.pedList(p)) {
     p = lapply(p, function(comp) {
-      setMarkers(comp, alleleMatrix = AM[comp$ID, , drop = FALSE],
-                 locusAttributes = locusAttributes, missing = missing,
-                 sep = sep, validate = validateMarkers)
+      setMarkers(comp, alleleMatrix = AM, locusAttributes = locusAttributes,
+                 missing = missing, sep = sep, validate = validateMarkers)
     })
 
     # Return pedlist

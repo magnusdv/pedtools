@@ -264,7 +264,7 @@ setSNPs = function(x, snpData) {
     attr(m, "afreq") = c(fr, 1 - fr)
     x$MARKERS[[idx]] = m
 
-    if(allowsMutations(m))
+    if(!is.null(mutmod.marker(m)))
       x = setMutmod(x, markers = idx, update = TRUE)
   }
 

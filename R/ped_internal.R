@@ -201,7 +201,7 @@ internalID = function(x, ids, errorIfUnknown = TRUE) {
   else if(!is.ped(x))
     stop2("Input is not a `ped` object or a list of such")
 
-  idsInt = match(ids, labels(x))
+  idsInt = match(ids, x$ID)
   if (anyNA(idsInt) && errorIfUnknown)
     stop2("Unknown ID label: ", ids[is.na(idsInt)])
   idsInt

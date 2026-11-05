@@ -24,7 +24,7 @@ is.marker = function(x) {
 #' @export
 #' @rdname is.marker
 is.markerList = function(x) {
-  inherits(x, "markerList") || (is.list(x) && all(sapply(x, is.marker)))
+  inherits(x, "markerList") || (is.list(x) && all(vapply(x, is.marker, logical(1))))
 }
 
 
@@ -85,7 +85,7 @@ checkDupNames = function(x) {
   else
     mlist = x
 
-  mnames = unlist(lapply(mlist, attr, "name"))
+  mnames = unlist(lapply(mlist, attr, "name"), use.names = FALSE)
   if(dup <- anyDuplicated.default(mnames, incomparables = NA))
     stop2("Duplicated marker name: ", mnames[dup])
 }
@@ -93,7 +93,7 @@ checkDupNames = function(x) {
 checkConsistency = function(x, mlist) {
   checkDupNames(mlist)
 
-  wrongSize = unlist(lapply(mlist, nrow) != pedsize(x))
+  wrongSize = vapply(mlist, nrow, integer(1)) != length(x$ID)
   if(any(wrongSize)) {
     erri = which(wrongSize)[1]
     errsize = nrow(mlist[[erri]])

@@ -250,7 +250,7 @@ setAfreq = function(x, marker, afreq, strict = TRUE) {
   x$MARKERS[[idx]] = m
 
   # Update mutation model
-  if(allowsMutations(m))
+  if(!is.null(mutmod.marker(m)))
     x = setMutmod(x, markers = marker, update = TRUE)
 
   x

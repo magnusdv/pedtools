@@ -228,7 +228,7 @@ hasLoop = function(x = NULL, fidx = x$FIDX, midx = x$MIDX) {
   # One nuclear family per distinct parent pair
   f = fidx[nonf]
   m = midx[nonf]
-  nucKey = f*(n + 1L) + m
+  nucKey = f*(n + 1) + m
   keepNuc = !duplicated.default(nucKey)
 
   # Loop iff E > V - 1 in nuclear graph
@@ -319,7 +319,7 @@ subnucs = function(x) {
   MIDX = x$MIDX
 
   # Indices of unique parent couples
-  key = FIDX*(n + 1L) + MIDX
+  key = FIDX*(n + 1) + MIDX
   couplesIdx = seqn[FIDX > 0L & !duplicated.default(key)]
 
   # List all nucs

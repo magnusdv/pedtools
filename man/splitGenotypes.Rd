@@ -9,7 +9,7 @@ splitGenotypes(x, sep = NULL, missing = 0, clean = FALSE, colNames = FALSE)
 \arguments{
 \item{x}{A matrix or data frame containing genotypes.}
 
-\item{sep}{Allele separator. If NULL, detected automatically from the first 100
+\item{sep}{Allele separator. If NULL, detected automatically from the first 50
 non-missing genotypes, trying "/", ",", "-", ";" and " ".}
 
 \item{missing}{Symbol for missing alleles (default 0).}

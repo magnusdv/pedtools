@@ -95,11 +95,9 @@ getLocusAttributes = function(x, markers = NULL,
   if(!is.ped(x))
     stop2("Input must be a `ped` object or a list of such")
 
-  markers = markers %||% seq_markers(x)
-
   attribs = match.arg(attribs, several.ok = TRUE)
+  mlist = if(is.null(markers)) x$MARKERS else getMarkers(x, markers)
 
-  mlist = getMarkers(x, markers)
   res = lapply(mlist, function(m) {
     a = attributes(m)[attribs]
     names(a) = attribs # ensure NULLs are kept - with names! Recall `list(a = 1)['b']`

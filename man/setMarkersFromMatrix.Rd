@@ -15,7 +15,8 @@ identifying individuals. If \code{loci = NULL}, columns must have matching names
 
 \item{loci}{Optional list of locus attributes. Each element must contain \code{name} and
 \code{afreq}. If \code{alleles} is omitted, allele labels are taken from \code{names(afreq)}. Other
-possible entries include \code{mutmod}, \code{chrom} and \code{posMb}.}
+possible entries include \code{mutmod}, \code{chrom} and \code{posMb}. Supplied frequencies and
+mutation models must be valid; no validation is performed here.}
 }
 \value{
 The input pedigrees with markers attached.
@@ -31,7 +32,7 @@ x = list(nuclearPed(1), singleton("S"))
 a = matrix(c("A", "B", "A", "A"), nrow = 2, byrow = TRUE,
            dimnames = list(c("3", "S"), c("M1.1", "M1.2")))
 
-# Infer allele frequencies from observed genotypes
+# Without `loci`: Equal frequencies to observed alleles
 y = setMarkersFromMatrix(x, a)
 getGenotypes(y)
 afreq(y[[1]], 1)

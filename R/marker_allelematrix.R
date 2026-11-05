@@ -200,7 +200,7 @@ removeGenotypes = function(x, ids = NULL, markers = NULL) {
 #' two allele columns per marker. Malformed genotypes give an error.
 #'
 #' @param x A matrix or data frame containing genotypes.
-#' @param sep Allele separator. If NULL, detected automatically from the first 100
+#' @param sep Allele separator. If NULL, detected automatically from the first 50
 #'   non-missing genotypes, trying "/", ",", "-", ";" and " ".
 #' @param missing Symbol for missing alleles (default 0).
 #' @param clean If TRUE, trim whitespace and fill in missing individual alleles, e.g. "1/"
@@ -266,8 +266,9 @@ splitGenotypes = function(x, sep = NULL, missing = 0, clean = FALSE, colNames = 
   # Split all genotypes and check allele counts
   spl = strsplit(x, sep, fixed = TRUE)
   len = lengths(spl)
-  if(any(len != 2L))
-    stop2("Malformed genotype: ", x[which(len != 2L)[1L]])
+  bad = len != 2L | (nzchar(sep) & endsWith(x, sep))
+  if(any(bad))
+    stop2("Malformed genotype: ", x[which(bad)[1L]])
 
   alleles = unlist(spl, use.names = FALSE)
   if(clean)
@@ -423,36 +424,6 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 }
 
 
-# TODO: Remove (replaced by `splitGenotypes()`)
-split_genotype_cols = function(m, sep, missing = 0) {
-  if(is.null(m))
-    return()
-
-  nc = ncol(m)
-  nr = nrow(m)
-  res = matrix(0, ncol = 2 * nc, nrow = nr, dimnames = list(rownames(m), NULL))
-
-  nas = is.na(m) | m == missing
-  if(all(nas))
-    return(res)
-
-  nonNA = m[!nas][1]
-  if(!grepl(sep, nonNA))
-    stop2("Allele separator not found in first non-NA entry of allele matrix: ", nonNA)
-
-  # Replace NA's and missing by <miss>/<miss>. (Suboptimal strategy, but simple)
-  m[nas] = sprintf("%s%s%s", missing, sep, missing)
-
-  splitvec = unlist(strsplit(m, sep, fixed = TRUE))
-
-  # Odd columns get first allele, even columns get second allele
-  evencols = 2 * seq_len(nc)
-  evenidx = 2 * seq_len(nc * nr)
-  res[, evencols - 1] = splitvec[evenidx - 1]
-  res[, evencols]     = splitvec[evenidx]
-  res
-}
-
 # For internal use
 markerlist2allelematrix = function(mlist, missing = NA) {
 
@@ -460,13 +431,13 @@ markerlist2allelematrix = function(mlist, missing = NA) {
   allelelist = lapply(mlist, function(m) c(missing, alleles.marker(m))[m + 1])
 
   # Transform to matrix (faster than cbind)
-  amat = unlist(allelelist)
+  amat = unlist(allelelist, use.names = FALSE)
   nMark = length(mlist)
   nInd = length(amat)/(2*nMark)
   dim(amat) = c(nInd, 2*nMark)
 
   # Column names
-  mnames = sapply(mlist, name)
+  mnames = vapply(mlist, name.marker, character(1))
   if(any(naname <- is.na(mnames)))
     mnames[naname] = as.character(which(naname))
   colnames(amat) = paste0(rep(mnames, each = 2), c(".1", ".2"))

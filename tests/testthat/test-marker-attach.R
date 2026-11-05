@@ -129,3 +129,25 @@ test_that("setMarkers() gives correct errors with duplicated marker names", {
   expect_error({name(x, 2) <- "M" }, "Duplicated marker name: M")
 
 })
+
+
+test_that("setMarkersFromMatrix uses standard attribute types", {
+  x = singleton("S", sex = 2)
+  a = matrix(c("1", "2"), nrow = 1,
+             dimnames = list("S", c("M.1", "M.2")))
+  y = setMarkersFromMatrix(x, a)
+  expect_identical(chrom(y), NA_character_)
+  expect_identical(isXmarker(y), FALSE)
+
+  loci = list(list(name = "M", alleles = 1:2, afreq = c(0.8, 0.2),
+                   chrom = 1L, posMb = 3L))
+  z = setMarkersFromMatrix(x, a, loci)
+  expect_identical(chrom(z), "1")
+  expect_identical(posMb(z), 3)
+  expect_identical(alleles(z), c("1", "2"))
+
+  namedLoci = list(list(name = "M", afreq = c("1" = 0.8, "2" = 0.2)))
+  w = setMarkersFromMatrix(x, a, namedLoci)
+  expect_null(names(attr(w$MARKERS[[1]], "afreq")))
+  expect_identical(afreq(w, 1), c("1" = 0.8, "2" = 0.2))
+})

@@ -252,7 +252,8 @@ checkLocusAttribs = function(a) {
 #'   `M1, M1` or `M1.1, M1.2`.
 #' @param loci Optional list of locus attributes. Each element must contain `name` and
 #'   `afreq`. If `alleles` is omitted, allele labels are taken from `names(afreq)`. Other
-#'   possible entries include `mutmod`, `chrom` and `posMb`.
+#'   possible entries include `mutmod`, `chrom` and `posMb`. Supplied frequencies and
+#'   mutation models must be valid; no validation is performed here.
 #'
 #' @return The input pedigrees with markers attached.
 #'
@@ -261,7 +262,7 @@ checkLocusAttribs = function(a) {
 #' a = matrix(c("A", "B", "A", "A"), nrow = 2, byrow = TRUE,
 #'            dimnames = list(c("3", "S"), c("M1.1", "M1.2")))
 #'
-#' # Infer allele frequencies from observed genotypes
+#' # Without `loci`: Equal frequencies to observed alleles
 #' y = setMarkersFromMatrix(x, a)
 #' getGenotypes(y)
 #' afreq(y[[1]], 1)
@@ -311,6 +312,10 @@ setMarkersFromMatrix = function(x, alleleMatrix = NULL, loci = NULL) {
   idx = match(rownames(alleleMatrix), ids, 0L)
   keep = idx > 0L
   idx = idx[keep]
+  dup = anyDuplicated.default(idx)
+  if(dup)
+    stop2("Duplicated sample ID: ", ids[idx[dup]])
+
   template = matrix(0L, nrow = length(ids), ncol = 2L)
 
   # Construct each marker using the supplied common allele set
@@ -327,10 +332,15 @@ setMarkersFromMatrix = function(x, alleleMatrix = NULL, loci = NULL) {
       stop2("Unknown allele at marker ", loc$name, ": ", a[which(bad)[1L]])
 
     m[idx, ] = ind
-    newMarker(m, alleles = als, afreq = loc$afreq, name = loc$name,
-              chrom = loc$chrom %||% NA, posMb = loc$posMb %||% NA_real_,
+    newMarker(m, alleles = as.character(als),
+              afreq = unname(loc$afreq),
+              name = as.character(loc$name),
+              chrom = as.character(loc$chrom %||% NA),
+              posMb = as.numeric(loc$posMb %||% NA),
               mutmod = loc$mutmod, pedmembers = ids, sex = x$SEX)
   })
+
+  checkDupNames(mlist)
   class(mlist) = "markerList"
   x$MARKERS = mlist
   x
