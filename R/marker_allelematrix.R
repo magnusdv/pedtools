@@ -290,6 +290,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
   labs = x$ID
   nind = length(labs)
+  missing = as.character(missing)
 
   m = as.matrix(alleleMatrix, rownames.force = TRUE)
 
@@ -301,7 +302,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
 
   # If rownames, ensure that order matches pedigree
   if(!is.null(row_nms) && !identical(row_nms, labs)) {
-    tmp = matrix("0", nrow = nind, ncol = ncol(m))
+    tmp = matrix(missing, nrow = nind, ncol = ncol(m))
     idx = match(row_nms, labs)
     tmp[idx[!is.na(idx)], ] = m[row_nms[!is.na(idx)], ]
     m = tmp
@@ -348,7 +349,7 @@ allelematrix2markerlist = function(x, alleleMatrix, locusAttributes, missing = 0
   }
 
   # Replace `missing` with zeroes
-  if(!identical(missing, 0))
+  if(!identical(missing, "0"))
     m[m %in% missing] = 0
 
   # Quick return if no locus attributes are given
