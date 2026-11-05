@@ -224,7 +224,7 @@ setAfreq = function(x, marker, afreq, strict = TRUE) {
     alsOrder = match(freqnames, als)
     if(anyNA(alsOrder))
       stop2("Unknown allele: ", freqnames[is.na(alsOrder)])
-    afreq = afreq[alsOrder]
+    afreq = afreq[als]
     attr(m, "afreq") = as.numeric(afreq)
   }
   else {
