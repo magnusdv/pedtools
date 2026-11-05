@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 ## Introduction
 The goal of **pedtools** is to provide a lightweight, but comprehensive tool set for creating, manipulating and visualizing pedigrees with or without marker data. Common pedigree structures are quickly produced with tailor-made functions, while a range of utilities enable modifications like adding or removing individuals, extracting subsets, loop breaking, and merging pedigrees. The plotting feature imports machinery from the [kinship2](https://CRAN.R-project.org/package=kinship2) package.
 
-**pedtools** is the hub of the **pedsuite**, a collection of R packages for pedigree analysis, including applications in forensic and medical genetics. The **pedsuite** has its own  [GitHub repository](https://github.com/magnusdv/pedsuite) and a dedicated [website](https://magnusdv.github.io/pedsuite/) offering more information.
+**pedtools** is the hub of the **pedsuite**, a collection of R packages for pedigree analysis, including applications in forensic and medical genetics. The **pedsuite** has its own  [GitHub repository](https://github.com/magnusdv/pedsuite) and a dedicated [website](https://pedsuite.org/) offering more information.
 
 #### Citation
 If you use **pedtools** in a publication, please cite the book [Pedigree Analysis in R](https://shop.elsevier.com/books/pedigree-analysis-in-r/vigeland/978-0-12-824430-2)

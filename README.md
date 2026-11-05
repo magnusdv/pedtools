@@ -26,8 +26,7 @@ machinery from the
 for pedigree analysis, including applications in forensic and medical
 genetics. The **pedsuite** has its own [GitHub
 repository](https://github.com/magnusdv/pedsuite) and a dedicated
-[website](https://magnusdv.github.io/pedsuite/) offering more
-information.
+[website](https://pedsuite.org/) offering more information.
 
 #### Citation
 
@@ -82,7 +81,7 @@ x = addMarker(x, "7" = "a/b")
 plot(x, marker = 1, hatched = 7)
 ```
 
-<img src="man/figures/README-example-1.png" width="40%" style="display: block; margin: auto;" />
+<img src="man/figures/README-example-1.png" alt="" width="40%" style="display: block; margin: auto;" />
 
 The process of building pedigrees is perfectly suited for R’s pipe
 operator `|>`. For example, the above pedigree could have been created
