@@ -1,5 +1,5 @@
 
-break_silent = function(...) breakLoops(..., allowFounder = TRUE, allowRepeated = TRUE, verbose=F)
+break_silent = function(...) breakLoops(..., verbose=F)
 tie_silent = function(...) tieLoops(..., verbose=F)
 
 
@@ -10,10 +10,10 @@ test_that("loops are detected correctly in fullSibMating peds", {
 })
 
 test_that("loops are gone after breaking in fullSibMating", {
-  x = breakLoops(fullSibMating(1), verbose=F)
+  x = break_silent(fullSibMating(1))
   expect_false(x$UNBROKEN_LOOPS)
 
-  x = breakLoops(fullSibMating(2), verbose=F)
+  x = break_silent(fullSibMating(2))
   expect_false(x$UNBROKEN_LOOPS)
 })
 
@@ -32,17 +32,17 @@ test_that("breaking one loop at a time is same as all at once", {
 
 test_that("breakLoops gives same result when breakers are explicitly given", {
   x = fullSibMating(1)
-  expect_identical(breakLoops(x, verbose=F), breakLoops(x, findLoopBreakers(x), verbose=F))
+  expect_identical(break_silent(x), break_silent(x, findLoopBreakers(x)))
 
   x = fullSibMating(2)
-  expect_identical(breakLoops(x, verbose=F), breakLoops(x, findLoopBreakers(x), verbose=F))
+  expect_identical(break_silent(x), break_silent(x, findLoopBreakers(x)))
 })
 
 test_that("ped->matrix->ped works with broken loops (fullsib)", {
-  x = breakLoops(fullSibMating(1), verbose=F)
+  x = break_silent(fullSibMating(1))
   expect_identical(restorePed(as.matrix(x)), x)
 
-  x = breakLoops(fullSibMating(2), verbose=F)
+  x = break_silent(fullSibMating(2))
   expect_identical(restorePed(as.matrix(x)), x)
 })
 
@@ -62,8 +62,8 @@ test_that("tieLoops restores broken loops (fullSib)", {
 
 test_that("tieLoops restores broken IDENTITY ped", {
   skip("Identity examples - takes long time")
-  ex = read.table (system.file ("example", "ex.pedigree", package = "identity"))
-  x = ped(id=ex[,1], fid=ex[,2], mid=ex[,3], sex=rep(0,nrow(ex)), reorder=F)
+  ex = read.table(system.file ("example", "ex.pedigree", package = "identity"))
+  x = ped(id = ex[,1], fid = ex[,2], mid = ex[,3], sex = rep(0, nrow(ex)), reorder=F)
   expect_identical(x, tie_silent(break_silent(x)))
 })
 

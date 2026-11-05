@@ -2,60 +2,57 @@
 #'
 #' Functions for identifying, breaking and restoring loops in pedigrees.
 #'
-#' In pedtools and other pedsuite packages, pedigree loops are usually handled
-#' under the hood by the functions described here, without the need for explicit
-#' action from end users. When a ped object `x` is created, an internal routine
-#' detects if the pedigree contains loops, in which case `x$UNBROKEN_LOOPS` is
-#' set to TRUE.
+#' In pedtools and other pedsuite packages, pedigree loops are usually handled under the
+#' hood by the functions described here, without the need for explicit action from end
+#' users. When a ped object `x` is created, an internal routine detects if the pedigree
+#' contains loops, in which case `x$UNBROKEN_LOOPS` is set to TRUE.
 #'
-#' In cases with complex inbreeding, it can be instructive to plot the pedigree
-#' after breaking the loops. Duplicated individuals are plotted with suitable
-#' labels (see examples).
+#' In cases with complex inbreeding, it can be instructive to plot the pedigree after
+#' breaking the loops. Duplicated individuals are plotted with suitable labels (see
+#' examples).
 #'
-#' The function `findLoopBreakers()` searches the marriage graph for cycles.
-#' For each cycle it chooses a suitable loop breaker and one child indicating
-#' which full-sibship should be moved.
+#' The function `findLoopBreakers()` searches the marriage graph for cycles. For each
+#' cycle it chooses a suitable loop breaker and one child indicating which full-sibship
+#' should be moved.
 #'
-#' The function `breakLoops()` then makes one founder copy of each selected
-#' loop breaker. For each pair of loop breaker and child, all children with the
-#' same parents as the indicated child are moved from the original parent to
-#' the copy. Repeating this removes the cycles, while recording the original
-#' and copied individuals in `x$LOOP_BREAKERS` so that `tieLoops()` can restore
-#' the original pedigree. In the current implementation, only nonfounders can
-#' act as loop breakers.
+#' The function `breakLoops()` then makes one founder copy of each selected loop breaker.
+#' For each pair of loop breaker and child, all children with the same parents as the
+#' indicated child are moved from the original parent to the copy. Repeating this removes
+#' the cycles, while recording the original and copied individuals in `x$LOOP_BREAKERS` so
+#' that `tieLoops()` can restore the original pedigree.
 #'
-#' Loop breakers may also be supplied by the user. A vector gives the loop
-#' breakers themselves; for each one, a full-sibship is chosen automatically.
-#' Repeated values are allowed and select successive sibships of the same
-#' individual. Alternatively, `loopBreakers` may be a two-column matrix or data
-#' frame whose first column gives loop breakers and whose second column gives
-#' a child in the sibship to be moved.
+#' Loop breakers may also be supplied by the user. A vector gives the loop breakers
+#' themselves; for each one, a full-sibship is chosen automatically. Repeated values are
+#' allowed and select successive sibships of the same individual. Alternatively,
+#' `loopBreakers` may be a two-column matrix or data frame whose first column gives loop
+#' breakers and whose second column gives a child in the sibship to be moved.
 #'
 #' @param x A [ped()] object.
-#' @param loopBreakers Either NULL, resulting in automatic selection of loop
-#'   breakers, a vector indicating the individuals to be used as loop breakers,
-#'   or a two-column matrix/data frame giving loop breakers and children.
+#' @param loopBreakers Either NULL, resulting in automatic selection of loop breakers, a
+#'   vector indicating the individuals to be used as loop breakers, or a two-column
+#'   matrix/data frame giving loop breakers and children.
 #' @param verbose A logical indicating whether to print progress messages.
-#' @param score Optional preference scores used by `findLoopBreakers()`. Higher
-#'   values are preferred. If named, the names are interpreted as individual
-#'   labels. Otherwise the vector must have length `pedsize(x)`.
-#' @param errorIfFail A logical. If TRUE, an error is raised if loop breaking
-#'   fails. If FALSE, the pedigree is returned unchanged.
-#' @param allowFounder,allowRepeated Logicals, temporarily set to FALSE.
+#' @param score Optional preference scores used by `findLoopBreakers()`. Higher values are
+#'   preferred. If named, the names are interpreted as individual labels. Otherwise the
+#'   vector must have length `pedsize(x)`.
+#' @param errorIfFail A logical. If TRUE, an error is raised if loop breaking fails. If
+#'   FALSE, the pedigree is returned unchanged.
+#' @param allowFounder A logical indicating if founders may be used as loop breakers.
+#' @param allowRepeated A logical indicating if the same individual may be used to break
+#'   multiple loops.
 #'
-#' @return For `breakLoops()`, a `ped` object in which the indicated loop
-#'   breakers are duplicated. The returned object has a non-null
-#'   `LOOP_BREAKERS` entry: a matrix with the internal IDs of the originals in
-#'   the first column and the copies in the second. If loop breaking fails,
-#'   then depending on `errorIfFail`, either an error is raised or the input
-#'   pedigree is returned unchanged.
+#' @return For `breakLoops()`, a `ped` object in which the indicated loop breakers are
+#'   duplicated. The returned object has a non-null `LOOP_BREAKERS` entry: a matrix with
+#'   the internal IDs of the originals in the first column and the copies in the second.
+#'   If loop breaking fails, then depending on `errorIfFail`, either an error is raised or
+#'   the input pedigree is returned unchanged.
 #'
-#'   For `tieLoops()`, a `ped` object in which any duplicated individuals
-#'   listed in `x$LOOP_BREAKERS` are merged back into their originals. For any
-#'   ped object `x`, the call `tieLoops(breakLoops(x))` should return `x`.
+#'   For `tieLoops()`, a `ped` object in which any duplicated individuals listed in
+#'   `x$LOOP_BREAKERS` are merged back into their originals. For any ped object `x`, the
+#'   call `tieLoops(breakLoops(x))` should return `x`.
 #'
-#'   For `findLoopBreakers()`, a two-column character matrix giving suitable
-#'   loop breakers in the first column and split children in the second.
+#'   For `findLoopBreakers()`, a two-column character matrix giving suitable loop breakers
+#'   in the first column and split children in the second.
 #'
 #' @examples
 #'
@@ -80,7 +77,7 @@
 #' @importFrom stats ave
 #' @export
 breakLoops = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE,
-                      score = NULL, allowFounder = FALSE, allowRepeated = FALSE) {
+                      score = NULL, allowFounder = TRUE, allowRepeated = TRUE) {
 
   if(isFALSE(x$UNBROKEN_LOOPS) || is.singleton(x)) {
     if(verbose) {
@@ -274,7 +271,7 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE,
 
   repeat {
     N = max(idx, fidx, midx)
-    couples = fidx * (N + 1L) + midx
+    couples = fidx * (N + 1) + midx
     g = .marriageGraphEdges(idx, fidx, midx, reduced = TRUE)
 
     loopRows = .findGraphCycle(cbind(g[, 1:2, drop = FALSE], seq_len(nrow(g))))
@@ -337,7 +334,7 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE,
 
   # Nuclear-family nodes, encoded safely above individual IDs
   N = max(c(idx, fidx, midx))
-  couples = fidx*(N + 1L) + midx
+  couples = fidx*(N + 1) + midx
 
   # Incoming edges: spouses to nuclear-family nodes
   keepNuc = !duplicated.default(couples)
@@ -400,7 +397,7 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE,
   sw = a > b
   a[sw] = .to[sw]
   b[sw] = .from[sw]
-  edgeKey = a*(nn + 1L) + b
+  edgeKey = a*(nn + 1) + b
 
   # Parallel edges are 2-cycles in this reduced multigraph
   dup = duplicated.default(edgeKey)
@@ -474,7 +471,7 @@ findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE,
   a[sw] = b[sw]
   b[sw] = tmp
 
-  edgelabels[match(a*(nn + 1L) + b, edgeKey)]
+  edgelabels[match(a*(nn + 1) + b, edgeKey)]
 }
 
 
@@ -541,7 +538,7 @@ inbreedingLoops = function(x) {
 
   if(n0 > 30) {
     # Identify unneeded sib leaves
-    pars = x$FIDX*(n0 + 1L) + x$MIDX
+    pars = x$FIDX*(n0 + 1) + x$MIDX
     sibships = unname(split.default(seq_along(pars), pars))
     sibships = sibships[lengths(sibships) > 1]
 
@@ -597,154 +594,4 @@ inbreedingLoops = function(x) {
     lo$pathB = idmap[lo$pathB]
     lo
   })
-}
-
-
-
-.breakLoops_old = function(x, loopBreakers = NULL, verbose = TRUE, errorIfFail = TRUE) {
-
-  if (isFALSE(x$UNBROKEN_LOOPS) || is.singleton(x)) {
-    if (verbose) {
-      if(is.null(x$LOOP_BREAKERS)) message("No loops to break")
-      else message("No further loops to break")
-    }
-    return(x)
-  }
-
-  auto = is.null(loopBreakers)
-  if (auto) {
-    loopBreakers = .findLoopBreakers_old(x)
-    if (length(loopBreakers) == 0) {
-      if (verbose)
-        message("Marriage loops detected, trying different selection method")
-      loopBreakers = .findLoopBreakers2_old(x, errorIfFail = errorIfFail)
-    }
-  }
-  if (!length(loopBreakers)) {
-    mess = "Loop breaking unsuccessful"
-    if(errorIfFail) stop2(mess)
-    else {
-      if(verbose) message(mess, " - returning unchanged")
-      return(x)
-    }
-  }
-
-  LABS = labels(x)
-
-  # Convert to internal IDs and sort (don't skip this)
-  loopBreakers = .mysortInt(internalID(x, loopBreakers))
-
-  FOU = founders(x, internal = TRUE)
-  FOU_LB = intersect(loopBreakers, FOU)
-  if (length(FOU_LB) > 0) {
-    mess = "Breaking loops at founders is not implemented"
-    if(errorIfFail) stop2(mess)
-    else {
-      if(verbose) message(mess, " - returning unchanged")
-      return(x)
-    }
-  }
-
-  if (verbose)
-    cat("Loop breakers:", toString(LABS[loopBreakers]), "\n")
-
-  ### Old ped data
-  oldpedm = as.matrix(x)
-  n = pedsize(x)
-
-  ### New ped matrix
-  # Setup for creating pedm by replicating lb rows
-  all_rows = rep.int(1:n, times = 1 + (1:n %in% loopBreakers))
-  new_rows = duplicated.default(all_rows)
-
-  # Dummy numerical IDs of the new duplicated indivs.
-  # NB: These are inserted in 'new_rows' positions, hence disrupts 1,2,3,...
-  # Therefore they will always be changed in restorePed().
-  dups = n + seq_along(loopBreakers)
-
-  # Create it
-  pedm = oldpedm[all_rows, ]
-  pedm[new_rows, 1] = dups
-  pedm[new_rows, 2:3] = 0
-
-  # Change original loop breakers occurring in FIDX and MIDX
-  wrong = match(pedm[, 2:3], loopBreakers, nomatch = 0)
-  pedm[, 2:3][wrong > 0] = dups[wrong]
-
-  ### Modify labels
-  attrs = attributes(oldpedm)  #all attributes except 'dim'
-  newlabs = attrs$LABELS[all_rows]
-  newlabs[new_rows] = paste0("=", newlabs[new_rows])
-  attrs$LABELS = newlabs
-
-  ### Loop breaker matrix.
-  # Previous loopBreakers must be fixed!
-  if(!is.null(old_lb_matr <- attrs$LOOP_BREAKERS))
-    old_lb_matr[] = match(old_lb_matr, pedm[, 1])
-
-  # New rows. (Remember internal numbering, i.e. indices.)
-  new_lb_matr = cbind(orig = which(new_rows) - 1, copy = which(new_rows))
-
-  # Append the new lb matrix to the old
-  attrs$LOOP_BREAKERS = rbind(old_lb_matr, new_lb_matr)
-
-  ### Create new ped
-  newx = restorePed(pedm, attrs = attrs)
-  if (auto)
-    return(.breakLoops_old(newx, verbose = verbose, errorIfFail = errorIfFail))
-  newx
-}
-
-
-
-# NB: Legacy version of findLoopBreakers; only identifies and breaks inbreeding loops
-.findLoopBreakers_old = function(x) {
-  loopdata = inbreedingLoops(x)
-
-  # write each loop as vector excluding top/bottom
-  loops = lapply(loopdata, function(lo) c(lo$pathA, lo$pathB))
-  bestbreakers = numeric()
-  while (length(loops) > 0) {
-    # add the individual occurring in most loops
-    best = which.max(tabulate(unlist(loops)))
-    bestbreakers = c(bestbreakers, best)
-    loops = loops[sapply(loops, function(vec) best %notin% vec)]
-  }
-  labs = labels(x)
-  labs[bestbreakers]
-}
-
-# Identifies and breaks marriage loops (was called after all inbreeding loops were broken)
-.findLoopBreakers2_old = function(x, errorIfFail = TRUE) {
-
-  breakers = numeric()
-  N = pedsize(x)
-  idx  = nonfounders(x, internal = TRUE)
-  fidx = x$FIDX[idx]
-  midx = x$MIDX[idx]
-  nonf = as.character(idx)
-
-  while (TRUE) {
-    g = .marriageGraphEdges(idx, fidx, midx, reduced = TRUE)
-    loop = .findGraphCycle(g)
-    if(length(loop) == 0)
-      break
-
-    goodBreakers = .myintersect(loop, nonf)
-    if(length(goodBreakers) == 0) {
-      if(errorIfFail) stop("\
-This pedigree requires founders as loop breakers, which is not implemented in pedtools yet.\
-Please contact package maintainer if this is important to you.", call. = FALSE)
-      else return()
-    }
-
-    b = as.numeric(goodBreakers[1])
-    breakers = c(breakers, b)
-    N = N+1
-    fidx[fidx == b] = N
-    midx[midx == b] = N
-  }
-
-  labs = labels(x)
-  labs[breakers]
 }

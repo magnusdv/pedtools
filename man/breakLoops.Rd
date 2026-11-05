@@ -29,68 +29,66 @@ findLoopBreakers(
 \arguments{
 \item{x}{A \code{\link[=ped]{ped()}} object.}
 
-\item{loopBreakers}{Either NULL, resulting in automatic selection of loop
-breakers, a vector indicating the individuals to be used as loop breakers,
-or a two-column matrix/data frame giving loop breakers and children.}
+\item{loopBreakers}{Either NULL, resulting in automatic selection of loop breakers, a
+vector indicating the individuals to be used as loop breakers, or a two-column
+matrix/data frame giving loop breakers and children.}
 
 \item{verbose}{A logical indicating whether to print progress messages.}
 
-\item{errorIfFail}{A logical. If TRUE, an error is raised if loop breaking
-fails. If FALSE, the pedigree is returned unchanged.}
+\item{errorIfFail}{A logical. If TRUE, an error is raised if loop breaking fails. If
+FALSE, the pedigree is returned unchanged.}
 
-\item{score}{Optional preference scores used by \code{findLoopBreakers()}. Higher
-values are preferred. If named, the names are interpreted as individual
-labels. Otherwise the vector must have length \code{pedsize(x)}.}
+\item{score}{Optional preference scores used by \code{findLoopBreakers()}. Higher values are
+preferred. If named, the names are interpreted as individual labels. Otherwise the
+vector must have length \code{pedsize(x)}.}
 
-\item{allowFounder, allowRepeated}{Logicals, temporarily set to FALSE.}
+\item{allowFounder}{A logical indicating if founders may be used as loop breakers.}
+
+\item{allowRepeated}{A logical indicating if the same individual may be used to break
+multiple loops.}
 }
 \value{
-For \code{breakLoops()}, a \code{ped} object in which the indicated loop
-breakers are duplicated. The returned object has a non-null
-\code{LOOP_BREAKERS} entry: a matrix with the internal IDs of the originals in
-the first column and the copies in the second. If loop breaking fails,
-then depending on \code{errorIfFail}, either an error is raised or the input
-pedigree is returned unchanged.
+For \code{breakLoops()}, a \code{ped} object in which the indicated loop breakers are
+duplicated. The returned object has a non-null \code{LOOP_BREAKERS} entry: a matrix with
+the internal IDs of the originals in the first column and the copies in the second.
+If loop breaking fails, then depending on \code{errorIfFail}, either an error is raised or
+the input pedigree is returned unchanged.
 
-For \code{tieLoops()}, a \code{ped} object in which any duplicated individuals
-listed in \code{x$LOOP_BREAKERS} are merged back into their originals. For any
-ped object \code{x}, the call \code{tieLoops(breakLoops(x))} should return \code{x}.
+For \code{tieLoops()}, a \code{ped} object in which any duplicated individuals listed in
+\code{x$LOOP_BREAKERS} are merged back into their originals. For any ped object \code{x}, the
+call \code{tieLoops(breakLoops(x))} should return \code{x}.
 
-For \code{findLoopBreakers()}, a two-column character matrix giving suitable
-loop breakers in the first column and split children in the second.
+For \code{findLoopBreakers()}, a two-column character matrix giving suitable loop breakers
+in the first column and split children in the second.
 }
 \description{
 Functions for identifying, breaking and restoring loops in pedigrees.
 }
 \details{
-In pedtools and other pedsuite packages, pedigree loops are usually handled
-under the hood by the functions described here, without the need for explicit
-action from end users. When a ped object \code{x} is created, an internal routine
-detects if the pedigree contains loops, in which case \code{x$UNBROKEN_LOOPS} is
-set to TRUE.
+In pedtools and other pedsuite packages, pedigree loops are usually handled under the
+hood by the functions described here, without the need for explicit action from end
+users. When a ped object \code{x} is created, an internal routine detects if the pedigree
+contains loops, in which case \code{x$UNBROKEN_LOOPS} is set to TRUE.
 
-In cases with complex inbreeding, it can be instructive to plot the pedigree
-after breaking the loops. Duplicated individuals are plotted with suitable
-labels (see examples).
+In cases with complex inbreeding, it can be instructive to plot the pedigree after
+breaking the loops. Duplicated individuals are plotted with suitable labels (see
+examples).
 
-The function \code{findLoopBreakers()} searches the marriage graph for cycles.
-For each cycle it chooses a suitable loop breaker and one child indicating
-which full-sibship should be moved.
+The function \code{findLoopBreakers()} searches the marriage graph for cycles. For each
+cycle it chooses a suitable loop breaker and one child indicating which full-sibship
+should be moved.
 
-The function \code{breakLoops()} then makes one founder copy of each selected
-loop breaker. For each pair of loop breaker and child, all children with the
-same parents as the indicated child are moved from the original parent to
-the copy. Repeating this removes the cycles, while recording the original
-and copied individuals in \code{x$LOOP_BREAKERS} so that \code{tieLoops()} can restore
-the original pedigree. In the current implementation, only nonfounders can
-act as loop breakers.
+The function \code{breakLoops()} then makes one founder copy of each selected loop breaker.
+For each pair of loop breaker and child, all children with the same parents as the
+indicated child are moved from the original parent to the copy. Repeating this removes
+the cycles, while recording the original and copied individuals in \code{x$LOOP_BREAKERS} so
+that \code{tieLoops()} can restore the original pedigree.
 
-Loop breakers may also be supplied by the user. A vector gives the loop
-breakers themselves; for each one, a full-sibship is chosen automatically.
-Repeated values are allowed and select successive sibships of the same
-individual. Alternatively, \code{loopBreakers} may be a two-column matrix or data
-frame whose first column gives loop breakers and whose second column gives
-a child in the sibship to be moved.
+Loop breakers may also be supplied by the user. A vector gives the loop breakers
+themselves; for each one, a full-sibship is chosen automatically. Repeated values are
+allowed and select successive sibships of the same individual. Alternatively,
+\code{loopBreakers} may be a two-column matrix or data frame whose first column gives loop
+breakers and whose second column gives a child in the sibship to be moved.
 }
 \examples{
 
