@@ -14,7 +14,7 @@ A comprehensive collection of tools for creating, manipulating and visualising p
 Useful links:
 \itemize{
   \item \url{https://github.com/magnusdv/pedtools}
-  \item \url{https://magnusdv.github.io/pedsuite/}
+  \item \url{https://pedsuite.org/}
 }
 
 }

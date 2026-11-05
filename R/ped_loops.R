@@ -236,7 +236,7 @@ tieLoops = function(x, verbose = TRUE) {
 #' @export
 #' @rdname breakLoops
 findLoopBreakers = function(x, score = NULL, errorIfFail = TRUE,
-                            allowFounder = FALSE, allowRepeated = FALSE) {
+                            allowFounder = TRUE, allowRepeated = TRUE) {
 
   empty = matrix(character(0), ncol = 2,
                  dimnames = list(NULL, c("lb", "child")))

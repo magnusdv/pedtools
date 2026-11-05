@@ -12,8 +12,8 @@ breakLoops(
   verbose = TRUE,
   errorIfFail = TRUE,
   score = NULL,
-  allowFounder = FALSE,
-  allowRepeated = FALSE
+  allowFounder = TRUE,
+  allowRepeated = TRUE
 )
 
 tieLoops(x, verbose = TRUE)
@@ -22,8 +22,8 @@ findLoopBreakers(
   x,
   score = NULL,
   errorIfFail = TRUE,
-  allowFounder = FALSE,
-  allowRepeated = FALSE
+  allowFounder = TRUE,
+  allowRepeated = TRUE
 )
 }
 \arguments{

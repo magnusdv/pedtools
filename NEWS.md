@@ -16,6 +16,7 @@
 * Preserve founder inbreeding when pedigree modifications produce disconnected output.
 * Minor optimisations of marker handling and pedigree conversion, and removal of unused internal code.
 * Update links to the new pedsuite home page: https://pedsuite.org/.
+* The extended loop-breaking methods introduced in version 2.11.0 are now enabled by default. The previous behaviour can be restored with `allowFounder = FALSE, allowRepeated = FALSE`.
 
 
 # pedtools 2.11.0
