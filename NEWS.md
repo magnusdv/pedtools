@@ -1,4 +1,21 @@
-# dev
+# pedtools 2.12.0
+
+## New features
+* New function `setMarkersFromMatrix()` for fast attachment of markers from an allele matrix.
+
+* New function `splitGenotypes()` for converting genotype columns to paired allele columns.
+
+* `as.matrix()` now supports lists of pedigrees with compatible marker attributes.
+
+* `removeIndividuals()` gains the option `remove = "exact"`, removing only the indicated individuals.
+
+* `setMarkers()` gains argument `validate`, allowing marker validation to be skipped when attaching prepared data.
+
+## Other
+* `setSex()` now updates the sex attributes of attached markers, fixing the display of X-linked genotypes after sex changes.
+* Preserve founder inbreeding when pedigree modifications produce disconnected output.
+* Minor optimisations of marker handling and pedigree conversion, and removal of unused internal code.
+* Update links to the new pedsuite home page: https://pedsuite.org/.
 
 
 # pedtools 2.11.0
