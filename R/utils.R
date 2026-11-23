@@ -159,7 +159,7 @@ listIdentical = function(x) {
 
 
 # Fold text near the target width, prefer spaces over punctuation
-smartfold = function(s, width = 10, breakAt = c(" ", "-", ".", ":", ")", "]"), tol = 3) {
+smartfold = function(s, width = 10, breakAt = c(" ", "-", ".", ":", ")", "]", "_"), tol = 3) {
   width = as.integer(max(width, 2))
   limit = width + as.integer(max(tol, 0))
 
