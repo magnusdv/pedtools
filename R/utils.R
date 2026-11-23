@@ -158,33 +158,61 @@ listIdentical = function(x) {
 }
 
 
-# Fold a single string at roughly the given width; try to break at nice places
-# Not optimised, and probably reinventing the wheel here.
-# Perhaps better idea: Start with strsplit(s, "")
-smartfold = function(s, width = 10, breakAt = c(' ', '-', '.', ':', ')', ']')) {
+# Fold text near the target width, prefer spaces over punctuation
+smartfold = function(s, width = 10, breakAt = c(" ", "-", ".", ":", ")", "]"), tol = 3) {
   width = as.integer(max(width, 2))
+  limit = width + as.integer(max(tol, 0))
+
+  # Preserve explicit line breaks, apply smartfold recursively
+  if(grepl("\n", s, fixed = TRUE)) {
+    lines = strsplit(s, "\n", fixed = TRUE)[[1L]]
+    lines = vapply(lines, FUN.VALUE = "",
+                   function(a) smartfold(a, width, breakAt = breakAt, tol = tol))
+    return(paste(lines, collapse = "\n"))
+  }
+
   nch = nchar(s)
-  if(nch < width + 3)
+  if(nch <= limit)
     return(s)
 
-  res = character(0)
+  res = character(ceiling(nch / max(1L, width - 2L)))
+  i = 0L
   remaining = s
-  while(nch >= width + 3) {
-    b = width # default next break, if no better
-    for (ch in breakAt) {
-      pos = gregexpr(ch, remaining, fixed = TRUE)[[1]] |> as.integer() # all positions
-      goodpos = pos[pos >= width - 2 & pos <= width + 3 & pos <= nch - 3]
+
+  while(nch > limit) {
+    b = width
+
+    # Try break characters in priority order
+    for(ch in breakAt) {
+      window = substr(remaining, 1L, min(nch, limit + nchar(ch)))
+      pos = gregexpr(ch, window, fixed = TRUE)[[1L]]
+      goodpos = pos[pos >= width - 2L & pos <= limit & pos <= nch - 3L]
+
+      # Also consider earlier spaces if the remainder fits on one line
+      if(ch == " ") {
+        earlier = pos[pos > 1L & pos < width - 2L & nch - pos <= limit]
+        goodpos = c(earlier, goodpos)
+      }
+
       if(length(goodpos)) {
-        b = max(goodpos)
+        # Balance the final two lines; otherwise break as late as possible
+        final = goodpos[nch - goodpos <= limit]
+        b = if(length(final)) final[which.min(abs(nch - 2L * final))] else max(goodpos)
         break
       }
     }
-    res = c(res, substr(remaining, 1, b))
-    remaining = substr(remaining, b + 1, nch)
+
+    i = i + 1L
+
+    # Remove spaces immediately adjacent to the break
+    res[i] = substr(remaining, 1L, b - (substr(remaining, b, b) == " "))
+    remaining = substr(remaining, b + 1L +
+                         (substr(remaining, b + 1L, b + 1L) == " "), nch)
     nch = nchar(remaining)
   }
-  res = c(res, remaining)
-  paste0(res, collapse = "\n")
+
+  res[i + 1L] = remaining
+  paste(res[seq_len(i + 1L)], collapse = "\n")
 }
 
 trunc = function(x, printMax = 8, head = 3) {
